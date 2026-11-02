@@ -101,3 +101,42 @@ fn san_disambiguates_identical_pieces_that_share_a_destination() {
     assert_eq!(p.to_san("b1c3").unwrap(), "Nbc3");
     assert_eq!(p.to_san("d1c3").unwrap(), "Ndc3");
 }
+
+#[test]
+fn legal_piece_moves_with_san_match_individual_queries() {
+    for (variant, fen) in [
+        (Variant::Standard, START),
+        (Variant::Standard, "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1"),
+        (Variant::Standard, "4k3/P7/8/8/8/8/7p/4K3 w - - 0 1"),
+        (Variant::Standard, "4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1"),
+        (Variant::Standard, "4k3/8/8/8/8/8/8/1N1NK3 w - - 0 1"),
+        (
+            Variant::Standard,
+            "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3",
+        ),
+        (Variant::Chess960, "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1"),
+        (Variant::Duck, START),
+        (Variant::Duck, "4k3/8/8/8/8/8/4R3/4K3 w - - 0 1"),
+        (Variant::Duck, "8/8/8/8/8/8/4R3/4K3 b - - 0 1"),
+        (Variant::KingOfTheHill, "7k/8/8/8/8/3K4/8/8 w - - 0 1"),
+        (Variant::KingOfTheHill, "7k/8/8/8/3K4/8/8/8 b - - 1 1"),
+    ] {
+        let p = Position::from_fen(variant, fen).unwrap();
+        let mut seen = std::collections::HashSet::new();
+        let expected: Vec<_> = p
+            .legal_moves()
+            .iter()
+            .filter_map(|m| {
+                let piece = m.as_str().split('@').next().unwrap();
+                seen.insert(piece.to_string())
+                    .then(|| (piece.to_string(), p.to_san(piece).unwrap()))
+            })
+            .collect();
+        let actual: Vec<_> = p
+            .legal_piece_moves_with_san()
+            .into_iter()
+            .map(|(m, san)| (m.to_string(), san))
+            .collect();
+        assert_eq!(actual, expected, "{variant:?}: {fen}");
+    }
+}

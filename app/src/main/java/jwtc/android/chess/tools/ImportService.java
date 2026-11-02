@@ -128,7 +128,9 @@ public class ImportService extends Service {
             Log.d(TAG, "uri " + uri.toString());
         }
 
-        importApi = new ImportApi();
+        if (mode != IMPORT_GAMES) {
+            importApi = new ImportApi();
+        }
         jobMode = mode;
         jobOutcome = null;
 
@@ -157,7 +159,7 @@ public class ImportService extends Service {
                                 new ImportJob(
                                         mode,
                                         isZip(in) ? PgnSource.zip(in) : PgnSource.file(in),
-                                        new GameImportHandler(importApi, getContentResolver())));
+                                        new GameImportHandler(getContentResolver())));
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
                         dispatcher.OnImportFatalError(mode);

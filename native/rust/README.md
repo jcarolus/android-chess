@@ -18,6 +18,13 @@ Variant: Play (`EnginePolicy.forPlay`), Analysis (`EnginePolicy.forAnalysis`) an
 Mate-in-Two Puzzles and Practice Positions (`EngineSession.forPuzzles`, quiescence
 off). OEX Engines are used only when selected and available, and never for Duck.
 
+PGN loading retains a native position in a scoped `RustBoard.Replay`, avoiding history replay
+on each forward move. Undo or a board reset releases it; the next forward move reconstructs
+the position from the Java snapshots and reversible history. Closing the scope releases the
+handle on success or failure. Other board operations use the stateless snapshot API.
+Legal piece moves and their SAN share one legal-move list, including Duck piece moves without
+expanding every possible placement.
+
 King of the Hill is exposed only in Play, with the built-in Engine or two humans on
 one device. PGN uses `[Variant "King of the Hill"]`; Analysis and Setup are unavailable.
 A legal king move to d4, e4, d5 or e5 wins after the fifty-move and repetition draw

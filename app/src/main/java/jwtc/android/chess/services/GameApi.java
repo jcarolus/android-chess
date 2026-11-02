@@ -35,7 +35,7 @@ public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
     private final RustBoard board;
-    public static final int MAX_PGN_SIZE = 500000;
+    public static final int MAX_PGN_SIZE = Pgn.MAX_GAME_SIZE;
 
     public final HashMap<String, String> pgnTags; //
     private GameTree gameTree;
@@ -944,9 +944,11 @@ public class GameApi {
             }
             resetPGNHistory(pgnTags.getOrDefault("FEN", board.toFEN()));
             gameTree.setRootComment(document.rootComment);
-            replayLine(document.mainLine);
-            if (!navigateTo(gameTree.mainLineEnd())) {
-                throw new IllegalArgumentException("Cannot restore main line");
+            try (RustBoard.Replay replay = board.beginReplay()) {
+                replayLine(document.mainLine);
+                if (!navigateTo(gameTree.mainLineEnd())) {
+                    throw new IllegalArgumentException("Cannot restore main line");
+                }
             }
             importedResult = document.result;
             if (board.isEnded() == 0) {

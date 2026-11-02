@@ -1141,6 +1141,22 @@ impl Position {
         }
         result
     }
+    /// Legal piece moves paired with SAN, sharing one legal-move generation for disambiguation.
+    /// Duck placements are omitted, including for piece moves that end the game immediately.
+    pub fn legal_piece_moves_with_san(&self) -> Vec<(CoordinateMove, String)> {
+        if self.variant == Variant::KingOfTheHill
+            && !matches!(self.game_state(), GameState::Play | GameState::Check)
+            || self.variant == Variant::Duck && self.game_state() != GameState::Play
+        {
+            return Vec::new();
+        }
+        let legal = self.legal_internal();
+        legal
+            .iter()
+            .map(|&m| (self.external(self.turn, m), self.format_san(m, &legal)))
+            .collect()
+    }
+
     /// Standard Algebraic Notation for the legal move matching `coordinate`.
     pub fn to_san(&self, coordinate: &str) -> Result<String, Error> {
         if self.variant == Variant::KingOfTheHill
@@ -1160,6 +1176,21 @@ impl Position {
             .copied()
             .find(|m| self.external(t, *m).as_str() == piece_str)
             .ok_or_else(|| invalid("Illegal move"))?;
+        let mut san = self.format_san(m, &legal);
+        if let Some(d) = duck {
+            let d = square(d)?;
+            let next = self.make(m);
+            if next.occupied() & bit(d) != 0 {
+                return Err(invalid("Illegal duck placement"));
+            }
+            san.push('@');
+            san.push_str(&name(d));
+        }
+        Ok(san)
+    }
+
+    fn format_san(&self, m: Move, legal: &[Move]) -> String {
+        let t = self.turn;
         let piece = self.piece(t, m.from).unwrap();
         let mut san = String::new();
         if m.castle {
@@ -1200,22 +1231,14 @@ impl Position {
             }
             san.push_str(&name(m.to));
         }
-        if let Some(d) = duck {
-            let d = square(d)?;
-            let next = self.make(m);
-            if next.occupied() & bit(d) != 0 {
-                return Err(invalid("Illegal duck placement"));
-            }
-            san.push('@');
-            san.push_str(&name(d));
-        } else if self.variant != Variant::Duck && m.check {
+        if self.variant != Variant::Duck && m.check {
             san.push(if self.make(m).legal_internal().is_empty() {
                 '#'
             } else {
                 '+'
             });
         }
-        Ok(san)
+        san
     }
 }
 #[cfg(test)]

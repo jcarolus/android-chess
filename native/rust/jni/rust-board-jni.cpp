@@ -13,6 +13,11 @@ struct BoardResult {
     char fen[96], san[24], moves[32768], attackers[256], turns[8192], error[256];
 };
 extern "C" {
+struct BoardReplay;
+BoardReplay* rust_board_replay_create(int32_t, const char*, const char* const*, size_t, BoardResult*);
+void rust_board_replay_destroy(BoardReplay*);
+void rust_board_replay_turns(const BoardReplay*, BoardResult*);
+void rust_board_replay_apply(BoardReplay*, const char*, BoardResult*);
 void rust_board_query(int32_t, const char*, const char* const*, size_t, BoardResult*);
 void rust_board_legal_moves(int32_t, const char*, const char* const*, size_t, BoardResult*);
 void rust_board_legal_turns(int32_t, const char*, const char* const*, size_t, BoardResult*);
@@ -80,6 +85,39 @@ static jobject toJava(JNIEnv* env, const BoardResult& result) {
     env->DeleteLocalRef(attackers);
     env->DeleteLocalRef(turns);
     return value;
+}
+extern "C" JNIEXPORT jlong JNICALL
+Java_jwtc_android_chess_engine_RustBoardNative_createReplay(JNIEnv* env, jclass, jint variant,
+        jstring fen, jobjectArray history) {
+    std::string startingPosition;
+    if (!text(env, fen, startingPosition)) return 0;
+    std::vector<std::string> moves;
+    std::vector<const char*> pointers;
+    if (!readHistory(env, history, moves, pointers)) return 0;
+    BoardResult result{};
+    BoardReplay* replay = rust_board_replay_create(variant, startingPosition.c_str(), pointers.data(), pointers.size(), &result);
+    if (result.error[0]) { fail(env, result.error); return 0; }
+    return reinterpret_cast<jlong>(replay);
+}
+extern "C" JNIEXPORT void JNICALL
+Java_jwtc_android_chess_engine_RustBoardNative_destroyReplay(JNIEnv*, jclass, jlong handle) {
+    rust_board_replay_destroy(reinterpret_cast<BoardReplay*>(handle));
+}
+extern "C" JNIEXPORT jobject JNICALL
+Java_jwtc_android_chess_engine_RustBoardNative_replayTurns(JNIEnv* env, jclass, jlong handle) {
+    BoardResult result{};
+    rust_board_replay_turns(reinterpret_cast<BoardReplay*>(handle), &result);
+    if (result.error[0]) { fail(env, result.error); return nullptr; }
+    return toJava(env, result);
+}
+extern "C" JNIEXPORT jobject JNICALL
+Java_jwtc_android_chess_engine_RustBoardNative_replayMove(JNIEnv* env, jclass, jlong handle, jstring move) {
+    std::string coordinate;
+    if (!text(env, move, coordinate)) return nullptr;
+    BoardResult result{};
+    rust_board_replay_apply(reinterpret_cast<BoardReplay*>(handle), coordinate.c_str(), &result);
+    if (result.error[0]) { fail(env, result.error); return nullptr; }
+    return toJava(env, result);
 }
 extern "C" JNIEXPORT jobject JNICALL
 Java_jwtc_android_chess_engine_RustBoardNative_query(JNIEnv* env, jclass, jint variant, jstring fen, jobjectArray history) {

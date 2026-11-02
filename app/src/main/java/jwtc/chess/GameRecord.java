@@ -42,10 +42,7 @@ public final class GameRecord {
         this.rating = rating;
     }
 
-    /**
-     * A Game to store, taking its columns from the tags of the PGN. Call after the PGN is exported,
-     * so its tags are final.
-     */
+    /** A Game to store, taking its columns from the supplied PGN tags. */
     public static GameRecord of(String pgn, Map<String, String> tags) {
         return new GameRecord(
                 0,
@@ -56,6 +53,20 @@ public final class GameRecord {
                 PgnDate.parse(tags.get("Date")),
                 tags.get("Result"),
                 null);
+    }
+
+    /**
+     * An imported Game with its original PGN and searchable columns. Checks syntax only; the
+     * Starting Position and move legality are validated when the Game is opened.
+     */
+    public static GameRecord fromPgn(String pgn) {
+        if (pgn == null || pgn.length() > Pgn.MAX_GAME_SIZE) {
+            throw new PgnSyntaxError("PGN is missing or exceeds the size limit");
+        }
+        PgnDocument document = Pgn.parse(pgn);
+        Map<String, String> tags = new LinkedHashMap<>(document.tags);
+        tags.put("Result", document.result == null ? "*" : document.result);
+        return of(pgn, tags);
     }
 
     /** A Game as read from the database. */

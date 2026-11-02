@@ -1,13 +1,21 @@
 package jwtc.android.chess.engine;
 
 /**
- * Stateless board-operations JNI adapter: every call rebuilds the position from a starting FEN plus
- * coordinate history and returns a result, with nothing persisted between calls.
+ * Board-operations JNI adapter. Snapshot calls rebuild from a starting FEN and coordinate history;
+ * scoped replay handles retain a position while loading PGN.
  */
 public final class RustBoardNative {
     static {
         System.loadLibrary("rust-chess-jni");
     }
+
+    static native long createReplay(int variant, String fen, String[] history);
+
+    static native void destroyReplay(long handle);
+
+    static native RustBoardResult replayTurns(long handle);
+
+    static native RustBoardResult replayMove(long handle, String move);
 
     private static native RustBoardResult query(int variant, String fen, String[] history);
 

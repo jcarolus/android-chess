@@ -8,7 +8,7 @@ import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
 
-/** Java-owned board snapshots. Rust validates moves; no live position is stored in native code. */
+/** Java-owned board snapshots, with a scoped native position for PGN replay. */
 public final class RustBoard {
     public static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     // Board-sharing screens observe the same Java state; game trees remain owned by GameApi.
@@ -23,6 +23,48 @@ public final class RustBoard {
     private String initialFen;
     private int promotion = BoardConstants.QUEEN;
     private List<LegalMove> legal;
+    private Replay replay;
+
+    /** Retains the native position for forward moves; navigation rebuilds it from Java history. */
+    public synchronized Replay beginReplay() {
+        if (replay != null) {
+            throw new IllegalStateException("A replay is already active");
+        }
+        replay = new Replay();
+        return replay;
+    }
+
+    public final class Replay implements AutoCloseable {
+        private long handle;
+
+        private Replay() {}
+
+        private long handle() {
+            if (handle == 0) {
+                handle =
+                        RustBoardNative.createReplay(
+                                variant.ordinal(), replayFen(), replayHistory());
+            }
+            return handle;
+        }
+
+        private void reset() {
+            if (handle != 0) {
+                RustBoardNative.destroyReplay(handle);
+                handle = 0;
+            }
+        }
+
+        @Override
+        public void close() {
+            synchronized (RustBoard.this) {
+                reset();
+                if (replay == this) {
+                    replay = null;
+                }
+            }
+        }
+    }
 
     private static final class Frame {
         final String fen, coordinate, san;
@@ -250,6 +292,9 @@ public final class RustBoard {
     }
 
     private void load(String fen, RustSearchRequest.Variant selected) {
+        if (replay != null) {
+            replay.reset();
+        }
         RustBoardResult result;
         try {
             result = RustBoardNative.query(selected, fen, new String[0]);
@@ -307,7 +352,11 @@ public final class RustBoard {
         } else {
             legal =
                     parseTurns(
-                            RustBoardNative.legalTurns(variant, replayFen(), replayHistory()).turns,
+                            (replay == null
+                                            ? RustBoardNative.legalTurns(
+                                                    variant, replayFen(), replayHistory())
+                                            : RustBoardNative.replayTurns(replay.handle()))
+                                    .turns,
                             toFEN());
         }
         return legal;
@@ -380,9 +429,7 @@ public final class RustBoard {
             if (move.packed != packed) {
                 continue;
             }
-            RustBoardResult result =
-                    RustBoardNative.applyMove(
-                            variant, replayFen(), replayHistory(), move.coordinate);
+            RustBoardResult result = applyMove(move.coordinate);
             // The duck placement still decides whether the opponent is left without moves.
             boolean pending =
                     variant == RustSearchRequest.Variant.DUCK
@@ -419,7 +466,7 @@ public final class RustBoard {
         String coordinate = pending.coordinate + "@" + Pos.toString(square);
         final RustBoardResult result;
         try {
-            result = RustBoardNative.applyMove(variant, replayFen(), replayHistory(), coordinate);
+            result = applyMove(coordinate);
         } catch (IllegalArgumentException ex) {
             return 0;
         }
@@ -439,10 +486,19 @@ public final class RustBoard {
     }
 
     public synchronized void undo() {
+        if (replay != null) {
+            replay.reset();
+        }
         if (frames.size() > 1) {
             frames.remove(frames.size() - 1);
         }
         legal = null;
+    }
+
+    private RustBoardResult applyMove(String coordinate) {
+        return replay == null
+                ? RustBoardNative.applyMove(variant, replayFen(), replayHistory(), coordinate)
+                : RustBoardNative.replayMove(replay.handle(), coordinate);
     }
 
     public synchronized int isAmbiguousCastle(int from, int to) {

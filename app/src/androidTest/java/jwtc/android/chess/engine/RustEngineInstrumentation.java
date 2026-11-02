@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.tools.ImportApi;
+import jwtc.chess.GameRecord;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
@@ -20,12 +22,14 @@ public final class RustEngineInstrumentation extends Instrumentation {
     private static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     private boolean ecoOnly;
     private boolean analysisOnly;
+    private boolean importOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
         ecoOnly = arguments != null && "eco".equals(arguments.getString("suite"));
         analysisOnly = arguments != null && "analysis".equals(arguments.getString("suite"));
+        importOnly = arguments != null && "import".equals(arguments.getString("suite"));
         start();
     }
 
@@ -33,6 +37,15 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (importOnly) {
+                importedGamesValidateOnOpening();
+                pgnReplayPreservesBranchesAndRollback();
+                report.putString(
+                        "stream",
+                        "Deferred import validation, PGN replay, variants, branches and rollback passed\n");
+                finish(-1, report);
+                return;
+            }
             if (ecoOnly) {
                 ecoLookupPreservesLivePosition();
                 report.putString("stream", "ECO lookup, and live-position preservation passed\n");
@@ -48,6 +61,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
             }
             boardSnapshots();
             boardOwnership();
+            importedGamesValidateOnOpening();
+            pgnReplayPreservesBranchesAndRollback();
             kingOfTheHillPersistence();
             nativeContract();
             nativeBoardContract();
@@ -302,6 +317,76 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game.stepBack() && game.stepForward() && fen.equals(game.getFEN()),
                             "Duck replay failed");
                 });
+    }
+
+    private void importedGamesValidateOnOpening() {
+        GameApi game = new ImportApi();
+        GameRecord record =
+                GameRecord.fromPgn("[Event \"Imported\"]\n1. e4 e5 (1... c5 2. Nf3) 2. Nf3 *");
+        check(game.loadGame(record), "Valid imported game did not open");
+        String saved = game.exportFullPGN(), fen = game.getFEN();
+        for (String pgn :
+                new String[] {
+                    "1. e4 e5 2. Ke4 *", "1. e4 e5 (1... c5 2. Ke4) *", "[FEN \"invalid\"]\n1. e4 *"
+                }) {
+            record = GameRecord.fromPgn(pgn);
+            check(pgn.equals(record.pgn), "Import changed the original PGN");
+            check(!game.loadGame(record), "Opening accepted illegal imported PGN");
+            check(game.getLastPgnError() != null, "Opening omitted the validation error");
+            check(
+                    saved.equals(game.exportFullPGN()) && fen.equals(game.getFEN()),
+                    "Opening invalid import changed the previous game");
+        }
+    }
+
+    private void pgnReplayPreservesBranchesAndRollback() {
+        GameApi game = new ImportApi();
+        for (String pgn :
+                new String[] {
+                    "[Event \"Branches\"]\n\n{root} 1. e4 $1 {main} e5 (1... c5 {Sicilian} 2. Nf3 (2. Nc3) d6) (1... e6 2. d4) 2. Nf3 Nc6 *",
+                    "1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
+                    "[Variant \"Fischerandom\"]\n[FEN \"4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1\"]\n\n1. O-O (1. O-O-O) *",
+                    "[Variant \"Duck\"]\n\n1. e4@d5 (1. d4@e5 d5@e4) e5@d4 2. Nf3@c6 *",
+                    "[Variant \"Duck\"]\n[FEN \"4k3/8/8/8/8/8/4R3/4K3 w - - 0 1\"]\n\n1. Rxe8 *",
+                    "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n1. Kd4 (1. Ke4) *",
+                    "[FEN \"4k3/P7/8/8/8/8/7p/4K3 w - - 0 1\"]\n\n1. a8=Q+ *",
+                    "[FEN \"4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1\"]\n\n1. exd6 *"
+                }) {
+            check(game.loadPGN(pgn), "Replay rejected " + pgn);
+            String saved = game.exportFullPGN();
+            String fen = game.getFEN();
+            int state = game.getEngineState();
+            check(!game.loadPGN("1. e4 e5 (1... c5 2. Ke4) *"), "Illegal branch accepted");
+            check(
+                    saved.equals(game.exportFullPGN()) && fen.equals(game.getFEN()),
+                    "Failed replay changed game");
+            check(game.loadPGN(saved), "Exported replay rejected");
+            check(
+                    saved.equals(game.exportFullPGN())
+                            && fen.equals(game.getFEN())
+                            && state == game.getEngineState(),
+                    "Replay round trip changed game");
+            game.restoreCurrentBoard();
+            check(
+                    fen.equals(game.getFEN()) && state == game.getEngineState(),
+                    "Replay and stateless restore differ");
+        }
+        check(
+                game.loadPGN("1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *"),
+                "Repetition replay failed");
+        check(game.getEngineState() == BoardConstants.DRAW_REPEAT, "Replay lost repetition draw");
+        check(game.loadPGN("[Variant \"Duck\"]\n\n1. e4@d5 *"), "Duck replay failed");
+        String saved = game.exportFullPGN(), fen = game.getFEN();
+        for (String invalid :
+                new String[] {
+                    "[Variant \"Duck\"]\n\n1. e4 *", "[Variant \"Duck\"]\n\n1. e4@a1 *"
+                }) {
+            check(!game.loadPGN(invalid), "Unfinished or illegal Duck turn accepted");
+            check(
+                    saved.equals(game.exportFullPGN()) && fen.equals(game.getFEN()),
+                    "Failed Duck replay changed game");
+        }
+        check(game.requestMove("e5@d4"), "Replay retained stale native position after close");
     }
 
     private void nativeContract() {

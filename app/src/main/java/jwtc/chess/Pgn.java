@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
  * board.
  */
 public final class Pgn {
+    public static final int MAX_GAME_SIZE = 500000;
+
     public static final Pattern MOVE =
             Pattern.compile(
                     "(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");

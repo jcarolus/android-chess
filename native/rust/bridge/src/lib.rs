@@ -158,7 +158,7 @@ pub unsafe extern "C" fn rust_chess_search(
         }
     }
 }
-/// Stateless board-operations result: a snapshot query, a move's SAN, the legal moves from a
+/// Board-operations result: a snapshot query, a move's SAN, the legal moves from a
 /// snapshot (optionally with SAN in `turns`), or the attackers of a square. Every call fills only the fields its name promises;
 /// the rest are left at their zero/empty default.
 #[repr(C)]
@@ -280,19 +280,14 @@ fn fill_query(position: &Position, out: &mut BoardResult) -> Result<(), Error> {
 /// Writes the legal moves of `position` to `out.turns` as space-separated `coordinate=san` pairs.
 /// Duck turns are reduced to their piece move, since SAN and move selection ignore the placement.
 fn fill_turns(position: &Position, out: &mut BoardResult) -> Result<(), Error> {
-    let mut seen = std::collections::HashSet::new();
     let mut turns = String::new();
-    for turn in position.legal_moves() {
-        let piece = turn.as_str().split('@').next().unwrap_or("");
-        if !seen.insert(piece.to_string()) {
-            continue;
-        }
+    for (turn, san) in position.legal_piece_moves_with_san() {
         if !turns.is_empty() {
             turns.push(' ');
         }
-        turns.push_str(piece);
+        turns.push_str(turn.as_str());
         turns.push('=');
-        turns.push_str(&position.to_san(piece)?);
+        turns.push_str(&san);
     }
     if !write_capped(&mut out.turns, &turns) {
         return Err(Error("Legal turns exceed buffer capacity".into()));
@@ -303,6 +298,111 @@ fn report(output: &mut BoardResult, result: std::thread::Result<Result<(), Error
     if let Err(e) = result.unwrap_or_else(|_| Err(Error("Rust board call panicked".into()))) {
         write_truncated(&mut output.error, &e.to_string());
     }
+}
+
+/// A position retained only while a caller replays a line of a PGN.
+pub struct BoardReplay {
+    variant: Variant,
+    position: Position,
+}
+
+/// # Safety
+/// Strings and history follow `rebuild`'s contract; `out` must be writable.
+/// The returned handle is owned by the caller and must be destroyed exactly once.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_replay_create(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    out: *mut BoardResult,
+) -> *mut BoardReplay {
+    if out.is_null() {
+        return std::ptr::null_mut();
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let mut handle = std::ptr::null_mut();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let replay = BoardReplay {
+            variant: parse_variant(variant)?,
+            position: rebuild(variant, fen, history, count)?,
+        };
+        handle = Box::into_raw(Box::new(replay));
+        Ok(())
+    }));
+    report(output, result);
+    handle
+}
+
+/// # Safety
+/// Consume a live replay handle exactly once, with no outstanding calls using it.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_replay_destroy(replay: *mut BoardReplay) {
+    if !replay.is_null() {
+        drop(Box::from_raw(replay));
+    }
+}
+
+/// # Safety
+/// `replay` must be live and exclusively held for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_replay_turns(
+    replay: *const BoardReplay,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let replay = replay
+            .as_ref()
+            .ok_or_else(|| Error("Missing replay handle".into()))?;
+        fill_turns(&replay.position, output)
+    }));
+    report(output, result);
+}
+
+/// Applies a complete turn, or returns a detached Duck piece preview. Failed moves leave the
+/// retained position untouched.
+///
+/// # Safety
+/// `replay` must be live and exclusively held; `coordinate` must be NUL-terminated, and `out` writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_replay_apply(
+    replay: *mut BoardReplay,
+    coordinate: *const c_char,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let replay = replay
+            .as_mut()
+            .ok_or_else(|| Error("Missing replay handle".into()))?;
+        let coordinate = text(coordinate)?;
+        let preview = replay.variant == Variant::Duck && !coordinate.contains('@');
+        let mut next = if preview {
+            replay.position.preview_piece(coordinate)?
+        } else {
+            replay.position.clone()
+        };
+        if !preview {
+            next.apply(coordinate)?;
+        }
+        fill_query(&next, output)?;
+        if !preview {
+            fill_turns(&next, output)?;
+            replay.position = next;
+        }
+        Ok(())
+    }));
+    report(output, result);
 }
 /// A snapshot query: game state, turn, check, castling rights, hash key, captured pieces, FEN
 /// and the draw/repetition counters.
@@ -559,6 +659,57 @@ mod tests {
         let applied = apply(&[], "e2e4");
         assert_eq!(text_of(&applied.turns), legal_turns(&history));
     }
+
+    #[test]
+    fn owned_replay_matches_stateless_moves_and_preserves_failed_moves() {
+        let fen = c(START);
+        let mut out = Box::new(default_board_result());
+        let replay =
+            unsafe { rust_board_replay_create(0, fen.as_ptr(), std::ptr::null(), 0, &mut *out) };
+        assert!(!replay.is_null(), "{}", text_of(&out.error));
+        let mut history = Vec::new();
+        for coordinate in [
+            "g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8",
+        ] {
+            unsafe { rust_board_replay_apply(replay, c("a1a1").as_ptr(), &mut *out) };
+            assert!(!text_of(&out.error).is_empty());
+            unsafe { rust_board_replay_turns(replay, &mut *out) };
+            assert_eq!(text_of(&out.error), "");
+            assert_eq!(text_of(&out.turns), legal_turns(&history));
+            unsafe { rust_board_replay_apply(replay, c(coordinate).as_ptr(), &mut *out) };
+            assert_eq!(text_of(&out.error), "");
+            let expected = apply(&history, coordinate);
+            assert_eq!(text_of(&out.fen), text_of(&expected.fen));
+            assert_eq!(text_of(&out.turns), text_of(&expected.turns));
+            assert_eq!(out.game_state, expected.game_state);
+            assert_eq!(out.repetition_count, expected.repetition_count);
+            history.push(coordinate.to_string());
+        }
+        assert_eq!(out.game_state, 6);
+        unsafe { rust_board_replay_destroy(replay) };
+    }
+
+    #[test]
+    fn owned_duck_replay_keeps_previews_detached() {
+        let fen = c(START);
+        let mut out = Box::new(default_board_result());
+        let replay =
+            unsafe { rust_board_replay_create(2, fen.as_ptr(), std::ptr::null(), 0, &mut *out) };
+        assert!(!replay.is_null());
+        unsafe { rust_board_replay_apply(replay, c("e2e4").as_ptr(), &mut *out) };
+        assert_eq!(text_of(&out.error), "");
+        assert!(text_of(&out.turns).is_empty());
+        unsafe { rust_board_replay_apply(replay, c("e2e4@a1").as_ptr(), &mut *out) };
+        assert!(!text_of(&out.error).is_empty());
+        unsafe { rust_board_replay_apply(replay, c("e2e4@d5").as_ptr(), &mut *out) };
+        assert_eq!(text_of(&out.error), "");
+        let expected = with_history(&[], |h, n, expected| unsafe {
+            rust_board_apply_move(2, fen.as_ptr(), h, n, c("e2e4@d5").as_ptr(), expected)
+        });
+        assert_eq!(text_of(&out.fen), text_of(&expected.fen));
+        assert_eq!(text_of(&out.turns), text_of(&expected.turns));
+        unsafe { rust_board_replay_destroy(replay) };
+    }
     /// Replaying from the last pawn move gives the same repetition result as the full history.
     #[test]
     fn windowed_history_keeps_repetition_detection() {
@@ -645,14 +796,26 @@ mod tests {
             }
         }
         let windowed = started.elapsed();
+        let started = std::time::Instant::now();
+        let mut out = Box::new(default_board_result());
+        let replay =
+            unsafe { rust_board_replay_create(0, fen.as_ptr(), std::ptr::null(), 0, &mut *out) };
+        assert!(!replay.is_null());
+        for m in &moves {
+            unsafe { rust_board_replay_apply(replay, c(m).as_ptr(), &mut *out) };
+            assert_eq!(text_of(&out.error), "");
+        }
+        unsafe { rust_board_replay_destroy(replay) };
+        let owned = started.elapsed();
         println!(
-            "{} plies: per-move SAN calls {} native calls in {:?}; batched {} calls in {:?}; windowed in {:?}",
+            "{} plies: per-move SAN calls {} native calls in {:?}; batched {} calls in {:?}; windowed in {:?}; owned replay in {:?}",
             moves.len(),
             calls,
             before,
             moves.len(),
             after,
-            windowed
+            windowed,
+            owned
         );
     }
 }
