@@ -272,8 +272,10 @@ public final class MateCollection {
 
     private void moveApplied() {
         numMoved++;
-        if (gameApi.isEnded()) {
+        if (MateRules.isSolved(gameApi.getEngineState(), gameApi.getTurn(), usersColor)) {
             solved();
+        } else if (gameApi.isEnded()) {
+            wrongReply();
         } else if (!isUsersTurn()) {
             handler.removeCallbacks(requestReply);
             handler.postDelayed(requestReply, REPLY_DELAY_MILLIS);
@@ -296,6 +298,10 @@ public final class MateCollection {
             return;
         }
 
+        wrongReply();
+    }
+
+    private void wrongReply() {
         PGNEntry entry = gameApi.getCurrentNode().getEntry();
         String lastMove = entry == null ? "" : entry.sMove;
         numMoved--;

@@ -24,6 +24,10 @@ final class MateRules {
         return value == BoardConstants.VALUATION_MATE * (usersTurn ? 1 : -1);
     }
 
+    static boolean isSolved(int boardState, int sideToMove, int usersColor) {
+        return boardState == BoardConstants.MATE && sideToMove != usersColor;
+    }
+
     /** The saved position, or the first one when it is gone or past the end of the collection. */
     static int restore(int saved, int total) {
         return saved < 0 || saved >= total ? 0 : saved;
