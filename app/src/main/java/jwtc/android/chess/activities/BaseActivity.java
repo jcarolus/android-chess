@@ -202,7 +202,6 @@ public class BaseActivity extends AppCompatActivity {
     public String readInputStream(Uri uri, int maxChars) {
         Log.d(TAG, "readInputString " + uri);
         try {
-            String s = "";
             InputStream is = getContentResolver().openInputStream(uri);
 
             try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
@@ -219,7 +218,6 @@ public class BaseActivity extends AppCompatActivity {
                     sb.append(buffer, 0, read);
                 }
 
-                is.close();
                 return sb.toString();
             }
         } catch (Exception e) {

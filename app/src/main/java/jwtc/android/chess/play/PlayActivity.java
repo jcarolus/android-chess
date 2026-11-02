@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import java.io.InputStream;
 import java.util.ArrayList;
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
@@ -36,7 +35,6 @@ import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
-import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.ClockListener;
@@ -351,10 +349,9 @@ public class PlayActivity extends ChessBoardActivity
                         sharedUri = clipData.getItemAt(0).getUri();
                     }
                     if (sharedUri != null) {
-                        try (InputStream is = getContentResolver().openInputStream(sharedUri)) {
-                            sPGN = PGNHelper.getPGNFromInputStream(is);
-                        } catch (Exception e) {
-                            Log.e(TAG, "Failed to open shared PGN " + sharedUri, e);
+                        sPGN = readInputStream(sharedUri, GameApi.MAX_PGN_SIZE);
+                        if (sPGN != null) {
+                            sPGN = sPGN.trim();
                         }
                     }
                 }
@@ -371,13 +368,10 @@ public class PlayActivity extends ChessBoardActivity
             }
         } else if (uri != null) {
             Log.i(TAG, "onResume opening " + uri.toString());
-
-            try {
-                InputStream is = getContentResolver().openInputStream(uri);
-                sPGN = PGNHelper.getPGNFromInputStream(is);
+            sPGN = readInputStream(uri, GameApi.MAX_PGN_SIZE);
+            if (sPGN != null) {
+                sPGN = sPGN.trim();
                 lGameID = 0;
-            } catch (Exception e) {
-                Log.e("onResume", "Failed " + e.toString());
             }
         }
         Log.d(
