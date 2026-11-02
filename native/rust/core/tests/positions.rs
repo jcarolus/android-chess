@@ -1,5 +1,47 @@
-use chess_core::{Position, Variant};
+use chess_core::{GameState, Position, Variant};
 const START: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+#[test]
+fn dead_positions_draw_in_standard_and_chess960() {
+    for variant in [Variant::Standard, Variant::Chess960] {
+        for fen in [
+            "k7/8/8/8/8/8/8/4K3 w - - 0 1",
+            "k7/8/8/8/8/8/4B3/4K3 w - - 0 1",
+            "k7/8/8/8/8/8/4N3/4K3 w - - 0 1",
+            "4k3/4b3/8/8/8/8/8/K7 b - - 0 1",
+            "4k3/4n3/8/8/8/8/8/K7 b - - 0 1",
+        ] {
+            assert_eq!(
+                Position::from_fen(variant, fen).unwrap().game_state(),
+                GameState::DrawMaterial,
+                "{variant:?}: {fen}"
+            );
+        }
+    }
+}
+
+#[test]
+fn minor_piece_endings_with_possible_mates_remain_playable() {
+    for fen in [
+        "4k3/8/8/8/8/8/4N3/4K1n1 w - - 0 1",
+        "4k3/8/8/8/8/8/4N3/4K1b1 w - - 0 1",
+        "4k3/8/8/8/8/8/3NN3/4K3 w - - 0 1",
+    ] {
+        assert_eq!(
+            Position::from_fen(Variant::Standard, fen)
+                .unwrap()
+                .game_state(),
+            GameState::Play,
+            "{fen}"
+        );
+    }
+}
+
+#[test]
+fn duck_kings_are_not_a_material_draw() {
+    let p = Position::from_fen(Variant::Duck, "4k3/8/8/3$4/8/8/8/4K3 w - - 0 1").unwrap();
+    assert_eq!(p.game_state(), GameState::Play);
+}
 #[test]
 fn owned_position_replays_coordinate_history() {
     let mut position = Position::from_fen(Variant::Standard, START).unwrap();

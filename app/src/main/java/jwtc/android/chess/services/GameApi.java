@@ -264,14 +264,22 @@ public class GameApi {
     }
 
     public GameApi() {
-        this(false);
+        this(false, RustBoard.shared());
     }
 
     /**
      * @param preservePosition keep the shared Java board instead of starting a new game
      */
     public GameApi(boolean preservePosition) {
-        board = RustBoard.shared();
+        this(preservePosition, RustBoard.shared());
+    }
+
+    protected GameApi(RustBoard board) {
+        this(false, board);
+    }
+
+    private GameApi(boolean preservePosition, RustBoard board) {
+        this.board = board;
         if (!preservePosition) {
             board.newGame();
         }

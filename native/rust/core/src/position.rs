@@ -984,6 +984,20 @@ impl Position {
         self.variant == Variant::KingOfTheHill
             && self.pieces[self.turn ^ 1][KING] & (bit(27) | bit(28) | bit(35) | bit(36)) != 0
     }
+
+    fn dead_position_by_material(&self) -> bool {
+        if !matches!(self.variant, Variant::Standard | Variant::Chess960) {
+            return false;
+        }
+        let mut minor_pieces = 0;
+        for pieces in &self.pieces {
+            if pieces[PAWN] | pieces[ROOK] | pieces[QUEEN] != 0 {
+                return false;
+            }
+            minor_pieces += (pieces[KNIGHT] | pieces[BISHOP]).count_ones();
+        }
+        minor_pieces <= 1
+    }
     pub fn game_state(&self) -> GameState {
         if self.variant == Variant::Duck && self.pieces.iter().any(|p| p[KING] == 0) {
             return GameState::Mate;
@@ -998,16 +1012,7 @@ impl Position {
         if self.hill_won() {
             return GameState::HillWin;
         }
-        if self.variant != Variant::KingOfTheHill
-            && self
-                .pieces
-                .iter()
-                .all(|p| p[PAWN] | p[ROOK] | p[QUEEN] == 0)
-            && self.material(0) <= 50340
-            && self.material(1) <= 50340
-            && ![0, 7, 56, 63].contains(&self.king(0))
-            && ![0, 7, 56, 63].contains(&self.king(1))
-        {
+        if self.dead_position_by_material() {
             return GameState::DrawMaterial;
         }
         if self.variant == Variant::Duck {
