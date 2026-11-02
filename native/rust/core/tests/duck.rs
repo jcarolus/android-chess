@@ -2,6 +2,31 @@ use chess_core::*;
 const START: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 #[test]
+fn castling_can_start_on_or_cross_an_attacked_square() {
+    for fen in [
+        "k3r3/8/8/3$4/8/8/8/4K2R w K - 0 1",
+        "k4r2/8/8/3$4/8/8/8/4K2R w K - 0 1",
+    ] {
+        let mut p = Position::from_fen(Variant::Duck, fen).unwrap();
+        assert!(
+            p.legal_moves().iter().any(|m| m.as_str() == "e1g1@d6"),
+            "{fen}"
+        );
+        p.apply("e1g1@d6").unwrap();
+        assert!(p.fen().ends_with("/5RK1 b - - 1 1"), "{}", p.fen());
+    }
+}
+
+#[test]
+fn castling_still_requires_an_empty_path() {
+    let p = Position::from_fen(Variant::Duck, "k7/8/8/8/8/8/8/4K$1R w K - 0 1").unwrap();
+    assert!(!p
+        .legal_moves()
+        .iter()
+        .any(|m| m.as_str().starts_with("e1g1")));
+}
+
+#[test]
 fn complete_turns_round_trip_and_incomplete_input_is_atomic() {
     let mut p = Position::from_fen(Variant::Duck, START).unwrap();
     assert_eq!(p.legal_moves().len(), 640);

@@ -642,7 +642,9 @@ impl Position {
                         moves.push(m);
                     }
                 }
-                if piece == KING && !self.attacked(t, self.king(t)) {
+                if piece == KING
+                    && (self.variant == Variant::Duck || !self.attacked(t, self.king(t)))
+                {
                     let base = if t == 1 { 56 } else { 0 };
                     let king = self.king(t);
                     for (mask, short) in [(6u8, true), (5u8, false)] {
@@ -660,14 +662,17 @@ impl Position {
                             continue;
                         }
                         // Every square either piece passes over or lands on must be
-                        // vacant apart from the castling king and rook themselves, and
-                        // the king may not pass over or land on an attacked square.
+                        // vacant apart from the castling king and rook themselves.
+                        // Only non-Duck variants restrict the king's attacked squares.
                         let span = |a: usize, b: usize| a.min(b)..=a.max(b);
                         let others = occ & !bit(king) & !bit(rook);
                         let vacant = span(king, to)
                             .chain(span(rook, rook_to))
                             .all(|s| others & bit(s) == 0);
-                        if vacant && span(king, to).all(|s| !self.attacked(t, s)) {
+                        if vacant
+                            && (self.variant == Variant::Duck
+                                || span(king, to).all(|s| !self.attacked(t, s)))
+                        {
                             let mut m = Move::new(king, to);
                             m.castle = true;
                             moves.push(m);
