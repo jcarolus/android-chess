@@ -287,6 +287,10 @@
     <string name="pgntool_export_explanation">导出对局数据库</string>
     <string name="pgntool_help">帮助</string>
     <string name="pgntool_import_explanation">导入对局到数据库</string>
+    <string name="importing_games">正在导入对局…</string>
+    <string name="importing_puzzles">正在导入习题…</string>
+    <string name="importing_practice_positions">正在导入练习局面…</string>
+    <string name="importing_openings">正在导入开局…</string>
     <string name="pgntool_import_practice">导入练习集</string>
     <string name="pgntool_import_puzzle">导入习题</string>
     <string name="pgntool_point_db_explanation">设置开局数据库</string>

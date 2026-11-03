@@ -287,6 +287,10 @@
     <string name="pgntool_export_explanation">Oyun veritabanını dışa aktar</string>
     <string name="pgntool_help">Yardım</string>
     <string name="pgntool_import_explanation">Oyunları veritabanına aktar</string>
+    <string name="importing_games">Oyunlar içe aktarılıyor…</string>
+    <string name="importing_puzzles">Problemler içe aktarılıyor…</string>
+    <string name="importing_practice_positions">Alıştırma konumları içe aktarılıyor…</string>
+    <string name="importing_openings">Açılışlar içe aktarılıyor…</string>
     <string name="pgntool_import_practice">Alıştırma seti içe aktar</string>
     <string name="pgntool_import_puzzle">Problemleri içe aktar</string>
     <string name="pgntool_point_db_explanation">Açılış veritabanını ayarla</string>

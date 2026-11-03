@@ -140,8 +140,20 @@ public class ImportActivity extends BaseActivity implements ImportListener {
             } else {
                 _mode = ImportService.IMPORT_GAMES;
             }
-            // @TODO based on the _mode, set a description
-            // _tvWork
+            switch (_mode) {
+                case ImportService.IMPORT_GAMES:
+                    _tvWork.setText(R.string.importing_games);
+                    break;
+                case ImportService.IMPORT_PUZZLES:
+                    _tvWork.setText(R.string.importing_puzzles);
+                    break;
+                case ImportService.IMPORT_PRACTICE:
+                    _tvWork.setText(R.string.importing_practice_positions);
+                    break;
+                case ImportService.IMPORT_OPENINGS:
+                    _tvWork.setText(R.string.importing_openings);
+                    break;
+            }
         }
     }
 

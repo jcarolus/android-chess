@@ -297,6 +297,10 @@
     <string name="pgntool_export_explanation">Partiendatenbank exportieren</string>
     <string name="pgntool_help">Hilfe</string>
     <string name="pgntool_import_explanation">Partien in die Datenbank importieren</string>
+    <string name="importing_games">Partien werden importiert…</string>
+    <string name="importing_puzzles">Rätsel werden importiert…</string>
+    <string name="importing_practice_positions">Übungsstellungen werden importiert…</string>
+    <string name="importing_openings">Eröffnungen werden importiert…</string>
     <string name="pgntool_import_practice">Übungsset importieren</string>
     <string name="pgntool_import_puzzle">Rätsel importieren</string>
     <string name="pgntool_point_db_explanation">Eröffnungsdatenbank setzen</string>

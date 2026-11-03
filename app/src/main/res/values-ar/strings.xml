@@ -301,6 +301,10 @@
     <string name="pgntool_export_explanation">تصدير قاعدة بيانات الألعاب</string>
     <string name="pgntool_help">مساعدة</string>
     <string name="pgntool_import_explanation">استيراد الألعاب إلى قاعدة بيانات الألعاب</string>
+    <string name="importing_games">جارٍ استيراد الألعاب…</string>
+    <string name="importing_puzzles">جارٍ استيراد الألغاز…</string>
+    <string name="importing_practice_positions">جارٍ استيراد وضعيات التدريب…</string>
+    <string name="importing_openings">جارٍ استيراد الافتتاحيات…</string>
     <string name="pgntool_import_practice">استيراد مجموعة تمارين</string>
     <string name="pgntool_import_puzzle">استيراد ألغاز</string>
     <string name="pgntool_point_db_explanation">تعيين قاعدة بيانات الافتتاحيات</string>

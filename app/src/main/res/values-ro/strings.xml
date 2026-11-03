@@ -287,6 +287,10 @@
     <string name="pgntool_export_explanation">Exportă baza de date cu partide</string>
     <string name="pgntool_help">Ajutor</string>
     <string name="pgntool_import_explanation">Importă partide în baza de date</string>
+    <string name="importing_games">Se importă partidele…</string>
+    <string name="importing_puzzles">Se importă problemele…</string>
+    <string name="importing_practice_positions">Se importă pozițiile de antrenament…</string>
+    <string name="importing_openings">Se importă deschiderile…</string>
     <string name="pgntool_import_practice">Importă set de antrenament</string>
     <string name="pgntool_import_puzzle">Importă probleme</string>
     <string name="pgntool_point_db_explanation">Setează baza de deschideri</string>

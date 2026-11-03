@@ -297,6 +297,10 @@
     <string name="pgntool_export_explanation">Exportar base de datos de partidas</string>
     <string name="pgntool_help">Ayuda</string>
     <string name="pgntool_import_explanation">Importar partidas a la base de datos</string>
+    <string name="importing_games">Importando partidas…</string>
+    <string name="importing_puzzles">Importando problemas…</string>
+    <string name="importing_practice_positions">Importando posiciones de práctica…</string>
+    <string name="importing_openings">Importando aperturas…</string>
     <string name="pgntool_import_practice">Importar conjunto de práctica</string>
     <string name="pgntool_import_puzzle">Importar problemas</string>
     <string name="pgntool_point_db_explanation">Establecer base de datos de aperturas</string>

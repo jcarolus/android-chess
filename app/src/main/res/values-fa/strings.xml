@@ -322,6 +322,10 @@
     <string name="pgntool_export_explanation">خروجی گرفتن از پایگاه‌داده‌ی بازی‌ها</string>
     <string name="pgntool_help">راهنما</string>
     <string name="pgntool_import_explanation">وارد کردن بازی‌ها به پایگاه‌داده</string>
+    <string name="importing_games">در حال وارد کردن بازی‌ها…</string>
+    <string name="importing_puzzles">در حال وارد کردن پازل‌ها…</string>
+    <string name="importing_practice_positions">در حال وارد کردن موقعیت‌های تمرینی…</string>
+    <string name="importing_openings">در حال وارد کردن گشایش‌ها…</string>
     <string name="pgntool_import_practice">وارد کردن مجموعه‌ی تمرین</string>
     <string name="pgntool_import_puzzle">وارد کردن پازل‌ها</string>
     <string name="pgntool_point_db_explanation">تنظیم پایگاه‌داده‌ی آغازین</string>

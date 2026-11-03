@@ -287,6 +287,10 @@
     <string name="pgntool_export_explanation">Exporter la base de données</string>
     <string name="pgntool_help">Aide</string>
     <string name="pgntool_import_explanation">Importer des parties dans la base</string>
+    <string name="importing_games">Importation des parties…</string>
+    <string name="importing_puzzles">Importation des problèmes…</string>
+    <string name="importing_practice_positions">Importation des positions d’entraînement…</string>
+    <string name="importing_openings">Importation des ouvertures…</string>
     <string name="pgntool_import_practice">Importer un ensemble d’entraînement</string>
     <string name="pgntool_import_puzzle">Importer des problèmes</string>
     <string name="pgntool_point_db_explanation">Définir la base d’ouvertures</string>

@@ -287,6 +287,10 @@
     <string name="pgntool_export_explanation">Экспорт базы партий</string>
     <string name="pgntool_help">Справка</string>
     <string name="pgntool_import_explanation">Импорт партий в базу</string>
+    <string name="importing_games">Импорт партий…</string>
+    <string name="importing_puzzles">Импорт задач…</string>
+    <string name="importing_practice_positions">Импорт тренировочных позиций…</string>
+    <string name="importing_openings">Импорт дебютов…</string>
     <string name="pgntool_import_practice">Импорт тренировочного набора</string>
     <string name="pgntool_import_puzzle">Импорт задач</string>
     <string name="pgntool_point_db_explanation">Установить базу дебютов</string>

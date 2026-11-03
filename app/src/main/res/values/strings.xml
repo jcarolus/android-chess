@@ -329,6 +329,10 @@
     <string name="pgntool_export_explanation">Export game database</string>
     <string name="pgntool_help">Help</string>
     <string name="pgntool_import_busy">An import is already running</string>
+    <string name="importing_games">Importing games…</string>
+    <string name="importing_puzzles">Importing puzzles…</string>
+    <string name="importing_practice_positions">Importing practice positions…</string>
+    <string name="importing_openings">Importing openings…</string>
     <string name="pgntool_import_explanation">Import games into the game database</string>
     <string name="pgntool_import_practice">Import practice set</string>
     <string name="pgntool_import_puzzle">Import puzzles</string>
