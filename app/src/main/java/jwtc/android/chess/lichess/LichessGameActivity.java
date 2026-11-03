@@ -15,6 +15,12 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
@@ -39,6 +45,7 @@ import jwtc.chess.board.BoardConstants;
 public class LichessGameActivity extends ChessBoardActivity
         implements LichessApi.LichessApiListener, ClockListener, LichessSession.Callbacks {
     private static final String TAG = "LichessGameActivity";
+    private static final String STATE_PENDING_EXPORT = "pendingExportPath";
     public static final int REQUEST_SAVE_GAME_TO_FILE = 1;
 
     public static final String EXTRA_GAME_ID = "gameId";
@@ -70,6 +77,7 @@ public class LichessGameActivity extends ChessBoardActivity
     private boolean freshLaunch;
     private boolean firstConnect = true;
     private String premoveGameId;
+    private File pendingExportFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +87,10 @@ public class LichessGameActivity extends ChessBoardActivity
         ActivityHelper.fixPaddings(this, findViewById(R.id.ICSPlay));
 
         freshLaunch = savedInstanceState == null;
+        if (savedInstanceState != null) {
+            String path = savedInstanceState.getString(STATE_PENDING_EXPORT);
+            pendingExportFile = path == null ? null : new File(path);
+        }
         Intent intent = getIntent();
         // currentGameId can change after launch (round N+1), so prefer the saved value on
         // recreation.
@@ -112,10 +124,7 @@ public class LichessGameActivity extends ChessBoardActivity
         buttonConfirmMove = findViewById(R.id.ButtonConfirmMove);
 
         MaterialButton buttonSaveToFile = findViewById(R.id.ButtonSaveToFile);
-        buttonSaveToFile.setOnClickListener(
-                v ->
-                        startIntentForSaveDocument(
-                                "application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE));
+        buttonSaveToFile.setOnClickListener(v -> startGameExport());
         MaterialButton buttonSaveToDatabase = findViewById(R.id.ButtonSaveToDatabase);
         buttonSaveToDatabase.setOnClickListener(
                 v -> {
@@ -275,6 +284,9 @@ public class LichessGameActivity extends ChessBoardActivity
         super.onSaveInstanceState(outState);
         // currentGameId may differ from the launch intent (round N+1 auto-open); preserve it.
         outState.putString(EXTRA_GAME_ID, currentGameId);
+        outState.putString(
+                STATE_PENDING_EXPORT,
+                pendingExportFile == null ? null : pendingExportFile.getAbsolutePath());
     }
 
     @Override
@@ -338,8 +350,54 @@ public class LichessGameActivity extends ChessBoardActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SAVE_GAME_TO_FILE && data != null && data.getData() != null) {
-            saveToFile(data.getData(), gameApi.exportFullPGN());
+        if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                try {
+                    if (pendingExportFile == null) {
+                        throw new IOException("Missing game export");
+                    }
+                    String pgn = readExport(pendingExportFile);
+                    saveToFile(data.getData(), pgn);
+                } catch (IOException e) {
+                    Log.e(TAG, "Could not read pending game export", e);
+                    Toast.makeText(this, R.string.ics_error, Toast.LENGTH_LONG).show();
+                }
+            }
+            if (pendingExportFile != null) {
+                pendingExportFile.delete();
+                pendingExportFile = null;
+            }
+        }
+    }
+
+    private void startGameExport() {
+        File snapshot = null;
+        try {
+            snapshot = File.createTempFile("lichess-game-", ".pgn", getCacheDir());
+            try (FileOutputStream output = new FileOutputStream(snapshot)) {
+                output.write(gameApi.exportFullPGN().getBytes(StandardCharsets.UTF_8));
+            }
+            pendingExportFile = snapshot;
+            startIntentForSaveDocument(
+                    "application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
+        } catch (IOException e) {
+            if (snapshot != null) {
+                snapshot.delete();
+            }
+            Log.e(TAG, "Could not prepare game export", e);
+            Toast.makeText(this, R.string.ics_error, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static String readExport(File file) throws IOException {
+        try (FileInputStream input = new FileInputStream(file);
+                ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[4096];
+            int count;
+            while ((count = input.read(buffer)) != -1) {
+                output.write(buffer, 0, count);
+            }
+            return new String(output.toByteArray(), StandardCharsets.UTF_8);
         }
     }
 
