@@ -279,11 +279,11 @@
     <string name="options_play_white">Белые</string>
     <string name="options_quiescent_off">Поиск тишины выключён</string>
     <string name="options_quiescent_on">Поиск тишины включён</string>
-    <string name="pgntool_confirm_delete">Вы уверены?</string>
+    <string name="pgntool_confirm_delete_games">Вы уверены?</string>
     <string name="pgntool_confirm_practice_reset">Вы уверены, что хотите сбросить?</string>
     <string name="pgntool_create_db_explanation">Создать базу дебютов</string>
-    <string name="pgntool_delete_explanation">Удалить все партии из базы</string>
-    <string name="pgntool_deleted">Все партии удалены</string>
+    <string name="pgntool_delete_games">Удалить все партии из базы</string>
+    <string name="pgntool_games_deleted">Все партии удалены</string>
     <string name="pgntool_export_explanation">Экспорт базы партий</string>
     <string name="pgntool_help">Справка</string>
     <string name="pgntool_import_explanation">Импорт партий в базу</string>

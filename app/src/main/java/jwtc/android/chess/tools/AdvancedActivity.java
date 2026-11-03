@@ -56,17 +56,41 @@ public class AdvancedActivity extends BaseActivity {
                         i.setType("*/*");
                         startActivityForResult(i, ImportService.IMPORT_OPENINGS);
 
-                    } else if (arrString[arg2].equals(
-                            getString(R.string.pgntool_delete_explanation))) {
+                    } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_games))) {
 
                         openConfirmDialog(
-                                getString(R.string.pgntool_confirm_delete),
+                                getString(R.string.pgntool_confirm_delete_games),
                                 getString(R.string.button_ok),
                                 getString(R.string.button_cancel),
                                 () -> {
                                     new GameStore(AdvancedActivity.this.getContentResolver())
                                             .deleteAll();
-                                    doToast(getString(R.string.pgntool_deleted));
+                                    doToast(getString(R.string.pgntool_games_deleted));
+                                },
+                                null);
+
+                    } else if (arrString[arg2].equals(
+                            getString(R.string.pgntool_delete_practice))) {
+                        openConfirmDialog(
+                                getString(R.string.pgntool_confirm_delete_practice),
+                                getString(R.string.button_ok),
+                                getString(R.string.button_cancel),
+                                () -> {
+                                    MateCollection.clearCollection(
+                                            this, MateKind.PRACTICE_POSITIONS);
+                                    doToast(getString(R.string.pgntool_practice_deleted));
+                                },
+                                null);
+
+                    } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_puzzles))) {
+                        openConfirmDialog(
+                                getString(R.string.pgntool_confirm_delete_puzzles),
+                                getString(R.string.button_ok),
+                                getString(R.string.button_cancel),
+                                () -> {
+                                    MateCollection.clearCollection(
+                                            this, MateKind.MATE_IN_TWO_PUZZLES);
+                                    doToast(getString(R.string.pgntool_puzzles_deleted));
                                 },
                                 null);
 

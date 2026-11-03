@@ -279,11 +279,11 @@
     <string name="options_play_white">白方</string>
     <string name="options_quiescent_off">安静搜索 关</string>
     <string name="options_quiescent_on">安静搜索 开</string>
-    <string name="pgntool_confirm_delete">你确定吗？</string>
+    <string name="pgntool_confirm_delete_games">你确定吗？</string>
     <string name="pgntool_confirm_practice_reset">确定要重置吗？</string>
     <string name="pgntool_create_db_explanation">创建开局数据库</string>
-    <string name="pgntool_delete_explanation">删除数据库中所有对局</string>
-    <string name="pgntool_deleted">所有对局已删除</string>
+    <string name="pgntool_delete_games">删除数据库中所有对局</string>
+    <string name="pgntool_games_deleted">所有对局已删除</string>
     <string name="pgntool_export_explanation">导出对局数据库</string>
     <string name="pgntool_help">帮助</string>
     <string name="pgntool_import_explanation">导入对局到数据库</string>

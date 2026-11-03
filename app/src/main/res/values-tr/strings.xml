@@ -279,11 +279,11 @@
     <string name="options_play_white">Beyaz</string>
     <string name="options_quiescent_off">Sessizlik araması kapalı</string>
     <string name="options_quiescent_on">Sessizlik araması açık</string>
-    <string name="pgntool_confirm_delete">Emin misiniz?</string>
+    <string name="pgntool_confirm_delete_games">Emin misiniz?</string>
     <string name="pgntool_confirm_practice_reset">Sıfırlamak istediğinize emin misiniz?</string>
     <string name="pgntool_create_db_explanation">Açılış veritabanı oluştur</string>
-    <string name="pgntool_delete_explanation">Veritabanındaki tüm oyunları sil</string>
-    <string name="pgntool_deleted">Tüm oyunlar silindi</string>
+    <string name="pgntool_delete_games">Veritabanındaki tüm oyunları sil</string>
+    <string name="pgntool_games_deleted">Tüm oyunlar silindi</string>
     <string name="pgntool_export_explanation">Oyun veritabanını dışa aktar</string>
     <string name="pgntool_help">Yardım</string>
     <string name="pgntool_import_explanation">Oyunları veritabanına aktar</string>

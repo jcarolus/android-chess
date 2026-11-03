@@ -279,11 +279,11 @@
     <string name="options_play_white">Blancs</string>
     <string name="options_quiescent_off">Recherche de quiétude désactivée</string>
     <string name="options_quiescent_on">Recherche de quiétude activée</string>
-    <string name="pgntool_confirm_delete">Êtes-vous sûr ?</string>
+    <string name="pgntool_confirm_delete_games">Êtes-vous sûr ?</string>
     <string name="pgntool_confirm_practice_reset">Voulez-vous vraiment réinitialiser ?</string>
     <string name="pgntool_create_db_explanation">Créer une base d’ouvertures</string>
-    <string name="pgntool_delete_explanation">Supprimer toutes les parties de la base</string>
-    <string name="pgntool_deleted">Toutes les parties supprimées</string>
+    <string name="pgntool_delete_games">Supprimer toutes les parties de la base</string>
+    <string name="pgntool_games_deleted">Toutes les parties supprimées</string>
     <string name="pgntool_export_explanation">Exporter la base de données</string>
     <string name="pgntool_help">Aide</string>
     <string name="pgntool_import_explanation">Importer des parties dans la base</string>

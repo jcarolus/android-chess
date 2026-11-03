@@ -279,11 +279,11 @@
     <string name="options_play_white">Bianchi</string>
     <string name="options_quiescent_off">Ricerca quiete disattiva</string>
     <string name="options_quiescent_on">Ricerca quiete attiva</string>
-    <string name="pgntool_confirm_delete">Sei sicuro?</string>
+    <string name="pgntool_confirm_delete_games">Sei sicuro?</string>
     <string name="pgntool_confirm_practice_reset">Vuoi davvero reimpostare?</string>
     <string name="pgntool_create_db_explanation">Crea database aperture</string>
-    <string name="pgntool_delete_explanation">Elimina tutte le partite nel database</string>
-    <string name="pgntool_deleted">Tutte le partite eliminate</string>
+    <string name="pgntool_delete_games">Elimina tutte le partite nel database</string>
+    <string name="pgntool_games_deleted">Tutte le partite eliminate</string>
     <string name="pgntool_export_explanation">Esporta database delle partite</string>
     <string name="pgntool_help">Aiuto</string>
     <string name="pgntool_import_explanation">Importa partite nel database</string>

@@ -289,11 +289,11 @@
     <string name="options_play_white">Weiß</string>
     <string name="options_quiescent_off">Quieszenz-Suche aus</string>
     <string name="options_quiescent_on">Quieszenz-Suche an</string>
-    <string name="pgntool_confirm_delete">Bist du sicher?</string>
+    <string name="pgntool_confirm_delete_games">Bist du sicher?</string>
     <string name="pgntool_confirm_practice_reset">Bist du sicher, dass du zurücksetzen willst?</string>
     <string name="pgntool_create_db_explanation">Eröffnungsdatenbank erstellen</string>
-    <string name="pgntool_delete_explanation">Alle Partien in der Datenbank löschen</string>
-    <string name="pgntool_deleted">Alle Partien gelöscht</string>
+    <string name="pgntool_delete_games">Alle Partien in der Datenbank löschen</string>
+    <string name="pgntool_games_deleted">Alle Partien gelöscht</string>
     <string name="pgntool_export_explanation">Partiendatenbank exportieren</string>
     <string name="pgntool_help">Hilfe</string>
     <string name="pgntool_import_explanation">Partien in die Datenbank importieren</string>

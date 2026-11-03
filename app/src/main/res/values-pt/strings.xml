@@ -279,11 +279,11 @@
     <string name="options_play_white">Brancas</string>
     <string name="options_quiescent_off">Busca de quietude desativada</string>
     <string name="options_quiescent_on">Busca de quietude ativada</string>
-    <string name="pgntool_confirm_delete">Tem certeza?</string>
+    <string name="pgntool_confirm_delete_games">Tem certeza?</string>
     <string name="pgntool_confirm_practice_reset">Tem certeza que deseja reiniciar?</string>
     <string name="pgntool_create_db_explanation">Criar banco de aberturas</string>
-    <string name="pgntool_delete_explanation">Excluir todas as partidas do banco</string>
-    <string name="pgntool_deleted">Todas as partidas foram excluídas</string>
+    <string name="pgntool_delete_games">Excluir todas as partidas do banco</string>
+    <string name="pgntool_games_deleted">Todas as partidas foram excluídas</string>
     <string name="pgntool_export_explanation">Exportar banco de dados de partidas</string>
     <string name="pgntool_help">Ajuda</string>
     <string name="pgntool_import_explanation">Importar partidas para o banco</string>

@@ -293,11 +293,11 @@
     <string name="options_play_white">أبيض</string>
     <string name="options_quiescent_off">إيقاف بحث الاستقرار</string>
     <string name="options_quiescent_on">تشغيل بحث الاستقرار</string>
-    <string name="pgntool_confirm_delete">هل أنت متأكد؟</string>
+    <string name="pgntool_confirm_delete_games">هل أنت متأكد؟</string>
     <string name="pgntool_confirm_practice_reset">هل أنت متأكد من رغبتك في إعادة التعيين؟</string>
     <string name="pgntool_create_db_explanation">إنشاء قاعدة بيانات الافتتاحيات</string>
-    <string name="pgntool_delete_explanation">حذف جميع الألعاب في قاعدة بيانات الألعاب</string>
-    <string name="pgntool_deleted">تم حذف جميع الألعاب</string>
+    <string name="pgntool_delete_games">حذف جميع الألعاب في قاعدة بيانات الألعاب</string>
+    <string name="pgntool_games_deleted">تم حذف جميع الألعاب</string>
     <string name="pgntool_export_explanation">تصدير قاعدة بيانات الألعاب</string>
     <string name="pgntool_help">مساعدة</string>
     <string name="pgntool_import_explanation">استيراد الألعاب إلى قاعدة بيانات الألعاب</string>
