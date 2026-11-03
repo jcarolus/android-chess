@@ -558,7 +558,8 @@ public class PlayActivity extends ChessBoardActivity
         updateGUI();
         updateLastMove();
 
-        playIfEngineMove();
+        // The engine may still be finishing its move callback before it can search again.
+        new Handler(Looper.getMainLooper()).post(this::playIfEngineMove);
     }
 
     @Override
