@@ -39,6 +39,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         try {
             if (importOnly) {
                 jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
+                jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
                 importedGamesValidateOnOpening();
                 pgnReplayPreservesBranchesAndRollback();
                 report.putString(
@@ -62,6 +63,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 return;
             }
             jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
+            jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
             boardSnapshots();
             boardOwnership();
             importedGamesValidateOnOpening();
