@@ -16,7 +16,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -256,7 +255,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         }
         String engineId = prefs.getString(AnalysisSettingsDialog.PREF_ENGINE, null);
         int millis = AnalysisSettingsDialog.getTimeMillis(prefs);
-        Analysis.Saved saved = readAnalysisState(restoredSession);
+        AnalysisResults.Saved saved = readAnalysisState(restoredSession);
         analysis.resume(engineId, millis, saved);
         restoredSession = null;
         showEngineWarning();
@@ -307,23 +306,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
             path[i] = reversed.get(path.length - 1 - i);
         }
         session.putIntArray("path", path);
-        Analysis.Saved saved = analysis.save();
-        session.putString("engine", saved.engine);
-        session.putInt("millis", saved.millis);
-        ArrayList<Bundle> results = new ArrayList<>();
-        for (Map.Entry<String, Analysis.Result> entry : saved.results.entrySet()) {
-            Analysis.Result analysis = entry.getValue();
-            Bundle result = new Bundle();
-            result.putString("position", entry.getKey());
-            result.putString("move", analysis.bestMove);
-            if (analysis.evaluation != null) {
-                result.putBoolean("mate", analysis.evaluation.mate);
-                result.putInt("value", analysis.evaluation.value);
-                result.putInt("depth", analysis.evaluation.depth);
-            }
-            results.add(result);
-        }
-        session.putParcelableArrayList("results", results);
+        analysis.save().writeTo(session);
         outState.putBundle("analysisSession", session);
     }
 
@@ -353,7 +336,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     private void showCachedEvaluation() {
         PositionSnapshot current = analysis.position(gameApi.getCurrentNode());
-        Analysis.Result result = analysis.result(current);
+        AnalysisResults.Result result = analysis.result(current);
         if (result == null || result.evaluation == null) {
             return;
         }
@@ -577,29 +560,11 @@ public class AnalyzeActivity extends ChessBoardActivity {
         super.onPause();
     }
 
-    private Analysis.Saved readAnalysisState(Bundle session) {
+    private AnalysisResults.Saved readAnalysisState(Bundle session) {
         if (session == null || !sessionId.equals(session.getString("id"))) {
             return null;
         }
-        Map<String, Analysis.Result> results = new java.util.LinkedHashMap<>();
-        ArrayList<Bundle> bundles = session.getParcelableArrayList("results");
-        if (bundles != null) {
-            for (Bundle result : bundles) {
-                if (result.containsKey("position")) {
-                    results.put(
-                            result.getString("position"),
-                            new Analysis.Result(
-                                    result.getString("move"),
-                                    result.containsKey("value")
-                                            ? new EngineEvaluation(
-                                                    result.getBoolean("mate"),
-                                                    result.getInt("value"),
-                                                    result.getInt("depth"))
-                                            : null));
-                }
-            }
-        }
-        return new Analysis.Saved(session.getString("engine"), session.getInt("millis"), results);
+        return AnalysisResults.Saved.readFrom(session);
     }
 
     protected boolean loadGame() {

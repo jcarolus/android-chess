@@ -6,6 +6,8 @@ import android.os.Looper;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import jwtc.android.chess.analyze.AnalysisResults.Result;
+import jwtc.android.chess.analyze.AnalysisResults.Saved;
 import jwtc.android.chess.engine.EngineEvaluation;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
@@ -55,41 +57,8 @@ final class Analysis implements EngineListener {
         this.listener = listener;
     }
 
-    static final class Result {
-        final PositionMove preferredMove;
-        final EngineEvaluation evaluation;
-        final String bestMove;
-
-        Result(PositionMove move, EngineEvaluation evaluation) {
-            this.preferredMove = move;
-            this.bestMove = move == null ? null : move.uci;
-            this.evaluation = evaluation;
-        }
-
-        Result(String move, EngineEvaluation evaluation) {
-            this.preferredMove = null;
-            this.bestMove = move;
-            this.evaluation = evaluation;
-        }
-    }
-
-    static final class Saved {
-        final String engine;
-        final int millis;
-        final Map<String, Result> results;
-
-        Saved(String engine, int millis, Map<String, Result> results) {
-            this.engine = engine;
-            this.millis = millis;
-            this.results = results;
-        }
-    }
-
     void resume(String engine, int millis, Saved saved) {
-        results.configure(engine, millis);
-        if (saved != null) {
-            results.restore(engine, millis, saved);
-        }
+        results.configure(engine, millis, saved);
         configuredEngine = engine;
         configuredMillis = millis;
         engineSession = EngineSession.forAnalysis(context, gameApi, this, engine);
@@ -128,7 +97,7 @@ final class Analysis implements EngineListener {
     }
 
     Saved save() {
-        return new Saved(configuredEngine, configuredMillis, results.snapshot());
+        return results.save();
     }
 
     boolean isActive() {
@@ -144,7 +113,7 @@ final class Analysis implements EngineListener {
     }
 
     Result result(PositionSnapshot position) {
-        return getAnalysis(position);
+        return results.result(position);
     }
 
     static final class Summary {
@@ -197,7 +166,7 @@ final class Analysis implements EngineListener {
                                 matches,
                                 parent.moves.size(),
                                 position.state == BoardConstants.MATE,
-                                isDraw(position.state));
+                                AnalysisResults.isDraw(position.state));
         return new Summary(
                 ready,
                 feedback,
@@ -259,32 +228,6 @@ final class Analysis implements EngineListener {
         }
     }
 
-    static boolean isDraw(int state) {
-        return state == BoardConstants.STALEMATE
-                || state == BoardConstants.DRAW_MATERIAL
-                || state == BoardConstants.DRAW_50
-                || state == BoardConstants.DRAW_REPEAT;
-    }
-
-    private Result getAnalysis(PositionSnapshot position) {
-        if (position == null) {
-            return null;
-        }
-        // Terminal outcomes come from the board, including repetition history absent from FEN.
-        if (isDraw(position.state)) {
-            return new Result((PositionMove) null, new EngineEvaluation(false, 0, 0));
-        }
-        if (position.state == BoardConstants.MATE) {
-            return new Result((PositionMove) null, new EngineEvaluation(true, 0, 0));
-        }
-        Result result = results.get(position.positionCommand);
-        if (result != null && result.preferredMove == null && result.bestMove != null) {
-            result = new Result(position.findMove(result.bestMove), result.evaluation);
-            results.put(position.positionCommand, result);
-        }
-        return result;
-    }
-
     void startNextAnalysis() {
         if (!analysisActive
                 || analysisDebouncing
@@ -302,9 +245,9 @@ final class Analysis implements EngineListener {
         PositionSnapshot parent = positions.get(displayedNode.getParent());
         // Feedback needs both sides of the move, even when navigation skips uncached positions.
         PositionSnapshot next =
-                parent != null && getAnalysis(parent) == null
+                parent != null && results.result(parent) == null
                         ? parent
-                        : getAnalysis(current) == null ? current : null;
+                        : results.result(current) == null ? current : null;
         if (next == null) {
             listener.onChanged();
             return;
@@ -331,7 +274,7 @@ final class Analysis implements EngineListener {
         if (!analysisActive || analysisFen == null) {
             return;
         }
-        results.put(requestedPosition.positionCommand, new Result((PositionMove) null, null));
+        results.unavailable(requestedPosition);
         analysisFen = null;
         requestedPosition = null;
         listener.onChanged();
@@ -346,12 +289,7 @@ final class Analysis implements EngineListener {
                 || displayedNode != gameApi.getCurrentNode()) {
             return;
         }
-        PositionMove preferredMove = requestedPosition.findMove(bestMove);
-        EngineEvaluation whiteEvaluation =
-                evaluation == null
-                        ? null
-                        : evaluation.forWhite(requestedPosition.turn == BoardConstants.WHITE);
-        results.put(requestedPosition.positionCommand, new Result(preferredMove, whiteEvaluation));
+        results.complete(requestedPosition, bestMove, evaluation);
         analysisFen = null;
         requestedPosition = null;
         listener.onChanged();

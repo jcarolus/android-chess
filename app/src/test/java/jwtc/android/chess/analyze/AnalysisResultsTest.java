@@ -6,8 +6,8 @@ import jwtc.android.chess.engine.EngineEvaluation;
 import org.junit.Test;
 
 public class AnalysisResultsTest {
-    private static Analysis.Result score(int value) {
-        return new Analysis.Result("e2e4", new EngineEvaluation(false, value, 8));
+    private static AnalysisResults.Result score(int value) {
+        return new AnalysisResults.Result("e2e4", new EngineEvaluation(false, value, 8));
     }
 
     @Test
@@ -24,30 +24,31 @@ public class AnalysisResultsTest {
     @Test
     public void settingsInvalidateButIdenticalSettingsRetainResults() {
         AnalysisResults results = new AnalysisResults();
-        results.configure("local", 100);
+        results.configure("local", 100, null);
         results.put("history", score(20));
-        results.configure("local", 100);
+        results.configure("local", 100, null);
         assertNotNull(results.get("history"));
-        results.configure("local", 200);
+        results.configure("local", 200, null);
         assertNull(results.get("history"));
         results.put("history", score(30));
-        results.configure("oex", 200);
+        results.configure("oex", 200, null);
         assertNull(results.get("history"));
     }
 
     @Test
     public void restorationRequiresMatchingSettingsAndKeepsUnavailableResults() {
         AnalysisResults source = new AnalysisResults();
-        source.put("failed", new Analysis.Result((String) null, null));
+        source.configure("local", 100, null);
+        source.put("failed", new AnalysisResults.Result((String) null, null));
         source.put("complete", score(40));
-        Analysis.Saved saved = new Analysis.Saved("local", 100, source.snapshot());
+        AnalysisResults.Saved saved = source.save();
         source.clear();
         AnalysisResults restored = new AnalysisResults();
-        restored.restore("oex", 100, saved);
-        assertTrue(restored.snapshot().isEmpty());
-        restored.restore("local", 200, saved);
-        assertTrue(restored.snapshot().isEmpty());
-        restored.restore("local", 100, saved);
+        restored.configure("oex", 100, saved);
+        assertTrue(restored.save().results.isEmpty());
+        restored.configure("local", 200, saved);
+        assertTrue(restored.save().results.isEmpty());
+        restored.configure("local", 100, saved);
         assertNotNull(restored.get("failed"));
         assertNull(restored.get("failed").evaluation);
         assertEquals(40, restored.get("complete").evaluation.value);
@@ -59,10 +60,10 @@ public class AnalysisResultsTest {
         for (int i = 0; i < 128; i++) {
             results.put("path" + i, score(i));
         }
-        Analysis.Saved saved = new Analysis.Saved(null, 0, results.snapshot());
+        AnalysisResults.Saved saved = results.save();
         results.get("path0");
         results.put("path128", score(128));
-        assertEquals(128, results.snapshot().size());
+        assertEquals(128, results.save().results.size());
         assertNotNull(results.get("path0"));
         assertNull(results.get("path1"));
         assertTrue(saved.results.containsKey("path1"));
