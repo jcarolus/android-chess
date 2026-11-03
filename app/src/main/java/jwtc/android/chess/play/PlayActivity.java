@@ -63,6 +63,7 @@ public class PlayActivity extends ChessBoardActivity
                 ClockListener,
                 MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
+    private static final String STATE_EXTERNAL_IMPORT_HANDLED = "externalImportHandled";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
     public static final int REQUEST_GAME_SETTINGS = 3;
@@ -83,6 +84,7 @@ public class PlayActivity extends ChessBoardActivity
     private SearchLimit searchLimit = SearchLimit.millis(1000);
     private EcoService ecoService;
     private long lGameID;
+    private boolean externalImportHandled;
     private LinearProgressIndicator progressBarEngine;
     private MaterialButton playButton;
     private boolean vsCPU = true;
@@ -156,6 +158,10 @@ public class PlayActivity extends ChessBoardActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        externalImportHandled =
+                savedInstanceState != null
+                        && savedInstanceState.getBoolean(STATE_EXTERNAL_IMPORT_HANDLED);
 
         setContentView(R.layout.play);
 
@@ -346,7 +352,9 @@ public class PlayActivity extends ChessBoardActivity
 
         buttonEco.setEnabled(false);
 
-        if ((Intent.ACTION_SEND.equals(action) && type != null) || uri != null) {
+        if (!externalImportHandled
+                && ((Intent.ACTION_SEND.equals(action) && type != null) || uri != null)) {
+            externalImportHandled = true;
             String contents = null;
             if (Intent.ACTION_SEND.equals(action)) {
                 contents = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -391,6 +399,12 @@ public class PlayActivity extends ChessBoardActivity
         }
 
         new Handler(Looper.getMainLooper()).postDelayed(this::playIfEngineMove, 500);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(STATE_EXTERNAL_IMPORT_HANDLED, externalImportHandled);
+        super.onSaveInstanceState(outState);
     }
 
     private String getIncomingFileName(Uri uri) {
