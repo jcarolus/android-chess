@@ -264,26 +264,16 @@ public class GameApi {
     }
 
     public GameApi() {
-        this(false, RustBoard.shared());
-    }
-
-    /**
-     * @param preservePosition keep the shared Java board instead of starting a new game
-     */
-    public GameApi(boolean preservePosition) {
-        this(preservePosition, RustBoard.shared());
-    }
-
-    protected GameApi(RustBoard board) {
-        this(false, board);
-    }
-
-    private GameApi(boolean preservePosition, RustBoard board) {
-        this.board = board;
-        if (!preservePosition) {
-            board.newGame();
-        }
+        this.board = new RustBoard();
         pgnTags = new HashMap<String, String>();
+        resetPGNHistory();
+    }
+
+    protected GameApi(String initialFen, RustSearchRequest.Variant variant) {
+        this();
+        if (!board.initFEN(initialFen, variant)) {
+            throw new IllegalArgumentException("Invalid starting Position");
+        }
         resetPGNHistory();
     }
 
@@ -553,11 +543,6 @@ public class GameApi {
             return false;
         }
         return true;
-    }
-
-    /** Rebuild this game's board after another screen may have used the shared board. */
-    public void restoreCurrentBoard() {
-        restoreBoard(currentNode, pendingDuckMove);
     }
 
     private void restoreBoard(Node target, PGNEntry pending) {

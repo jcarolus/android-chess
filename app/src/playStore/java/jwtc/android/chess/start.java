@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import jwtc.android.chess.activities.StartBaseActivity;
-import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.DisplayedPosition;
 
 public class start extends StartBaseActivity {
     public static final String TAG = "start";
@@ -39,7 +39,6 @@ public class start extends StartBaseActivity {
     private boolean mWaitingForReconnect;
     private String mSessionId;
 
-    private GameApi gameApi;
     private Timer _timer;
     private volatile String _lastMessage;
 
@@ -47,8 +46,6 @@ public class start extends StartBaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        gameApi = new GameApi(true);
 
         // Configure Cast device discovery
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
@@ -130,7 +127,7 @@ public class start extends StartBaseActivity {
                 new TimerTask() {
                     @Override
                     public void run() {
-                        sendMessage(gameApi.getFEN());
+                        sendMessage(DisplayedPosition.currentFen());
                     }
                 },
                 0,

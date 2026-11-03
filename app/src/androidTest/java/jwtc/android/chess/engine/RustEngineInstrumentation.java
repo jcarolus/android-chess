@@ -9,6 +9,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import jwtc.android.chess.hotspotboard.HotspotBoardApi;
+import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportApi;
@@ -23,6 +25,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
     private boolean ecoOnly;
     private boolean analysisOnly;
     private boolean importOnly;
+    private boolean ownershipOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -30,6 +33,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         ecoOnly = arguments != null && "eco".equals(arguments.getString("suite"));
         analysisOnly = arguments != null && "analysis".equals(arguments.getString("suite"));
         importOnly = arguments != null && "import".equals(arguments.getString("suite"));
+        ownershipOnly = arguments != null && "ownership".equals(arguments.getString("suite"));
         start();
     }
 
@@ -37,6 +41,13 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (ownershipOnly) {
+                boardOwnership();
+                report.putString(
+                        "stream", "Independent Games and displayed Hotspot Position passed\n");
+                finish(-1, report);
+                return;
+            }
             if (importOnly) {
                 jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
                 jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
@@ -121,8 +132,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     check(
                             game.loadPGN(saved) && game.isKingOfTheHillVariant(),
                             "Hill PGN reload failed");
-                    game.restoreCurrentBoard();
-                    check(game.isKingOfTheHillVariant(), "Restore lost hill rules");
+                    check(game.isKingOfTheHillVariant(), "PGN reload lost hill rules");
                     check(
                             game.loadPGN(
                                     "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*"),
@@ -251,12 +261,22 @@ public final class RustEngineInstrumentation extends Instrumentation {
                                     && game.getEngineState() == BoardConstants.DRAW_REPEAT,
                             "Redo lost repetition draw");
                     String fen = game.getFEN();
-                    GameApi observer = new GameApi(true);
-                    check(observer.getFEN().equals(fen), "Shared board lost its position");
+                    GameApi observer = new GameApi();
+                    check(observer.getFEN().equals(START), "New Game did not start independently");
+                    check(observer.requestMove("d4"), "Second Game could not move");
+                    String observerFen = observer.getFEN();
+                    check(game.getFEN().equals(fen), "Second Game changed first Position");
                     game.newGame();
                     check(
-                            observer.getFEN().equals(START),
-                            "Board sharing stopped observing changes");
+                            observer.getFEN().equals(observerFen),
+                            "First Game reset changed second Position");
+                    DisplayedPosition.publish(observer);
+                    HotspotBoardApi hotspot = new HotspotBoardApi();
+                    check(hotspot.getFEN().equals(observerFen), "Hotspot lost displayed Position");
+                    observer.newGame();
+                    check(
+                            hotspot.getFEN().equals(observerFen),
+                            "Hotspot Position changed with another Game");
                     check(
                             game.loadPGN("1. e4 e5 (1... c5 2. Nf3) 2. Nf3 *"),
                             "Variation import failed");
@@ -268,18 +288,19 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             "Failed import changed game");
                     game.newGameRandomFischer(518);
                     check(game.isChess960Variant(), "Chess960 seed 518 lost its variant");
-                    game.restoreCurrentBoard();
-                    check(game.isChess960Variant(), "Restoring Chess960 lost its variant");
+                    observer.newGame();
+                    check(game.isChess960Variant(), "Second Game changed Chess960 variant");
+                    DisplayedPosition.publish(game);
+                    check(
+                            new HotspotBoardApi().isChess960Variant(),
+                            "Hotspot lost displayed Chess960 variant");
                     check(
                             game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
                             "Chess960 setup failed");
                     check(
                             game.requestMove("O-O") && game.isChess960Variant(),
                             "Castling lost Chess960 variant");
-                    game.restoreCurrentBoard();
-                    check(
-                            game.isChess960Variant(),
-                            "Restored castled position lost Chess960 variant");
+                    check(game.isChess960Variant(), "Castled Position lost Chess960 variant");
                     check(
                             game.initFEN("4k3/8/8/8/8/8/8/R5KR w KQ - 0 1", true),
                             "Stationary king setup failed");
@@ -290,6 +311,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true),
                             "King-to-rook setup failed");
                     check(game.requestMove(60, 63), "King-to-rook castle request failed");
+                    game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
+                    DisplayedPosition.publish(game);
+                    check(
+                            new HotspotBoardApi().isKingOfTheHillVariant(),
+                            "Hotspot lost displayed Hill variant");
                     game.reset();
                     check(
                             game.isLegalPosition() == 0 && game.getMoveArraySize() == 0,
@@ -371,10 +397,6 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             && fen.equals(game.getFEN())
                             && state == game.getEngineState(),
                     "Replay round trip changed game");
-            game.restoreCurrentBoard();
-            check(
-                    fen.equals(game.getFEN()) && state == game.getEngineState(),
-                    "Replay and stateless restore differ");
         }
         check(
                 game.loadPGN("1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *"),

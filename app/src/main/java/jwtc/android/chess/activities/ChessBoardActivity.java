@@ -31,6 +31,7 @@ import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.android.chess.services.MoveSpeech;
@@ -900,6 +901,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         updateSelectedSquares();
+        DisplayedPosition.publish(gameApi);
     }
 
     private void startMoveAnimation(int from, int to, int color, int piece) {

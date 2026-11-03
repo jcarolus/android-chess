@@ -11,13 +11,6 @@ import jwtc.chess.board.BoardPosition;
 /** Java-owned board snapshots, with a scoped native position for PGN replay. */
 public final class RustBoard {
     public static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    // Board-sharing screens observe the same Java state; game trees remain owned by GameApi.
-    private static final RustBoard shared = new RustBoard();
-
-    public static RustBoard shared() {
-        return shared;
-    }
-
     private final List<Frame> frames = new ArrayList<>();
     private RustSearchRequest.Variant variant;
     private String initialFen;

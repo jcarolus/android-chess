@@ -230,8 +230,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 }
             }
             sessionLoaded = true;
-        } else {
-            gameApi.restoreCurrentBoard();
         }
         if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
             analysis.pause();

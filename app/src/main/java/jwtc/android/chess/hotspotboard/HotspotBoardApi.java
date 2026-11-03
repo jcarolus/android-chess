@@ -1,6 +1,7 @@
 package jwtc.android.chess.hotspotboard;
 
 import android.util.Log;
+import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.board.BoardConstants;
 
@@ -10,8 +11,11 @@ public class HotspotBoardApi extends GameApi {
     protected boolean isPlayingAsWhite = true;
 
     public HotspotBoardApi() {
-        // The service and other board screens share the Java-owned position.
-        super(true);
+        this(DisplayedPosition.current());
+    }
+
+    private HotspotBoardApi(DisplayedPosition.Snapshot position) {
+        super(position.fen, position.variant);
     }
 
     public void restorePlayers(String name, String opponent, boolean white) {

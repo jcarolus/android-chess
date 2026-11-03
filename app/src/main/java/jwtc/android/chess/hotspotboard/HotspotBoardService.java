@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.android.chess.services.SocketConnectService;
 import jwtc.chess.board.BoardConstants;
@@ -43,7 +43,6 @@ public class HotspotBoardService extends SocketConnectService {
                     pollHandler.postDelayed(this, POLL_INTERVAL_MS);
                 }
             };
-    private final GameApi gameApi = new GameApi(true);
 
     private boolean isHost = false;
     private ClientConnection activePlayingConnection = null;
@@ -297,7 +296,7 @@ public class HotspotBoardService extends SocketConnectService {
     }
 
     private void broadcastSnapshotIfChanged() {
-        String fen = gameApi.getFEN();
+        String fen = DisplayedPosition.currentFen();
         if (fen == null || fen.equals(lastBroadcastFen)) {
             return;
         }
@@ -305,7 +304,7 @@ public class HotspotBoardService extends SocketConnectService {
     }
 
     private void broadcastSnapshot(boolean force) {
-        String fen = gameApi.getFEN();
+        String fen = DisplayedPosition.currentFen();
         if (!force && (fen == null || fen.equals(lastBroadcastFen))) {
             return;
         }
@@ -327,7 +326,7 @@ public class HotspotBoardService extends SocketConnectService {
 
     private void sendSnapshot(ClientConnection connection) {
         try {
-            String fen = gameApi.getFEN();
+            String fen = DisplayedPosition.currentFen();
             if (fen == null) {
                 return;
             }
