@@ -10,6 +10,8 @@ fn dead_positions_draw_in_standard_and_chess960() {
             "k7/8/8/8/8/8/4N3/4K3 w - - 0 1",
             "4k3/4b3/8/8/8/8/8/K7 b - - 0 1",
             "4k3/4n3/8/8/8/8/8/K7 b - - 0 1",
+            "4k3/8/8/8/5b2/8/8/2B1K3 w - - 0 1",
+            "4k3/8/8/8/5b2/8/8/2B1K1B1 w - - 0 1",
         ] {
             assert_eq!(
                 Position::from_fen(variant, fen).unwrap().game_state(),
@@ -26,6 +28,7 @@ fn minor_piece_endings_with_possible_mates_remain_playable() {
         "4k3/8/8/8/8/8/4N3/4K1n1 w - - 0 1",
         "4k3/8/8/8/8/8/4N3/4K1b1 w - - 0 1",
         "4k3/8/8/8/8/8/3NN3/4K3 w - - 0 1",
+        "4k3/8/8/8/8/5b2/8/2B1K3 w - - 0 1",
     ] {
         assert_eq!(
             Position::from_fen(Variant::Standard, fen)

@@ -70,6 +70,7 @@ pub(crate) const ROOK: usize = 3;
 pub(crate) const QUEEN: usize = 4;
 pub(crate) const KING: usize = 5;
 pub(crate) const WHITE: usize = 1;
+pub(crate) const WHITE_SQUARES: u64 = 0x55AA55AA55AA55AA;
 const fn leaper<const N: usize>(deltas: [(i32, i32); N]) -> [u64; 64] {
     let mut table = [0u64; 64];
     let mut s = 0;
@@ -994,14 +995,17 @@ impl Position {
         if !matches!(self.variant, Variant::Standard | Variant::Chess960) {
             return false;
         }
-        let mut minor_pieces = 0;
+        let mut bishops = 0;
+        let mut knights = 0;
         for pieces in &self.pieces {
             if pieces[PAWN] | pieces[ROOK] | pieces[QUEEN] != 0 {
                 return false;
             }
-            minor_pieces += (pieces[KNIGHT] | pieces[BISHOP]).count_ones();
+            bishops |= pieces[BISHOP];
+            knights |= pieces[KNIGHT];
         }
-        minor_pieces <= 1
+        bishops.count_ones() + knights.count_ones() <= 1
+            || knights == 0 && (bishops & WHITE_SQUARES == 0 || bishops & !WHITE_SQUARES == 0)
     }
     pub fn game_state(&self) -> GameState {
         if self.variant == Variant::Duck && self.pieces.iter().any(|p| p[KING] == 0) {

@@ -44,7 +44,6 @@ const PASSED_PAWN_AREA: [[u64; 64]; 2] = {
     table
 };
 const CENTER: u64 = 0x00003C3C3C3C0000;
-const WHITE_SQUARES: u64 = 0x55AA55AA55AA55AA;
 impl Position {
     /// Static evaluation from the side to move; mate distances are not encoded.
     pub fn evaluate(&self) -> i32 {
