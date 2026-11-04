@@ -268,24 +268,37 @@ public final class GameTree {
 
     public String moveNumber(Node node) {
         requireMember(node);
+        return formatMoveNumber(node, true);
+    }
+
+    private String formatMoveNumber(Node node, boolean includeBlack) {
         int absolutePly = startingPly + node.ply - 1;
-        return (absolutePly / 2 + 1) + (absolutePly % 2 == 0 ? "." : "...");
+        boolean whiteMove = absolutePly % 2 == 0;
+        if (!whiteMove && !includeBlack) {
+            return "";
+        }
+        return (absolutePly / 2 + 1) + (whiteMove ? "." : "...");
     }
 
     /** Iterative traversal also handles very long lines without consuming the Java call stack. */
     public String exportMoves() {
         StringBuilder out = new StringBuilder();
-        appendComment(out, rootComment);
+        boolean followsComment = appendComment(out, rootComment);
         Deque<Object> work = new ArrayDeque<>();
         pushContinuations(work, root);
         while (!work.isEmpty()) {
             Object item = work.pop();
             if (item instanceof String) {
                 out.append(item);
+                followsComment = false;
             } else if (item instanceof Node) {
                 Node node = (Node) item;
-                appendComment(out, node.leadingComment);
-                out.append(moveNumber(node)).append(' ').append(node.entry.sMove);
+                boolean hasLeadingComment = appendComment(out, node.leadingComment);
+                String number = formatMoveNumber(node, hasLeadingComment || followsComment);
+                if (!number.isEmpty()) {
+                    out.append(number).append(' ');
+                }
+                out.append(node.entry.sMove);
                 if (node.entry.duckMove != -1) {
                     out.append('@').append(Pos.toString(node.entry.duckMove));
                 }
@@ -293,7 +306,7 @@ public final class GameTree {
                 for (int nag : node.nags) {
                     out.append('$').append(nag).append(' ');
                 }
-                appendComment(out, node.entry.sAnnotation);
+                followsComment = appendComment(out, node.entry.sAnnotation);
             } else {
                 pushContinuations(work, ((Continuation) item).node);
             }
@@ -325,10 +338,12 @@ public final class GameTree {
         work.push(first);
     }
 
-    private static void appendComment(StringBuilder out, String text) {
-        if (text != null && !text.isEmpty()) {
-            out.append('{').append(text.replace('{', '[').replace('}', ']')).append("} ");
+    private static boolean appendComment(StringBuilder out, String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
         }
+        out.append('{').append(text.replace('{', '[').replace('}', ']')).append("} ");
+        return true;
     }
 
     private void requireMember(Node node) {

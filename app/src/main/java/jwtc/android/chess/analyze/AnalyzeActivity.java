@@ -119,7 +119,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 new MoveRecyclerAdapter(
                         this,
                         gameApi,
-                        false,
                         position -> {
                             int index = position + 1;
                             if (index < navigationLine.size()) {

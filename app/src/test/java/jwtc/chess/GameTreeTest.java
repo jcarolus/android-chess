@@ -25,10 +25,10 @@ public class GameTreeTest {
     }
 
     @Test
-    public void exportsMainLineWithMoveNumbers() {
+    public void exportsMainLineWithWhiteMoveNumbers() {
         Node e4 = add(tree.getRoot(), "e4", 1);
         add(add(e4, "e5", 2), "Nf3", 3);
-        assertEquals("1. e4 1... e5 2. Nf3", tree.exportMoves());
+        assertEquals("1. e4 e5 2. Nf3", tree.exportMoves());
     }
 
     @Test
@@ -38,7 +38,20 @@ public class GameTreeTest {
         Node e5 = add(e4, "e5", 2);
         add(e4, "c5", 5);
         add(e5, "Nf3", 3);
-        assertEquals("1. e4 ( 1. d4 ) 1... e5 ( 1... c5 ) 2. Nf3", tree.exportMoves());
+        assertEquals("1. e4 ( 1. d4 ) e5 ( c5 ) 2. Nf3", tree.exportMoves());
+    }
+
+    @Test
+    public void exportsBlackMoveNumbersImmediatelyAfterComments() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        tree.setAnnotation(e4, "main");
+        Node e5 = add(e4, "e5", 2);
+        Node c5 = add(e4, "c5", 3);
+        tree.setLeadingComment(c5, "alternative");
+        add(add(e5, "Nf3", 4), "Nc6", 5);
+
+        assertEquals(
+                "1. e4 {main} 1... e5 ( {alternative} 1... c5 ) 2. Nf3 Nc6", tree.exportMoves());
     }
 
     @Test
@@ -59,7 +72,7 @@ public class GameTreeTest {
         assertFalse(tree.contains(e5));
         assertFalse(tree.contains(nf3));
         assertFalse(tree.contains(c5));
-        assertEquals("1. e4 ( 1. d4 ) 1... c6", tree.exportMoves());
+        assertEquals("1. e4 ( 1. d4 ) c6", tree.exportMoves());
     }
 
     @Test
@@ -108,6 +121,9 @@ public class GameTreeTest {
         Node second = black.append(first, new PGNEntry("Ka2", "", 2, -1), 0, 0, false);
         assertEquals("7...", black.moveNumber(first));
         assertEquals("8.", black.moveNumber(second));
+        assertEquals("Kg1 8. Ka2", black.exportMoves());
+        black.setRootComment("start");
+        assertEquals("{start} 7... Kg1 8. Ka2", black.exportMoves());
     }
 
     @Test

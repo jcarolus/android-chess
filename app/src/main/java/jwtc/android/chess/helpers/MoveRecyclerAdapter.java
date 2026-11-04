@@ -16,7 +16,9 @@ import java.util.List;
 import jwtc.android.chess.R;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.GameTree.Node;
+import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
+import jwtc.chess.board.BoardConstants;
 
 public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapter.ViewHolder> {
     private final ArrayList<HashMap<String, String>> mapMoves =
@@ -24,25 +26,15 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     private final OnItemClickListener listener;
     private final GameApi gameApi;
     private final Context context;
-    private final boolean showMoveNumber;
 
     public interface OnItemClickListener {
         void onMoveItemClick(int position);
     }
 
     public MoveRecyclerAdapter(Context context, GameApi gameApi, OnItemClickListener listener) {
-        this(context, gameApi, true, listener);
-    }
-
-    public MoveRecyclerAdapter(
-            Context context,
-            GameApi gameApi,
-            boolean showMoveNumber,
-            OnItemClickListener listener) {
         this.context = context;
         this.gameApi = gameApi;
         this.listener = listener;
-        this.showMoveNumber = showMoveNumber;
     }
 
     public void update() {
@@ -52,15 +44,20 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     public void update(List<Node> nodes) {
         ArrayList<HashMap<String, String>> newMapMoves = new ArrayList<HashMap<String, String>>();
 
-        for (int i = 0; i < nodes.size(); i++) {
-            String sMove = nodes.get(i).getEntry().sMove;
-            if (nodes.get(i).getEntry().duckMove != -1) {
-                sMove += "@" + Pos.toString(nodes.get(i).getEntry().duckMove);
+        for (Node node : nodes) {
+            PGNEntry entry = node.getEntry();
+            String sMove = entry.sMove;
+            if (entry.duckMove != -1) {
+                sMove += "@" + Pos.toString(entry.duckMove);
             }
             HashMap<String, String> item = new HashMap<String, String>();
-            item.put("nr", gameApi.getMoveNumber(nodes.get(i)) + " ");
+            item.put(
+                    "nr",
+                    node.getParent().getTurn() == BoardConstants.WHITE
+                            ? gameApi.getMoveNumber(node) + " "
+                            : "");
             item.put("move", sMove);
-            item.put("turn", gameApi.getCurrentNode() == nodes.get(i) ? "yes" : "no");
+            item.put("turn", gameApi.getCurrentNode() == node ? "yes" : "no");
 
             newMapMoves.add(item);
         }
@@ -139,8 +136,9 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
             holder.textViewMove.setPaintFlags(
                     holder.textViewMove.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
         }
-        holder.textViewNumMove.setVisibility(showMoveNumber ? View.VISIBLE : View.GONE);
-        holder.textViewNumMove.setText(item.get("nr"));
+        String moveNumber = item.get("nr");
+        holder.textViewNumMove.setVisibility(moveNumber.isEmpty() ? View.GONE : View.VISIBLE);
+        holder.textViewNumMove.setText(moveNumber);
         holder.textViewMove.setText(item.get("move"));
     }
 
