@@ -27,14 +27,18 @@ final class PracticePositionSelector {
             return null;
         }
 
+        int finalPly = game.getPGNSize();
+        if (finalPly == 0) {
+            return null;
+        }
+
         long finalPosition = game.getHashKey();
         if (!seenFinalPositions.add(finalPosition)) {
             return null;
         }
 
-        int finalPly = game.getPGNSize();
-        if (finalPly < 3) {
-            return null;
+        if (finalPly == 1) {
+            return game.exportFullPGN();
         }
 
         String[] moves = {
@@ -42,7 +46,8 @@ final class PracticePositionSelector {
         };
         String selected = null;
         int played = 0;
-        for (int plies = 2; plies <= 4; ) {
+        int searchLimit = Math.min(4, finalPly + 1);
+        for (int plies = 2; plies <= searchLimit; ) {
             for (int undo = 0; undo <= played; undo++) {
                 game.undoMove();
             }
