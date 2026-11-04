@@ -37,16 +37,10 @@
                 android:accessibilityLiveRegion="assertive" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonShareBoard"
-                style="?attr/chessImageButtonStyle"
-                app:icon="@drawable/ic_share_fill"
-                android:contentDescription="@string/share_chess_link" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonAnalysisSettings"
-                style="?attr/chessImageButtonStyle"
-                app:icon="@drawable/sliders"
-                android:contentDescription="@string/analysis_settings" />
+                android:id="@+id/ButtonMenu"
+                app:icon="@drawable/ic_three_dots_vertical"
+                android:contentDescription="@string/button_menu_description"
+                style="?attr/chessImageButtonStyle" />
 
         </LinearLayout>
 

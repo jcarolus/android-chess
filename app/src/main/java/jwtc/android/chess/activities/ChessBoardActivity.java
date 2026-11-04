@@ -26,11 +26,13 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.constants.PieceSets;
+import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
@@ -233,6 +235,19 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onPlayerForfeitedOnTime(int color) {
         Log.d(TAG, "onPlayerForfeitedOnTime " + color);
+    }
+
+    protected void showSaveGameDialog(long gameId) {
+        new SaveGameDialog(this, gameApi, gameId, this::saveGameFromDialog).show();
+    }
+
+    protected void startSaveGameToFile(int requestCode) {
+        startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", requestCode);
+    }
+
+    protected void copyGameToClipboard() {
+        Clipboard.stringToClipboard(
+                this, gameApi.exportFullPGN(), getString(R.string.copied_clipboard_success));
     }
 
     public void afterCreate() {

@@ -206,7 +206,7 @@ public class PlayActivity extends ChessBoardActivity
 
         progressBarEngine = findViewById(R.id.ProgressBarPlay);
 
-        final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU);
+        final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU, R.array.play_menu);
 
         MaterialButton buttonMenu = findViewById(R.id.ButtonMenu);
         buttonMenu.setOnClickListener(
@@ -894,13 +894,9 @@ public class PlayActivity extends ChessBoardActivity
                         }
                     }
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
-                    Clipboard.stringToClipboard(
-                            this,
-                            gameApi.exportFullPGN(),
-                            getString(R.string.copied_clipboard_success));
+                    copyGameToClipboard();
                 } else if (item.equals(getString(R.string.menu_save_game_to_file))) {
-                    startIntentForSaveDocument(
-                            "application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
+                    startSaveGameToFile(REQUEST_SAVE_GAME_TO_FILE);
                 } else if (item.equals(getString(R.string.menu_save_position_to_file))) {
                     startIntentForSaveDocument(
                             "application/x-chess-fen",
@@ -1115,9 +1111,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     public void saveGame() {
-        SaveGameDialog saveDialog =
-                new SaveGameDialog(this, gameApi, lGameID, this::saveGameFromDialog);
-        saveDialog.show();
+        showSaveGameDialog(lGameID);
     }
 
     @Override

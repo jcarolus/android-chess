@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,13 +28,21 @@ public class MenuDialog extends ResultDialog<Bundle> {
     }
 
     public MenuDialog(
-            @NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode) {
+            @NonNull Context context,
+            ResultDialogListener<Bundle> listener,
+            int requestCode,
+            @ArrayRes int menuItems) {
         super(context, listener, requestCode);
 
         setTitle(R.string.title_menu);
         setContentView(R.layout.play_menu);
 
         ListView list = findViewById(R.id.ListMenu);
+        list.setAdapter(
+                new ArrayAdapter<>(
+                        context,
+                        android.R.layout.simple_list_item_1,
+                        context.getResources().getStringArray(menuItems)));
         list.setOnItemClickListener(
                 (parent, view, position, id) -> {
                     String item = parent.getItemAtPosition(position).toString();

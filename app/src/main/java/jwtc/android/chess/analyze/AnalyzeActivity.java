@@ -2,6 +2,7 @@ package jwtc.android.chess.analyze;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,8 @@ import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.links.LinkActivity;
+import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
@@ -42,11 +45,14 @@ public class AnalyzeActivity extends ChessBoardActivity {
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
+    private static final int REQUEST_MENU = 1;
+    private static final int REQUEST_SAVE_GAME_TO_FILE = 2;
     private boolean engineWarningAcknowledged;
     private AlertDialog analysisDialog;
     private String sessionId;
     private boolean sessionLoaded;
     private Bundle restoredSession;
+    private Uri pendingSaveUri;
     // The game came from Play's "game_pgn" preference, so analysis changes are written back there.
     private boolean fromGamePgnPref;
     private long lGameID;
@@ -156,9 +162,32 @@ public class AnalyzeActivity extends ChessBoardActivity {
                         gameApi.goTo(navigationLine.get(index + 1));
                     }
                 });
-        findViewById(R.id.ButtonAnalysisSettings)
-                .setOnClickListener(
-                        v -> AnalysisSettingsDialog.show(this, getPrefs(), this::restartAnalysis));
+        MenuDialog menuDialog =
+                new MenuDialog(this, this::onMenuSelected, REQUEST_MENU, R.array.analyze_menu);
+        findViewById(R.id.ButtonMenu).setOnClickListener(v -> menuDialog.show());
+    }
+
+    private void onMenuSelected(int requestCode, Bundle data) {
+        String item = data.getString("item");
+        if (getString(R.string.analysis_settings).equals(item)) {
+            AnalysisSettingsDialog.show(this, getPrefs(), this::restartAnalysis);
+        } else if (getString(R.string.share_chess_link).equals(item)) {
+            LinkSharing.show(this, gameApi);
+        } else if (getString(R.string.menu_save_game).equals(item)) {
+            showSaveGameDialog(lGameID);
+        } else if (getString(R.string.menu_save_game_to_file).equals(item)) {
+            startSaveGameToFile(REQUEST_SAVE_GAME_TO_FILE);
+        } else if (getString(R.string.menu_clip_pgn).equals(item)) {
+            copyGameToClipboard();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_SAVE_GAME_TO_FILE && resultCode == RESULT_OK && data != null) {
+            pendingSaveUri = data.getData();
+        }
     }
 
     @Override
@@ -228,6 +257,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 }
             }
             sessionLoaded = true;
+        }
+        if (pendingSaveUri != null) {
+            saveToFile(pendingSaveUri, gameApi.exportFullPGN());
+            pendingSaveUri = null;
         }
         if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
             analysis.pause();
