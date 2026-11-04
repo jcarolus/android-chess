@@ -1,33 +1,30 @@
-# 👑️ Chess for Android
+# Chess for Android
 
-> A free, open-source chess app — no ads, just chess.
+A free, open-source chess app — no ads, just chess.
 
-## ✨ Features
+## Features
 
-|            | Details                                                                                      |
-|-------------------|----------------------------------------------------------------------------------------------|
-| 👑| Standard chess, Chess 960, Duck chess                                       |
-| 🌐| Play online on [Lichess](https://lichess.org) and [FICS](https://freechess.org)              |
-| 🧩| Lichess puzzles. Mate in two collection                                                      |
-| 📶| Cast the board to your Chromecast device                                                     |
-| 📖| ECO opening explorer                                                                         |
-| 🗄| Local game database with search                                                              |
-| ♿| Screen reader support via TalkBack                                                           |
-| 🛠️| Manual board setup mode                                                                      |
-| 🖥️| Supports the **Open Exchange Protocol (OEX)**, letting you plug in third-party chess engines |
+- Standard chess, Chess 960, Duck chess
+- Play online on [Lichess](https://lichess.org) and [FICS](https://freechess.org)
+- Lichess puzzles. Mate in two collection
+- Cast the board to your Chromecast device
+- ECO opening explorer
+- Local game database with search
+- Screen reader support via TalkBack
+- Manual board setup mode
+- Supports the **Open Exchange Protocol (OEX)**, letting you plug in third-party chess engines
 
----
 
-## 🌐 Developer website
+## Developer website
 
 [https://jwtc.nl(https://jwtc.nl)
 
-## 🎬 Demo
+## Demo
 
 [https://youtu.be/oFvqyaLGvq0](https://youtu.be/oFvqyaLGvq0)
 
 
-## 📦 Install
+## Install
 
 | Store | Link |
 |---|---|
@@ -35,7 +32,7 @@
 | Google Play | [https://play.google.com/store/apps/details?id=jwtc.android.chess](https://play.google.com/store/apps/details?id=jwtc.android.chess) |
 
 
-## 📌 Roadmap
+## Roadmap
 
 - Address open items in the [feature request list](../../issues)
 - Improve translation coverage and consistency
@@ -43,7 +40,7 @@
 - **Contributions welcome** — feel free to open a PR or issue
 
 
-## ☕ Support
+## Support
 
 If you enjoy the app, consider buying me a coffee!
 
@@ -78,6 +75,6 @@ Use the same JDK and Android SDK required to build the app, plus Rust with
 `rustup component add rustfmt clippy`. Initial runs need network access to
 download Gradle tooling. Both scripts support `CARGO=/path/to/cargo`.
 
-## 📄 License
+## License
 
 MIT — see [License.md](License.md) for details.
