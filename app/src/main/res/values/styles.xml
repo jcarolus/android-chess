@@ -195,7 +195,6 @@
 
     <style name="MyPaneTextStyle" parent="@style/MySmallTextStyle">
         <item name="android:padding">@dimen/control_padding</item>
-        <item name="android:background">?attr/paneBackground</item>
         <item name="android:scrollHorizontally">false</item>
     </style>
 

@@ -4,7 +4,6 @@
     app:layout_optimizationLevel="none"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/paneBackground"
     android:padding="@dimen/compact_row_padding">
 
     <TextView

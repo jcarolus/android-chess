@@ -8,7 +8,6 @@
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/paneBackground"
         android:stretchColumns="1"
         android:layout_marginBottom="@dimen/board_row_gap"
         android:padding="@dimen/panel_padding">

@@ -70,7 +70,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/HistoryRecyclerView"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/control_gap"
@@ -78,7 +78,6 @@
                     android:orientation="horizontal"
                     android:scrollbars="horizontal"
                     android:fadeScrollbars="false"
-                    android:background="?attr/paneBackground"
                     android:scrollbarAlwaysDrawHorizontalTrack="true" />
 
                 <com.google.android.material.button.MaterialButton

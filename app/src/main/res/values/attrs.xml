@@ -5,7 +5,6 @@
         last move, ECO, game rows). A theme attribute rather than a direct colour
         reference so e-ink mode can swap the translucent tint for an outline.
     -->
-    <attr name="paneBackground" format="reference|color" />
 
     <!--
         Button styles as theme attributes. An explicit style="@style/ChessButton"

@@ -4,7 +4,6 @@
         <item name="chessToggleButtonStyle">@style/ChessToggleButton</item>
         <item name="chessButtonStyle">@style/ChessButton</item>
         <item name="chessImageButtonStyle">@style/ChessImageButton</item>
-        <item name="paneBackground">@color/paneBackgroundColor</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="colorPrimary">@color/primaryColor</item>
@@ -26,7 +25,6 @@
         <item name="chessToggleButtonStyle">@style/ChessToggleButton</item>
         <item name="chessButtonStyle">@style/ChessButton</item>
         <item name="chessImageButtonStyle">@style/ChessImageButton</item>
-        <item name="paneBackground">@color/paneBackgroundColor</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
@@ -52,7 +50,6 @@
         <item name="chessToggleButtonStyle">@style/ChessToggleButton</item>
         <item name="chessButtonStyle">@style/ChessButton</item>
         <item name="chessImageButtonStyle">@style/ChessImageButton</item>
-        <item name="paneBackground">@color/paneBackgroundColor</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:windowMinWidthMajor">0%</item>
@@ -97,7 +94,6 @@
         <item name="switchStyle">@style/MySwitchStyleEink</item>
         <item name="chessButtonStyle">@style/ChessButtonEink</item>
         <item name="chessImageButtonStyle">@style/ChessImageButtonEink</item>
-        <item name="paneBackground">@drawable/eink_pane_border</item>
         <item name="android:windowBackground">@color/einkBackground</item>
         <item name="colorPrimary">@color/einkBackground</item>
         <item name="colorPrimaryVariant">@color/einkBackground</item>
@@ -127,7 +123,6 @@
         <item name="switchStyle">@style/MySwitchStyleEink</item>
         <item name="chessButtonStyle">@style/ChessButtonEink</item>
         <item name="chessImageButtonStyle">@style/ChessImageButtonEink</item>
-        <item name="paneBackground">@drawable/eink_pane_border</item>
         <item name="colorPrimary">@color/einkBackground</item>
         <item name="colorPrimaryVariant">@color/einkBackground</item>
         <item name="colorOnPrimary">@color/einkForeground</item>
@@ -153,7 +148,6 @@
         <item name="android:textColorPrimary">@color/einkForeground</item>
         <item name="android:textColorSecondary">@color/einkForeground</item>
         <item name="android:textColorHint">@color/einkForeground</item>
-        <item name="paneBackground">@drawable/eink_pane_border</item>
         <item name="chessButtonStyle">@style/ChessButtonEink</item>
         <item name="chessImageButtonStyle">@style/ChessImageButtonEink</item>
         <item name="android:windowBackground">@color/einkBackground</item>

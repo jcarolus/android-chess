@@ -8,8 +8,7 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="2"
-        android:background="?attr/paneBackground">
+        android:stretchColumns="2">
 
         <TableRow
             android:paddingTop="@dimen/row_padding"
