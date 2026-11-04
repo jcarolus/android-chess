@@ -14,6 +14,8 @@
     <dimen name="screen_padding">@dimen/space_large</dimen>
     <dimen name="board_screen_padding">@dimen/space_small</dimen>
     <dimen name="list_screen_padding">@dimen/space_tiny</dimen>
+    <dimen name="tv_safe_margin_horizontal">48dp</dimen>
+    <dimen name="tv_safe_margin_vertical">27dp</dimen>
     <dimen name="panel_padding">@dimen/space_medium</dimen>
     <dimen name="dialog_padding">@dimen/space_extra_large</dimen>
     <dimen name="section_gap">@dimen/space_large</dimen>

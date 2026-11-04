@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,6 +24,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
@@ -674,7 +674,7 @@ public class LichessGameActivity extends ChessBoardActivity
 
     private void showPromotionPicker(PromotionSelectionListener listener) {
         final String[] items = getResources().getStringArray(R.array.promotionpieces);
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
         builder.setTitle(R.string.title_pick_promo);
         builder.setCancelable(false);
         builder.setSingleChoiceItems(

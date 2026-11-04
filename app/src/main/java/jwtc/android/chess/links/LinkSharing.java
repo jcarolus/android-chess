@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 import androidx.core.content.FileProvider;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.GameTree.Node;
 
@@ -55,7 +55,7 @@ public final class LinkSharing {
     }
 
     public static void show(Context context, GameApi game) {
-        new MaterialAlertDialogBuilder(context)
+        new ChessAlertDialogBuilder(context)
                 .setItems(
                         new String[] {
                             context.getString(R.string.share_game_link),
@@ -85,7 +85,7 @@ public final class LinkSharing {
                                                 ? AppLink.game(game.exportFullPGN(), path)
                                                 : AppLink.position(game.getFEN()));
                             } catch (IllegalArgumentException e) {
-                                new MaterialAlertDialogBuilder(context)
+                                new ChessAlertDialogBuilder(context)
                                         .setMessage(R.string.app_link_too_large)
                                         .setPositiveButton(
                                                 R.string.share_pgn,

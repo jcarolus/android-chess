@@ -14,7 +14,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.lichess.models.SwissStanding;
 import jwtc.android.chess.lichess.models.SwissTournament;
 import jwtc.android.chess.lichess.models.Team;
@@ -357,7 +357,7 @@ public class LichessSwissActivity extends LichessBaseActivity
         editPassword.setSingleLine(true);
         container.addView(editPassword);
 
-        new MaterialAlertDialogBuilder(this)
+        new ChessAlertDialogBuilder(this)
                 .setTitle(R.string.lichess_team_join)
                 .setView(container)
                 .setPositiveButton(

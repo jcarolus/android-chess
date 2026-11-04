@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -26,6 +25,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.constants.PieceSets;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.HapticFeedback;
@@ -112,7 +112,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
 
             final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
             builder.setTitle(R.string.title_pick_promo);
             builder.setCancelable(false);
             builder.setSingleChoiceItems(

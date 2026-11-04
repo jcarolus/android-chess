@@ -675,6 +675,7 @@ public class GamesListActivity extends ChessBoardActivity {
                             : R.style.ChessDialogTheme);
 
             setContentView(R.layout.gameslist_filters);
+            ActivityHelper.constrainDialogToTvSafeArea(this);
         }
 
         public void init() {

@@ -21,13 +21,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.links.AppLink;
 import jwtc.android.chess.links.LinkActivity;
@@ -805,7 +805,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 });
 
         AlertDialog dialog =
-                new MaterialAlertDialogBuilder(this)
+                new ChessAlertDialogBuilder(this)
                         .setTitle(R.string.hotspot_connection_settings)
                         .setView(dialogView)
                         .setNegativeButton(R.string.button_cancel, null)
@@ -1061,7 +1061,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             return;
         }
 
-        new MaterialAlertDialogBuilder(this)
+        new ChessAlertDialogBuilder(this)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(

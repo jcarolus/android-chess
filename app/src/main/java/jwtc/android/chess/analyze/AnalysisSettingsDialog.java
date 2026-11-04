@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.oex.OexEngineDescriptor;
 import jwtc.android.chess.engine.oex.OexEngineResolver;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.views.FixedDropdownView;
 
 final class AnalysisSettingsDialog {
@@ -50,7 +50,7 @@ final class AnalysisSettingsDialog {
                 BigDecimal.valueOf(getTimeMillis(prefs), 3).stripTrailingZeros().toPlainString());
 
         AlertDialog dialog =
-                new MaterialAlertDialogBuilder(context)
+                new ChessAlertDialogBuilder(context)
                         .setTitle(R.string.analysis_settings)
                         .setView(content)
                         .setNegativeButton(R.string.button_cancel, null)

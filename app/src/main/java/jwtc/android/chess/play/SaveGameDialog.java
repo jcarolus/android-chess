@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.GameApi;
@@ -39,6 +40,7 @@ public class SaveGameDialog extends Dialog {
 
     protected void init(long lGameID, OnResultListener onResult) {
         setContentView(R.layout.savegame);
+        ActivityHelper.constrainDialogToTvSafeArea(this);
         setTitle(R.string.title_save_game);
 
         result.lGameID = lGameID;

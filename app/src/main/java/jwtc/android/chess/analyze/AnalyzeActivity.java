@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +21,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.engine.EngineEvaluation;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
@@ -274,7 +274,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
             }
             if (analysisDialog == null) {
                 analysisDialog =
-                        new MaterialAlertDialogBuilder(this)
+                        new ChessAlertDialogBuilder(this)
                                 .setMessage(
                                         gameApi.isKingOfTheHillVariant()
                                                 ? R.string.analysis_king_of_the_hill_unsupported
@@ -404,7 +404,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         View content = getLayoutInflater().inflate(R.layout.analysis_engine_warning, null);
         CheckBox dontShowAgain = content.findViewById(R.id.AnalysisDontShowAgain);
         analysisDialog =
-                new MaterialAlertDialogBuilder(this)
+                new ChessAlertDialogBuilder(this)
                         .setView(content)
                         .setPositiveButton(
                                 R.string.analysis_continue,

@@ -12,12 +12,12 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.ColorUtils;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.FixedDropdownView;
@@ -276,7 +276,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         saturationSlider.addOnChangeListener(listener);
         lightnessSlider.addOnChangeListener(listener);
 
-        new MaterialAlertDialogBuilder(this)
+        new ChessAlertDialogBuilder(this)
                 .setTitle(titleResource)
                 .setView(dialogView)
                 .setNegativeButton(android.R.string.cancel, null)

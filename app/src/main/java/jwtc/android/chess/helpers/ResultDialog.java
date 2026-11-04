@@ -2,6 +2,7 @@ package jwtc.android.chess.helpers;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import androidx.annotation.NonNull;
 import jwtc.android.chess.R;
 
@@ -21,6 +22,12 @@ public class ResultDialog<T> extends Dialog {
 
         this.listener = listener;
         this.requestCode = requestCode;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ActivityHelper.constrainDialogToTvSafeArea(this);
     }
 
     protected void setResult(T data) {

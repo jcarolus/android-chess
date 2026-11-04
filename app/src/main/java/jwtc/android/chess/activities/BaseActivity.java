@@ -13,7 +13,6 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -21,6 +20,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.play.SaveGameDialog;
@@ -92,7 +92,7 @@ public class BaseActivity extends AppCompatActivity {
             String negativeText,
             Runnable onPositive,
             Runnable onNegative) {
-        new MaterialAlertDialogBuilder(BaseActivity.this)
+        new ChessAlertDialogBuilder(BaseActivity.this)
                 .setMessage(message)
                 .setPositiveButton(
                         positiveText,
