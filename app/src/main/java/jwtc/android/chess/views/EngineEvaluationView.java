@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import jwtc.android.chess.R;
 
-/** White-relative evaluation in pawns; black fills the top, white the bottom. */
+/** White-relative evaluation in pawns; white fills the left or bottom of the bar. */
 public class EngineEvaluationView extends View {
     private final Paint paint = new Paint();
     private float whiteFraction = 0.5f;
@@ -43,12 +43,20 @@ public class EngineEvaluationView extends View {
         float border = getResources().getDisplayMetrics().density;
         float width = getWidth();
         float height = getHeight();
-        float split = border + Math.max(0, height - 2 * border) * (1 - whiteFraction);
         paint.setColor(Color.GRAY);
         canvas.drawRect(0, 0, width, height, paint);
-        paint.setColor(Color.BLACK);
-        canvas.drawRect(border, border, width - border, split, paint);
-        paint.setColor(Color.WHITE);
-        canvas.drawRect(border, split, width - border, height - border, paint);
+        if (width > height) {
+            float split = border + Math.max(0, width - 2 * border) * whiteFraction;
+            paint.setColor(Color.WHITE);
+            canvas.drawRect(border, border, split, height - border, paint);
+            paint.setColor(Color.BLACK);
+            canvas.drawRect(split, border, width - border, height - border, paint);
+        } else {
+            float split = border + Math.max(0, height - 2 * border) * (1 - whiteFraction);
+            paint.setColor(Color.BLACK);
+            canvas.drawRect(border, border, width - border, split, paint);
+            paint.setColor(Color.WHITE);
+            canvas.drawRect(border, split, width - border, height - border, paint);
+        }
     }
 }

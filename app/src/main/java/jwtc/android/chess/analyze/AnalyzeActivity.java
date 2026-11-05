@@ -2,6 +2,7 @@ package jwtc.android.chess.analyze;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -147,13 +148,16 @@ public class AnalyzeActivity extends ChessBoardActivity {
         afterCreate();
         chessBoardView.setNextFocusRightId(R.id.ButtonPrevious);
 
+        boolean landscape =
+                getResources().getConfiguration().orientation
+                        == Configuration.ORIENTATION_LANDSCAPE;
         initBoardLayoutSizing(
                 findViewById(R.id.root_layout),
                 findViewById(R.id.board_area),
                 findViewById(R.id.analyze_controls),
                 null,
-                null,
-                24);
+                landscape ? null : evaluationView,
+                landscape ? 24 : 0);
         findViewById(R.id.ButtonPrevious).setOnClickListener(v -> gameApi.undoMove());
         buttonNext.setOnClickListener(
                 v -> {

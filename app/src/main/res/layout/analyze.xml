@@ -17,24 +17,22 @@
 
         <jwtc.android.chess.views.EngineEvaluationView
             android:id="@+id/engine_evaluation"
-            android:layout_width="20dp"
-            android:layout_height="0dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@id/includeboard"
-            app:layout_constraintBottom_toBottomOf="@id/includeboard" />
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            app:layout_constraintStart_toStartOf="@id/includeboard"
+            app:layout_constraintEnd_toEndOf="@id/includeboard"
+            app:layout_constraintTop_toBottomOf="@id/includeboard"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <include
             android:id="@+id/includeboard"
             layout="@layout/chessboard"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/board_row_gap"
-            android:layout_marginBottom="@dimen/board_row_gap"
-            android:layout_marginLeft="@dimen/board_control_gap"
-            app:layout_constraintLeft_toRightOf="@id/engine_evaluation"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/engine_evaluation"
             app:layout_constraintDimensionRatio="W,1:1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
