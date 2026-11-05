@@ -1,0 +1,203 @@
+package jwtc.android.chess.engine;
+
+import android.content.Context;
+import jwtc.android.chess.services.GameApi;
+
+/**
+ * The Engines one Mode uses: picks the Engine for that Mode, owns its lifecycle and the
+ * registration of the listener, and takes the search limit per request.
+ *
+ * <p>Once closed, a session ignores further requests, so a delayed callback that fires after the
+ * screen has paused cannot start a search on a destroyed Engine.
+ */
+public final class EngineSession {
+    public static final String LOCAL_ENGINE_ID = "local";
+    private final Context context;
+    private final GameApi gameApi;
+    private final EngineListener listener;
+    private OexEngine oex;
+    private RustLocalEngine rust;
+    private EngineApi current;
+    private boolean closed = false;
+
+    private EngineSession(Context context, GameApi gameApi, EngineListener listener) {
+        this.context = context;
+        this.gameApi = gameApi;
+        this.listener = listener;
+    }
+
+    /**
+     * Session for Mate-in-Two Puzzles and Practice Positions: always the built-in Rust Engine, with
+     * quiescence search off so a forced mate is found at the shallow depth the caller asks for.
+     */
+    public static EngineSession forPuzzles(GameApi gameApi, EngineListener listener) {
+        EngineSession session = new EngineSession(null, gameApi, listener);
+        session.rust = new RustLocalEngine(gameApi);
+        session.rust.setQuiescentSearchOn(false);
+        session.use(session.rust);
+        return session;
+    }
+
+    /**
+     * Session for Analysis: an available OEX Engine unless the built-in Engine was picked or none
+     * is installed (see {@link EnginePolicy#forAnalysis}). The built-in choice is the Rust Engine.
+     */
+    public static EngineSession forAnalysis(
+            Context context, GameApi gameApi, EngineListener listener, String oexEngineId) {
+        EngineSession session = new EngineSession(context, gameApi, listener);
+        boolean oexAvailable =
+                !gameApi.isDuckVariant()
+                        && !LOCAL_ENGINE_ID.equals(oexEngineId)
+                        && OexEngine.hasAvailableEngines(context);
+        if (EnginePolicy.forAnalysis(oexAvailable) == EnginePolicy.Backend.OEX) {
+            session.oex = new OexEngine(context, gameApi, oexEngineId);
+            session.use(session.oex);
+        } else {
+            session.rust = new RustLocalEngine(gameApi);
+            session.use(session.rust);
+        }
+        return session;
+    }
+
+    /** Integration entry point for device tests that need a Rust-only session. */
+    static EngineSession forRustTesting(GameApi gameApi, EngineListener listener) {
+        EngineSession session = new EngineSession(null, gameApi, listener);
+        session.rust = new RustLocalEngine(gameApi);
+        session.use(session.rust);
+        return session;
+    }
+
+    /** Session for Play; no Engine is active until {@link #selectForPlay}. */
+    public static EngineSession forPlay(Context context, GameApi gameApi, EngineListener listener) {
+        return new EngineSession(context, gameApi, listener);
+    }
+
+    /**
+     * Picks the Engine for Play from the user's settings and the Variant (see {@link
+     * EnginePolicy#forPlay}). Switching Engines cancels the running search and moves the listener
+     * over; selecting the same Engine again leaves it running.
+     */
+    public void selectForPlay(
+            boolean prefersOex,
+            String oexEngineId,
+            boolean requiresBuiltinEngine,
+            boolean quiescentSearch) {
+        if (closed) {
+            return;
+        }
+        boolean oexAvailable =
+                !requiresBuiltinEngine && prefersOex && OexEngine.hasAvailableEngines(context);
+        EngineApi target;
+        if (EnginePolicy.forPlay(prefersOex, oexAvailable, requiresBuiltinEngine)
+                == EnginePolicy.Backend.OEX) {
+            if (oex == null) {
+                oex = new OexEngine(context, gameApi, oexEngineId);
+            } else {
+                oex.setPreferredEngineId(oexEngineId);
+            }
+            target = oex;
+        } else {
+            if (rust == null) {
+                rust = new RustLocalEngine(gameApi);
+            }
+            target = rust;
+        }
+        if (target != current) {
+            if (current != null) {
+                current.abort(null);
+                current.removeListener(listener);
+            }
+            use(target);
+        }
+        target.setQuiescentSearchOn(quiescentSearch);
+    }
+
+    private void use(EngineApi engine) {
+        current = engine;
+        engine.addListener(listener);
+    }
+
+    public void setTargetElo(Integer elo) {
+        if (oex != null) {
+            oex.setTargetElo(elo);
+        }
+    }
+
+    public boolean isBuiltin() {
+        return !closed && current != null && current == rust;
+    }
+
+    /** Whether an Engine is selected and not searching; false once closed. */
+    public boolean isReady() {
+        return !closed && current != null && current.isReady();
+    }
+
+    /** Whether the active Engine can analyse; false once closed. */
+    public boolean supportsAnalysis() {
+        return !closed && current != null && current.supportsAnalysis();
+    }
+
+    /** Starts a PLAY search of the current position; the result arrives at the listener. */
+    public void play(SearchLimit limit) {
+        if (closed || current == null || gameApi.hasPendingDuckMove()) {
+            return;
+        }
+        current.play(limit);
+    }
+
+    /** Starts an ANALYSIS search of the given FEN; results arrive at the listener. */
+    public void analyze(String fen, int timeMillis) {
+        if (closed || current == null || gameApi.hasPendingDuckMove()) {
+            return;
+        }
+        current.analyze(fen, timeMillis);
+    }
+
+    public void analyzeCurrentPosition(int timeMillis) {
+        if (!closed && current != null && !gameApi.hasPendingDuckMove()) {
+            current.analyzeCurrentPosition(timeMillis);
+        }
+    }
+
+    public void analyze(GameApi.PositionSnapshot position, int timeMillis) {
+        if (!closed && current != null && !gameApi.hasPendingDuckMove()) {
+            current.analyze(position, timeMillis);
+        }
+    }
+
+    /** Stops the current search, delivering its completed result before onDone. */
+    public void stop(Runnable onDone) {
+        if (!closed && current != null) {
+            current.stop(onDone);
+        }
+    }
+
+    /**
+     * Cancels the current search without emitting a move, then runs onDone on the main thread once
+     * a new search may start. Does nothing once closed.
+     */
+    public void abort(Runnable onDone) {
+        if (closed || current == null) {
+            return;
+        }
+        current.abort(onDone);
+    }
+
+    /** Cancels any search and releases every Engine. Safe to call more than once. */
+    public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
+        if (current != null) {
+            current.abort(null);
+            current.removeListener(listener);
+        }
+        if (oex != null) {
+            oex.destroy();
+        }
+        if (rust != null) {
+            rust.destroy();
+        }
+    }
+}

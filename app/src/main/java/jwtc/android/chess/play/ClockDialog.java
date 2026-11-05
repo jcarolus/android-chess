@@ -6,15 +6,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import androidx.annotation.NonNull;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 
 public class ClockDialog extends ResultDialog<Bundle> {
-    public ClockDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs) {
+    public ClockDialog(
+            @NonNull Context context,
+            ResultDialogListener<Bundle> listener,
+            int requestCode,
+            final SharedPreferences prefs) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.clock_dialog);
@@ -29,37 +31,43 @@ public class ClockDialog extends ResultDialog<Bundle> {
         editIncrement.setText("" + increment);
 
         Button buttonOk = findViewById(R.id.ButtonOk);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        buttonOk.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                try {
-                    SharedPreferences.Editor editor = prefs.edit();
+                        try {
+                            SharedPreferences.Editor editor = prefs.edit();
 
-                    long totalMillies = (long) Integer.parseInt(editMinutes.getText().toString()) * 60000;
-                    long increment = (long) Integer.parseInt(editIncrement.getText().toString()) * 1000;
+                            long totalMillies =
+                                    (long) Integer.parseInt(editMinutes.getText().toString())
+                                            * 60000;
+                            long increment =
+                                    (long) Integer.parseInt(editIncrement.getText().toString())
+                                            * 1000;
 
-                    editor.putLong("clockInitialMillies", totalMillies);
-                    editor.putLong("clockWhiteMillies", totalMillies);
-                    editor.putLong("clockBlackMillies", totalMillies);
-                    editor.putLong("clockIncrement", increment);
-                    editor.putLong("clockStartTime", System.currentTimeMillis());
+                            editor.putLong("clockInitialMillies", totalMillies);
+                            editor.putLong("clockWhiteMillies", totalMillies);
+                            editor.putLong("clockBlackMillies", totalMillies);
+                            editor.putLong("clockIncrement", increment);
+                            editor.putLong("clockStartTime", System.currentTimeMillis());
 
-                    editor.commit();
+                            editor.commit();
 
-                    setResult(new Bundle());
+                            setResult(new Bundle());
 
-                } catch (Exception e) {
-                }
-                dismiss();
-            }
-        });
+                        } catch (Exception e) {
+                        }
+                        dismiss();
+                    }
+                });
         Button buttonCancel = findViewById(R.id.ButtonCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        buttonCancel.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                    }
+                });
     }
 }

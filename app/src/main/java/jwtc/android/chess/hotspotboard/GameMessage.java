@@ -18,7 +18,8 @@ public class GameMessage {
     public int lastMove;
     public String lastMovePgn;
 
-    public GameMessage(int type, String FEN, String white, String black, int lastMove, String lastMovePgn) {
+    public GameMessage(
+            int type, String FEN, String white, String black, int lastMove, String lastMovePgn) {
         this.type = type;
         this.FEN = FEN;
         this.white = white;

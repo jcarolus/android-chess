@@ -8,4 +8,7 @@ public interface ImportListener {
     void OnImportFinished(int mode);
 
     void OnImportFatalError(int mode);
+
+    /** A new request was rejected while the accepted job continues. */
+    default void OnImportRejected(int mode) {}
 }

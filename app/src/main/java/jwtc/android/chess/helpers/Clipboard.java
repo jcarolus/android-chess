@@ -8,7 +8,6 @@ public class Clipboard {
     private static ClipboardManager clipboardManager = null;
     private static ClipData clipData = null;
 
-
     public static void stringToClipboard(Context context, String s, String sToast) {
         initClipboardManager(context);
         clipData = ClipData.newPlainText("text", s);
@@ -27,7 +26,8 @@ public class Clipboard {
 
     private static void initClipboardManager(Context context) {
         if (clipboardManager == null) {
-            clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboardManager =
+                    (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         }
     }
 }

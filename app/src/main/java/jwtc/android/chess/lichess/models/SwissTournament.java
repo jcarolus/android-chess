@@ -13,7 +13,7 @@ public class SwissTournament {
     public Clock clock;
 
     public static class Clock {
-        public int limit;     // seconds
+        public int limit; // seconds
         public int increment; // seconds
     }
 

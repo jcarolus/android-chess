@@ -5,13 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import jwtc.android.chess.R;
 
 public class StartItemAdapter extends RecyclerView.Adapter<StartItemAdapter.TileVH> {
@@ -33,7 +30,9 @@ public class StartItemAdapter extends RecyclerView.Adapter<StartItemAdapter.Tile
     @NonNull
     @Override
     public TileVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.start_item, parent, false);
+        View v =
+                LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.start_item, parent, false);
         return new TileVH(v);
     }
 
@@ -67,9 +66,12 @@ public class StartItemAdapter extends RecyclerView.Adapter<StartItemAdapter.Tile
             title.setText(startItem.textResourceId);
             icon.setImageResource(startItem.iconResourceId);
 
-            itemView.setOnClickListener(v -> {
-                if (listener != null) listener.onTileClick(startItem, position);
-            });
+            itemView.setOnClickListener(
+                    v -> {
+                        if (listener != null) {
+                            listener.onTileClick(startItem, position);
+                        }
+                    });
         }
     }
 }

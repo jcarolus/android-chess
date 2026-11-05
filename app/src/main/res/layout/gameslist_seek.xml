@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="4dip"
+    android:layout_margin="@dimen/compact_control_gap"
     android:stretchColumns="1">
 
     <TableRow android:gravity="center">
@@ -11,7 +11,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonPrevious"
             app:icon="@drawable/ic_chevron_left"
-            android:contentDescription="Previous game"
+            android:contentDescription="@string/gameslist_previous_game_description"
             style="?attr/chessImageButtonStyle" />
 
         <SeekBar
@@ -29,7 +29,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonNext"
             app:icon="@drawable/ic_chevron_right"
-            android:contentDescription="Next game"
+            android:contentDescription="@string/gameslist_next_game_description"
             style="?attr/chessImageButtonStyle" />
     </TableRow>
 </TableLayout>

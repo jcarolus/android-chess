@@ -2,15 +2,9 @@ package jwtc.android.chess.views;
 
 import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
-
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.board.BoardConstants;
 
@@ -123,9 +117,7 @@ public class ChessBoardView extends ViewGroup {
         return null;
     }
 
-    /**
-     * Any layout manager that doesn't scroll will want this.
-     */
+    /** Any layout manager that doesn't scroll will want this. */
     @Override
     public boolean shouldDelayChildPressedState() {
         return false;
@@ -137,11 +129,12 @@ public class ChessBoardView extends ViewGroup {
     }
 
     public void layoutChild(View child) {
-        final int pos = child instanceof ChessSquareView
-            ? ((ChessSquareView) child).getPos()
-            : (child instanceof ChessPieceView
-            ? ((ChessPieceView) child).getPos()
-            : ((ChessPieceLabelView) child).getPos());
+        final int pos =
+                child instanceof ChessSquareView
+                        ? ((ChessSquareView) child).getPos()
+                        : (child instanceof ChessPieceView
+                                ? ((ChessPieceView) child).getPos()
+                                : ((ChessPieceLabelView) child).getPos());
 
         final int width = Math.min(getWidth(), getHeight()) / 8;
         // rotated
@@ -150,7 +143,11 @@ public class ChessBoardView extends ViewGroup {
         final int col = BoardConstants.COL[actualPos];
 
         if (child instanceof ChessPieceLabelView) {
-            child.layout(col * width + width / 2, row * width + width / 2, col * width + width - 4, row * width + width - 4);
+            child.layout(
+                    col * width + width / 2,
+                    row * width + width / 2,
+                    col * width + width - 4,
+                    row * width + width - 4);
         } else {
             child.layout(col * width, row * width, col * width + width, row * width + width);
         }
@@ -171,7 +168,9 @@ public class ChessBoardView extends ViewGroup {
     private boolean isPointInsideView(float x, float y, View view) {
         float tx = view.getTranslationX();
         float ty = view.getTranslationY();
-        return x >= view.getLeft() + tx && x <= view.getRight() + tx &&
-            y >= view.getTop() + ty && y <= view.getBottom() + ty;
+        return x >= view.getLeft() + tx
+                && x <= view.getRight() + tx
+                && y >= view.getTop() + ty
+                && y <= view.getBottom() + ty;
     }
 }

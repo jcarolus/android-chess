@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dip">
+    android:padding="@dimen/panel_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,11 +11,20 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/TextViewLastMove"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:accessibilityLiveRegion="assertive" />
+
+        <TextView
             android:id="@+id/TextStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/MyPaneTextStyle2Lines"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/board_control_gap"
             android:visibility="invisible" />
 
         <LinearLayout
@@ -29,7 +38,7 @@
                 android:id="@+id/ButtonConnect"
                 android:text="@string/hotspot_connect"
                 android:layout_width="wrap_content"
-                android:layout_margin="8dip"
+                android:layout_margin="@dimen/control_gap"
                 style="?attr/chessButtonStyle" />
         </LinearLayout>
 
@@ -47,8 +56,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="8dip"
-                android:layout_marginEnd="4dip" />
+                android:layout_marginStart="@dimen/control_gap"
+                android:layout_marginEnd="@dimen/board_control_gap" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonCopyIp"
@@ -56,6 +65,13 @@
                 android:contentDescription="@string/hotspot_copy_ip"
                 android:visibility="gone"
                 app:icon="@drawable/ic_clipboard" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonShareInvitation"
+                android:contentDescription="@string/share_invitation"
+                android:visibility="gone"
+                app:icon="@drawable/ic_share_fill"
+                style="?attr/chessImageButtonStyle" />
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDisconnect"
@@ -81,7 +97,7 @@
                 android:id="@+id/ButtonDraw"
                 android:text="@string/hotspot_draw"
                 android:layout_width="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/content_indent"
                 style="?attr/chessButtonStyle" />
         </LinearLayout>
 
@@ -89,7 +105,7 @@
             android:id="@+id/LayoutNewGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButtonToggleGroup
@@ -133,7 +149,7 @@
                 android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_sound"
                 android:checked="true" />
 
@@ -141,7 +157,7 @@
                 android:id="@+id/SwitchSpeech"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_speech"
                 android:checked="true" />
 
@@ -149,9 +165,29 @@
                 android:id="@+id/SwitchAccessibilityDrag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_accessibility_drag"
                 android:checked="false" />
         </com.google.android.flexbox.FlexboxLayout>
+
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:accessibilityLiveRegion="none" />
+
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

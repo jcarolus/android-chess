@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="@dimen/control_gap"
     android:clickable="true"
     android:focusable="true"
     app:cardCornerRadius="16dp"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:padding="8dp">
+        android:padding="@dimen/row_padding">
 
         <ImageView
             android:id="@+id/start_item_icon"
@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/start_item_title"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/compact_control_gap"
             android:textSize="16sp"
             android:textAlignment="center"
             android:gravity="center"

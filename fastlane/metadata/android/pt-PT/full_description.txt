@@ -5,7 +5,7 @@ JOGUE À SUA MANEIRA
 • Jogue offline contra o motor de xadrez integrado.
 • Ligue-se ao Lichess ou ao FICS para jogar online.
 • Crie ou aceite desafios no Lichess e continue as suas partidas em curso.
-• Escolha entre xadrez clássico, Xadrez960 ou o modo experimental Duck Chess.
+• Escolha entre xadrez clássico, Xadrez960 ou o modo Duck Chess.
 • Configure posições personalizadas diretamente no tabuleiro.
 
 TREINE E MELHORE

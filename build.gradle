@@ -6,6 +6,33 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.0.1'
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:8.1.0'
+    }
+}
+
+apply plugin: 'com.diffplug.spotless'
+apply plugin: 'checkstyle'
+
+spotless {
+    java {
+        target 'app/src/**/*.java'
+        googleJavaFormat('1.24.0').aosp()
+    }
+}
+
+checkstyle {
+    toolVersion = '10.21.2'
+    configFile = file('config/checkstyle/checkstyle.xml')
+}
+
+tasks.register('checkJavaBraces', Checkstyle) {
+    description = 'Checks braces in all Java sources, including tests and both flavors.'
+    group = 'verification'
+    source fileTree('app/src') { include '**/*.java' }
+    classpath = files()
+    reports {
+        xml.required = true
+        html.required = true
     }
 }
 

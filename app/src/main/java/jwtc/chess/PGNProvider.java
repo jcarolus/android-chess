@@ -1,8 +1,5 @@
 package jwtc.chess;
 
-import java.util.Calendar;
-import java.util.HashMap;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -17,8 +14,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-
-import jwtc.android.chess.services.GameApi;
+import java.util.Calendar;
+import java.util.HashMap;
 
 public class PGNProvider extends ContentProvider {
 
@@ -38,9 +35,7 @@ public class PGNProvider extends ContentProvider {
 
     protected static UriMatcher sUriMatcher;
 
-    /**
-     * This class helps open, create, and upgrade the database file.
-     */
+    /** This class helps open, create, and upgrade the database file. */
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
         DatabaseHelper(Context context) {
@@ -53,9 +48,8 @@ public class PGNProvider extends ContentProvider {
                 Log.d(TAG, "Database version " + i);
             }
 
-//            SQLiteDatabase db = getWritableDatabase();
-//            db.execSQL("PRAGMA user_version = " + 1);
-
+            //            SQLiteDatabase db = getWritableDatabase();
+            //            db.execSQL("PRAGMA user_version = " + 1);
 
         }
 
@@ -63,29 +57,80 @@ public class PGNProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             Log.d(TAG, "DatabaseHelper.onCreate");
 
-            db.execSQL("CREATE TABLE " + GAMES_TABLE_NAME + " ("
-                + PGNColumns._ID + " INTEGER PRIMARY KEY,"
-                + PGNColumns.WHITE + " TEXT,"
-                + PGNColumns.BLACK + " TEXT,"
-                + PGNColumns.PGN + " TEXT,"
-                + PGNColumns.DATE + " INTEGER,"
-                + PGNColumns.RATING + " REAL,"
-                + PGNColumns.EVENT + " TEXT,"
-                + PGNColumns.RESULT + " TEXT"
-                + ");");
-            db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_result  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.RESULT + ")");
-            db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_black  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.BLACK + ")");
-            db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_white  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.WHITE + ")");
-            db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_event  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.EVENT + ")");
+            db.execSQL(
+                    "CREATE TABLE "
+                            + GAMES_TABLE_NAME
+                            + " ("
+                            + PGNColumns._ID
+                            + " INTEGER PRIMARY KEY,"
+                            + PGNColumns.WHITE
+                            + " TEXT,"
+                            + PGNColumns.BLACK
+                            + " TEXT,"
+                            + PGNColumns.PGN
+                            + " TEXT,"
+                            + PGNColumns.DATE
+                            + " INTEGER,"
+                            + PGNColumns.RATING
+                            + " REAL,"
+                            + PGNColumns.EVENT
+                            + " TEXT,"
+                            + PGNColumns.RESULT
+                            + " TEXT"
+                            + ");");
+            db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS idx_games_table_result  ON "
+                            + GAMES_TABLE_NAME
+                            + "("
+                            + PGNColumns.RESULT
+                            + ")");
+            db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS idx_games_table_black  ON "
+                            + GAMES_TABLE_NAME
+                            + "("
+                            + PGNColumns.BLACK
+                            + ")");
+            db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS idx_games_table_white  ON "
+                            + GAMES_TABLE_NAME
+                            + "("
+                            + PGNColumns.WHITE
+                            + ")");
+            db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS idx_games_table_event  ON "
+                            + GAMES_TABLE_NAME
+                            + "("
+                            + PGNColumns.EVENT
+                            + ")");
 
-            String sPGN = "1. Nf3 Nf6 2. c4 g6 3. Nc3 Bg7 4. d4 O-O 5. Bf4 d5 6. Qb3 dxc4 7. Qxc4 c6 8. e4 Nbd7 9. Rd1 Nb6 10. Qc5 Bg4 11. Bg5 Na4 12. Qa3 Nxc3 13. bxc3 Nxe4 14. Bxe7 Qb6 15. Bc4 Nxc3 16. Bc5 Rfe8+ 17. Kf1 Be6 18. Bxb6 Bxc4+ 19. Kg1 Ne2+ 20. Kf1 Nxd4+ 21. Kg1 Ne2+ 22. Kf1 Nc3+ 23. Kg1 axb6 24. Qb4 Ra4 25. Qxb6 Nxd1 26. h3 Rxa2 27. Kh2 Nxf2 28. Re1 Rxe1 29. Qd8+ Bf8 30. Nxe1 Bd5 31. Nf3 Ne4 32. Qb8 b5 33. h4 h5 34. Ne5 Kg7 35. Kg1 Bc5+ 36. Kf1 Ng3+ 37. Ke1 Bb4+ 38. Kd1 Bb3+ 39. Kc1 Ne2+ 40. Kb1 Nc3+ 41. Kc1 Rc2# 0-1";
+            String sPGN =
+                    "1. Nf3 Nf6 2. c4 g6 3. Nc3 Bg7 4. d4 O-O 5. Bf4 d5 6. Qb3 dxc4 7. Qxc4 c6 8. e4 Nbd7 9. Rd1 Nb6 10. Qc5 Bg4 11. Bg5 Na4 12. Qa3 Nxc3 13. bxc3 Nxe4 14. Bxe7 Qb6 15. Bc4 Nxc3 16. Bc5 Rfe8+ 17. Kf1 Be6 18. Bxb6 Bxc4+ 19. Kg1 Ne2+ 20. Kf1 Nxd4+ 21. Kg1 Ne2+ 22. Kf1 Nc3+ 23. Kg1 axb6 24. Qb4 Ra4 25. Qxb6 Nxd1 26. h3 Rxa2 27. Kh2 Nxf2 28. Re1 Rxe1 29. Qd8+ Bf8 30. Nxe1 Bd5 31. Nf3 Ne4 32. Qb8 b5 33. h4 h5 34. Ne5 Kg7 35. Kg1 Bc5+ 36. Kf1 Ng3+ 37. Ke1 Bb4+ 38. Kd1 Bb3+ 39. Kc1 Ne2+ 40. Kb1 Nc3+ 41. Kc1 Rc2# 0-1";
             Calendar c = Calendar.getInstance();
             c.set(1956, 10, 17);
             String sDate = "" + c.getTimeInMillis();
-            db.execSQL("INSERT INTO "
-                + GAMES_TABLE_NAME
-                + " (" + PGNColumns.WHITE + ", " + PGNColumns.BLACK + ", " + PGNColumns.PGN + ", " + PGNColumns.DATE + ", " + PGNColumns.RATING + ", " + PGNColumns.EVENT + ", " + PGNColumns.RESULT + ")"
-                + " VALUES ('Donald Byrne', 'Robert James Fischer', '" + sPGN + "', " + sDate + ", 5.0, 'Great game', '0-1');");
+            db.execSQL(
+                    "INSERT INTO "
+                            + GAMES_TABLE_NAME
+                            + " ("
+                            + PGNColumns.WHITE
+                            + ", "
+                            + PGNColumns.BLACK
+                            + ", "
+                            + PGNColumns.PGN
+                            + ", "
+                            + PGNColumns.DATE
+                            + ", "
+                            + PGNColumns.RATING
+                            + ", "
+                            + PGNColumns.EVENT
+                            + ", "
+                            + PGNColumns.RESULT
+                            + ")"
+                            + " VALUES ('Donald Byrne', 'Robert James Fischer', '"
+                            + sPGN
+                            + "', "
+                            + sDate
+                            + ", 5.0, 'Great game', '0-1');");
         }
 
         @Override
@@ -130,20 +175,27 @@ public class PGNProvider extends ContentProvider {
 
             try {
                 if (!hasColumn(db, GAMES_TABLE_NAME, PGNColumns.RESULT)) {
-                    db.execSQL("ALTER TABLE " + GAMES_TABLE_NAME + " ADD COLUMN " + PGNColumns.RESULT + " TEXT");
+                    db.execSQL(
+                            "ALTER TABLE "
+                                    + GAMES_TABLE_NAME
+                                    + " ADD COLUMN "
+                                    + PGNColumns.RESULT
+                                    + " TEXT");
                 }
 
-                c = db.query(
-                    GAMES_TABLE_NAME,
-                    new String[]{PGNColumns._ID, PGNColumns.PGN},
-                    null, null, null, null,
-                    null
-                );
+                c =
+                        db.query(
+                                GAMES_TABLE_NAME,
+                                new String[] {PGNColumns._ID, PGNColumns.PGN},
+                                null,
+                                null,
+                                null,
+                                null,
+                                null);
 
                 final int idIndex = c.getColumnIndexOrThrow(PGNColumns._ID);
                 final int pgnIndex = c.getColumnIndexOrThrow(PGNColumns.PGN);
 
-                HashMap<String, String> pgnTags = new HashMap<>();
                 ContentValues contentValues = new ContentValues();
 
                 while (c.moveToNext()) {
@@ -152,22 +204,45 @@ public class PGNProvider extends ContentProvider {
                     try {
                         String sPGN = c.isNull(pgnIndex) ? null : c.getString(pgnIndex);
 
-                        GameApi.loadPGNHead(sPGN, pgnTags);
-                        String result = pgnTags.get("Result");
+                        String result = Pgn.readTags(sPGN).get("Result");
 
                         contentValues.clear();
                         contentValues.put(PGNColumns.RESULT, result);
 
-                        db.update(GAMES_TABLE_NAME, contentValues, PGNColumns._ID + " = ?", new String[]{Long.toString(id)});
+                        db.update(
+                                GAMES_TABLE_NAME,
+                                contentValues,
+                                PGNColumns._ID + " = ?",
+                                new String[] {Long.toString(id)});
                     } catch (Exception ex) {
                         Log.d(TAG, "Failed to update row for result " + ex.getMessage());
                     }
                 }
 
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_result  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.RESULT + ")");
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_black  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.BLACK + ")");
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_white  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.WHITE + ")");
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_event  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.EVENT + ")");
+                db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS idx_games_table_result  ON "
+                                + GAMES_TABLE_NAME
+                                + "("
+                                + PGNColumns.RESULT
+                                + ")");
+                db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS idx_games_table_black  ON "
+                                + GAMES_TABLE_NAME
+                                + "("
+                                + PGNColumns.BLACK
+                                + ")");
+                db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS idx_games_table_white  ON "
+                                + GAMES_TABLE_NAME
+                                + "("
+                                + PGNColumns.WHITE
+                                + ")");
+                db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS idx_games_table_event  ON "
+                                + GAMES_TABLE_NAME
+                                + "("
+                                + PGNColumns.EVENT
+                                + ")");
 
                 db.setTransactionSuccessful();
 
@@ -196,7 +271,12 @@ public class PGNProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(
+            Uri uri,
+            String[] projection,
+            String selection,
+            String[] selectionArgs,
+            String sortOrder) {
         Log.d(TAG, "query " + uri);
 
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
@@ -309,8 +389,14 @@ public class PGNProvider extends ContentProvider {
 
             case GAMES_ID:
                 String gameId = uri.getPathSegments().get(1);
-                count = db.delete(GAMES_TABLE_NAME, PGNColumns._ID + "=" + gameId
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                count =
+                        db.delete(
+                                GAMES_TABLE_NAME,
+                                PGNColumns._ID
+                                        + "="
+                                        + gameId
+                                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+                                whereArgs);
                 break;
 
             default:
@@ -333,8 +419,15 @@ public class PGNProvider extends ContentProvider {
 
             case GAMES_ID:
                 String gameId = uri.getPathSegments().get(1);
-                count = db.update(GAMES_TABLE_NAME, values, PGNColumns._ID + "=" + gameId
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                count =
+                        db.update(
+                                GAMES_TABLE_NAME,
+                                values,
+                                PGNColumns._ID
+                                        + "="
+                                        + gameId
+                                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+                                whereArgs);
                 break;
 
             default:

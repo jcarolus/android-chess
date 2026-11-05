@@ -17,28 +17,28 @@
             <jwtc.android.chess.views.ChessPiecesStackView
                 android:layout_width="wrap_content"
                 android:layout_height="48dip"
-                android:layout_marginTop="4dip"
+                android:layout_marginTop="@dimen/board_control_gap"
                 android:id="@+id/blackPieces" />
 
             <jwtc.android.chess.views.ChessPiecesStackView
                 android:layout_width="wrap_content"
                 android:layout_height="48dip"
-                android:layout_marginTop="4dip"
-                android:layout_marginStart="16dip"
-                android:layout_marginEnd="4dip"
+                android:layout_marginTop="@dimen/board_control_gap"
+                android:layout_marginStart="@dimen/content_indent"
+                android:layout_marginEnd="@dimen/board_control_gap"
                 android:id="@+id/duckStack" />
         </LinearLayout>
 
         <jwtc.android.chess.views.ChessPiecesStackView
             android:layout_width="wrap_content"
             android:layout_height="48dip"
-            android:layout_marginTop="4dip"
+            android:layout_marginTop="@dimen/board_control_gap"
             android:id="@+id/whitePieces" />
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="4dip"
+            android:padding="@dimen/control_padding"
             app:flexDirection="row"
             app:flexWrap="wrap"
             app:alignItems="center">
@@ -73,7 +73,7 @@
                 android:id="@+id/SpinnerOptionsEnPassant"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dip"
+                android:layout_marginStart="@dimen/board_control_gap"
                 android:hint="@string/msg_setup_enpassant" />
         </com.google.android.flexbox.FlexboxLayout>
 
@@ -135,7 +135,7 @@
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="4dip"
+            android:padding="@dimen/control_padding"
             app:flexDirection="row"
             app:flexWrap="wrap"
             app:justifyContent="flex_end"
@@ -166,6 +166,12 @@
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsAnalyse"
+                android:text="@string/gameslist_analyze"
+                android:layout_width="wrap_content"
+                style="?attr/chessButtonStyle" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSetupOptionsOk"
                 android:text="@string/button_ok"
                 android:layout_width="wrap_content"
@@ -177,9 +183,9 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -187,9 +193,9 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

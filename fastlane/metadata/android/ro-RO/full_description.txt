@@ -5,7 +5,7 @@ JOACĂ AȘA CUM VREI
 • Joacă offline împotriva motorului de șah integrat.
 • Conectează-te la Lichess sau FICS pentru partide online.
 • Creează sau acceptă provocări Lichess și continuă partidele aflate în desfășurare.
-• Alege între șah standard, Șah960 sau varianta experimentală Duck Chess.
+• Alege între șah standard, Șah960 sau varianta Duck Chess.
 • Configurează poziții personalizate direct pe tablă.
 
 ANTRENEAZĂ-TE ȘI PROGRESEAZĂ

@@ -5,7 +5,7 @@ JUEGA A TU MANERA
 • Juega sin conexión contra el motor de ajedrez integrado.
 • Conéctate a Lichess o FICS para jugar partidas en línea.
 • Crea o acepta desafíos de Lichess y continúa tus partidas en curso.
-• Elige entre ajedrez estándar, Ajedrez960 o el modo experimental Duck Chess.
+• Elige entre ajedrez estándar, Ajedrez960 o el modo Duck Chess.
 • Configura posiciones personalizadas directamente en el tablero.
 
 ENTRENA Y MEJORA

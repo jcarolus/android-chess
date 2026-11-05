@@ -5,7 +5,7 @@ PLAY YOUR WAY
 • Play offline against the built-in chess engine.
 • Connect to Lichess or FICS for online games.
 • Create or accept Lichess challenges and continue your ongoing games.
-• Choose standard chess, Chess960, or experimental Duck Chess.
+• Choose standard chess, Chess960, or Duck Chess.
 • Set up custom positions directly on the board.
 
 TRAIN AND IMPROVE

@@ -10,5 +10,5 @@
         android:layout_height="24dip"
         android:layout_width="24dip"
         android:layout_alignParentEnd="true"
-        android:layout_margin="4dip" />
+        android:layout_margin="@dimen/board_control_gap" />
 </RelativeLayout>

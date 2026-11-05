@@ -62,7 +62,8 @@ public class Pos {
         return "" + ((char) (Pos.col(val) + (int) 'a')) + "" + (8 - Pos.row(val));
     }
 
-    // returns string representation of the row of val - human represented so from bottom to top ["1"-"8"]
+    // returns string representation of the row of val - human represented so from bottom to top
+    // ["1"-"8"]
     public static String rowToString(final int val) {
         return "" + (8 - Pos.row(val));
     }
@@ -73,6 +74,8 @@ public class Pos {
     }
 
     public static int getFieldColor(final int pos) {
-        return (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? BoardConstants.WHITE : BoardConstants.BLACK) : (((pos >> 3) & 1) == 0 ? BoardConstants.BLACK : BoardConstants.WHITE);
+        return (pos & 1) == 0
+                ? (((pos >> 3) & 1) == 0 ? BoardConstants.WHITE : BoardConstants.BLACK)
+                : (((pos >> 3) & 1) == 0 ? BoardConstants.BLACK : BoardConstants.WHITE);
     }
 }

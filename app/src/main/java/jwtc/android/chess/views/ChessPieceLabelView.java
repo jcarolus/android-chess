@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.TypedValue;
 import android.view.Gravity;
-
 import androidx.appcompat.widget.AppCompatTextView;
-
 import jwtc.android.chess.R;
 import jwtc.chess.board.BoardConstants;
 
@@ -18,9 +16,8 @@ public class ChessPieceLabelView extends AppCompatTextView {
     public static final String CHECK = "+";
     public static final String DRAW = "½";
     public static final String DRAW_50 = "50";
-    public static final String CORRECT = "✓"; //"✓";
-    public static final String WRONG = "✕"; //"✖";
-
+    public static final String CORRECT = "✓"; // "✓";
+    public static final String WRONG = "✕"; // "✖";
 
     public ChessPieceLabelView(Context context, int position, int color, String label) {
         super(context);

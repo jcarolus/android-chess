@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingTop="8dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="8dp">
+    android:paddingStart="@dimen/dialog_padding"
+    android:paddingTop="@dimen/panel_padding"
+    android:paddingEnd="@dimen/dialog_padding"
+    android:paddingBottom="@dimen/panel_padding">
 
     <View
         android:id="@+id/ColorPreview"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="@dimen/control_gap" />
 
     <TextView
         android:layout_width="match_parent"

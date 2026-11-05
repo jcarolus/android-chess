@@ -9,9 +9,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
 import android.util.Log;
-
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,10 +69,14 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         int result = textToSpeech.setLanguage(selectedLocale);
 
         String selectedVoiceName = prefs.getString("speechVoice", null);
-        if (selectedVoiceName != null && !selectedVoiceName.isEmpty() && setVoiceByName(selectedVoiceName)) {
+        if (selectedVoiceName != null
+                && !selectedVoiceName.isEmpty()
+                && setVoiceByName(selectedVoiceName)) {
             result = TextToSpeech.SUCCESS;
         }
-        ready = result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED;
+        ready =
+                result != TextToSpeech.LANG_MISSING_DATA
+                        && result != TextToSpeech.LANG_NOT_SUPPORTED;
 
         return result;
     }
@@ -170,14 +172,15 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             if (voice == null || voice.getLocale() == null) {
                 continue;
             }
-            if (isLocaleSupported(voice.getLocale()) && isSupportedByAppLocales(voice.getLocale())) {
+            if (isLocaleSupported(voice.getLocale())
+                    && isSupportedByAppLocales(voice.getLocale())) {
                 filteredVoices.add(voice);
             }
         }
 
-        filteredVoices.sort(Comparator
-                .comparing((Voice voice) -> voice.getLocale().toLanguageTag())
-                .thenComparing(Voice::getName));
+        filteredVoices.sort(
+                Comparator.comparing((Voice voice) -> voice.getLocale().toLanguageTag())
+                        .thenComparing(Voice::getName));
         return filteredVoices;
     }
 
@@ -282,8 +285,9 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         lastInitStatus = status;
         if (status == TextToSpeech.SUCCESS) {
             lastLanguageStatus = setDefaults();
-            ready = lastLanguageStatus != TextToSpeech.LANG_MISSING_DATA
-                && lastLanguageStatus != TextToSpeech.LANG_NOT_SUPPORTED;
+            ready =
+                    lastLanguageStatus != TextToSpeech.LANG_MISSING_DATA
+                            && lastLanguageStatus != TextToSpeech.LANG_NOT_SUPPORTED;
         } else {
             lastLanguageStatus = TextToSpeech.LANG_NOT_SUPPORTED;
             ready = false;
@@ -360,31 +364,31 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         } else {
             textToSpeech = new TextToSpeech(context, this, enginePackage);
         }
-        textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-            @Override
-            public void onStart(String utteranceId) {
-            }
+        textToSpeech.setOnUtteranceProgressListener(
+                new UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {}
 
-            @Override
-            public void onDone(String utteranceId) {
-                synchronized (speechStateLock) {
-                    lastMoveSpeechQueue.finish(utteranceId);
-                }
-            }
+                    @Override
+                    public void onDone(String utteranceId) {
+                        synchronized (speechStateLock) {
+                            lastMoveSpeechQueue.finish(utteranceId);
+                        }
+                    }
 
-            @Override
-            public void onError(String utteranceId) {
-                synchronized (speechStateLock) {
-                    lastMoveSpeechQueue.finish(utteranceId);
-                }
-            }
+                    @Override
+                    public void onError(String utteranceId) {
+                        synchronized (speechStateLock) {
+                            lastMoveSpeechQueue.finish(utteranceId);
+                        }
+                    }
 
-            @Override
-            public void onStop(String utteranceId, boolean interrupted) {
-                synchronized (speechStateLock) {
-                    lastMoveSpeechQueue.finish(utteranceId);
-                }
-            }
-        });
+                    @Override
+                    public void onStop(String utteranceId, boolean interrupted) {
+                        synchronized (speechStateLock) {
+                            lastMoveSpeechQueue.finish(utteranceId);
+                        }
+                    }
+                });
     }
 }

@@ -1,12 +1,5 @@
 package jwtc.android.chess.ics;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import jwtc.android.chess.R;
-import jwtc.android.chess.activities.BaseActivity;
-import jwtc.android.chess.helpers.ActivityHelper;
-
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,26 +8,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
-
 import androidx.appcompat.app.AlertDialog;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import jwtc.android.chess.R;
+import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class CustomCommands extends BaseActivity implements OnItemClickListener {
 
     public static final String TAG = "CustomCommands";
-    public static final String DEFAULT_COMMANDS = "[" +
-        "\"tell relay listgames\"," +
-        "\"tell endgamebot kbnk\"," +
-        "\"tell endgamebot help\"," +
-        "\"exl\"," +
-        "\"help commands\"" +
-        "]";
+    public static final String DEFAULT_COMMANDS =
+            "["
+                    + "\"tell relay listgames\","
+                    + "\"tell endgamebot kbnk\","
+                    + "\"tell endgamebot help\","
+                    + "\"exl\","
+                    + "\"help commands\""
+                    + "]";
 
     private ListView _listCommands;
     ArrayAdapter<String> _adapter;
@@ -48,55 +45,62 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(getString(R.string.title_edit_or_delete));
 
-        builder.setPositiveButton(getString(R.string.choice_edit), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setPositiveButton(
+                getString(R.string.choice_edit),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                final FrameLayout fl = new FrameLayout(CustomCommands.this);
-                final EditText input = new EditText(CustomCommands.this);
-                input.setText(_adapter.getItem(position));
-                input.setGravity(Gravity.CENTER);
+                        final FrameLayout fl = new FrameLayout(CustomCommands.this);
+                        final EditText input = new EditText(CustomCommands.this);
+                        input.setText(_adapter.getItem(position));
+                        input.setGravity(Gravity.CENTER);
 
-                fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+                        fl.addView(
+                                input,
+                                new FrameLayout.LayoutParams(
+                                        FrameLayout.LayoutParams.MATCH_PARENT,
+                                        FrameLayout.LayoutParams.WRAP_CONTENT));
 
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(CustomCommands.this)
-                    .setView(fl)
-                    .setTitle(getString(R.string.title_edit_command))
-                    .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            String s = input.getText().toString();
+                        MaterialAlertDialogBuilder builder =
+                                new MaterialAlertDialogBuilder(CustomCommands.this)
+                                        .setView(fl)
+                                        .setTitle(getString(R.string.title_edit_command))
+                                        .setPositiveButton(
+                                                R.string.button_ok,
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(
+                                                            DialogInterface dialog, int which) {
+                                                        String s = input.getText().toString();
 
-                            _adapter.remove(_adapter.getItem(position));
-                            _adapter.insert(s, position);
+                                                        _adapter.remove(_adapter.getItem(position));
+                                                        _adapter.insert(s, position);
 
-                            _listCommands.invalidateViews();
+                                                        _listCommands.invalidateViews();
 
-                            dialog.dismiss();
-                        }
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
 
-                    });
-                AlertDialog alert = builder.create();
-                alert.show();
+                        dialog.dismiss();
+                    }
+                });
 
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(
+                getString(R.string.choice_delete),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-        });
-
-        builder.setNegativeButton(getString(R.string.choice_delete), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
-                _adapter.remove(_adapter.getItem(position));
-                _listCommands.invalidateViews();
-                dialog.dismiss();
-
-            }
-        });
+                        _adapter.remove(_adapter.getItem(position));
+                        _listCommands.invalidateViews();
+                        dialog.dismiss();
+                    }
+                });
 
         AlertDialog alert = builder.create();
         alert.show();
-
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +124,8 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
         _adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 
         try {
-            JSONArray jArray = new JSONArray(prefs.getString("ics_custom_commands", DEFAULT_COMMANDS));
+            JSONArray jArray =
+                    new JSONArray(prefs.getString("ics_custom_commands", DEFAULT_COMMANDS));
             for (int i = 0; i < jArray.length(); i++) {
                 _adapter.add(jArray.getString(i));
             }
@@ -131,7 +136,6 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
 
         _listCommands.setAdapter(_adapter);
     }
-
 
     @Override
     protected void onPause() {
@@ -171,20 +175,27 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
             input.setGravity(Gravity.CENTER);
             input.setSingleLine();
 
-            fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+            fl.addView(
+                    input,
+                    new FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT));
 
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                .setView(fl)
-                .setTitle(R.string.menu_new_command)
-                .setMessage(R.string.menu_new_command_message)
-                .setPositiveButton(R.string.button_ok, (dialog, which) -> {
-                    String s = input.getText().toString();
+            MaterialAlertDialogBuilder builder =
+                    new MaterialAlertDialogBuilder(this)
+                            .setView(fl)
+                            .setTitle(R.string.menu_new_command)
+                            .setMessage(R.string.menu_new_command_message)
+                            .setPositiveButton(
+                                    R.string.button_ok,
+                                    (dialog, which) -> {
+                                        String s = input.getText().toString();
 
-                    _adapter.add(s);
-                    _listCommands.invalidateViews();
+                                        _adapter.add(s);
+                                        _listCommands.invalidateViews();
 
-                    dialog.dismiss();
-                });
+                                        dialog.dismiss();
+                                    });
             AlertDialog alert = builder.create();
             alert.show();
 
@@ -193,5 +204,4 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
 
         return super.onOptionsItemSelected(item);
     }
-
 }

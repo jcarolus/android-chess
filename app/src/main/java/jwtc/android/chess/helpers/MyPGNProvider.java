@@ -2,7 +2,6 @@ package jwtc.android.chess.helpers;
 
 import android.content.UriMatcher;
 import android.net.Uri;
-
 import jwtc.chess.PGNProvider;
 
 public class MyPGNProvider extends PGNProvider {

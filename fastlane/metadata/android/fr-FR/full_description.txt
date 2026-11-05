@@ -5,7 +5,7 @@ JOUEZ À VOTRE FAÇON
 • Jouez hors ligne contre le moteur d'échecs intégré.
 • Connectez-vous à Lichess ou à FICS pour jouer en ligne.
 • Créez ou acceptez des défis Lichess et reprenez vos parties en cours.
-• Choisissez les échecs classiques, les échecs960 ou Duck Chess en version expérimentale.
+• Choisissez les échecs classiques, les échecs960 ou Duck Chess.
 • Configurez des positions personnalisées directement sur l'échiquier.
 
 ENTRAÎNEZ-VOUS ET PROGRESSEZ

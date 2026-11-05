@@ -16,10 +16,9 @@ public class GameFull {
     public Clock clock;
     public int daysPerTurn;
 
-    public String type;  // will be "gameFull"
+    public String type; // will be "gameFull"
 
     public GameState state;
 
     public String winner; // "white" "black"
 }
-

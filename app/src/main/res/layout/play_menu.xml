@@ -8,6 +8,5 @@
         android:id="@+id/ListMenu"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:drawSelectorOnTop="false"
-        android:entries="@array/play_menu" />
+        android:drawSelectorOnTop="false" />
 </RelativeLayout>

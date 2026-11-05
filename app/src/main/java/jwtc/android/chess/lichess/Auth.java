@@ -7,17 +7,15 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
+import jwtc.android.chess.helpers.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -30,7 +28,15 @@ public class Auth {
     private static final String TAG = "lichess.Auth";
     private static final String LICHESS_HOST = "https://lichess.org";
     private static final String CLIENT_ID = "lichess-api-demo"; // "lichess-android-client";
-    private static final String[] SCOPES = new String[]{"board:play", "puzzle:read", "puzzle:write", "tournament:write", "team:write"};
+    private static final String[] SCOPES =
+            new String[] {
+                "board:play",
+                "puzzle:read",
+                "puzzle:write",
+                "tournament:write",
+                "team:read",
+                "team:write"
+            };
     private static final String PREFS_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
@@ -39,16 +45,21 @@ public class Auth {
     private final Context context;
     private final OAuth2AuthCodePKCE oauth;
     private final OkHttpClient httpClient = new OkHttpClient();
-    private final OkHttpClient httpStreamClient = new OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(0, TimeUnit.MILLISECONDS) // infinite timeout
-        .build();
+    private final OkHttpClient httpStreamClient =
+            new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(0, TimeUnit.MILLISECONDS) // infinite timeout
+                    .build();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    NdJsonStream.Stream eventStream, gameStream, challengeStream, seekStream, swissListStream, swissResultsStream;
+    NdJsonStream.Stream eventStream,
+            gameStream,
+            challengeStream,
+            seekStream,
+            swissListStream,
+            swissResultsStream;
     private String accessToken, refreshToken;
     Long expiresAt;
-
 
     public interface AuthResponseHandler {
         void onResponse(JsonObject jsonObject);
@@ -58,15 +69,16 @@ public class Auth {
 
     public Auth(Context context) {
         this.context = context;
-        String redirectUri = "jwtc.android.chess:/oauth2redirect"; // match Android manifest intent filter
-        this.oauth = new OAuth2AuthCodePKCE(
-            context,
-            LICHESS_HOST + "/oauth",
-            LICHESS_HOST + "/api/token",
-            CLIENT_ID,
-            redirectUri,
-            SCOPES
-        );
+        String redirectUri =
+                "jwtc.android.chess:/oauth2redirect"; // match Android manifest intent filter
+        this.oauth =
+                new OAuth2AuthCodePKCE(
+                        context,
+                        LICHESS_HOST + "/oauth",
+                        LICHESS_HOST + "/api/token",
+                        CLIENT_ID,
+                        redirectUri,
+                        SCOPES);
     }
 
     public void login(Activity activity) {
@@ -81,49 +93,56 @@ public class Auth {
 
     public void authenticateWithToken(OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
         // Already logged in, authenticate silently
-        authenticate(new OAuth2AuthCodePKCE.Callback<String, Exception>() {
-            @Override
-            public void onSuccess(String result) {
-                Log.d("Auth", "Restored session for " + result);
-                mainHandler.post(() -> {
-                    callback.onSuccess(result);
-                });
-            }
+        authenticate(
+                new OAuth2AuthCodePKCE.Callback<String, Exception>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.d("Auth", "Restored session for " + result);
+                        mainHandler.post(
+                                () -> {
+                                    callback.onSuccess(result);
+                                });
+                    }
 
-            @Override
-            public void onError(Exception e) {
-                Log.w("Auth", "Failed to restore session", e);
-                mainHandler.post(() -> {
-                    callback.onError(e);
+                    @Override
+                    public void onError(Exception e) {
+                        Log.w("Auth", "Failed to restore session", e);
+                        mainHandler.post(
+                                () -> {
+                                    callback.onError(e);
+                                });
+                    }
                 });
-            }
-        });
     }
 
-    public void handleLoginResponse(Intent data, OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
+    public void handleLoginResponse(
+            Intent data, OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
         Log.d(TAG, "handleLoginResponse");
 
-        oauth.handleAuthResponse(data, new OAuth2AuthCodePKCE.Callback<net.openid.appauth.TokenResponse, Exception>() {
-            @Override
-            public void onSuccess(net.openid.appauth.TokenResponse result) {
-                Log.d(TAG, "handleLoginResponse.onSuccess");
+        oauth.handleAuthResponse(
+                data,
+                new OAuth2AuthCodePKCE.Callback<net.openid.appauth.TokenResponse, Exception>() {
+                    @Override
+                    public void onSuccess(net.openid.appauth.TokenResponse result) {
+                        Log.d(TAG, "handleLoginResponse.onSuccess");
 
-                accessToken = result.accessToken;
-                refreshToken = result.refreshToken;
-                expiresAt = result.accessTokenExpirationTime;
+                        accessToken = result.accessToken;
+                        refreshToken = result.refreshToken;
+                        expiresAt = result.accessTokenExpirationTime;
 
-                saveTokens();
+                        saveTokens();
 
-                authenticate(callback);
-            }
+                        authenticate(callback);
+                    }
 
-            @Override
-            public void onError(Exception e) {
-                mainHandler.post(() -> {
-                    callback.onError(e);
+                    @Override
+                    public void onError(Exception e) {
+                        mainHandler.post(
+                                () -> {
+                                    callback.onError(e);
+                                });
+                    }
                 });
-            }
-        });
     }
 
     public void playing(OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
@@ -131,51 +150,86 @@ public class Auth {
     }
 
     public void challenge(Map<String, Object> payload, AuthResponseHandler responseHandler) {
-        String username = (String) payload.get("username");
+        Object usernameValue = payload.get("username");
+        String username =
+                usernameValue instanceof String
+                        ? Utils.getTrimmedOrNull((String) usernameValue)
+                        : null;
+        if (username == null) {
+            mainHandler.post(() -> responseHandler.onClose(false));
+            return;
+        }
         payload.remove("username");
         payload.put("keepAliveStream", true);
 
         if (challengeStream != null) {
             challengeStream.close();
         }
-        challengeStream = openStream("/api/challenge/" + username, payload, new NdJsonStream.Handler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                mainHandler.post(() -> {
-                    responseHandler.onResponse(jsonObject);
-                });
-            }
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
+                openStream(
+                        "/api/challenge/" + username,
+                        payload,
+                        new NdJsonStream.Handler() {
+                            @Override
+                            public void onResponse(JsonObject jsonObject) {
+                                mainHandler.post(
+                                        () -> {
+                                            responseHandler.onResponse(jsonObject);
+                                        });
+                            }
 
-            @Override
-            public void onClose(boolean success) {
-                mainHandler.post(() -> {
-                    responseHandler.onClose(success);
-                    challengeStream = null;
-                });
-            }
-        });
+                            @Override
+                            public void onClose(boolean success) {
+                                mainHandler.post(
+                                        () -> {
+                                            if (challengeStream != null
+                                                    && challengeStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
+                                            challengeStream = null;
+                                            responseHandler.onClose(success);
+                                        });
+                            }
+                        });
+        challengeStream = self[0];
     }
 
     public void seek(Map<String, Object> payload, AuthResponseHandler responseHandler) {
         if (seekStream != null) {
             seekStream.close();
         }
-        seekStream = openStream("/api/board/seek", payload, new NdJsonStream.Handler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                mainHandler.post(() -> {
-                    responseHandler.onResponse(jsonObject);
-                });
-            }
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
+                openStream(
+                        "/api/board/seek",
+                        payload,
+                        new NdJsonStream.Handler() {
+                            @Override
+                            public void onResponse(JsonObject jsonObject) {
+                                mainHandler.post(
+                                        () -> {
+                                            responseHandler.onResponse(jsonObject);
+                                        });
+                            }
 
-            @Override
-            public void onClose(boolean success) {
-                mainHandler.post(() -> {
-                    responseHandler.onClose(success);
-                    seekStream = null;
-                });
-            }
-        });
+                            @Override
+                            public void onClose(boolean success) {
+                                mainHandler.post(
+                                        () -> {
+                                            if (seekStream != null && seekStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
+                                            seekStream = null;
+                                            responseHandler.onClose(success);
+                                        });
+                            }
+                        });
+        seekStream = self[0];
     }
 
     public void cancelChallenge() {
@@ -192,11 +246,13 @@ public class Auth {
         }
     }
 
-    public void acceptChallenge(String challengeId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void acceptChallenge(
+            String challengeId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         post("/api/challenge/" + challengeId + "/accept", null, callback);
     }
 
-    public void declineChallenge(String challengeId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void declineChallenge(
+            String challengeId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         post("/api/challenge/" + challengeId + "/decline", null, callback);
     }
 
@@ -204,31 +260,46 @@ public class Auth {
         if (eventStream != null) {
             eventStream.close();
         }
-        eventStream = openStream("/api/stream/event", null, new NdJsonStream.Handler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                mainHandler.post(() -> {
-                    responseHandler.onResponse(jsonObject);
-                });
-            }
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
+                openStream(
+                        "/api/stream/event",
+                        null,
+                        new NdJsonStream.Handler() {
+                            @Override
+                            public void onResponse(JsonObject jsonObject) {
+                                mainHandler.post(
+                                        () -> {
+                                            responseHandler.onResponse(jsonObject);
+                                        });
+                            }
 
-            @Override
-            public void onClose(boolean success) {
-                mainHandler.post(() -> {
-                    responseHandler.onClose(success);
-                    eventStream = null;
-                });
-            }
-        });
+                            @Override
+                            public void onClose(boolean success) {
+                                mainHandler.post(
+                                        () -> {
+                                            if (eventStream != null && eventStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
+                                            eventStream = null;
+                                            responseHandler.onClose(success);
+                                        });
+                            }
+                        });
+        eventStream = self[0];
     }
 
     // --- Teams & Swiss tournaments ---
 
-    public void teamsOfUser(String username, OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject> callback) {
+    public void teamsOfUser(
+            String username, OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject> callback) {
         getArray("/api/team/of/" + username, callback);
     }
 
-    public void allTeams(int page, String search, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void allTeams(
+            int page, String search, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         String path;
         if (search != null && !search.trim().isEmpty()) {
             String text;
@@ -244,43 +315,61 @@ public class Auth {
         get(path, callback);
     }
 
-    public void joinTeam(String teamId, Map<String, Object> body, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void joinTeam(
+            String teamId,
+            Map<String, Object> body,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         enqueueJsonResponse(
-            LichessWriteRequestFactory.teamJoin(LICHESS_HOST, accessToken, teamId, body),
-            callback
-        );
+                LichessWriteRequestFactory.teamJoin(LICHESS_HOST, accessToken, teamId, body),
+                callback);
     }
 
-    public void quitTeam(String teamId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void quitTeam(
+            String teamId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         enqueueJsonResponse(
-            LichessWriteRequestFactory.teamQuit(LICHESS_HOST, accessToken, teamId),
-            callback
-        );
+                LichessWriteRequestFactory.teamQuit(LICHESS_HOST, accessToken, teamId), callback);
     }
 
     public void teamSwiss(String teamId, String status, AuthResponseHandler responseHandler) {
         if (swissListStream != null) {
             swissListStream.close();
         }
-        swissListStream = openStream("/api/team/" + teamId + "/swiss?status=" + status, null, new NdJsonStream.Handler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                mainHandler.post(() -> {
-                    responseHandler.onResponse(jsonObject);
-                });
-            }
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
+                openStream(
+                        "/api/team/" + teamId + "/swiss?status=" + status,
+                        null,
+                        new NdJsonStream.Handler() {
+                            @Override
+                            public void onResponse(JsonObject jsonObject) {
+                                mainHandler.post(
+                                        () -> {
+                                            responseHandler.onResponse(jsonObject);
+                                        });
+                            }
 
-            @Override
-            public void onClose(boolean success) {
-                mainHandler.post(() -> {
-                    // Clear the reference to this (now finished) stream first, so that if
-                    // responseHandler.onClose() chains a new stream into swissListStream
-                    // (as fetchTeamSwiss does), that reference survives and stays cancellable.
-                    swissListStream = null;
-                    responseHandler.onClose(success);
-                });
-            }
-        });
+                            @Override
+                            public void onClose(boolean success) {
+                                mainHandler.post(
+                                        () -> {
+                                            if (swissListStream != null
+                                                    && swissListStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
+                                            // Clear the reference to this (now finished) stream
+                                            // first, so that if
+                                            // responseHandler.onClose() chains a new stream into
+                                            // swissListStream
+                                            // (as fetchTeamSwiss does), that reference survives and
+                                            // stays cancellable.
+                                            swissListStream = null;
+                                            responseHandler.onClose(success);
+                                        });
+                            }
+                        });
+        swissListStream = self[0];
     }
 
     public void swissInfo(String id, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
@@ -291,46 +380,60 @@ public class Auth {
         if (swissResultsStream != null) {
             swissResultsStream.close();
         }
-        swissResultsStream = openStream("/api/swiss/" + id + "/results?nb=50", null, new NdJsonStream.Handler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                mainHandler.post(() -> {
-                    responseHandler.onResponse(jsonObject);
-                });
-            }
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
+                openStream(
+                        "/api/swiss/" + id + "/results?nb=50",
+                        null,
+                        new NdJsonStream.Handler() {
+                            @Override
+                            public void onResponse(JsonObject jsonObject) {
+                                mainHandler.post(
+                                        () -> {
+                                            responseHandler.onResponse(jsonObject);
+                                        });
+                            }
 
-            @Override
-            public void onClose(boolean success) {
-                mainHandler.post(() -> {
-                    responseHandler.onClose(success);
-                    swissResultsStream = null;
-                });
-            }
-        });
+                            @Override
+                            public void onClose(boolean success) {
+                                mainHandler.post(
+                                        () -> {
+                                            if (swissResultsStream != null
+                                                    && swissResultsStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
+                                            swissResultsStream = null;
+                                            responseHandler.onClose(success);
+                                        });
+                            }
+                        });
+        swissResultsStream = self[0];
     }
 
-    public void joinSwiss(String id, Map<String, Object> body, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void joinSwiss(
+            String id,
+            Map<String, Object> body,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         enqueueJsonResponse(
-            LichessWriteRequestFactory.swissJoin(LICHESS_HOST, accessToken, id, body),
-            callback
-        );
+                LichessWriteRequestFactory.swissJoin(LICHESS_HOST, accessToken, id, body),
+                callback);
     }
 
-    public void withdrawSwiss(String id, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void withdrawSwiss(
+            String id, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         enqueueJsonResponse(
-            LichessWriteRequestFactory.swissWithdraw(LICHESS_HOST, accessToken, id),
-            callback
-        );
+                LichessWriteRequestFactory.swissWithdraw(LICHESS_HOST, accessToken, id), callback);
     }
 
     public void puzzleBatchSelect(
-        String angle,
-        Integer nb,
-        String difficulty,
-        String color,
-        boolean withToken,
-        OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback
-    ) {
+            String angle,
+            Integer nb,
+            String difficulty,
+            String color,
+            boolean withToken,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         StringBuilder path = new StringBuilder("/api/puzzle/batch/");
         path.append(angle);
         String queryAppend = "?";
@@ -349,11 +452,10 @@ public class Auth {
     }
 
     public void puzzleBatchSolve(
-        String angle,
-        int nb,
-        Map<String, Object> payload,
-        OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback
-    ) {
+            String angle,
+            int nb,
+            Map<String, Object> payload,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         String path = "/api/puzzle/batch/" + angle + "?nb=" + nb;
         post(path, payload, callback);
     }
@@ -366,37 +468,48 @@ public class Auth {
         // call, the resulting (cancelled) onClose is ignored instead of being reported as a
         // disconnect that would bounce the user back to the lobby.
         final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
-        self[0] = openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                String type = jsonObject.get("type").getAsString();
-                if (type.equals("gameFull") || type.equals("gameState")) {
-                    mainHandler.post(() -> {
-                        responseHandler.onResponse(jsonObject);
-                    });
-                }
-            }
+        self[0] =
+                openStream(
+                        "/api/board/game/stream/" + gameId,
+                        null,
+                        new NdJsonStream.Handler() {
+                            @Override
+                            public void onResponse(JsonObject jsonObject) {
+                                String type = jsonObject.get("type").getAsString();
+                                if (type.equals("gameFull") || type.equals("gameState")) {
+                                    mainHandler.post(
+                                            () -> {
+                                                responseHandler.onResponse(jsonObject);
+                                            });
+                                }
+                            }
 
-            @Override
-            public void onClose(boolean sucess) {
-                mainHandler.post(() -> {
-                    if (gameStream != self[0]) {
-                        // Superseded by a newer game stream; this close is intentional.
-                        return;
-                    }
-                    responseHandler.onClose(sucess);
-                    gameStream = null;
-                });
-            }
-        });
+                            @Override
+                            public void onClose(boolean sucess) {
+                                mainHandler.post(
+                                        () -> {
+                                            if (gameStream != self[0]) {
+                                                // Superseded by a newer game stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
+                                            responseHandler.onClose(sucess);
+                                            gameStream = null;
+                                        });
+                            }
+                        });
         gameStream = self[0];
     }
 
-    public void move(String gameId, String move, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void move(
+            String gameId,
+            String move,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         post("/api/board/game/" + gameId + "/move/" + move, null, callback);
     }
 
-    public void resign(String gameId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void resign(
+            String gameId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         post("/api/board/game/" + gameId + "/resign", null, callback);
     }
 
@@ -404,7 +517,10 @@ public class Auth {
         post("/api/board/game/" + gameId + "/abort", null, callback);
     }
 
-    public void draw(String gameId, String accept /* yes|no*/, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void draw(
+            String gameId,
+            String accept /* yes|no*/,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         post("/api/board/game/" + gameId + "/draw/" + accept, null, callback);
     }
 
@@ -413,53 +529,59 @@ public class Auth {
     }
 
     public void authenticate(OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
-        Request req = new Request.Builder()
-            .url(LICHESS_HOST + "/api/account")
-            .addHeader("Authorization", "Bearer " + accessToken)
-            .build();
+        Request req =
+                new Request.Builder()
+                        .url(LICHESS_HOST + "/api/account")
+                        .addHeader("Authorization", "Bearer " + accessToken)
+                        .build();
 
-        httpClient.newCall(req).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                mainHandler.post(() -> {
-                    callback.onError(e);
-                });
-            }
+        httpClient
+                .newCall(req)
+                .enqueue(
+                        new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                mainHandler.post(
+                                        () -> {
+                                            callback.onError(e);
+                                        });
+                            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    mainHandler.post(() -> {
-                        callback.onError(new IOException("HTTP " + response.code()));
-                    });
-                    return;
-                }
+                            @Override
+                            public void onResponse(Call call, Response response)
+                                    throws IOException {
+                                if (!response.isSuccessful()) {
+                                    mainHandler.post(
+                                            () -> {
+                                                callback.onError(
+                                                        new IOException("HTTP " + response.code()));
+                                            });
+                                    return;
+                                }
 
-                String json = response.body().string();
-                JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-                Log.d(TAG, json);
-                mainHandler.post(() -> {
-                    callback.onSuccess(jsonObject.get("id").getAsString());
-                });
-
-            }
-        });
+                                String json = response.body().string();
+                                JsonObject jsonObject =
+                                        JsonParser.parseString(json).getAsJsonObject();
+                                Log.d(TAG, json);
+                                mainHandler.post(
+                                        () -> {
+                                            callback.onSuccess(jsonObject.get("id").getAsString());
+                                        });
+                            }
+                        });
     }
 
     public void saveTokens() {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putString(KEY_ACCESS_TOKEN, accessToken)
-            .putString(KEY_REFRESH_TOKEN, refreshToken)
-            .putLong(KEY_EXPIRES_AT, expiresAt != null ? expiresAt : 0L)
-            .apply();
+                .edit()
+                .putString(KEY_ACCESS_TOKEN, accessToken)
+                .putString(KEY_REFRESH_TOKEN, refreshToken)
+                .putLong(KEY_EXPIRES_AT, expiresAt != null ? expiresAt : 0L)
+                .apply();
     }
 
     public void clearTokens() {
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .clear()
-            .apply();
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().clear().apply();
     }
 
     public void restoreTokens() {
@@ -504,15 +626,21 @@ public class Auth {
         oauth.dispose();
     }
 
-    public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void post(
+            String path,
+            Map<String, Object> jsonBody,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         post(path, jsonBody, true, callback);
     }
 
-    public void post(String path, Map<String, Object> jsonBody, boolean withToken, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void post(
+            String path,
+            Map<String, Object> jsonBody,
+            boolean withToken,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "post " + path);
-        Request.Builder reqBuilder = new Request.Builder()
-            .url(LICHESS_HOST + path)
-            .addHeader("Accept", "*/*");
+        Request.Builder reqBuilder =
+                new Request.Builder().url(LICHESS_HOST + path).addHeader("Accept", "*/*");
 
         if (withToken) {
             reqBuilder.addHeader("Authorization", "Bearer " + accessToken);
@@ -520,10 +648,8 @@ public class Auth {
 
         if (jsonBody != null) {
             String json = new Gson().toJson(jsonBody);
-            RequestBody body = RequestBody.create(
-                json,
-                MediaType.get("application/json; charset=utf-8")
-            );
+            RequestBody body =
+                    RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
             reqBuilder.post(body);
         } else {
             reqBuilder.post(RequestBody.create(new byte[0]));
@@ -532,173 +658,220 @@ public class Auth {
         enqueueJsonResponse(reqBuilder.build(), callback);
     }
 
-    private void enqueueJsonResponse(Request request, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure " + e);
-                mainHandler.post(() -> {
-                    //callback.onError(e);
-                    // @TODO general error
-                });
-            }
+    private void enqueueJsonResponse(
+            Request request, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        httpClient
+                .newCall(request)
+                .enqueue(
+                        new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                Log.d(TAG, "onFailure " + e);
+                                mainHandler.post(
+                                        () -> {
+                                            // callback.onError(e);
+                                            // @TODO general error
+                                        });
+                            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    try {
-                        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-                        mainHandler.post(() -> {
-                            callback.onError(jsonObject);
-                        });
-                    } catch (Exception ex) {
-                        Log.d(TAG, "could not parse " + response.code() + " => " + responseBody);
-                    }
-                    return;
-                }
-                Log.d(TAG, "wating for response...");
-                String responseBody = response.body().string();
-                Log.d(TAG, "responseBody " + responseBody);
-                try {
-                    String[] lines = responseBody.split("\r?\n");
-                    for (String line : lines) {
-                        if (line == null || line.trim().isEmpty()) {
-                            continue;
-                        }
+                            @Override
+                            public void onResponse(Call call, Response response)
+                                    throws IOException {
+                                if (!response.isSuccessful()) {
+                                    String responseBody = response.body().string();
+                                    try {
+                                        JsonObject jsonObject =
+                                                JsonParser.parseString(responseBody)
+                                                        .getAsJsonObject();
+                                        mainHandler.post(
+                                                () -> {
+                                                    callback.onError(jsonObject);
+                                                });
+                                    } catch (Exception ex) {
+                                        Log.d(
+                                                TAG,
+                                                "could not parse "
+                                                        + response.code()
+                                                        + " => "
+                                                        + responseBody);
+                                    }
+                                    return;
+                                }
+                                Log.d(TAG, "wating for response...");
+                                String responseBody = response.body().string();
+                                Log.d(TAG, "responseBody " + responseBody);
+                                try {
+                                    String[] lines = responseBody.split("\r?\n");
+                                    for (String line : lines) {
+                                        if (line == null || line.trim().isEmpty()) {
+                                            continue;
+                                        }
 
-                        JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
-                        mainHandler.post(() -> {
-                            callback.onSuccess(jsonObject);
+                                        JsonObject jsonObject =
+                                                JsonParser.parseString(line).getAsJsonObject();
+                                        mainHandler.post(
+                                                () -> {
+                                                    callback.onSuccess(jsonObject);
+                                                });
+                                    }
+                                } catch (Exception ex) {
+                                    Log.d(TAG, "Caught " + ex);
+                                    mainHandler.post(
+                                            () -> {
+                                                // callback.onError(ex);
+                                                // @TODO another general error
+                                            });
+                                }
+                            }
                         });
-                    }
-                } catch (Exception ex) {
-                    Log.d(TAG, "Caught " + ex);
-                    mainHandler.post(() -> {
-                        // callback.onError(ex);
-                        // @TODO another general error
-                    });
-                }
-            }
-        });
     }
 
     public void get(String path, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         get(path, true, callback);
     }
 
-    public void get(String path, boolean withToken, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void get(
+            String path,
+            boolean withToken,
+            OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "get " + path);
-        Request.Builder reqBuilder = new Request.Builder()
-            .url(LICHESS_HOST + path)
-            .addHeader("Accept", "*/*")
-            .get();
+        Request.Builder reqBuilder =
+                new Request.Builder().url(LICHESS_HOST + path).addHeader("Accept", "*/*").get();
 
         if (withToken) {
             reqBuilder.addHeader("Authorization", "Bearer " + accessToken);
         }
 
-        httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure " + e);
-                mainHandler.post(() -> {
-                    //callback.onError(e);
-                    // @TODO general error
-                });
-            }
+        httpClient
+                .newCall(reqBuilder.build())
+                .enqueue(
+                        new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                Log.d(TAG, "onFailure " + e);
+                                mainHandler.post(
+                                        () -> {
+                                            // callback.onError(e);
+                                            // @TODO general error
+                                        });
+                            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    try {
-                        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-                        mainHandler.post(() -> {
-                            callback.onError(jsonObject);
-                        });
-                    } catch (Exception ex) {
-                        Log.d(TAG, "could not parse " + response.code() + " => " + responseBody);
-                    }
-                    return;
-                }
-                Log.d(TAG, "wating for response...");
-                String responseBody = response.body().string();
-                Log.d(TAG, "responseBody " + responseBody);
-                try {
-                    String[] lines = responseBody.split("\r?\n");
-                    for (String line : lines) {
-                        if (line == null || line.trim().isEmpty()) {
-                            continue;
-                        }
+                            @Override
+                            public void onResponse(Call call, Response response)
+                                    throws IOException {
+                                if (!response.isSuccessful()) {
+                                    String responseBody = response.body().string();
+                                    try {
+                                        JsonObject jsonObject =
+                                                JsonParser.parseString(responseBody)
+                                                        .getAsJsonObject();
+                                        mainHandler.post(
+                                                () -> {
+                                                    callback.onError(jsonObject);
+                                                });
+                                    } catch (Exception ex) {
+                                        Log.d(
+                                                TAG,
+                                                "could not parse "
+                                                        + response.code()
+                                                        + " => "
+                                                        + responseBody);
+                                    }
+                                    return;
+                                }
+                                Log.d(TAG, "wating for response...");
+                                String responseBody = response.body().string();
+                                Log.d(TAG, "responseBody " + responseBody);
+                                try {
+                                    String[] lines = responseBody.split("\r?\n");
+                                    for (String line : lines) {
+                                        if (line == null || line.trim().isEmpty()) {
+                                            continue;
+                                        }
 
-                        JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
-                        mainHandler.post(() -> {
-                            callback.onSuccess(jsonObject);
+                                        JsonObject jsonObject =
+                                                JsonParser.parseString(line).getAsJsonObject();
+                                        mainHandler.post(
+                                                () -> {
+                                                    callback.onSuccess(jsonObject);
+                                                });
+                                    }
+                                } catch (Exception ex) {
+                                    Log.d(TAG, "Caught " + ex);
+                                    mainHandler.post(
+                                            () -> {
+                                                // callback.onError(ex);
+                                                // @TODO another general error
+                                            });
+                                }
+                            }
                         });
-                    }
-                } catch (Exception ex) {
-                    Log.d(TAG, "Caught " + ex);
-                    mainHandler.post(() -> {
-                        // callback.onError(ex);
-                        // @TODO another general error
-                    });
-                }
-            }
-        });
     }
 
     public void getArray(String path, OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject> callback) {
         Log.d(TAG, "getArray " + path);
-        Request req = new Request.Builder()
-            .url(LICHESS_HOST + path)
-            .addHeader("Accept", "*/*")
-            .addHeader("Authorization", "Bearer " + accessToken)
-            .get()
-            .build();
+        Request req =
+                new Request.Builder()
+                        .url(LICHESS_HOST + path)
+                        .addHeader("Accept", "*/*")
+                        .addHeader("Authorization", "Bearer " + accessToken)
+                        .get()
+                        .build();
 
-        httpClient.newCall(req).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "getArray onFailure " + e);
-            }
+        httpClient
+                .newCall(req)
+                .enqueue(
+                        new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                Log.d(TAG, "getArray onFailure " + e);
+                            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseBody = response.body().string();
-                if (!response.isSuccessful()) {
-                    try {
-                        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-                        mainHandler.post(() -> callback.onError(jsonObject));
-                    } catch (Exception ex) {
-                        Log.d(TAG, "getArray could not parse " + response.code() + " => " + responseBody);
-                    }
-                    return;
-                }
-                try {
-                    JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
-                    mainHandler.post(() -> callback.onSuccess(jsonArray));
-                } catch (Exception ex) {
-                    Log.d(TAG, "getArray parse error " + ex);
-                }
-            }
-        });
+                            @Override
+                            public void onResponse(Call call, Response response)
+                                    throws IOException {
+                                String responseBody = response.body().string();
+                                if (!response.isSuccessful()) {
+                                    try {
+                                        JsonObject jsonObject =
+                                                JsonParser.parseString(responseBody)
+                                                        .getAsJsonObject();
+                                        mainHandler.post(() -> callback.onError(jsonObject));
+                                    } catch (Exception ex) {
+                                        Log.d(
+                                                TAG,
+                                                "getArray could not parse "
+                                                        + response.code()
+                                                        + " => "
+                                                        + responseBody);
+                                    }
+                                    return;
+                                }
+                                try {
+                                    JsonArray jsonArray =
+                                            JsonParser.parseString(responseBody).getAsJsonArray();
+                                    mainHandler.post(() -> callback.onSuccess(jsonArray));
+                                } catch (Exception ex) {
+                                    Log.d(TAG, "getArray parse error " + ex);
+                                }
+                            }
+                        });
     }
 
-    public NdJsonStream.Stream openStream(String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
+    public NdJsonStream.Stream openStream(
+            String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
         Log.d(TAG, "openStream " + path);
-        Request.Builder reqBuilder = new Request.Builder()
-            .url(LICHESS_HOST + path)
-            .addHeader("Authorization", "Bearer " + accessToken)
-            .addHeader("Accept", "*/*");
+        Request.Builder reqBuilder =
+                new Request.Builder()
+                        .url(LICHESS_HOST + path)
+                        .addHeader("Authorization", "Bearer " + accessToken)
+                        .addHeader("Accept", "*/*");
 
         if (jsonBody != null) {
             String json = new Gson().toJson(jsonBody);
             Log.d(TAG, "post body " + json);
-            RequestBody body = RequestBody.create(
-                json,
-                MediaType.get("application/json; charset=utf-8")
-            );
+            RequestBody body =
+                    RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
             reqBuilder.post(body);
         }
 

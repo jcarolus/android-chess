@@ -8,7 +8,6 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -21,8 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 public final class NetworkAddressHelper {
-    private NetworkAddressHelper() {
-    }
+    private NetworkAddressHelper() {}
 
     public static String getLikelyWifiIpv4Address(Context context) {
         String activeNetworkAddress = getActiveWifiIpv4Address(context);
@@ -51,7 +49,10 @@ public final class NetworkAddressHelper {
                     continue;
                 }
 
-                String interfaceName = networkInterface.getName() == null ? "" : networkInterface.getName().toLowerCase(Locale.US);
+                String interfaceName =
+                        networkInterface.getName() == null
+                                ? ""
+                                : networkInterface.getName().toLowerCase(Locale.US);
                 Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
                 while (inetAddresses.hasMoreElements()) {
                     InetAddress inetAddress = inetAddresses.nextElement();
@@ -80,7 +81,8 @@ public final class NetworkAddressHelper {
     }
 
     public static String getActiveWifiIpv4Address(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager == null) {
             return null;
         }
@@ -91,8 +93,10 @@ public final class NetworkAddressHelper {
                 return null;
             }
 
-            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
-            if (capabilities == null || !capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            NetworkCapabilities capabilities =
+                    connectivityManager.getNetworkCapabilities(activeNetwork);
+            if (capabilities == null
+                    || !capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                 return null;
             }
 
@@ -122,10 +126,12 @@ public final class NetworkAddressHelper {
         }
 
         int gatewayAddress = wifiManager.getDhcpInfo().gateway;
-        return String.format(Locale.US, "%d.%d.%d.%d",
-            (gatewayAddress & 0xff),
-            (gatewayAddress >> 8 & 0xff),
-            (gatewayAddress >> 16 & 0xff),
-            (gatewayAddress >> 24 & 0xff));
+        return String.format(
+                Locale.US,
+                "%d.%d.%d.%d",
+                (gatewayAddress & 0xff),
+                (gatewayAddress >> 8 & 0xff),
+                (gatewayAddress >> 16 & 0xff),
+                (gatewayAddress >> 24 & 0xff));
     }
 }

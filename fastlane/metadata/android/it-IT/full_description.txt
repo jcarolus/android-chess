@@ -5,7 +5,7 @@ GIOCA COME PREFERISCI
 • Gioca offline contro il motore scacchistico integrato.
 • Collegati a Lichess o FICS per giocare online.
 • Crea o accetta sfide su Lichess e continua le partite in corso.
-• Scegli tra scacchi standard, Scacchi960 e la variante sperimentale Duck Chess.
+• Scegli tra scacchi standard, Scacchi960 e la variante Duck Chess.
 • Imposta posizioni personalizzate direttamente sulla scacchiera.
 
 ALLENATI E MIGLIORA

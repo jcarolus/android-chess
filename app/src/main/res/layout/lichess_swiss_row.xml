@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dip"
-    android:background="@color/paneBackgroundColor">
+    android:padding="@dimen/row_padding">
 
     <TextView
         android:id="@+id/text_swiss_name"

@@ -11,9 +11,6 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.os.Build;
 import android.util.Log;
-
-import org.xmlpull.v1.XmlPullParser;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import org.xmlpull.v1.XmlPullParser;
 
 public class OexEngineResolver {
     private static final String TAG = "OexEngineResolver";
@@ -38,10 +36,9 @@ public class OexEngineResolver {
 
     public List<OexEngineDescriptor> resolveEngines() {
         PackageManager packageManager = context.getPackageManager();
-        List<ResolveInfo> providers = packageManager.queryIntentActivities(
-            new Intent(ACTION_ENGINE_PROVIDER),
-            PackageManager.GET_META_DATA
-        );
+        List<ResolveInfo> providers =
+                packageManager.queryIntentActivities(
+                        new Intent(ACTION_ENGINE_PROVIDER), PackageManager.GET_META_DATA);
 
         List<OexEngineDescriptor> engines = new ArrayList<>();
         Set<String> supportedTargets = getSupportedTargets();
@@ -59,11 +56,16 @@ public class OexEngineResolver {
             String resolvedAuthority = resolveVisibleAuthority(packageName, authority);
             if (resolvedAuthority == null) {
                 resolvedAuthority = firstAuthorityCandidate(authority);
-                Log.w(TAG, "Authority pre-check failed; using declared authority from metadata: " + resolvedAuthority);
+                Log.w(
+                        TAG,
+                        "Authority pre-check failed; using declared authority from metadata: "
+                                + resolvedAuthority);
             }
 
             try {
-                Resources resources = packageManager.getResourcesForApplication(resolveInfo.activityInfo.applicationInfo);
+                Resources resources =
+                        packageManager.getResourcesForApplication(
+                                resolveInfo.activityInfo.applicationInfo);
                 int xmlResourceId = resources.getIdentifier(XML_ENGINE_LIST, "xml", packageName);
                 if (xmlResourceId == 0) {
                     continue;
@@ -76,14 +78,23 @@ public class OexEngineResolver {
                 try {
                     int eventType = parser.getEventType();
                     while (eventType != XmlPullParser.END_DOCUMENT) {
-                        if (eventType == XmlPullParser.START_TAG && "engine".equalsIgnoreCase(parser.getName())) {
+                        if (eventType == XmlPullParser.START_TAG
+                                && "engine".equalsIgnoreCase(parser.getName())) {
                             String fileName = parser.getAttributeValue(null, "filename");
                             String name = parser.getAttributeValue(null, "name");
                             String targetSpecification = parser.getAttributeValue(null, "target");
-                            if (isSupportedTarget(targetSpecification, supportedTargets) &&
-                                fileName != null && !fileName.isEmpty() &&
-                                name != null && !name.isEmpty()) {
-                                engines.add(new OexEngineDescriptor(name, fileName, resolvedAuthority, packageName, versionCode));
+                            if (isSupportedTarget(targetSpecification, supportedTargets)
+                                    && fileName != null
+                                    && !fileName.isEmpty()
+                                    && name != null
+                                    && !name.isEmpty()) {
+                                engines.add(
+                                        new OexEngineDescriptor(
+                                                name,
+                                                fileName,
+                                                resolvedAuthority,
+                                                packageName,
+                                                versionCode));
                             }
                         }
                         eventType = parser.next();
@@ -97,7 +108,9 @@ public class OexEngineResolver {
             }
         }
 
-        Collections.sort(engines, Comparator.comparing(OexEngineDescriptor::getName, String.CASE_INSENSITIVE_ORDER));
+        Collections.sort(
+                engines,
+                Comparator.comparing(OexEngineDescriptor::getName, String.CASE_INSENSITIVE_ORDER));
         return engines;
     }
 
@@ -118,15 +131,19 @@ public class OexEngineResolver {
     public File ensureLocalCopy(OexEngineDescriptor engine) throws Exception {
         File installedExecutable = findInstalledNativeLib(engine);
         if (installedExecutable != null) {
-            Log.i(TAG, "Using installed OEX engine binary: " + installedExecutable.getAbsolutePath());
+            Log.i(
+                    TAG,
+                    "Using installed OEX engine binary: " + installedExecutable.getAbsolutePath());
             return installedExecutable;
         }
-        throw new IllegalStateException("Could not resolve installed OEX engine binary for " + engine.getId());
+        throw new IllegalStateException(
+                "Could not resolve installed OEX engine binary for " + engine.getId());
     }
 
     private File findInstalledNativeLib(OexEngineDescriptor engine) {
         try {
-            ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(engine.getPackageName(), 0);
+            ApplicationInfo appInfo =
+                    context.getPackageManager().getApplicationInfo(engine.getPackageName(), 0);
             if (appInfo.nativeLibraryDir == null || appInfo.nativeLibraryDir.isEmpty()) {
                 return null;
             }
@@ -200,7 +217,9 @@ public class OexEngineResolver {
 
         String discovered = discoverProviderAuthorityFromPackage(packageName);
         if (discovered != null) {
-            Log.w(TAG, "Using discovered provider authority for " + packageName + ": " + discovered);
+            Log.w(
+                    TAG,
+                    "Using discovered provider authority for " + packageName + ": " + discovered);
             return discovered;
         }
         return null;
@@ -209,7 +228,8 @@ public class OexEngineResolver {
     private String discoverProviderAuthorityFromPackage(String packageName) {
         PackageManager packageManager = context.getPackageManager();
         try {
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_PROVIDERS);
+            PackageInfo packageInfo =
+                    packageManager.getPackageInfo(packageName, PackageManager.GET_PROVIDERS);
             ProviderInfo[] providers = packageInfo.providers;
             if (providers == null || providers.length == 0) {
                 return null;
@@ -218,7 +238,9 @@ public class OexEngineResolver {
             // Prefer exported providers with "engine" marker in authority.
             String fallback = null;
             for (ProviderInfo provider : providers) {
-                if (provider == null || provider.authority == null || provider.authority.trim().isEmpty()) {
+                if (provider == null
+                        || provider.authority == null
+                        || provider.authority.trim().isEmpty()) {
                     continue;
                 }
                 if (!provider.exported) {

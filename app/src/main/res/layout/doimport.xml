@@ -6,12 +6,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center"
-    android:padding="16dip">
+    android:padding="@dimen/screen_padding">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dip">
+        android:padding="@dimen/panel_padding">
 
         <LinearLayout
             android:orientation="vertical"
@@ -28,36 +28,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <TableRow android:layout_margin="8dip">
+                <TableRow android:layout_margin="@dimen/control_gap">
 
                     <TextView
                         android:text="Added"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dip" />
+                        android:layout_margin="@dimen/control_gap" />
 
                     <TextView
                         android:id="@+id/TextViewDoImportCnt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minWidth="40dip"
-                        android:layout_margin="8dip" />
+                        android:layout_margin="@dimen/control_gap" />
                 </TableRow>
 
-                <TableRow android:layout_margin="8dip">
+                <TableRow android:layout_margin="@dimen/control_gap">
 
                     <TextView
                         android:text="Ignored"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dip" />
+                        android:layout_margin="@dimen/control_gap" />
 
                     <TextView
                         android:id="@+id/TextViewDoImportCntFail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minWidth="40dip"
-                        android:layout_margin="8dip" />
+                        android:layout_margin="@dimen/control_gap" />
                 </TableRow>
             </TableLayout>
 

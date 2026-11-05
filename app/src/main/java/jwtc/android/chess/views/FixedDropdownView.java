@@ -4,20 +4,15 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import jwtc.android.chess.R;
 
 public class FixedDropdownView extends LinearLayout {
@@ -56,27 +51,29 @@ public class FixedDropdownView extends LinearLayout {
         autoCompleteTextView.setAdapter(adapter);
 
         autoCompleteTextView.setOnClickListener(v -> autoCompleteTextView.showDropDown());
-//        autoCompleteTextView.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (hasFocus) autoCompleteTextView.showDropDown();
-//        });
+        //        autoCompleteTextView.setOnFocusChangeListener((v, hasFocus) -> {
+        //            if (hasFocus) autoCompleteTextView.showDropDown();
+        //        });
 
-        textInputLayout.setEndIconOnClickListener(v -> {
-            // Clear any filtering by resetting text
-            autoCompleteTextView.setText(autoCompleteTextView.getText(), false);
-            autoCompleteTextView.requestFocus();
-            autoCompleteTextView.showDropDown();
-        });
+        textInputLayout.setEndIconOnClickListener(
+                v -> {
+                    // Clear any filtering by resetting text
+                    autoCompleteTextView.setText(autoCompleteTextView.getText(), false);
+                    autoCompleteTextView.requestFocus();
+                    autoCompleteTextView.showDropDown();
+                });
 
-        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
-            selectedPosition = position;
+        autoCompleteTextView.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    selectedPosition = position;
 
-            if (externalItemClickListener != null) {
-                externalItemClickListener.onItemClick(parent, view, position, id);
-            }
-        });
+                    if (externalItemClickListener != null) {
+                        externalItemClickListener.onItemClick(parent, view, position, id);
+                    }
+                });
 
         if (attrs != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.hint});
+            TypedArray a = context.obtainStyledAttributes(attrs, new int[] {android.R.attr.hint});
             CharSequence hint = a.getText(0);
             a.recycle();
 
@@ -88,14 +85,18 @@ public class FixedDropdownView extends LinearLayout {
 
     public void setItems(List<String> newItems) {
         items.clear();
-        if (newItems != null) items.addAll(newItems);
+        if (newItems != null) {
+            items.addAll(newItems);
+        }
         adapter.notifyDataSetChanged();
     }
 
     public void setItems(String[] newItems) {
         items.clear();
         if (newItems != null) {
-            for (String s : newItems) items.add(s);
+            for (String s : newItems) {
+                items.add(s);
+            }
         }
         adapter.notifyDataSetChanged();
     }

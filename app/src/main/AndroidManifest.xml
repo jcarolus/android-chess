@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="298"
-    android:versionName="10.6.0">
+    android:versionCode="313"
+    android:versionName="10.7.0">
     <queries>
         <intent>
             <action
@@ -29,14 +29,23 @@
             android:exported="true" />
         <service
             android:name=".tools.ImportService"
-            android:exported="true" />
+            android:exported="false" />
         <service
             android:name=".hotspotboard.HotspotBoardService"
-            android:exported="true" />
+            android:exported="false" />
         <service
             android:name=".lichess.LichessService"
-            android:exported="true" />
+            android:exported="false" />
 
+        <activity android:name=".links.LinkActivity" android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="jwtc.nl" android:path="/app" />
+                <data android:scheme="https" android:host="jwtc.nl" android:pathPrefix="/app/" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".start"
             android:label="@string/app_name"
@@ -57,15 +66,24 @@
         <activity
             android:name=".HtmlActivity"
             android:label="@string/app_name_help"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".activities.BoardPreferencesActivity"
             android:label="@string/globalpreferences"
-            android:exported="true"></activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activities.AccessibilityPreferences"
             android:label="@string/globalpreferences"
-            android:exported="true"></activity>
+            android:exported="false"></activity>
+        <activity
+            android:name=".analyze.AnalyzeActivity"
+            android:label="@string/app_name"
+            android:exported="false">
+            <layout android:minWidth="300dp" android:minHeight="460dp" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".start" />
+        </activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"
@@ -90,6 +108,33 @@
                 <data android:mimeType="application/x-chess-fen" />
             </intent-filter>
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="text/plain" />
+                <!-- Simple globs do not backtrack over dots in names on older Android versions. -->
+                <data android:pathPattern=".*\\.fen" />
+                <data android:pathPattern=".*\\..*\\.fen" />
+                <data android:pathPattern=".*\\..*\\..*\\.fen" />
+                <data android:pathPattern=".*\\.FEN" />
+                <data android:pathPattern=".*\\..*\\.FEN" />
+                <data android:pathPattern=".*\\..*\\..*\\.FEN" />
+                <data android:pathSuffix=".fen" />
+                <data android:pathSuffix=".FEN" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- Downloads document IDs do not contain the file's extension. -->
+                <data android:scheme="content"
+                    android:host="com.android.providers.downloads.documents"
+                    android:pathPrefix="/document/"
+                    android:mimeType="application/octet-stream" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/x-chess-fen" />
@@ -102,7 +147,7 @@
         <activity
             android:name=".setup.SetupActivity"
             android:label="@string/app_name_setup"
-            android:exported="true">
+            android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -114,7 +159,7 @@
         <activity
             android:name=".setup.SetupRandomFischerActivity"
             android:label="@string/app_name_setup"
-            android:exported="true">
+            android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -126,7 +171,7 @@
         <activity
             android:name=".GamesListActivity"
             android:label="@string/app_name_save_games"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -137,7 +182,7 @@
         <activity
             android:name="jwtc.android.chess.puzzle.PuzzleActivity"
             android:label="@string/app_name"
-            android:exported="true">
+            android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -149,7 +194,7 @@
         <activity
             android:name="jwtc.android.chess.practice.PracticeActivity"
             android:label="@string/app_name"
-            android:exported="true">
+            android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -198,7 +243,7 @@
             android:name="jwtc.android.chess.hotspotboard.HotspotBoardActivity"
             android:label="@string/app_name"
             android:screenOrientation="locked"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -209,7 +254,7 @@
         <activity
             android:name="jwtc.android.chess.tools.AdvancedActivity"
             android:label="@string/app_name_pgntools"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -261,13 +306,21 @@
         </activity>
 
         <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.sharedgames"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/shared_game_paths" />
+        </provider>
+        <provider
             android:name=".helpers.MyPGNProvider"
             android:authorities="jwtc.android.chess.helpers.MyPGNProvider"
-            android:exported="true" />
+            android:exported="false" />
         <provider
             android:name=".puzzle.MyPuzzleProvider"
             android:authorities="jwtc.android.chess.puzzle.MyPuzzleProvider"
-            android:exported="true" />
+            android:exported="false" />
     </application>
     <supports-screens
         android:anyDensity="true"

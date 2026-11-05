@@ -5,7 +5,7 @@ Android için Satranç; ücretsiz, açık kaynaklı ve reklamsız bir satranç u
 • Yerleşik satranç motoruna karşı çevrim dışı oynayın.
 • Çevrim içi oyunlar için Lichess veya FICS'e bağlanın.
 • Lichess meydan okumaları oluşturun veya kabul edin ve devam eden oyunlarınızı sürdürün.
-• Standart satranç, Satranç960 veya deneysel Ördek Satrancı arasında seçim yapın.
+• Standart satranç, Satranç960 veya Ördek Satrancı arasında seçim yapın.
 • Özel konumları doğrudan tahtada kurun.
 
 ANTRENMAN YAPIN VE GELİŞİN

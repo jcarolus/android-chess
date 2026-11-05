@@ -3,19 +3,19 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_margin="8dip"
+    android:layout_margin="@dimen/control_gap"
     android:layout_gravity="center">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="320dip"
         android:layout_height="wrap_content"
-        android:padding="8dip">
+        android:padding="@dimen/panel_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dip">
+            android:padding="@dimen/panel_padding">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/InputMinutes"
@@ -56,14 +56,14 @@
                         android:text="@string/button_cancel"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_margin="2dip" />
+                        android:layout_margin="@dimen/tiny_control_gap" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonOk"
                         android:text="@string/button_ok"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_margin="2dip" />
+                        android:layout_margin="@dimen/tiny_control_gap" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>

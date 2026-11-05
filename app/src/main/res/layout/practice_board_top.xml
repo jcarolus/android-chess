@@ -11,6 +11,6 @@
         android:layout_width="40dip"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:paddingStart="8dip"
-        android:paddingEnd="8dip" />
+        android:paddingStart="@dimen/panel_padding"
+        android:paddingEnd="@dimen/panel_padding" />
 </RelativeLayout>

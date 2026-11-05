@@ -1,7 +1,6 @@
 package jwtc.android.chess;
 
 import android.os.Bundle;
-
 import jwtc.android.chess.activities.StartBaseActivity;
 
 public class start extends StartBaseActivity {

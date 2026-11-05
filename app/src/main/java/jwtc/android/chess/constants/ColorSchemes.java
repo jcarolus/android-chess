@@ -1,7 +1,6 @@
 package jwtc.android.chess.constants;
 
 import androidx.core.graphics.ColorUtils;
-
 import jwtc.android.chess.R;
 
 public class ColorSchemes {
@@ -17,7 +16,6 @@ public class ColorSchemes {
     public static final int HIGHLIGHT = 3;
     public static final int COORD_BACKGROUND = 4;
     public static final int COORD_TEXT = 5;
-
 
     // [color scheme index] x [color index]
     private static final int[][] colorScheme = new int[11][6];
@@ -41,7 +39,6 @@ public class ColorSchemes {
         colorScheme[0][HIGHLIGHT] = 0xffFFE1B0;
         colorScheme[0][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
         colorScheme[0][COORD_TEXT] = DEFAULT_COORD_TEXT;
-
 
         colorScheme[1][DARK_SQUARE] = 0xee629EFC;
         colorScheme[1][LIGHT_SQUARE] = 0xee93BBFA;
@@ -119,22 +116,24 @@ public class ColorSchemes {
         colorScheme[EINK_COLOR_SCHEME][LIGHT_SQUARE] = 0xffffffff; // light square
         colorScheme[EINK_COLOR_SCHEME][SELECTED_SQUARE] = 0xff4d4d4d; // selected square
         colorScheme[EINK_COLOR_SCHEME][HIGHLIGHT] = 0xff666666; // last-move
-        colorScheme[EINK_COLOR_SCHEME][COORD_BACKGROUND] = 0xffffffff; // coordinate background, opaque
+        colorScheme[EINK_COLOR_SCHEME][COORD_BACKGROUND] =
+                0xffffffff; // coordinate background, opaque
         colorScheme[EINK_COLOR_SCHEME][COORD_TEXT] = 0xff000000; // coordinate text, opaque
-
     }
 
     public static int getLight() {
-        int color = selectedColorScheme == CUSTOM_COLOR_SCHEME
-            ? customLightColor
-            : colorScheme[selectedColorScheme][LIGHT_SQUARE];
+        int color =
+                selectedColorScheme == CUSTOM_COLOR_SCHEME
+                        ? customLightColor
+                        : colorScheme[selectedColorScheme][LIGHT_SQUARE];
         return desaturateColor(color, ColorSchemes.saturationFactor);
     }
 
     public static int getDark() {
-        int color = selectedColorScheme == CUSTOM_COLOR_SCHEME
-            ? customDarkColor
-            : colorScheme[selectedColorScheme][DARK_SQUARE];
+        int color =
+                selectedColorScheme == CUSTOM_COLOR_SCHEME
+                        ? customDarkColor
+                        : colorScheme[selectedColorScheme][DARK_SQUARE];
         return desaturateColor(color, ColorSchemes.saturationFactor);
     }
 

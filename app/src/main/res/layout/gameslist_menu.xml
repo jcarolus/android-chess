@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dip"
+    android:padding="@dimen/control_padding"
     app:flexDirection="row"
     app:flexWrap="wrap"
     app:justifyContent="flex_start"
@@ -12,7 +12,7 @@
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/ButtonToggleGroupView"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/imageButtonSize"
+        android:layout_height="@dimen/image_button_size"
         android:layout_gravity="center"
         app:singleSelection="true"
         app:selectionRequired="true">
@@ -21,27 +21,28 @@
             android:id="@+id/ButtonToggleBoard"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/imageButtonSize"
-            android:text="Board" />
+            android:layout_height="@dimen/image_button_size"
+            android:text="@string/gameslist_view_board" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonTogglePgn"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/imageButtonSize"
-            android:text="PGN" />
+            android:layout_height="@dimen/image_button_size"
+            android:text="@string/gameslist_view_pgn" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonToggleList"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/imageButtonSize"
-            android:text="List" />
+            android:layout_height="@dimen/image_button_size"
+            android:text="@string/gameslist_view_list" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ButtonOpenFilters"
         app:icon="@drawable/sliders"
+        android:contentDescription="@string/gameslist_filters_description"
         android:checkable="true"
         style="?attr/chessImageButtonStyle" />
 </com.google.android.flexbox.FlexboxLayout>

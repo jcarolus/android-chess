@@ -3,8 +3,8 @@
     android:id="@+id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingStart="@dimen/menu_padding_horizontal"
+    android:paddingEnd="@dimen/menu_padding_horizontal"
+    android:paddingTop="@dimen/menu_padding_vertical"
+    android:paddingBottom="@dimen/menu_padding_vertical"
     android:textAppearance="?attr/textAppearanceBody1" />

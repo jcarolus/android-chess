@@ -5,9 +5,13 @@ package jwtc.android.chess.services;
  *
  * <p>Callbacks are invoked after the corresponding operation has completed. Implementations may
  * inspect {@link GameApi} or the underlying game state to determine the resulting position. They
- * are notifications only and do not request or authorize game changes.</p>
+ * are notifications only and do not request or authorize game changes.
  */
 public interface GameListener {
+    default void onPositionChanged(jwtc.chess.GameTree.Node node) {}
+
+    default void onGameTreeChanged() {}
+
     default void onMoveApplied(int move) {}
 
     default void onDuckMoveApplied(int duckMove) {}

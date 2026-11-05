@@ -3,7 +3,7 @@
     android:id="@+id/root_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dip"
+    android:layout_margin="@dimen/control_gap"
     android:layout_gravity="center">
 
     <LinearLayout
@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="@dimen/control_gap">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSaveCancel"

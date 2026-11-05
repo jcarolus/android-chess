@@ -12,5 +12,4 @@
     <color name="surfaceTextColor">#fafafa</color>
     <color name="primaryColorDisabled">#888888</color>
     <color name="wrongColor">#D96227</color>
-    <color name="paneBackgroundColor">#60556E92</color>
 </resources>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/control_gap"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/ToggleOpponentGroup"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/compact_control_gap"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetBottom="0dp"
+                    android:text="@string/options_play_android"
+                    android:id="@+id/radioAndroid"
+                    style="?attr/chessToggleButtonStyle"
+                />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:text="@string/options_play_human"
+                    android:id="@+id/radioHuman"
+                    style="?attr/chessToggleButtonStyle"
+                />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/ToggleColorGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/compact_control_gap"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/options_play_white"
+                    android:id="@+id/radioWhite"
+                    style="?attr/chessToggleButtonStyle"
+                />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/options_play_black"
+                    android:id="@+id/radioBlack"
+                    style="?attr/chessToggleButtonStyle"
+                />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/ToggleVariantGroup"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/compact_control_gap"
+                app:checkedButton="@id/radioStandard"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/radioStandard"
+                    style="?attr/chessToggleButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/new_game_variant_standard" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/radioDuck"
+                    style="?attr/chessToggleButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/new_game_variant_duck" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/radioKingOfTheHill"
+                    style="?attr/chessToggleButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/new_game_variant_king_of_the_hill" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/radioChess960"
+                    style="?attr/chessToggleButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/new_game_variant_chess960" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonCancel"
+                android:text="@string/button_cancel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/tiny_control_gap"
+                style="?attr/chessButtonStyle" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonOk"
+                android:text="@string/button_ok"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/tiny_control_gap"
+                style="?attr/chessButtonStyle" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

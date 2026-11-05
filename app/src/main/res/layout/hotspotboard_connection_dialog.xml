@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="8dp">
+        android:paddingTop="@dimen/panel_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,7 +19,7 @@
                 android:id="@+id/SwitchHost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dip"
+                android:layout_margin="@dimen/control_gap"
                 android:checked="true"
                 android:text="@string/hotspot_host" />
 
@@ -27,7 +27,7 @@
                 android:id="@+id/SwitchShare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dip"
+                android:layout_margin="@dimen/control_gap"
                 android:text="@string/hotspot_share"
                 android:visibility="gone" />
         </LinearLayout>
@@ -36,8 +36,8 @@
             android:id="@+id/networkToggleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             app:selectionRequired="true"
             app:singleSelection="true">
 
@@ -60,7 +60,7 @@
             android:id="@+id/TextConnectionHelp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:ellipsize="none"
             android:lines="2"
             android:maxLines="10"
@@ -72,16 +72,16 @@
             android:id="@+id/TextLocalIp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="4dip"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/board_control_gap"
             android:visibility="gone" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/InputName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:hint="@string/hotspot_name_hint">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -95,7 +95,7 @@
             android:id="@+id/InputHostIp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:hint="@string/hotspot_host_ip_hint"
             android:visibility="gone">
 

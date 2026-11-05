@@ -12,7 +12,6 @@
     <color name="surfaceTextColor">#000000</color>
     <color name="primaryColorDisabled">#888888</color>
     <color name="wrongColor">#D96227</color>
-    <color name="paneBackgroundColor">#20879FB6</color>
 
     <!--
         E-ink palette. Not under values-night: night mode keeps the saturated

@@ -1,14 +1,12 @@
 package jwtc.android.chess.ics;
 
-import jwtc.android.chess.*;
-import jwtc.android.chess.helpers.ResultDialog;
-import jwtc.android.chess.helpers.ResultDialogListener;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.TextView;
-
 import com.google.android.material.button.MaterialButton;
+import jwtc.android.chess.*;
+import jwtc.android.chess.helpers.ResultDialog;
+import jwtc.android.chess.helpers.ResultDialogListener;
 
 /**
  * @TODO just openConfirmDialog?
@@ -28,12 +26,13 @@ public class ICSConfirmDlg extends ResultDialog<Bundle> {
         _tvText = findViewById(R.id.TextViewConfirm);
 
         MaterialButton butYes = findViewById(R.id.ButtonConfirmYes);
-        butYes.setOnClickListener(arg0 -> {
-            Bundle data = new Bundle();
-            data.putCharSequence("data", _sendString);
-            setResult(data);
-            dismiss();
-        });
+        butYes.setOnClickListener(
+                arg0 -> {
+                    Bundle data = new Bundle();
+                    data.putCharSequence("data", _sendString);
+                    setResult(data);
+                    dismiss();
+                });
         MaterialButton butNo = findViewById(R.id.ButtonConfirmNo);
         butNo.setOnClickListener(arg0 -> dismiss());
     }

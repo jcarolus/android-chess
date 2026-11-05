@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="8dip">
+        android:layout_margin="@dimen/control_gap">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:orientation="horizontal">
 
             <EditText
@@ -64,7 +64,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:text="@string/lichess_swiss_title"
             android:accessibilityLiveRegion="polite" />
 
@@ -72,7 +72,7 @@
             android:id="@+id/ProgressBarSwissTeams"
             android:layout_width="match_parent"
             android:layout_height="4dip"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:visibility="gone"
             android:indeterminate="true"
             style="?android:attr/progressBarStyleHorizontal" />
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginTop="8dip" />
+            android:layout_marginTop="@dimen/control_gap" />
 
         <LinearLayout
             android:id="@+id/LayoutSwissPaging"
@@ -119,7 +119,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="8dip">
+        android:layout_margin="@dimen/control_gap">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -138,7 +138,7 @@
                 style="@style/MyHeaderTextStyle"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_marginStart="8dip"
+                android:layout_marginStart="@dimen/control_gap"
                 android:layout_height="wrap_content"
                 android:text="" />
 
@@ -153,13 +153,13 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:text="@string/lichess_swiss_tournaments" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -198,7 +198,7 @@
             android:id="@+id/ProgressBarSwissList"
             android:layout_width="match_parent"
             android:layout_height="4dip"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:visibility="gone"
             android:indeterminate="true"
             style="?android:attr/progressBarStyleHorizontal" />
@@ -208,7 +208,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginTop="8dip" />
+            android:layout_marginTop="@dimen/control_gap" />
     </LinearLayout>
 
     <!-- 2 : tournament detail + standings -->
@@ -216,7 +216,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="8dip">
+        android:layout_margin="@dimen/control_gap">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -235,7 +235,7 @@
                 style="@style/MyHeaderTextStyle"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_marginStart="8dip"
+                android:layout_marginStart="@dimen/control_gap"
                 android:layout_height="wrap_content"
                 android:text="" />
         </LinearLayout>
@@ -245,7 +245,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dip"
+            android:layout_marginTop="@dimen/compact_control_gap"
             android:text="" />
 
         <LinearLayout
@@ -257,14 +257,14 @@
                 android:text="@string/lichess_swiss_join"
                 android:id="@+id/ButtonSwissJoin"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="4dip"
+                android:layout_marginTop="@dimen/compact_control_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_swiss_withdraw"
                 android:id="@+id/ButtonSwissWithdraw"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="4dip"
+                android:layout_marginTop="@dimen/compact_control_gap"
                 style="?attr/chessButtonStyle" />
         </LinearLayout>
 
@@ -272,7 +272,7 @@
             android:id="@+id/ProgressBarSwissStandings"
             android:layout_width="match_parent"
             android:layout_height="4dip"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:visibility="gone"
             android:indeterminate="true"
             style="?android:attr/progressBarStyleHorizontal" />
@@ -282,6 +282,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginTop="8dip" />
+            android:layout_marginTop="@dimen/control_gap" />
     </LinearLayout>
 </ViewAnimator>
