@@ -21,7 +21,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -119,7 +118,6 @@ public class PlayActivity extends ChessBoardActivity
     public static final String PREF_MOVE_ENTRY = "play_move_entry";
     public static final String PREF_CONFIRM_MOVE_ENTRY = "play_confirm_move_entry";
 
-    private LinearLayout moveEntryRow;
     private MoveEntryField moveEntry;
     private Node moveEntryPosition;
     private boolean moveEntryTurn;
@@ -143,7 +141,7 @@ public class PlayActivity extends ChessBoardActivity
         }
         moveEntryPosition = position;
         moveEntryTurn = playerTurn;
-        moveEntryRow.setVisibility(available ? View.VISIBLE : View.GONE);
+        moveEntry.setVisibility(available ? View.VISIBLE : View.GONE);
         if (gainedTurn
                 && moveEntry.requestFocus()
                 && getSystemService(AccessibilityManager.class).isTouchExplorationEnabled()) {
@@ -153,7 +151,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     private void submitMoveEntry(String text) {
-        if (reviewingMove || moveEntryRow.getVisibility() != View.VISIBLE) {
+        if (reviewingMove || moveEntry.getVisibility() != View.VISIBLE) {
             return;
         }
         if (!canApplyMoveEntry()) {
@@ -330,21 +328,12 @@ public class PlayActivity extends ChessBoardActivity
 
         afterCreate();
 
-        moveEntryRow = new LinearLayout(this);
-        moveEntryRow.setGravity(Gravity.CENTER_VERTICAL);
-        moveEntryRow.setVisibility(View.GONE);
         moveEntry = new MoveEntryField(this, this::submitMoveEntry);
-        moveEntryRow.addView(
+        moveEntry.setVisibility(View.GONE);
+        ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(
                 moveEntry,
-                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        MaterialButton submitMove = new MaterialButton(this);
-        submitMove.setText(R.string.app_name_play);
-        submitMove.setOnClickListener(view -> submitMoveEntry(moveEntry.getText().toString()));
-        moveEntryRow.addView(
-                submitMove,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(moveEntryRow);
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
 
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
