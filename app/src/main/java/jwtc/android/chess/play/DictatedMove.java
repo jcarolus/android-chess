@@ -14,6 +14,10 @@ final class DictatedMove {
     private static final Pattern SEPARATORS = Pattern.compile("[^\\p{L}\\p{M}\\p{N}\\s-]+");
 
     static final class Vocabulary {
+        private static final String[] NATO_FILES = {
+            "alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel"
+        };
+
         private final Map<String, Integer> files = new LinkedHashMap<>();
         private final Map<String, Integer> ranks = new LinkedHashMap<>();
         private final Map<String, Integer> promotions = new LinkedHashMap<>();
@@ -26,6 +30,7 @@ final class DictatedMove {
             }
             for (int index = 0; index < 8; index++) {
                 addAliases(files, Character.toString((char) ('a' + index)), index);
+                addAliases(files, NATO_FILES[index], index);
                 addAliases(ranks, Integer.toString(index + 1), index + 1);
                 addAliases(ranks, rankWords[index], index + 1);
             }

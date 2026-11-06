@@ -15,6 +15,17 @@ import org.w3c.dom.NodeList;
 
 public class DictatedMoveTest {
     @Test
+    public void acceptsNatoFileNamesWithLocalizedRanks() {
+        assertEquals("a1 b2", parse("Alfa one Bravo two", "en").describe());
+        assertEquals("c3 d4", parse("Charlie drie Delta vier", "nl").describe());
+        assertEquals("e1 e2", parse("Echo één Echo twee", "nl").describe());
+        assertEquals("e1 e2", parse("Echo 1 Echo 2", "nl").describe());
+        assertEquals("f5 g6", parse("Foxtrot 5 Golf 6", "nl").describe());
+        assertEquals("h7 h8", parse("Hotel zeven h8", "nl").describe());
+        assertNull(parse("1 2", "nl"));
+    }
+
+    @Test
     public void acceptsHyphenBeforeHandwrittenPromotionPiece() {
         DictatedMove move = parse("B7.-B8-Dame", "nl");
         assertEquals("b7 b8", move.describe());
