@@ -3,6 +3,7 @@ package jwtc.android.chess.play;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,14 +18,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
+import java.util.ArrayList;
+import java.util.Locale;
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -35,6 +35,7 @@ import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
@@ -50,12 +51,9 @@ import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameRecord;
+import jwtc.chess.GameTree.Node;
 import jwtc.chess.board.BoardConstants;
-
 import org.json.JSONArray;
-
-import java.util.ArrayList;
-import java.util.Locale;
 
 public class PlayActivity extends ChessBoardActivity
         implements EngineListener,
@@ -109,6 +107,82 @@ public class PlayActivity extends ChessBoardActivity
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
     private View boardTopLayout, boardBottomLayout, layoutHistory, layoutEco;
+
+    private DictationProbe dictationProbe;
+    private Node dictationPosition;
+    private boolean dictationTurn;
+    private int dictationPositionRevision;
+
+    private void updateDictationProbe() {
+        if (dictationProbe == null) {
+            return;
+        }
+        Node position = gameApi.getCurrentNode();
+        boolean available = !gameApi.isDuckVariant();
+        boolean playerTurn =
+                available && !gameApi.isEnded() && (!vsCPU || gameApi.getTurn() == myTurn);
+        boolean positionChanged = position != dictationPosition;
+        if (positionChanged || playerTurn != dictationTurn) {
+            dictationPositionRevision++;
+            dictationProbe.resetForPosition();
+        }
+        dictationProbe.setVisibility(available ? View.VISIBLE : View.GONE);
+        if (playerTurn && (positionChanged || !dictationTurn)) {
+            Log.d(DictationProbe.TAG, "request input focus: " + dictationProbe.requestFocus());
+        }
+        dictationPosition = position;
+        dictationTurn = playerTurn;
+    }
+
+    private void tryDictatedMove(DictatedMove move) {
+        String mode = getIntent().getStringExtra("dictation_probe");
+        if (!canApplyDictatedMove()) {
+            return;
+        }
+        if ("apply".equals(mode)) {
+            applyDictatedMove(move);
+        } else if ("review".equals(mode)) {
+            int positionRevision = dictationPositionRevision;
+            new ChessAlertDialogBuilder(this)
+                    .setMessage("Play move: " + dictationProbe.getText())
+                    .setPositiveButton(
+                            R.string.alert_yes,
+                            (dialog, which) -> {
+                                if (positionRevision == dictationPositionRevision
+                                        && canApplyDictatedMove()) {
+                                    applyDictatedMove(move);
+                                }
+                            })
+                    .setNegativeButton(R.string.alert_no, null)
+                    .setOnDismissListener(dialog -> dictationProbe.resetForPosition())
+                    .show();
+        }
+    }
+
+    private boolean canApplyDictatedMove() {
+        return dictationTurn
+                && dictationPosition == gameApi.getCurrentNode()
+                && !gameApi.isEnded()
+                && !gameApi.hasContinuationToOverwrite();
+    }
+
+    private void applyDictatedMove(DictatedMove move) {
+        boolean promotes = gameApi.isPromotionMove(move.from, move.to);
+        if (promotes != (move.promotion >= 0)) {
+            Log.d(DictationProbe.TAG, "promotion mismatch");
+            return;
+        }
+        if (promotes) {
+            gameApi.setPromo(move.promotion);
+        }
+        try {
+            Log.d(DictationProbe.TAG, "move applied: " + gameApi.requestMove(move.from, move.to));
+        } finally {
+            if (promotes) {
+                gameApi.setPromo(BoardConstants.QUEEN);
+            }
+        }
+    }
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -180,6 +254,12 @@ public class PlayActivity extends ChessBoardActivity
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
 
         afterCreate();
+
+        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0
+                && getIntent().hasExtra("dictation_probe")) {
+            dictationProbe = new DictationProbe(this, this::tryDictatedMove);
+            ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(dictationProbe);
+        }
 
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
@@ -443,6 +523,7 @@ public class PlayActivity extends ChessBoardActivity
 
     @Override
     protected void onPause() {
+        dictationPositionRevision++;
         super.onPause();
 
         if (engineSession != null) {
@@ -697,6 +778,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateGUI() {
+        updateDictationProbe();
         updateSelectedSquares();
         updateCapturedPieces();
         updateSeekBar();
@@ -706,6 +788,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateLastMove() {
+        updateDictationProbe();
         final int state = chessStateToR(gameApi.getState());
         String sState = "";
         // in play or mate are clear from last move.
