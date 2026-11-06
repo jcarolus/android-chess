@@ -33,4 +33,4 @@ Chess for Android 支援 TalkBack 等螢幕閱讀器。棋格、棋子、棋步�
 
 除了內建引擎，Chess for Android 也支援 Open Exchange Protocol（OEX），安裝相容的第三方西洋棋引擎後就能使用。
 
-無論是想快速下一局離線棋、在 Lichess 上線上對戰、做戰術訓練、使用無障礙操作，還是需要一個能搜尋的棋譜資料庫，Chess for Android 都是你隨身帶著走的棋盤。
+無論是想快速下一局離線棋、透過 Lichess 與其他棋手對戰、做戰術訓練、使用無障礙操作，還是需要一個能搜尋的棋譜資料庫，Chess for Android 都是你隨身帶著走的棋盤。

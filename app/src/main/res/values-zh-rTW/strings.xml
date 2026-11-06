@@ -80,7 +80,7 @@
     <string name="choose_light_square_color">選擇淺色棋格的顏色</string>
     <string name="color_hue">色相</string>
     <string name="color_saturation">飽和度</string>
-    <string name="color_lightness">亮度</string>
+    <string name="color_lightness">明度</string>
     <string name="copied_clipboard_success">棋譜已複製到剪貼簿</string>
     <string name="gamepreferences">棋局設定</string>
     <string name="globalpreferences">全域設定</string>
@@ -283,8 +283,8 @@
     <string name="options_play_black">黑方</string>
     <string name="options_play_human">雙人對弈</string>
     <string name="options_play_white">白方</string>
-    <string name="options_quiescent_off">靜態搜尋：關閉</string>
-    <string name="options_quiescent_on">靜態搜尋：開啟</string>
+    <string name="options_quiescent_off">靜止搜尋：關閉</string>
+    <string name="options_quiescent_on">靜止搜尋：開啟</string>
     <string name="pgntool_confirm_delete_games">要刪除棋譜資料庫中的所有棋譜嗎？</string>
     <string name="pgntool_confirm_delete_practice">要刪除所有練習局面嗎？</string>
     <string name="pgntool_confirm_delete_puzzles">要刪除所有棋題局面嗎？</string>
@@ -578,7 +578,7 @@
     <string name="pgn_return_main_line">返回主線</string>
     <string name="pgn_promote_variation">設為首選變化</string>
     <string name="pgn_delete_variation">刪除變化</string>
-    <string name="engine_evaluation_score">引擎評估：%1$+.1f 個士兵（正值對白方有利）</string>
+    <string name="engine_evaluation_score">引擎評估：%1$+.1f（以兵為單位，正值對白方有利）</string>
     <string name="engine_evaluation_pending">無法取得引擎評估</string>
     <string name="analysis_settings">分析設定</string>
     <string name="analysis_time_budget">每個局面的分析時間（秒）</string>
