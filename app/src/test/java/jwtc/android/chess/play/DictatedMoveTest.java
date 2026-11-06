@@ -27,7 +27,8 @@ public class DictatedMoveTest {
             {"ro", "e două e patru", "regină"},
             {"ru", "e два e четыре", "ферзь"},
             {"tr", "e iki e dört", "vezir"},
-            {"zh", "e二e四", "后"}
+            {"zh", "e二e四", "后"},
+            {"zh-TW", "e兩e四", "皇后"}
         };
         for (String[] example : examples) {
             String locale = example[0];
@@ -123,10 +124,16 @@ public class DictatedMoveTest {
     }
 
     private static DictatedMove parse(String text, String languageTag) {
-        String language = Locale.forLanguageTag(languageTag).getLanguage();
+        Locale locale = Locale.forLanguageTag(languageTag);
+        String language = locale.getLanguage();
         File resources = new File("src/main/res");
         File localized = new File(resources, "values-" + language + "/strings.xml");
+        File regional =
+                new File(resources, "values-" + language + "-r" + locale.getCountry() + "/strings.xml");
         File source = localized.isFile() ? localized : new File(resources, "values/strings.xml");
+        if (regional.isFile()) {
+            source = regional;
+        }
         try {
             Document document =
                     DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(source);
