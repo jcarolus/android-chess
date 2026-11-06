@@ -19,6 +19,14 @@ public class DictatedMoveTest {
     }
 
     @Test
+    public void preservesKingToRookCoordinates() {
+        DictatedMove move = DictatedMove.parse("e1 h1");
+        assertEquals(60, move.from);
+        assertEquals(63, move.to);
+        assertEquals(-1, move.promotion);
+    }
+
+    @Test
     public void parsesPromotion() {
         DictatedMove move = DictatedMove.parse("e seven e eight knight");
         assertEquals(12, move.from);

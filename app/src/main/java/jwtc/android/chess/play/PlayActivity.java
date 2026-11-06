@@ -3,7 +3,6 @@ package jwtc.android.chess.play;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +14,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
@@ -108,80 +110,115 @@ public class PlayActivity extends ChessBoardActivity
     private PopupWindow popupWindowInfoBalloon;
     private View boardTopLayout, boardBottomLayout, layoutHistory, layoutEco;
 
-    private DictationProbe dictationProbe;
-    private Node dictationPosition;
-    private boolean dictationTurn;
-    private int dictationPositionRevision;
+    public static final String PREF_MOVE_ENTRY = "play_move_entry";
+    public static final String PREF_CONFIRM_MOVE_ENTRY = "play_confirm_move_entry";
 
-    private void updateDictationProbe() {
-        if (dictationProbe == null) {
+    private MoveEntryField moveEntry;
+    private Node moveEntryPosition;
+    private boolean moveEntryTurn;
+    private int moveEntryRevision;
+    private boolean reviewingMove;
+
+    private void updateMoveEntry() {
+        if (moveEntry == null) {
             return;
         }
         Node position = gameApi.getCurrentNode();
-        boolean available = !gameApi.isDuckVariant();
+        boolean available =
+                getPrefs().getBoolean(PREF_MOVE_ENTRY, false) && !gameApi.isDuckVariant();
         boolean playerTurn =
                 available && !gameApi.isEnded() && (!vsCPU || gameApi.getTurn() == myTurn);
-        boolean positionChanged = position != dictationPosition;
-        if (positionChanged || playerTurn != dictationTurn) {
-            dictationPositionRevision++;
-            dictationProbe.resetForPosition();
+        boolean positionChanged = position != moveEntryPosition;
+        boolean gainedTurn = playerTurn && (positionChanged || !moveEntryTurn);
+        if (positionChanged || playerTurn != moveEntryTurn) {
+            moveEntryRevision++;
+            moveEntry.resetConnection(true);
         }
-        dictationProbe.setVisibility(available ? View.VISIBLE : View.GONE);
-        if (playerTurn && (positionChanged || !dictationTurn)) {
-            Log.d(DictationProbe.TAG, "request input focus: " + dictationProbe.requestFocus());
+        moveEntryPosition = position;
+        moveEntryTurn = playerTurn;
+        moveEntry.setVisibility(available ? View.VISIBLE : View.GONE);
+        if (gainedTurn
+                && moveEntry.requestFocus()
+                && getSystemService(AccessibilityManager.class).isTouchExplorationEnabled()) {
+            moveEntry.performAccessibilityAction(
+                    AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
         }
-        dictationPosition = position;
-        dictationTurn = playerTurn;
     }
 
-    private void tryDictatedMove(DictatedMove move) {
-        String mode = getIntent().getStringExtra("dictation_probe");
-        if (!canApplyDictatedMove()) {
+    private void submitMoveEntry(String text) {
+        if (reviewingMove || moveEntry.getVisibility() != View.VISIBLE) {
             return;
         }
-        if ("apply".equals(mode)) {
-            applyDictatedMove(move);
-        } else if ("review".equals(mode)) {
-            int positionRevision = dictationPositionRevision;
-            new ChessAlertDialogBuilder(this)
-                    .setMessage("Play move: " + dictationProbe.getText())
-                    .setPositiveButton(
-                            R.string.alert_yes,
-                            (dialog, which) -> {
-                                if (positionRevision == dictationPositionRevision
-                                        && canApplyDictatedMove()) {
-                                    applyDictatedMove(move);
-                                }
-                            })
-                    .setNegativeButton(R.string.alert_no, null)
-                    .setOnDismissListener(dialog -> dictationProbe.resetForPosition())
-                    .show();
+        if (!canApplyMoveEntry()) {
+            moveEntry.setError(getString(R.string.move_entry_wrong_turn));
+            return;
         }
+        DictatedMove coordinates = DictatedMove.parse(text);
+        if (coordinates == null) {
+            moveEntry.setError(getString(R.string.move_entry_format));
+            return;
+        }
+        if (coordinates.promotion < 0
+                && gameApi.isPromotionMove(coordinates.from, coordinates.to)) {
+            moveEntry.setError(getString(R.string.move_entry_promotion));
+            return;
+        }
+        PositionMove move =
+                gameApi.resolveTextMove(coordinates.from, coordinates.to, coordinates.promotion);
+        if (move == null) {
+            moveEntry.setError(getString(R.string.move_entry_illegal));
+            return;
+        }
+        moveEntry.setError(null);
+        int revision = moveEntryRevision;
+        int textRevision = moveEntry.textRevision();
+        Runnable apply =
+                () -> {
+                    if (revision == moveEntryRevision
+                            && canApplyMoveEntry()
+                            && textRevision == moveEntry.textRevision()) {
+                        gameApi.move(move.move, -1);
+                    }
+                };
+        boolean review = getPrefs().getBoolean(PREF_CONFIRM_MOVE_ENTRY, false);
+        boolean overwrite = gameApi.hasContinuationToOverwrite();
+        if (!review && !overwrite) {
+            apply.run();
+            return;
+        }
+        String description = coordinates.describe();
+        if (review && coordinates.promotion >= 0) {
+            description +=
+                    " "
+                            + getResources()
+                                    .getStringArray(R.array.promotionpieces)[
+                                    BoardConstants.QUEEN - coordinates.promotion];
+        }
+        String message =
+                review
+                        ? getString(R.string.move_entry_review, description, move.san)
+                        : getString(R.string.title_overwrite_main_line);
+        if (review && overwrite) {
+            message += "\n" + getString(R.string.title_overwrite_main_line);
+        }
+        reviewingMove = true;
+        new ChessAlertDialogBuilder(this)
+                .setMessage(message)
+                .setPositiveButton(R.string.alert_yes, (dialog, which) -> apply.run())
+                .setNegativeButton(R.string.alert_no, null)
+                .setOnDismissListener(
+                        dialog -> {
+                            reviewingMove = false;
+                            moveEntry.resetConnection(false);
+                        })
+                .show();
     }
 
-    private boolean canApplyDictatedMove() {
-        return dictationTurn
-                && dictationPosition == gameApi.getCurrentNode()
+    private boolean canApplyMoveEntry() {
+        return moveEntryTurn
+                && moveEntryPosition == gameApi.getCurrentNode()
                 && !gameApi.isEnded()
-                && !gameApi.hasContinuationToOverwrite();
-    }
-
-    private void applyDictatedMove(DictatedMove move) {
-        boolean promotes = gameApi.isPromotionMove(move.from, move.to);
-        if (promotes != (move.promotion >= 0)) {
-            Log.d(DictationProbe.TAG, "promotion mismatch");
-            return;
-        }
-        if (promotes) {
-            gameApi.setPromo(move.promotion);
-        }
-        try {
-            Log.d(DictationProbe.TAG, "move applied: " + gameApi.requestMove(move.from, move.to));
-        } finally {
-            if (promotes) {
-                gameApi.setPromo(BoardConstants.QUEEN);
-            }
-        }
+                && (!vsCPU || gameApi.getTurn() == myTurn);
     }
 
     @Override
@@ -255,11 +292,9 @@ public class PlayActivity extends ChessBoardActivity
 
         afterCreate();
 
-        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0
-                && getIntent().hasExtra("dictation_probe")) {
-            dictationProbe = new DictationProbe(this, this::tryDictatedMove);
-            ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(dictationProbe);
-        }
+        moveEntry = new MoveEntryField(this, this::submitMoveEntry);
+        moveEntry.setVisibility(View.GONE);
+        ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(moveEntry);
 
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
@@ -478,6 +513,7 @@ public class PlayActivity extends ChessBoardActivity
             gameApi.newGame();
         }
 
+        updateMoveEntry();
         new Handler(Looper.getMainLooper()).postDelayed(this::playIfEngineMove, 500);
     }
 
@@ -523,7 +559,9 @@ public class PlayActivity extends ChessBoardActivity
 
     @Override
     protected void onPause() {
-        dictationPositionRevision++;
+        moveEntryRevision++;
+        moveEntryTurn = false;
+        moveEntry.resetConnection(true);
         super.onPause();
 
         if (engineSession != null) {
@@ -737,12 +775,14 @@ public class PlayActivity extends ChessBoardActivity
 
     @Override
     public void onPlayerResigned(int color) {
+        updateMoveEntry();
         Log.d(TAG, "onPlayerResigned " + color);
         feedbackPlayerResigned(color, textViewLastMove);
     }
 
     @Override
     public void onDrawAgreed() {
+        updateMoveEntry();
         Log.d(TAG, "onDrawAgreed");
         feedbackDrawAgreed(textViewLastMove);
     }
@@ -778,7 +818,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateGUI() {
-        updateDictationProbe();
+        updateMoveEntry();
         updateSelectedSquares();
         updateCapturedPieces();
         updateSeekBar();
@@ -788,7 +828,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateLastMove() {
-        updateDictationProbe();
+        updateMoveEntry();
         final int state = chessStateToR(gameApi.getState());
         String sState = "";
         // in play or mate are clear from last move.

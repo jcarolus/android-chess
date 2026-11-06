@@ -36,6 +36,10 @@ final class DictatedMove {
         this.promotion = promotion;
     }
 
+    String describe() {
+        return Pos.toString(from) + " " + Pos.toString(to);
+    }
+
     static DictatedMove parse(String text) {
         Matcher matcher = MOVE.matcher(text.trim().toLowerCase(Locale.ROOT));
         if (!matcher.matches()) {

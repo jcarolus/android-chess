@@ -338,6 +338,31 @@ public class GameApi {
         return true;
     }
 
+    /** Resolves a coordinate entry with explicit promotion and king-to-rook castling. */
+    public PositionMove resolveTextMove(int from, int to, int promotion) {
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if (Move.getFrom(move.packed) != from
+                    || Move.isPromotionMove(move.packed) != (promotion >= 0)
+                    || (promotion >= 0 && Move.getPromotionPiece(move.packed) != promotion)) {
+                continue;
+            }
+            int destination = Move.getTo(move.packed);
+            if (Move.isOO(move.packed) || Move.isOOO(move.packed)) {
+                if (isChess960Variant()) {
+                    if (move.coordinate.equals(Pos.toString(from) + Pos.toString(to))) {
+                        return new PositionMove(move.packed, move.san);
+                    }
+                    continue;
+                }
+                destination = Pos.fromColAndRow(Move.isOO(move.packed) ? 7 : 0, Pos.row(from));
+            }
+            if (destination == to) {
+                return new PositionMove(move.packed, move.san);
+            }
+        }
+        return null;
+    }
+
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
         if (pendingDuckMove != null || isEnded()) {

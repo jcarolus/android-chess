@@ -1,5 +1,7 @@
 # Android Play dictation probe
 
+These commands apply to the debug probe at commit `39bdf7d3`. Current builds expose text move entry in Accessibility preferences.
+
 Use a disposable local game in a debug APK. The probe logs the field contents to logcat, so dictate only chess coordinates while testing.
 
 ```sh
