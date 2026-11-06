@@ -585,4 +585,23 @@
     <string name="app_link_too_large">Cette partie est trop longue pour un lien. Partagez plutôt la partie complète au format PGN.</string>
     <string name="app_link_no_engine">Aucune analyse par moteur pour cette variante. Vous pouvez parcourir les positions et les coups.</string>
     <string name="share_failed">Impossible de partager la partie. Veuillez réessayer.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e</string>
+    <string-array name="move_input_ranks">
+        <item>un|une</item>
+        <item>deux</item>
+        <item>trois</item>
+        <item>quatre</item>
+        <item>cinq</item>
+        <item>six</item>
+        <item>sept</item>
+        <item>huit</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cavalier</item>
+        <item>fou</item>
+        <item>tour</item>
+        <item>dame|reine</item>
+    </string-array>
 </resources>

@@ -33,7 +33,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     @Override
     public boolean requestMove(final int from, final int to) {
         if (gameApi.isEnded()) {
-            setMessage("Finished position");
+            setMessage(getString(R.string.practice_finished_position));
             rebuildBoard();
             return false;
         }
@@ -140,7 +140,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     @Override
     public void onEndOfCollection() {
-        setMessage("You completed all puzzles!!!");
+        setMessage(getString(R.string.practice_completed_collection));
     }
 
     @Override

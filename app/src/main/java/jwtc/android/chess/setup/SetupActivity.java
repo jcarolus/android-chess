@@ -190,7 +190,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         if (gameApi.isLegalPosition() == 0) {
             openConfirmDialog(
-                    "Use illegal position?",
+                    getString(R.string.setup_use_illegal_position),
                     getString(R.string.alert_yes),
                     getString(R.string.alert_no),
                     onReady,

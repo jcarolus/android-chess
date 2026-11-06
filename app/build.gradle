@@ -5,6 +5,13 @@ android {
         generateLocaleConfig true
     }
 
+    bundle {
+        language {
+            // The keyboard language can differ from the device and app languages.
+            enableSplit = false
+        }
+    }
+
     signingConfigs {
         config {
             storeFile file('../../android-keystore')
@@ -17,7 +24,7 @@ android {
         testInstrumentationRunner "jwtc.android.chess.engine.RustEngineInstrumentation"
         minSdkVersion 24
         targetSdkVersion 36
-        resourceConfigurations += ['en', 'zh', 'it', 'pt', 'es', 'ru', 'de', 'fr', 'tr', 'ro', 'ar', 'fa']
+        resourceConfigurations += ['en', 'zh', 'it', 'pt', 'es', 'ru', 'de', 'fr', 'tr', 'ro', 'ar', 'fa', 'nl']
         // place correct redirectScheme~
         manifestPlaceholders = [appAuthRedirectScheme: 'jwtc.android.chess']
     }

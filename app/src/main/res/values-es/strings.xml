@@ -595,4 +595,23 @@
     <string name="app_link_too_large">Esta partida es demasiado grande para un enlace. Comparte la partida completa como PGN.</string>
     <string name="app_link_no_engine">El análisis con motor no está disponible para esta variante. Puedes explorar el tablero y las jugadas.</string>
     <string name="share_failed">No se pudo compartir la partida. Inténtalo de nuevo.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e</string>
+    <string-array name="move_input_ranks">
+        <item>uno|un</item>
+        <item>dos</item>
+        <item>tres</item>
+        <item>cuatro</item>
+        <item>cinco</item>
+        <item>seis</item>
+        <item>siete</item>
+        <item>ocho</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>caballo</item>
+        <item>alfil</item>
+        <item>torre</item>
+        <item>dama|reina</item>
+    </string-array>
 </resources>

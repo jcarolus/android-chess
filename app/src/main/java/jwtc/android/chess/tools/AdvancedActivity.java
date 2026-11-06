@@ -110,9 +110,9 @@ public class AdvancedActivity extends BaseActivity {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putString("UCIEngine", null);
                             editor.commit();
-                            doToast("Engine " + sEngine + " uninstalled");
+                            doToast(getString(R.string.engine_uninstalled, sEngine));
                         } else {
-                            doToast("No engine installed");
+                            doToast(getString(R.string.engine_not_installed));
                         }
                     } else if (arrString[arg2].equals(
                             getString(R.string.pgntool_unset_uci_database))) {
@@ -128,9 +128,9 @@ public class AdvancedActivity extends BaseActivity {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putString("UCIDatabase", null);
                             editor.commit();
-                            doToast("Database " + sDatabase + " uninstalled");
+                            doToast(getString(R.string.opening_database_uninstalled, sDatabase));
                         } else {
-                            doToast("No database installed");
+                            doToast(getString(R.string.opening_database_not_installed));
                         }
                     } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
 

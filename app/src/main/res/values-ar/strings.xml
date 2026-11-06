@@ -594,4 +594,23 @@
     <string name="app_link_too_large">هذه المباراة أكبر من أن تتم مشاركتها كرابط. شارك المباراة كاملة بصيغة PGN بدلاً من ذلك.</string>
     <string name="app_link_no_engine">تحليل المحرك غير متاح لهذا النوع. يمكنك استعراض الرقعة والنقلات.</string>
     <string name="share_failed">تعذرت مشاركة المباراة. يرجى المحاولة مجددًا.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e</string>
+    <string-array name="move_input_ranks">
+        <item>واحد</item>
+        <item>اثنان|اثنين</item>
+        <item>ثلاثة</item>
+        <item>أربعة</item>
+        <item>خمسة</item>
+        <item>ستة</item>
+        <item>سبعة</item>
+        <item>ثمانية</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>حصان</item>
+        <item>فيل</item>
+        <item>رخ</item>
+        <item>وزير|ملكة</item>
+    </string-array>
 </resources>

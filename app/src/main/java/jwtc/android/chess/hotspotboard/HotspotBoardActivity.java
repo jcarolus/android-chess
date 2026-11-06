@@ -265,19 +265,22 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                     overrideGameState = BoardConstants.WHITE_RESIGNED;
                                 }
                                 showGameResult(
-                                        "Victory!",
-                                        ((HotspotBoardApi) gameApi).getOpponentName()
-                                                + " has resigned.");
+                                        getString(R.string.hotspot_result_victory),
+                                        getString(
+                                                R.string.hotspot_result_opponent_resigned,
+                                                ((HotspotBoardApi) gameApi).getOpponentName()));
                                 break;
                             case GameMessage.TYPE_DRAW_OFFER:
                                 openConfirmDialog(
-                                        "Draw Offer",
-                                        "Accept",
-                                        "Decline",
+                                        getString(R.string.title_offers_draw),
+                                        getString(R.string.lichess_challenge_dialog_button_accept),
+                                        getString(R.string.lichess_challenge_dialog_button_decline),
                                         () -> {
                                             overrideGameState = BoardConstants.DRAW_AGREEMENT;
                                             sendGameMessage(GameMessage.TYPE_DRAW_ACCEPT, 0, "");
-                                            showGameResult("Game Over", "The game is a draw.");
+                                            showGameResult(
+                                                    getString(R.string.hotspot_result_game_over),
+                                                    getString(R.string.hotspot_result_draw));
                                         },
                                         () -> {
                                             sendGameMessage(GameMessage.TYPE_DRAW_DECLINE, 0, "");
@@ -285,7 +288,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 break;
                             case GameMessage.TYPE_DRAW_ACCEPT:
                                 overrideGameState = BoardConstants.DRAW_AGREEMENT;
-                                showGameResult("Game Over", "The game is a draw.");
+                                showGameResult(
+                                        getString(R.string.hotspot_result_game_over),
+                                        getString(R.string.hotspot_result_draw));
                                 break;
                             case GameMessage.TYPE_DRAW_DECLINE:
                                 updateStatus(getString(R.string.hotspot_status_draw_declined));
@@ -479,9 +484,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonResign.setOnClickListener(
                 v -> {
                     openConfirmDialog(
-                            "Are you sure you want to resign?",
-                            "Yes",
-                            "No",
+                            getString(R.string.lichess_confirm_resign),
+                            getString(R.string.alert_yes),
+                            getString(R.string.alert_no),
                             () -> {
                                 sendGameMessage(GameMessage.TYPE_RESIGN, 0, "");
                                 if (((HotspotBoardApi) gameApi).isPlayingAsWhite()) {
@@ -489,7 +494,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 } else {
                                     overrideGameState = BoardConstants.BLACK_RESIGNED;
                                 }
-                                showGameResult("Defeat", "You resigned.");
+                                showGameResult(
+                                        getString(R.string.hotspot_result_defeat),
+                                        getString(R.string.hotspot_result_you_resigned));
                             },
                             null);
                 });
@@ -623,7 +630,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         updateNewGameButtonVisibility(effectiveConnected);
 
         if (!effectiveConnected) {
-            textOpponent.setText("Opponent");
+            textOpponent.setText(R.string.lichess_create_challenge_player);
             updateGameButtonsVisibility(false);
         }
     }
@@ -1099,18 +1106,30 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 // if it's white's turn, white is mated (and loses)
                 if ((turn == BoardConstants.WHITE && amIWhite)
                         || (turn == BoardConstants.BLACK && !amIWhite)) {
-                    showGameResult("Defeat", "You lost by checkmate.");
+                    showGameResult(
+                            getString(R.string.hotspot_result_defeat),
+                            getString(R.string.hotspot_result_mate_lost));
                 } else {
-                    showGameResult("Victory!", "You won by checkmate.");
+                    showGameResult(
+                            getString(R.string.hotspot_result_victory),
+                            getString(R.string.hotspot_result_mate_won));
                 }
             } else if (!restoringState && state == BoardConstants.STALEMATE) {
-                showGameResult("Game Over", "The game is a draw by stalemate.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_stalemate));
             } else if (!restoringState && state == BoardConstants.DRAW_REPEAT) {
-                showGameResult("Game Over", "The game is a draw by 3-fold repetition.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_repetition));
             } else if (!restoringState && state == BoardConstants.DRAW_50) {
-                showGameResult("Game Over", "The game is a draw by the 50-move rule.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_fifty_moves));
             } else if (!restoringState && state == BoardConstants.DRAW_MATERIAL) {
-                showGameResult("Game Over", "The game is a draw by insufficient material.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_insufficient_material));
             }
 
             updateGameButtonsVisibility(

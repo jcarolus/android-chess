@@ -585,4 +585,23 @@
     <string name="app_link_too_large">Partida este prea mare pentru un link. Distribuie partida completă în format PGN.</string>
     <string name="app_link_no_engine">Analiza motorului nu este disponibilă pentru această variantă. Poți explora tabla și mutările.</string>
     <string name="share_failed">Partida nu a putut fi distribuită. Încearcă din nou.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e</string>
+    <string-array name="move_input_ranks">
+        <item>unu|una</item>
+        <item>doi|două</item>
+        <item>trei</item>
+        <item>patru</item>
+        <item>cinci</item>
+        <item>șase</item>
+        <item>șapte</item>
+        <item>opt</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cal</item>
+        <item>nebun</item>
+        <item>turn</item>
+        <item>damă|regină</item>
+    </string-array>
 </resources>

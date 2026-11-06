@@ -1,30 +1,74 @@
 package jwtc.android.chess.play;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 final class DictatedMove {
-    private static final List<String> RANKS =
-            Arrays.asList("one", "two", "three", "four", "five", "six", "seven", "eight");
-    private static final List<String> PIECES = Arrays.asList("knight", "bishop", "rook", "queen");
-    private static final int[] PROMOTIONS = {
-        BoardConstants.KNIGHT, BoardConstants.BISHOP, BoardConstants.ROOK, BoardConstants.QUEEN
-    };
-    private static final String RANK = "([1-8]|" + String.join("|", RANKS) + ")";
-    private static final Pattern MOVE =
-            Pattern.compile(
-                    "([a-h])\\s*"
-                            + RANK
-                            + "\\s+([a-h])\\s*"
-                            + RANK
-                            + "(?:\\s+("
-                            + String.join("|", PIECES)
-                            + "))?");
+    private static final Pattern SEPARATORS = Pattern.compile("[^\\p{L}\\p{M}\\p{N}\\s-]+");
+
+    static final class Vocabulary {
+        private final Map<String, Integer> files = new LinkedHashMap<>();
+        private final Map<String, Integer> ranks = new LinkedHashMap<>();
+        private final Map<String, Integer> promotions = new LinkedHashMap<>();
+        private final Pattern move;
+
+        Vocabulary(String eAliases, String[] rankWords, String[] promotionWords) {
+            if (rankWords.length != 8 || promotionWords.length != 4) {
+                throw new IllegalArgumentException(
+                        "Expected eight ranks and four promotion pieces");
+            }
+            for (int index = 0; index < 8; index++) {
+                addAliases(files, Character.toString((char) ('a' + index)), index);
+                addAliases(ranks, Integer.toString(index + 1), index + 1);
+                addAliases(ranks, rankWords[index], index + 1);
+            }
+            addAliases(files, eAliases, 4);
+            int[] pieces = {
+                BoardConstants.KNIGHT,
+                BoardConstants.BISHOP,
+                BoardConstants.ROOK,
+                BoardConstants.QUEEN
+            };
+            for (int index = 0; index < pieces.length; index++) {
+                addAliases(promotions, promotionWords[index], pieces[index]);
+            }
+            String square = alternatives(files) + "\\s*" + alternatives(ranks);
+            move =
+                    Pattern.compile(
+                            square
+                                    + "(?:\\s+|\\s*-\\s*|(?<=\\p{sc=Han}))"
+                                    + square
+                                    + "(?:(?:\\s+|(?=\\p{sc=Han}))"
+                                    + alternatives(promotions)
+                                    + ")?");
+        }
+
+        private static void addAliases(Map<String, Integer> words, String aliases, int value) {
+            for (String alias : aliases.split("\\|", -1)) {
+                String word = normalize(alias);
+                Integer previous = words.putIfAbsent(word, value);
+                if (word.isEmpty() || (previous != null && previous != value)) {
+                    throw new IllegalArgumentException("Invalid or ambiguous move alias: " + alias);
+                }
+            }
+        }
+
+        private static String alternatives(Map<String, Integer> words) {
+            return words.keySet().stream()
+                    .map(Pattern::quote)
+                    .collect(Collectors.joining("|", "(", ")"));
+        }
+
+        int square(String file, String rank) {
+            return Pos.fromColAndRow(files.get(file), 8 - ranks.get(rank));
+        }
+    }
 
     final int from;
     final int to;
@@ -40,20 +84,32 @@ final class DictatedMove {
         return Pos.toString(from) + " " + Pos.toString(to);
     }
 
-    static DictatedMove parse(String text) {
-        Matcher matcher = MOVE.matcher(text.trim().toLowerCase(Locale.ROOT));
+    static DictatedMove parse(String text, Vocabulary vocabulary) {
+        Matcher matcher = vocabulary.move.matcher(normalize(text));
         if (!matcher.matches()) {
             return null;
         }
         String piece = matcher.group(5);
         return new DictatedMove(
-                square(matcher.group(1), matcher.group(2)),
-                square(matcher.group(3), matcher.group(4)),
-                piece == null ? -1 : PROMOTIONS[PIECES.indexOf(piece)]);
+                vocabulary.square(matcher.group(1), matcher.group(2)),
+                vocabulary.square(matcher.group(3), matcher.group(4)),
+                piece == null ? -1 : vocabulary.promotions.get(piece));
     }
 
-    private static int square(String file, String rank) {
-        int number = rank.length() == 1 ? rank.charAt(0) - '0' : RANKS.indexOf(rank) + 1;
-        return Pos.fromColAndRow(file.charAt(0) - 'a', 8 - number);
+    private static String normalize(String text) {
+        StringBuilder coordinates = new StringBuilder(text.length());
+        text.codePoints()
+                .forEach(
+                        character -> {
+                            if (Character.isDigit(character)) {
+                                coordinates.append(Character.digit(character, 10));
+                            } else if ((character >= 'Ａ' && character <= 'Ｚ')
+                                    || (character >= 'ａ' && character <= 'ｚ')) {
+                                coordinates.append((char) (character - 'Ａ' + 'A'));
+                            } else {
+                                coordinates.appendCodePoint(character);
+                            }
+                        });
+        return SEPARATORS.matcher(coordinates).replaceAll(" ").trim().toLowerCase(Locale.ROOT);
     }
 }

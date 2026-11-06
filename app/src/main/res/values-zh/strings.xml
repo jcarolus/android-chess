@@ -585,4 +585,23 @@
     <string name="app_link_too_large">棋局过大，无法通过链接分享。请改为分享完整的 PGN 棋局。</string>
     <string name="app_link_no_engine">此变体不支持引擎分析。您可以浏览棋盘和着法。</string>
     <string name="share_failed">无法分享棋局。请重试。</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e</string>
+    <string-array name="move_input_ranks">
+        <item>一</item>
+        <item>二|两</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+        <item>七</item>
+        <item>八</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>马|馬</item>
+        <item>象|相</item>
+        <item>车|車</item>
+        <item>后|後|皇后</item>
+    </string-array>
 </resources>

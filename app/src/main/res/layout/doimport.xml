@@ -31,7 +31,7 @@
                 <TableRow android:layout_margin="@dimen/control_gap">
 
                     <TextView
-                        android:text="Added"
+                        android:text="@string/import_added"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/control_gap" />
@@ -47,7 +47,7 @@
                 <TableRow android:layout_margin="@dimen/control_gap">
 
                     <TextView
-                        android:text="Ignored"
+                        android:text="@string/import_ignored"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/control_gap" />

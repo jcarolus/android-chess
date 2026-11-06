@@ -585,4 +585,23 @@
     <string name="app_link_too_large">Questa partita è troppo grande per un link. Condividi la partita completa in formato PGN.</string>
     <string name="app_link_no_engine">Analisi del motore non disponibile per questa variante. Puoi esplorare la scacchiera e le mosse.</string>
     <string name="share_failed">Impossibile condividere la partita. Riprova.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e</string>
+    <string-array name="move_input_ranks">
+        <item>uno|un</item>
+        <item>due</item>
+        <item>tre</item>
+        <item>quattro</item>
+        <item>cinque</item>
+        <item>sei</item>
+        <item>sette</item>
+        <item>otto</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cavallo</item>
+        <item>alfiere</item>
+        <item>torre</item>
+        <item>donna|regina</item>
+    </string-array>
 </resources>

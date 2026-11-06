@@ -3,6 +3,8 @@ package jwtc.android.chess.play;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodSubtype;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -153,7 +157,7 @@ public class PlayActivity extends ChessBoardActivity
             moveEntry.setError(getString(R.string.move_entry_wrong_turn));
             return;
         }
-        DictatedMove coordinates = DictatedMove.parse(text);
+        DictatedMove coordinates = DictatedMove.parse(text, moveEntryVocabulary());
         if (coordinates == null) {
             moveEntry.setError(getString(R.string.move_entry_format));
             return;
@@ -212,6 +216,23 @@ public class PlayActivity extends ChessBoardActivity
                             moveEntry.resetConnection(false);
                         })
                 .show();
+    }
+
+    private DictatedMove.Vocabulary moveEntryVocabulary() {
+        InputMethodSubtype keyboard =
+                getSystemService(InputMethodManager.class).getCurrentInputMethodSubtype();
+        String languageTag = keyboard == null ? "" : keyboard.getLanguageTag();
+        if (keyboard != null && languageTag.isEmpty()) {
+            languageTag = keyboard.getLocale().replace('_', '-');
+        }
+        Locale locale = languageTag.isEmpty() ? Locale.ENGLISH : Locale.forLanguageTag(languageTag);
+        Configuration configuration = new Configuration(getResources().getConfiguration());
+        configuration.setLocale(locale);
+        Resources vocabulary = createConfigurationContext(configuration).getResources();
+        return new DictatedMove.Vocabulary(
+                vocabulary.getString(R.string.move_input_file_e),
+                vocabulary.getStringArray(R.array.move_input_ranks),
+                vocabulary.getStringArray(R.array.move_input_promotions));
     }
 
     private boolean canApplyMoveEntry() {

@@ -628,4 +628,50 @@
     <string name="app_link_too_large">This game is too large to share as a link. Share the complete game as PGN instead.</string>
     <string name="app_link_no_engine">Engine analysis is unavailable for this variant. You can browse the board and moves.</string>
     <string name="share_failed">Could not share the game. Please try again.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e|ee</string>
+    <string-array name="move_input_ranks">
+        <item>one</item>
+        <item>two</item>
+        <item>three</item>
+        <item>four</item>
+        <item>five</item>
+        <item>six</item>
+        <item>seven</item>
+        <item>eight</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>knight</item>
+        <item>bishop</item>
+        <item>rook</item>
+        <item>queen</item>
+    </string-array>
+    <string name="practice_finished_position">Finished position</string>
+    <string name="practice_completed_collection">You completed all puzzles!</string>
+    <string name="import_start_failed">Could not start import</string>
+    <string name="import_failed">Import failed</string>
+    <string name="engine_uninstalled">Engine %1$s uninstalled</string>
+    <string name="engine_not_installed">No engine installed</string>
+    <string name="opening_database_uninstalled">Database %1$s uninstalled</string>
+    <string name="opening_database_not_installed">No database installed</string>
+    <string name="setup_use_illegal_position">Use illegal position?</string>
+    <string name="clock_minutes_hint">Minutes</string>
+    <string name="clock_increment_hint">Increment in seconds</string>
+    <string name="import_added">Added</string>
+    <string name="import_ignored">Ignored</string>
+    <string name="pgn_date_hint">PGN date</string>
+    <string name="eco_openings_description">ECO openings</string>
+    <string name="hotspot_result_game_over">Game over</string>
+    <string name="hotspot_result_defeat">Defeat</string>
+    <string name="hotspot_result_victory">Victory!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s has resigned.</string>
+    <string name="hotspot_result_you_resigned">You resigned.</string>
+    <string name="hotspot_result_mate_lost">You lost by checkmate.</string>
+    <string name="hotspot_result_mate_won">You won by checkmate.</string>
+    <string name="hotspot_result_draw">The game is a draw.</string>
+    <string name="hotspot_result_stalemate">The game is a draw by stalemate.</string>
+    <string name="hotspot_result_repetition">The game is a draw by 3-fold repetition.</string>
+    <string name="hotspot_result_fifty_moves">The game is a draw by the 50-move rule.</string>
+    <string name="hotspot_result_insufficient_material">The game is a draw by insufficient material.</string>
 </resources>

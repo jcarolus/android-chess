@@ -100,7 +100,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
             startService(new Intent(this, ImportService.class));
             if (!bindService(
                     new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
-                doToast("Could not start import");
+                doToast(getString(R.string.import_start_failed));
             }
         }
     }
@@ -189,6 +189,6 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     @Override
     public void OnImportFatalError(int mode) {
         _progress.setVisibility(View.INVISIBLE);
-        _tvWorkCnt.setText("An error occured, import failed");
+        _tvWorkCnt.setText(R.string.import_failed);
     }
 }

@@ -585,4 +585,23 @@
     <string name="app_link_too_large">Эта партия слишком велика для ссылки. Поделитесь полной партией в формате PGN.</string>
     <string name="app_link_no_engine">Анализ движком недоступен для этого варианта. Можно просматривать доску и ходы.</string>
     <string name="share_failed">Не удалось поделиться партией. Повторите попытку.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string name="move_input_file_e">e</string>
+    <string-array name="move_input_ranks">
+        <item>один|одна</item>
+        <item>два|две</item>
+        <item>три</item>
+        <item>четыре</item>
+        <item>пять</item>
+        <item>шесть</item>
+        <item>семь</item>
+        <item>восемь</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>конь</item>
+        <item>слон</item>
+        <item>ладья</item>
+        <item>ферзь|королева</item>
+    </string-array>
 </resources>
