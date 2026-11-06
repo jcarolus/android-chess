@@ -21,6 +21,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
@@ -117,6 +119,7 @@ public class PlayActivity extends ChessBoardActivity
     public static final String PREF_MOVE_ENTRY = "play_move_entry";
     public static final String PREF_CONFIRM_MOVE_ENTRY = "play_confirm_move_entry";
 
+    private LinearLayout moveEntryRow;
     private MoveEntryField moveEntry;
     private Node moveEntryPosition;
     private boolean moveEntryTurn;
@@ -140,7 +143,7 @@ public class PlayActivity extends ChessBoardActivity
         }
         moveEntryPosition = position;
         moveEntryTurn = playerTurn;
-        moveEntry.setVisibility(available ? View.VISIBLE : View.GONE);
+        moveEntryRow.setVisibility(available ? View.VISIBLE : View.GONE);
         if (gainedTurn
                 && moveEntry.requestFocus()
                 && getSystemService(AccessibilityManager.class).isTouchExplorationEnabled()) {
@@ -150,14 +153,14 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     private void submitMoveEntry(String text) {
-        if (reviewingMove || moveEntry.getVisibility() != View.VISIBLE) {
+        if (reviewingMove || moveEntryRow.getVisibility() != View.VISIBLE) {
             return;
         }
         if (!canApplyMoveEntry()) {
             moveEntry.setError(getString(R.string.move_entry_wrong_turn));
             return;
         }
-        DictatedMove coordinates = DictatedMove.parse(text, moveEntryVocabulary());
+        DictatedMove coordinates = parseMoveEntry(text);
         if (coordinates == null) {
             moveEntry.setError(getString(R.string.move_entry_format));
             return;
@@ -218,14 +221,28 @@ public class PlayActivity extends ChessBoardActivity
                 .show();
     }
 
-    private DictatedMove.Vocabulary moveEntryVocabulary() {
+    private DictatedMove parseMoveEntry(String text) {
         InputMethodSubtype keyboard =
                 getSystemService(InputMethodManager.class).getCurrentInputMethodSubtype();
         String languageTag = keyboard == null ? "" : keyboard.getLanguageTag();
         if (keyboard != null && languageTag.isEmpty()) {
             languageTag = keyboard.getLocale().replace('_', '-');
         }
-        Locale locale = languageTag.isEmpty() ? Locale.ENGLISH : Locale.forLanguageTag(languageTag);
+        Locale locale = Locale.forLanguageTag(languageTag);
+        if (!locale.getLanguage().isEmpty()) {
+            return DictatedMove.parse(text, moveEntryVocabulary(locale));
+        }
+
+        // Some keyboards expose no subtype language in handwriting mode.
+        return DictatedMove.parseUnambiguous(
+                text,
+                Arrays.stream(getResources().getStringArray(R.array.move_input_languages))
+                        .map(Locale::forLanguageTag)
+                        .map(this::moveEntryVocabulary)
+                        .iterator());
+    }
+
+    private DictatedMove.Vocabulary moveEntryVocabulary(Locale locale) {
         Configuration configuration = new Configuration(getResources().getConfiguration());
         configuration.setLocale(locale);
         Resources vocabulary = createConfigurationContext(configuration).getResources();
@@ -313,9 +330,21 @@ public class PlayActivity extends ChessBoardActivity
 
         afterCreate();
 
+        moveEntryRow = new LinearLayout(this);
+        moveEntryRow.setGravity(Gravity.CENTER_VERTICAL);
+        moveEntryRow.setVisibility(View.GONE);
         moveEntry = new MoveEntryField(this, this::submitMoveEntry);
-        moveEntry.setVisibility(View.GONE);
-        ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(moveEntry);
+        moveEntryRow.addView(
+                moveEntry,
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        MaterialButton submitMove = new MaterialButton(this);
+        submitMove.setText(R.string.app_name_play);
+        submitMove.setOnClickListener(view -> submitMoveEntry(moveEntry.getText().toString()));
+        moveEntryRow.addView(
+                submitMove,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(moveEntryRow);
 
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);

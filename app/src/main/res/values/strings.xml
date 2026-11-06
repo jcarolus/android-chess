@@ -630,6 +630,22 @@
     <string name="share_failed">Could not share the game. Please try again.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_languages" translatable="false">
+        <item>en</item>
+        <item>ar</item>
+        <item>de</item>
+        <item>es</item>
+        <item>fa</item>
+        <item>fr</item>
+        <item>it</item>
+        <item>nl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>tr</item>
+        <item>zh</item>
+        <item>zh-TW</item>
+    </string-array>
     <string name="move_input_file_e">e|ee</string>
     <string-array name="move_input_ranks">
         <item>one</item>

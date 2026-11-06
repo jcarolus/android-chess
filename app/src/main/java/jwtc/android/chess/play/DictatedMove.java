@@ -1,5 +1,6 @@
 package jwtc.android.chess.play;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -44,7 +45,7 @@ final class DictatedMove {
                             square
                                     + "(?:\\s+|\\s*-\\s*|(?<=\\p{sc=Han}))"
                                     + square
-                                    + "(?:(?:\\s+|(?=\\p{sc=Han}))"
+                                    + "(?:(?:\\s+|\\s*-\\s*|(?=\\p{sc=Han}))"
                                     + alternatives(promotions)
                                     + ")?");
         }
@@ -94,6 +95,24 @@ final class DictatedMove {
                 vocabulary.square(matcher.group(1), matcher.group(2)),
                 vocabulary.square(matcher.group(3), matcher.group(4)),
                 piece == null ? -1 : vocabulary.promotions.get(piece));
+    }
+
+    static DictatedMove parseUnambiguous(String text, Iterator<Vocabulary> vocabularies) {
+        DictatedMove result = null;
+        while (vocabularies.hasNext()) {
+            DictatedMove candidate = parse(text, vocabularies.next());
+            if (candidate == null) {
+                continue;
+            }
+            if (result != null
+                    && (result.from != candidate.from
+                            || result.to != candidate.to
+                            || result.promotion != candidate.promotion)) {
+                return null;
+            }
+            result = candidate;
+        }
+        return result;
     }
 
     private static String normalize(String text) {

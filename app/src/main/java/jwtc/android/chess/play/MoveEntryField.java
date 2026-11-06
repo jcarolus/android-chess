@@ -14,7 +14,7 @@ import jwtc.android.chess.R;
 
 final class MoveEntryField extends AppCompatEditText {
     private final Consumer<String> submit;
-    private int connectionId;
+    private int inputGeneration;
     private int textRevision;
     private int focusRevision;
 
@@ -55,7 +55,7 @@ final class MoveEntryField extends AppCompatEditText {
     }
 
     void resetConnection(boolean clear) {
-        connectionId++;
+        inputGeneration++;
         if (clear) {
             setText("");
         }
@@ -71,61 +71,66 @@ final class MoveEntryField extends AppCompatEditText {
         if (connection == null) {
             return null;
         }
-        int id = ++connectionId;
+        // Android can create another connection while the IME still uses this one.
+        int generation = inputGeneration;
         return new InputConnectionWrapper(connection, false) {
+            private boolean closed;
+
+            private boolean isCurrent() {
+                return !closed && generation == inputGeneration;
+            }
+
             @Override
             public boolean commitText(CharSequence text, int cursor) {
-                return id == connectionId && committed(text, super.commitText(text, cursor));
+                return isCurrent() && committed(text, super.commitText(text, cursor));
             }
 
             @Override
             public boolean commitText(CharSequence text, int cursor, TextAttribute attribute) {
-                return id == connectionId
+                return isCurrent()
                         && committed(text, super.commitText(text, cursor, attribute));
             }
 
             @Override
             public boolean setComposingText(CharSequence text, int cursor) {
-                return id == connectionId && super.setComposingText(text, cursor);
+                return isCurrent() && super.setComposingText(text, cursor);
             }
 
             @Override
             public boolean setComposingText(
                     CharSequence text, int cursor, TextAttribute attribute) {
-                return id == connectionId && super.setComposingText(text, cursor, attribute);
+                return isCurrent() && super.setComposingText(text, cursor, attribute);
             }
 
             @Override
             public boolean setComposingRegion(int start, int end) {
-                return id == connectionId && super.setComposingRegion(start, end);
+                return isCurrent() && super.setComposingRegion(start, end);
             }
 
             @Override
             public boolean setComposingRegion(int start, int end, TextAttribute attribute) {
-                return id == connectionId && super.setComposingRegion(start, end, attribute);
+                return isCurrent() && super.setComposingRegion(start, end, attribute);
             }
 
             @Override
             public boolean replaceText(
                     int start, int end, CharSequence text, int cursor, TextAttribute attribute) {
-                return id == connectionId && super.replaceText(start, end, text, cursor, attribute);
+                return isCurrent() && super.replaceText(start, end, text, cursor, attribute);
             }
 
             @Override
             public boolean sendKeyEvent(KeyEvent event) {
-                return id == connectionId && super.sendKeyEvent(event);
+                return isCurrent() && super.sendKeyEvent(event);
             }
 
             @Override
             public boolean performEditorAction(int action) {
-                return id == connectionId && super.performEditorAction(action);
+                return isCurrent() && super.performEditorAction(action);
             }
 
             @Override
             public void closeConnection() {
-                if (id == connectionId) {
-                    connectionId++;
-                }
+                closed = true;
                 super.closeConnection();
             }
 
@@ -138,7 +143,7 @@ final class MoveEntryField extends AppCompatEditText {
                 if (accepted && value.length() > 1 && value.contentEquals(getText())) {
                     post(
                             () -> {
-                                if (id == connectionId
+                                if (isCurrent()
                                         && revision == textRevision
                                         && focusedRevision == focusRevision
                                         && hasFocus()

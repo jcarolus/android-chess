@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Locale;
 import javax.xml.parsers.DocumentBuilderFactory;
 import jwtc.chess.board.BoardConstants;
@@ -13,6 +14,43 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class DictatedMoveTest {
+    @Test
+    public void acceptsHyphenBeforeHandwrittenPromotionPiece() {
+        DictatedMove move = parse("B7.-B8-Dame", "nl");
+        assertEquals("b7 b8", move.describe());
+        assertEquals(BoardConstants.QUEEN, move.promotion);
+        assertNull(parse("B7-B8--Dame", "nl"));
+    }
+
+    @Test
+    public void recognizesDutchHandwritingWhenKeyboardLanguageIsUnknown() {
+        DictatedMove move =
+                DictatedMove.parseUnambiguous(
+                        "B7-B8.Dame",
+                        Arrays.asList(
+                                        vocabulary("en"),
+                                        vocabulary("nl"),
+                                        vocabulary("fr"),
+                                        vocabulary("de"))
+                                .iterator());
+        assertEquals("b7 b8", move.describe());
+        assertEquals(BoardConstants.QUEEN, move.promotion);
+    }
+
+    @Test
+    public void rejectsConflictingInterpretationsWhenKeyboardLanguageIsUnknown() {
+        DictatedMove.Vocabulary alternate =
+                new DictatedMove.Vocabulary(
+                        "e",
+                        new String[] {
+                            "one", "three", "two", "four", "five", "six", "seven", "eight"
+                        },
+                        new String[] {"knight", "bishop", "rook", "queen"});
+        assertNull(
+                DictatedMove.parseUnambiguous(
+                        "e two e four", Arrays.asList(vocabulary("en"), alternate).iterator()));
+    }
+
     @Test
     public void parsesPackagedVocabularies() {
         String[][] examples = {
@@ -124,12 +162,18 @@ public class DictatedMoveTest {
     }
 
     private static DictatedMove parse(String text, String languageTag) {
+        return DictatedMove.parse(text, vocabulary(languageTag));
+    }
+
+    private static DictatedMove.Vocabulary vocabulary(String languageTag) {
         Locale locale = Locale.forLanguageTag(languageTag);
         String language = locale.getLanguage();
         File resources = new File("src/main/res");
         File localized = new File(resources, "values-" + language + "/strings.xml");
         File regional =
-                new File(resources, "values-" + language + "-r" + locale.getCountry() + "/strings.xml");
+                new File(
+                        resources,
+                        "values-" + language + "-r" + locale.getCountry() + "/strings.xml");
         File source = localized.isFile() ? localized : new File(resources, "values/strings.xml");
         if (regional.isFile()) {
             source = regional;
@@ -146,12 +190,10 @@ public class DictatedMoveTest {
                     break;
                 }
             }
-            return DictatedMove.parse(
-                    text,
-                    new DictatedMove.Vocabulary(
-                            file.getTextContent(),
-                            words(document, "move_input_ranks"),
-                            words(document, "move_input_promotions")));
+            return new DictatedMove.Vocabulary(
+                    file.getTextContent(),
+                    words(document, "move_input_ranks"),
+                    words(document, "move_input_promotions"));
         } catch (Exception error) {
             throw new AssertionError("Could not load vocabulary from " + source, error);
         }
