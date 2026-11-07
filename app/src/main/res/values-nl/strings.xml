@@ -702,9 +702,10 @@
     <string name="pref_move_entry">Zetten invoeren als tekst in Spelen</string>
     <string name="pref_confirm_move_entry">Tekstzetten controleren voor uitvoering</string>
     <string name="move_entry_hint">Zet, bijvoorbeeld e2 e4</string>
-    <string name="move_entry_format">Voer het beginveld en het doelveld in, bijvoorbeeld e2 e4.</string>
+    <string name="move_entry_format">Voer een zet in, bijvoorbeeld e2e4, Nf3 of paard f3.</string>
     <string name="move_entry_illegal">Die zet is niet toegestaan in deze stelling.</string>
     <string name="move_entry_wrong_turn">Wacht tot je aan zet bent in een lopende partij.</string>
     <string name="move_entry_promotion">Voeg een promotiestuk toe: dame, toren, loper of paard.</string>
     <string name="move_entry_review">%1$s (%2$s) spelen?</string>
+    <string name="move_input_captures">slaat|neemt</string>
 </resources>

@@ -614,4 +614,5 @@
         <item>turm</item>
         <item>dame|königin</item>
     </string-array>
+    <string name="move_input_captures">schlägt|nimmt</string>
 </resources>

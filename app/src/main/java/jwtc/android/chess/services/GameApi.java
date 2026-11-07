@@ -363,6 +363,20 @@ public class GameApi {
         return null;
     }
 
+    /** Resolves SAN against legal moves without changing the position. */
+    public PositionMove resolveSanMove(java.util.function.Predicate<String> matches) {
+        PositionMove result = null;
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if (matches.test(move.san)) {
+                if (result != null) {
+                    return null;
+                }
+                result = new PositionMove(move.packed, move.san);
+            }
+        }
+        return result;
+    }
+
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
         if (pendingDuckMove != null || isEnded()) {

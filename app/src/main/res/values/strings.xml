@@ -690,4 +690,5 @@
     <string name="hotspot_result_repetition">The game is a draw by 3-fold repetition.</string>
     <string name="hotspot_result_fifty_moves">The game is a draw by the 50-move rule.</string>
     <string name="hotspot_result_insufficient_material">The game is a draw by insufficient material.</string>
+    <string name="move_input_captures">takes|captures</string>
 </resources>

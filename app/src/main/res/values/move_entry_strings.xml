@@ -3,7 +3,7 @@
     <string name="pref_move_entry">Text move entry in Play</string>
     <string name="pref_confirm_move_entry">Review text moves before playing</string>
     <string name="move_entry_hint">Move, for example e2 e4</string>
-    <string name="move_entry_format">Enter the origin and destination, for example e2 e4.</string>
+    <string name="move_entry_format">Enter a move, for example e2e4, Nf3 or Knight f3.</string>
     <string name="move_entry_illegal">That move is illegal in this position.</string>
     <string name="move_entry_wrong_turn">Wait for your turn in an active game.</string>
     <string name="move_entry_promotion">Add a promotion piece: queen, rook, bishop, or knight.</string>

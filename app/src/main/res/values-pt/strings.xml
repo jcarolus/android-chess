@@ -604,4 +604,5 @@
         <item>torre</item>
         <item>dama|rainha</item>
     </string-array>
+    <string name="move_input_captures">toma|captura</string>
 </resources>

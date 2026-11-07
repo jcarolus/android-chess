@@ -604,4 +604,5 @@
         <item>tour</item>
         <item>dame|reine</item>
     </string-array>
+    <string name="move_input_captures">prend|capture</string>
 </resources>

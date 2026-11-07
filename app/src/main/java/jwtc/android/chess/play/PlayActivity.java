@@ -163,13 +163,17 @@ public class PlayActivity extends ChessBoardActivity
             moveEntry.setError(getString(R.string.move_entry_format));
             return;
         }
-        if (coordinates.promotion < 0
+        if (coordinates.san == null
+                && coordinates.promotion < 0
                 && gameApi.isPromotionMove(coordinates.from, coordinates.to)) {
             moveEntry.setError(getString(R.string.move_entry_promotion));
             return;
         }
         PositionMove move =
-                gameApi.resolveTextMove(coordinates.from, coordinates.to, coordinates.promotion);
+                coordinates.san == null
+                        ? gameApi.resolveTextMove(
+                                coordinates.from, coordinates.to, coordinates.promotion)
+                        : gameApi.resolveSanMove(coordinates::matchesSan);
         if (move == null) {
             moveEntry.setError(getString(R.string.move_entry_illegal));
             return;
@@ -191,7 +195,7 @@ public class PlayActivity extends ChessBoardActivity
             apply.run();
             return;
         }
-        String description = coordinates.describe();
+        String description = coordinates.san == null ? coordinates.describe() : move.san;
         if (review && coordinates.promotion >= 0) {
             description +=
                     " "
@@ -247,7 +251,16 @@ public class PlayActivity extends ChessBoardActivity
         return new DictatedMove.Vocabulary(
                 vocabulary.getString(R.string.move_input_file_e),
                 vocabulary.getStringArray(R.array.move_input_ranks),
-                vocabulary.getStringArray(R.array.move_input_promotions));
+                vocabulary.getStringArray(R.array.move_input_promotions),
+                new String[] {
+                    vocabulary.getString(R.string.piece_pawn),
+                    vocabulary.getString(R.string.piece_knight),
+                    vocabulary.getString(R.string.piece_bishop),
+                    vocabulary.getString(R.string.piece_rook),
+                    vocabulary.getString(R.string.piece_queen),
+                    vocabulary.getString(R.string.piece_king)
+                },
+                vocabulary.getString(R.string.move_input_captures));
     }
 
     private boolean canApplyMoveEntry() {
@@ -330,10 +343,11 @@ public class PlayActivity extends ChessBoardActivity
 
         moveEntry = new MoveEntryField(this, this::submitMoveEntry);
         moveEntry.setVisibility(View.GONE);
-        ((ViewGroup) findViewById(R.id.play_board_bottom)).addView(
-                moveEntry,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        ((ViewGroup) findViewById(R.id.play_board_bottom))
+                .addView(
+                        moveEntry,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
 
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);

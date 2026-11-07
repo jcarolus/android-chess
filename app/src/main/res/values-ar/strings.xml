@@ -613,4 +613,5 @@
         <item>رخ</item>
         <item>وزير|ملكة</item>
     </string-array>
+    <string name="move_input_captures">يأخذ</string>
 </resources>

@@ -635,7 +635,7 @@
     <string name="pref_move_entry">在下棋模式中使用文字輸入棋步</string>
     <string name="pref_confirm_move_entry">走棋前確認文字輸入的棋步</string>
     <string name="move_entry_hint">輸入棋步，例如 e2 e4</string>
-    <string name="move_entry_format">請輸入起點格與目標格，例如 e2 e4。</string>
+    <string name="move_entry_format">請輸入棋步，例如 e2e4、Nf3 或 馬 f3。</string>
     <string name="move_entry_illegal">在目前局面中不能這樣走。</string>
     <string name="move_entry_wrong_turn">請等到進行中的棋局輪到你走棋。</string>
     <string name="move_entry_promotion">請指定升變棋子：皇后、城堡、主教或騎士。</string>
@@ -668,4 +668,5 @@
     <string name="hotspot_result_repetition">同一局面出現三次，這局棋以和局結束。</string>
     <string name="hotspot_result_fifty_moves">依五十步規則，這局棋以和局結束。</string>
     <string name="hotspot_result_insufficient_material">棋子不足以將死對手，這局棋以和局結束。</string>
+    <string name="move_input_captures">吃</string>
 </resources>

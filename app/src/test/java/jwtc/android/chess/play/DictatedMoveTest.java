@@ -1,7 +1,9 @@
 package jwtc.android.chess.play;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
@@ -14,6 +16,51 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class DictatedMoveTest {
+    @Test
+    public void acceptsCompactCoordinatesAndPromotions() {
+        assertEquals("e2 e4", parse("e2e4", "en").describe());
+        assertEquals(BoardConstants.QUEEN, parse("e7e8Q", "en").promotion);
+        assertEquals(BoardConstants.KNIGHT, parse("e7e8=N", "en").promotion);
+    }
+
+    @Test
+    public void acceptsSanWithOptionalCheckAndPromotionEquals() {
+        assertTrue(parse("Nf6", "en").matchesSan("Nf6+"));
+        assertTrue(parse("Nf6+", "en").matchesSan("Nf6+"));
+        assertFalse(parse("Nf6+", "en").matchesSan("Nf6"));
+        assertTrue(parse("e8Q", "en").matchesSan("e8=Q+"));
+        assertTrue(parse("e8=Q", "en").matchesSan("e8=Q"));
+        assertTrue(parse("O-O", "en").matchesSan("O-O+"));
+        assertTrue(parse("R1e2", "en").matchesSan("R1e2"));
+        assertFalse(parse("Re2", "en").matchesSan("R1e2"));
+    }
+
+    @Test
+    public void acceptsSpokenPiecesCapturesAndPromotion() {
+        assertTrue(parse("Knight f3", "en").matchesSan("Nf3"));
+        assertTrue(parse("pawn e8 queen", "en").matchesSan("e8=Q"));
+        assertTrue(parse("Knight takes f3", "en").matchesSan("Nxf3"));
+        assertTrue(parse("bishop captures g7", "en").matchesSan("Bxg7+"));
+        assertTrue(parse("pawn e captures d8 queen", "en").matchesSan("exd8=Q+"));
+        assertFalse(parse("Knight takes f3", "en").matchesSan("Nf3"));
+        assertTrue(parse("Nxf3", "en").matchesSan("Nxf3"));
+    }
+
+    @Test
+    public void acceptsLocalizedSanInEveryVocabulary() {
+        for (String language :
+                new String[] {
+                    "en", "nl", "de", "fr", "es", "it", "pt", "ro", "ru", "tr", "ar", "fa", "zh",
+                    "zh-TW"
+                }) {
+            DictatedMove.Vocabulary vocabulary = vocabulary(language);
+            assertTrue(DictatedMove.parse("Nf3", vocabulary).matchesSan("Nf3+"));
+        }
+        assertTrue(parse("paard slaat f3", "nl").matchesSan("Nxf3"));
+        assertTrue(parse("pion e8 dame", "nl").matchesSan("e8=Q"));
+        assertTrue(parse("Springer schlägt f3", "de").matchesSan("Nxf3"));
+    }
+
     @Test
     public void acceptsNatoFileNamesWithLocalizedRanks() {
         assertEquals("a1 b2", parse("Alfa one Bravo two", "en").describe());
@@ -56,7 +103,9 @@ public class DictatedMoveTest {
                         new String[] {
                             "one", "three", "two", "four", "five", "six", "seven", "eight"
                         },
-                        new String[] {"knight", "bishop", "rook", "queen"});
+                        new String[] {"knight", "bishop", "rook", "queen"},
+                        new String[] {"pawn", "knight", "bishop", "rook", "queen", "king"},
+                        "takes|captures");
         assertNull(
                 DictatedMove.parseUnambiguous(
                         "e two e four", Arrays.asList(vocabulary("en"), alternate).iterator()));
@@ -204,10 +253,30 @@ public class DictatedMoveTest {
             return new DictatedMove.Vocabulary(
                     file.getTextContent(),
                     words(document, "move_input_ranks"),
-                    words(document, "move_input_promotions"));
+                    words(document, "move_input_promotions"),
+                    new String[] {
+                        string(document, "piece_pawn"),
+                        string(document, "piece_knight"),
+                        string(document, "piece_bishop"),
+                        string(document, "piece_rook"),
+                        string(document, "piece_queen"),
+                        string(document, "piece_king")
+                    },
+                    string(document, "move_input_captures"));
         } catch (Exception error) {
             throw new AssertionError("Could not load vocabulary from " + source, error);
         }
+    }
+
+    private static String string(Document document, String name) {
+        NodeList strings = document.getElementsByTagName("string");
+        for (int i = 0; i < strings.getLength(); i++) {
+            Element element = (Element) strings.item(i);
+            if (name.equals(element.getAttribute("name"))) {
+                return element.getTextContent();
+            }
+        }
+        throw new AssertionError("Missing string " + name);
     }
 
     private static String[] words(Document document, String name) {
