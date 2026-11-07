@@ -119,6 +119,10 @@ final class DictatedMove {
         return san.equals(expected) || san.equals(expected.replaceAll("[+#]$", ""));
     }
 
+    boolean matchesSanWithoutPromotion(String legalSan) {
+        return legalSan.matches(".*=[QRBN][+#]?") && matchesSan(legalSan.replaceAll("=[QRBN]", ""));
+    }
+
     String describe() {
         if (san != null) {
             return san;

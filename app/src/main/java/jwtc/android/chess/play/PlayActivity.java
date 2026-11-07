@@ -57,6 +57,7 @@ import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameRecord;
 import jwtc.chess.GameTree.Node;
+import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 import org.json.JSONArray;
 
@@ -154,21 +155,67 @@ public class PlayActivity extends ChessBoardActivity
             moveEntry.setError(getString(R.string.move_entry_format));
             return;
         }
-        if (coordinates.san == null
-                && coordinates.promotion < 0
-                && gameApi.isPromotionMove(coordinates.from, coordinates.to)) {
-            moveEntry.setError(getString(R.string.move_entry_promotion));
-            return;
-        }
         PositionMove move =
                 coordinates.san == null
                         ? gameApi.resolveTextMove(
                                 coordinates.from, coordinates.to, coordinates.promotion)
                         : gameApi.resolveSanMove(coordinates::matchesSan);
+        PositionMove promotion = null;
+        if (move == null) {
+            if (coordinates.san != null) {
+                promotion = gameApi.resolveSanPromotion(coordinates::matchesSanWithoutPromotion);
+            } else if (coordinates.promotion < 0) {
+                promotion =
+                        gameApi.resolveTextMove(
+                                coordinates.from, coordinates.to, BoardConstants.QUEEN);
+            }
+        }
+        if (promotion != null) {
+            int from = Move.getFrom(promotion.move);
+            int to = Move.getTo(promotion.move);
+            int revision = moveEntryRevision;
+            int textRevision = moveEntry.textRevision();
+            moveEntry.setError(null);
+            reviewingMove = true;
+            boolean[] selectedPiece = {false};
+            promotionDialog(
+                            piece -> {
+                                selectedPiece[0] = true;
+                                reviewingMove = false;
+                                moveEntry.resetConnection(false);
+                                if (revision == moveEntryRevision
+                                        && canApplyMoveEntry()
+                                        && textRevision == moveEntry.textRevision()) {
+                                    PositionMove selected =
+                                            gameApi.resolveTextMove(from, to, piece);
+                                    if (selected != null
+                                            && (coordinates.san == null
+                                                    || coordinates.matchesSanWithoutPromotion(
+                                                            selected.san))) {
+                                        confirmMoveEntry(coordinates, selected);
+                                    } else {
+                                        moveEntry.setError(getString(R.string.move_entry_illegal));
+                                    }
+                                }
+                            })
+                    .setOnDismissListener(
+                            dialog -> {
+                                if (!selectedPiece[0]) {
+                                    reviewingMove = false;
+                                    moveEntry.resetConnection(false);
+                                }
+                            })
+                    .show();
+            return;
+        }
         if (move == null) {
             moveEntry.setError(getString(R.string.move_entry_illegal));
             return;
         }
+        confirmMoveEntry(coordinates, move);
+    }
+
+    private void confirmMoveEntry(DictatedMove coordinates, PositionMove move) {
         moveEntry.setError(null);
         int revision = moveEntryRevision;
         int textRevision = moveEntry.textRevision();
@@ -187,12 +234,12 @@ public class PlayActivity extends ChessBoardActivity
             return;
         }
         String description = coordinates.san == null ? coordinates.describe() : move.san;
-        if (review && coordinates.promotion >= 0) {
+        if (review && Move.isPromotionMove(move.move)) {
             description +=
                     " "
                             + getResources()
                                     .getStringArray(R.array.promotionpieces)[
-                                    BoardConstants.QUEEN - coordinates.promotion];
+                                    BoardConstants.QUEEN - Move.getPromotionPiece(move.move)];
         }
         String message =
                 review

@@ -17,6 +17,21 @@ import org.w3c.dom.NodeList;
 
 public class DictatedMoveTest {
     @Test
+    public void acceptsOmittedSanPromotionWithoutIgnoringExplicitPieces() {
+        for (String text : new String[] {"e8", "pawn e8"}) {
+            for (String piece : new String[] {"Q", "R", "B", "N"}) {
+                assertTrue(parse(text, "en").matchesSanWithoutPromotion("e8=" + piece));
+            }
+        }
+        assertTrue(parse("e takes d8", "en").matchesSanWithoutPromotion("exd8=N+"));
+        assertTrue(parse("e8+", "en").matchesSanWithoutPromotion("e8=Q+"));
+        assertFalse(parse("e8+", "en").matchesSanWithoutPromotion("e8=N"));
+        assertFalse(parse("e8Q", "en").matchesSanWithoutPromotion("e8=N"));
+        assertFalse(parse("e8", "en").matchesSanWithoutPromotion("e8"));
+        assertEquals(-1, parse("e7e8", "en").promotion);
+    }
+
+    @Test
     public void acceptsCompactCoordinatesAndPromotions() {
         assertEquals("e2 e4", parse("e2e4", "en").describe());
         assertEquals(BoardConstants.QUEEN, parse("e7e8Q", "en").promotion);

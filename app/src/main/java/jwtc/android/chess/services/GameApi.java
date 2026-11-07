@@ -377,6 +377,20 @@ public class GameApi {
         return result;
     }
 
+    /** Resolves an omitted SAN promotion only when all choices move the same pawn. */
+    public PositionMove resolveSanPromotion(java.util.function.Predicate<String> matches) {
+        PositionMove result = null;
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if (Move.isPromotionMove(move.packed) && matches.test(move.san)) {
+                if (result != null && !Move.equalPositions(result.move, move.packed)) {
+                    return null;
+                }
+                result = new PositionMove(move.packed, move.san);
+            }
+        }
+        return result;
+    }
+
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
         if (pendingDuckMove != null || isEnded()) {

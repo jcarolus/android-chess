@@ -110,30 +110,32 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
             return gameApi.requestDuckMove(to);
         } else if (gameApi.isPromotionMove(from, to)) {
 
-            final String[] items = getResources().getStringArray(R.array.promotionpieces);
-
-            ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
-            builder.setTitle(R.string.title_pick_promo);
-            builder.setCancelable(false);
-            builder.setSingleChoiceItems(
-                    items,
-                    0,
-                    (dialog, item) -> {
-                        dialog.dismiss();
-                        gameApi.setPromo(4 - item);
-                        if (!gameApi.requestMove(from, to)) {
-                            rebuildBoard();
-                        }
-                    });
-            builder.create().show();
-
-            //            if (_vibrator != null) {
-            //                _vibrator.vibrate(40L);
-            //            }
+            promotionDialog(
+                            piece -> {
+                                gameApi.setPromo(piece);
+                                if (!gameApi.requestMove(from, to)) {
+                                    rebuildBoard();
+                                }
+                            })
+                    .show();
 
             return true;
         }
         return gameApi.requestMove(from, to);
+    }
+
+    protected ChessAlertDialogBuilder promotionDialog(java.util.function.IntConsumer selected) {
+        ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
+        builder.setTitle(R.string.title_pick_promo)
+                .setCancelable(false)
+                .setSingleChoiceItems(
+                        getResources().getStringArray(R.array.promotionpieces),
+                        0,
+                        (dialog, item) -> {
+                            dialog.dismiss();
+                            selected.accept(4 - item);
+                        });
+        return builder;
     }
 
     @Override
