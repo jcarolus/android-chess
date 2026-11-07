@@ -16,8 +16,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityManager;
-import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.ImageView;
@@ -134,7 +132,6 @@ public class PlayActivity extends ChessBoardActivity
         boolean playerTurn =
                 available && !gameApi.isEnded() && (!vsCPU || gameApi.getTurn() == myTurn);
         boolean positionChanged = position != moveEntryPosition;
-        boolean gainedTurn = playerTurn && (positionChanged || !moveEntryTurn);
         if (positionChanged || playerTurn != moveEntryTurn) {
             moveEntryRevision++;
             moveEntry.resetConnection(true);
@@ -142,12 +139,6 @@ public class PlayActivity extends ChessBoardActivity
         moveEntryPosition = position;
         moveEntryTurn = playerTurn;
         moveEntry.setVisibility(available ? View.VISIBLE : View.GONE);
-        if (gainedTurn
-                && moveEntry.requestFocus()
-                && getSystemService(AccessibilityManager.class).isTouchExplorationEnabled()) {
-            moveEntry.performAccessibilityAction(
-                    AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
-        }
     }
 
     private void submitMoveEntry(String text) {
