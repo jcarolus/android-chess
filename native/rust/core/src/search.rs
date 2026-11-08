@@ -107,6 +107,10 @@ impl Worker<'_> {
         if p.drawn_in_search(&self.seen[self.seen_from..]) {
             return 0;
         }
+        if moves.is_empty() {
+            self.nodes += 1;
+            return MATE;
+        }
         if depth == 0 {
             self.nodes += 1;
             return p.evaluate();
@@ -136,16 +140,29 @@ impl Worker<'_> {
             let seen_from = self.enter(p, m);
             let value = if next.pieces.iter().any(|p| p[KING] == 0) {
                 -next.evaluate()
+            } else if next.drawn_in_search(&self.seen[self.seen_from..]) {
+                0
             } else {
                 let mut best_duck = -MATE - 1;
-                // Preserve native candidates, their order and duplicates: destinations
-                // of the opponent's non-capturing piece moves, not every empty square.
-                for candidate in &children {
-                    if candidate.capture || next.occupied() & bit(candidate.to) != 0 {
-                        continue;
-                    }
+                // Prefer destinations of the opponent's non-capturing moves.
+                let mut candidates: Vec<_> = children
+                    .iter()
+                    .filter(|m| !m.capture && next.occupied() & bit(m.to) == 0)
+                    .map(|m| m.to)
+                    .collect();
+                // A restricted candidate set must not force a stalemate win for the opponent.
+                if candidates.iter().all(|&square| {
+                    let mut placed = next.clone();
+                    placed.duck = Some(square);
+                    placed.pseudo_moves().is_empty()
+                }) {
+                    candidates = (0..64)
+                        .filter(|&square| next.occupied() & bit(square) == 0)
+                        .collect();
+                }
+                for square in candidates {
                     let mut duck_board = next.clone();
-                    duck_board.duck = Some(candidate.to);
+                    duck_board.duck = Some(square);
                     let mut replies = duck_board.pseudo_moves();
                     let value = -self.alpha_beta_duck(
                         &duck_board,
@@ -157,7 +174,7 @@ impl Worker<'_> {
                     );
                     if value > best_duck {
                         best_duck = value;
-                        m.duck = Some(candidate.to);
+                        m.duck = Some(square);
                         line = self.pv[ply + 1].clone();
                     }
                     alpha = alpha.max(best_duck);
@@ -179,11 +196,6 @@ impl Worker<'_> {
             if best >= beta || self.interrupted {
                 break;
             }
-        }
-        if moves.is_empty() {
-            // Duck chess: having no moves wins.
-            self.nodes += 1;
-            return MATE;
         }
         best
     }
@@ -515,6 +527,44 @@ mod tests {
         let mut moves = p.pseudo_moves();
         let score = worker.quiesce(&p, &mut moves, depth, -MATE, MATE);
         (score, worker.nodes)
+    }
+
+    #[test]
+    fn chess960_castling_search_branch_produces_a_replayable_principal_variation() {
+        for (fen, castle) in [
+            ("8/4k3/8/8/8/8/8/1R2K1R1 w KQ - 0 1", "e1b1"),
+            ("1r2k1r1/8/8/8/8/8/4K3/8 b kq - 0 1", "e8b8"),
+        ] {
+            let p = Position::from_fen(Variant::Chess960, fen).unwrap();
+            let control = SearchControl::default();
+            let mut worker = Worker {
+                control: &control,
+                start: Instant::now(),
+                budget: None,
+                quiescence: true,
+                nodes: 0,
+                interrupted: false,
+                seen: vec![],
+                seen_from: 0,
+                best: [None; 20],
+                values: [0; 20],
+                pv: std::array::from_fn(|_| Vec::new()),
+            };
+            // Isolate the castling branch so evaluation changes cannot hide it behind another move.
+            let mut moves: Vec<_> = p
+                .legal_internal()
+                .into_iter()
+                .filter(|&m| p.external(p.turn, m).as_str() == castle)
+                .collect();
+            assert_eq!(moves.len(), 1);
+            worker.alpha_beta(&p, &mut moves, 2, 0, -MATE, MATE);
+            assert_eq!(p.external(p.turn, worker.pv[0][0]).as_str(), castle);
+            let mut replay = p.clone();
+            for &m in &worker.pv[0] {
+                let coordinate = replay.external(replay.turn, m);
+                replay.apply(coordinate.as_str()).unwrap();
+            }
+        }
     }
 
     #[test]

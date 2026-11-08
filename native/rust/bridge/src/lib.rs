@@ -647,6 +647,72 @@ mod tests {
         })
     }
     #[test]
+    fn variant_ids_preserve_the_requested_rules_and_reject_unknown_ids() {
+        for (id, variant) in [
+            (0, Variant::Standard),
+            (1, Variant::Chess960),
+            (2, Variant::Duck),
+            (3, Variant::KingOfTheHill),
+        ] {
+            assert_eq!(parse_variant(id).unwrap(), variant);
+        }
+        for id in [-1, 4, i32::MAX] {
+            let mut out = Box::new(default_board_result());
+            unsafe { rust_board_query(id, c(START).as_ptr(), std::ptr::null(), 0, &mut *out) };
+            assert!(!text_of(&out.error).is_empty());
+        }
+        let fen = c("8/4k3/8/8/8/8/8/1R2K1R1 w KQ - 0 1");
+        let out = with_history(&[], |h, n, out| unsafe {
+            rust_board_legal_turns(1, fen.as_ptr(), h, n, out)
+        });
+        assert!(text_of(&out.turns).split(' ').any(|s| s == "e1b1=O-O-O"));
+        assert!(text_of(&out.turns).split(' ').any(|s| s == "e1g1=O-O"));
+    }
+
+    #[test]
+    fn variant_terminal_states_survive_history_replay_and_have_no_turns() {
+        for (id, fen, history, expected) in [
+            (
+                3,
+                "7k/8/8/8/8/3K4/8/8 w - - 0 1",
+                vec!["d3d4".to_string()],
+                7,
+            ),
+            (
+                2,
+                "7K/8/8/8/8/8/pp6/k7 w - - 0 1",
+                vec!["h8h7@b1".to_string()],
+                8,
+            ),
+            (
+                2,
+                "4k3/4R3/8/8/8/8/8/K7 w - - 0 1",
+                vec!["e7e8".to_string()],
+                2,
+            ),
+        ] {
+            let fen = c(fen);
+            let snapshot = with_history(&history, |h, n, out| unsafe {
+                rust_board_query(id, fen.as_ptr(), h, n, out)
+            });
+            assert_eq!(snapshot.game_state, expected);
+            let turns = with_history(&history, |h, n, out| unsafe {
+                rust_board_legal_turns(id, fen.as_ptr(), h, n, out)
+            });
+            assert!(text_of(&turns.turns).is_empty());
+            let mut owned = Box::new(default_board_result());
+            with_history(&history, |h, n, out| unsafe {
+                let handle = rust_board_replay_create(id, fen.as_ptr(), h, n, out);
+                assert!(!handle.is_null());
+                rust_board_replay_turns(handle, &mut *owned);
+                assert_eq!(text_of(&owned.error), "");
+                assert!(text_of(&owned.turns).is_empty());
+                rust_board_replay_destroy(handle);
+            });
+        }
+    }
+
+    #[test]
     fn legal_turns_pair_each_move_with_its_san() {
         let turns = legal_turns(&[]);
         assert_eq!(turns.split(' ').count(), 20);
