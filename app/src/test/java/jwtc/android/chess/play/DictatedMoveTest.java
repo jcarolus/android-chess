@@ -62,6 +62,31 @@ public class DictatedMoveTest {
     }
 
     @Test
+    public void acceptsPieceHomophonesInMovesAndPromotions() {
+        String[][] examples = {
+            {"en", "night", "N"},
+            {"nl", "paart", "N"},
+            {"fr", "renne", "Q"},
+            {"fr", "rêne", "Q"}
+        };
+        for (String[] example : examples) {
+            String language = example[0];
+            String alias = example[1];
+            String piece = example[2];
+            assertTrue(parse(alias + " f3", language).matchesSan(piece + "f3"));
+            assertTrue(parse("e8 " + alias, language).matchesSan("e8=" + piece));
+            assertEquals(
+                    piece.equals("N") ? BoardConstants.KNIGHT : BoardConstants.QUEEN,
+                    parse("e7 e8 " + alias, language).promotion);
+        }
+        assertTrue(parse("Night takes f3", "en-US").matchesSan("Nxf3+"));
+        assertNull(parse("night f3", "nl"));
+        assertNull(parse("paart f3", "en"));
+        assertNull(parse("renne f3", "en"));
+        assertNull(parse("nightingale f3", "en"));
+    }
+
+    @Test
     public void acceptsLocalizedSanInEveryVocabulary() {
         for (String language :
                 new String[] {

@@ -637,7 +637,7 @@
         <item>acht</item>
     </string-array>
     <string-array name="move_input_promotions">
-        <item>paard</item>
+        <item>paard|paart</item>
         <item>loper</item>
         <item>toren</item>
         <item>dame|koningin|konining</item>

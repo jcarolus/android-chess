@@ -657,7 +657,7 @@
         <item>eight</item>
     </string-array>
     <string-array name="move_input_promotions">
-        <item>knight</item>
+        <item>knight|night</item>
         <item>bishop</item>
         <item>rook</item>
         <item>queen</item>

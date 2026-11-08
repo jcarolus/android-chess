@@ -601,7 +601,7 @@
         <item>cavalier</item>
         <item>fou</item>
         <item>tour</item>
-        <item>dame|reine</item>
+        <item>dame|reine|renne|rêne</item>
     </string-array>
     <string name="move_input_captures">prend|capture</string>
 </resources>
