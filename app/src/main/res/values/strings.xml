@@ -646,7 +646,6 @@
         <item>zh</item>
         <item>zh-TW</item>
     </string-array>
-    <string name="move_input_file_e">e|ee</string>
     <string-array name="move_input_ranks">
         <item>one</item>
         <item>two</item>

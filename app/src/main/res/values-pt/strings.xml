@@ -587,7 +587,6 @@
     <string name="share_failed">Não foi possível partilhar a partida. Tenta novamente.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
-    <string name="move_input_file_e">e</string>
     <string-array name="move_input_ranks">
         <item>um|uma</item>
         <item>dois|duas</item>

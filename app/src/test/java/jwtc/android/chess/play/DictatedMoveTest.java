@@ -114,7 +114,6 @@ public class DictatedMoveTest {
     public void rejectsConflictingInterpretationsWhenKeyboardLanguageIsUnknown() {
         DictatedMove.Vocabulary alternate =
                 new DictatedMove.Vocabulary(
-                        "e",
                         new String[] {
                             "one", "three", "two", "four", "five", "six", "seven", "eight"
                         },
@@ -179,11 +178,11 @@ public class DictatedMoveTest {
     }
 
     @Test
-    public void normalizesEnglishFileAliasAndPunctuation() {
-        DictatedMove move = parse("ee two E. 4", "en-US");
+    public void normalizesFileLettersAndPunctuation() {
+        DictatedMove move = parse("e two E. 4", "en-US");
         assertEquals("e2 e4", move.describe());
         assertNull(parse("zee two E. 4", "en"));
-        assertNull(parse("ee two to E. 4", "en"));
+        assertNull(parse("ee two E. 4", "en"));
     }
 
     @Test
@@ -256,17 +255,7 @@ public class DictatedMoveTest {
         try {
             Document document =
                     DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(source);
-            Element file = (Element) document.getElementsByTagName("string").item(0);
-            NodeList strings = document.getElementsByTagName("string");
-            for (int i = 0; i < strings.getLength(); i++) {
-                Element candidate = (Element) strings.item(i);
-                if ("move_input_file_e".equals(candidate.getAttribute("name"))) {
-                    file = candidate;
-                    break;
-                }
-            }
             return new DictatedMove.Vocabulary(
-                    file.getTextContent(),
                     words(document, "move_input_ranks"),
                     words(document, "move_input_promotions"),
                     new String[] {

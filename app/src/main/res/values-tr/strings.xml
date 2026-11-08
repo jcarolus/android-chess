@@ -587,7 +587,6 @@
     <string name="share_failed">Oyun paylaşılamadı. Lütfen tekrar deneyin.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
-    <string name="move_input_file_e">e</string>
     <string-array name="move_input_ranks">
         <item>bir</item>
         <item>iki</item>

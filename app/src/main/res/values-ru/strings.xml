@@ -587,7 +587,6 @@
     <string name="share_failed">Не удалось поделиться партией. Повторите попытку.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
-    <string name="move_input_file_e">e</string>
     <string-array name="move_input_ranks">
         <item>один|одна</item>
         <item>два|две</item>

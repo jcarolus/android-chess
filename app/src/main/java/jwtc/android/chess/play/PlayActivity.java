@@ -287,7 +287,6 @@ public class PlayActivity extends ChessBoardActivity
         configuration.setLocale(locale);
         Resources vocabulary = createConfigurationContext(configuration).getResources();
         return new DictatedMove.Vocabulary(
-                vocabulary.getString(R.string.move_input_file_e),
                 vocabulary.getStringArray(R.array.move_input_ranks),
                 vocabulary.getStringArray(R.array.move_input_promotions),
                 new String[] {

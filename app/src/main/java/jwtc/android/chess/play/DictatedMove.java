@@ -25,7 +25,6 @@ final class DictatedMove {
         private final Map<String, String> sanWords = new LinkedHashMap<>();
 
         Vocabulary(
-                String eAliases,
                 String[] rankWords,
                 String[] promotionWords,
                 String[] pieceWords,
@@ -49,7 +48,6 @@ final class DictatedMove {
                 addAliases(ranks, Integer.toString(index + 1), index + 1);
                 addAliases(ranks, rankWords[index], index + 1);
             }
-            addAliases(files, eAliases, 4);
             int[] pieces = {
                 BoardConstants.KNIGHT,
                 BoardConstants.BISHOP,

@@ -596,7 +596,6 @@
     <string name="share_failed">تعذرت مشاركة المباراة. يرجى المحاولة مجددًا.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
-    <string name="move_input_file_e">e</string>
     <string-array name="move_input_ranks">
         <item>واحد</item>
         <item>اثنان|اثنين</item>

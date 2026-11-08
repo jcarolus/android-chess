@@ -614,7 +614,6 @@
     <string name="share_failed">無法分享棋局，請再試一次。</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
-    <string name="move_input_file_e">e</string>
     <string-array name="move_input_ranks">
         <item>一</item>
         <item>二|兩</item>
