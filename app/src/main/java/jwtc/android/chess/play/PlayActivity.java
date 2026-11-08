@@ -415,11 +415,7 @@ public class PlayActivity extends ChessBoardActivity
         final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU, R.array.play_menu);
 
         MaterialButton buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(
-                v -> {
-                    menuDialog.setKingOfTheHill(gameApi.isKingOfTheHillVariant());
-                    menuDialog.show();
-                });
+        buttonMenu.setOnClickListener(v -> menuDialog.show());
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -1079,9 +1075,6 @@ public class PlayActivity extends ChessBoardActivity
                             PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
                     startActivityForResult(intent, REQUEST_SETUP);
                 } else if (item.equals(getString(R.string.menu_analyse_game))) {
-                    if (gameApi.isKingOfTheHillVariant()) {
-                        return;
-                    }
                     intent = new Intent(this, AnalyzeActivity.class);
                     intent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
                     startActivity(intent);
