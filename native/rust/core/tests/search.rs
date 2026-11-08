@@ -27,6 +27,33 @@ fn fixed_depth_matches_native_starting_position() {
 }
 
 #[test]
+fn fixed_depth_recognizes_mate_on_the_final_ply_without_quiescence() {
+    for variant in [Variant::Standard, Variant::Chess960] {
+        for fen in [
+            "7k/8/5KQ1/8/8/8/8/8 w - - 0 1",
+            "8/8/8/8/8/5kq1/8/7K b - - 0 1",
+        ] {
+            let request = SearchRequest::new(
+                18,
+                variant,
+                fen,
+                vec![],
+                SearchLimit::Depth(1),
+                SearchOptions { quiescence: false },
+            )
+            .unwrap();
+            let result = search(&request, &SearchControl::default()).unwrap();
+            assert_eq!(result.score, 100000, "{variant:?}: {fen}");
+            assert_eq!(result.completed_depth, 1);
+            assert_eq!(result.pv.len(), 1);
+            let mut position = request.position().clone();
+            position.apply(result.best_move.unwrap().as_str()).unwrap();
+            assert_eq!(position.game_state(), chess_core::GameState::Mate);
+        }
+    }
+}
+
+#[test]
 fn timed_progress_can_stop_and_retains_the_completed_iteration() {
     use chess_core::{search_with_progress, SearchEvent};
     let request = SearchRequest::new(

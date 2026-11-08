@@ -320,12 +320,9 @@ impl Worker<'_> {
             }
         }
         let value = p.evaluate();
-        if !self.quiescence {
-            return value;
-        }
-        if depth == 0 {
-            // Only mate is detected at the depth limit; looking for stalemate
-            // would mean playing every move at every leaf.
+        if !self.quiescence || depth == 0 {
+            // Checked leaves must distinguish mate from static evaluation even
+            // when tactical search is disabled. Stop at the first legal reply.
             if p.last_check
                 && !moves.iter().any(|m| {
                     let next = p.make_unrecorded(*m);
@@ -573,6 +570,27 @@ mod tests {
             quiescence("7k/6Q1/5K2/8/8/8/8/8 b - - 0 1", 0, true).0,
             -MATE
         );
+    }
+
+    #[test]
+    fn disabled_quiescence_still_detects_mate_without_searching_replies() {
+        let (score, nodes) = quiescence("7k/6Q1/5K2/8/8/8/8/8 b - - 0 1", 5, false);
+        assert_eq!(score, -MATE);
+        assert_eq!(nodes, 1);
+    }
+
+    #[test]
+    fn checked_leaf_with_a_quiet_escape_is_not_mate() {
+        let fen = "4k3/8/8/8/8/8/4R3/4K3 b - - 0 1";
+        let evaluation = Position::from_fen(Variant::Standard, fen)
+            .unwrap()
+            .evaluate();
+        for (depth, enabled) in [(5, false), (0, true)] {
+            let (score, nodes) = quiescence(fen, depth, enabled);
+            assert_eq!(score, evaluation);
+            assert_ne!(score, -MATE);
+            assert_eq!(nodes, 1);
+        }
     }
 
     #[test]
