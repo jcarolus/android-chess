@@ -17,6 +17,105 @@ import org.w3c.dom.NodeList;
 
 public class DictatedMoveTest {
     @Test
+    public void acceptsLocalizedCastlingInEveryVocabulary() {
+        String[][] examples = {
+            {"en", "castle", "castle short", "castle long"},
+            {"nl", "rokade", "korte rokade", "lange rokade"},
+            {"de", "Rochade", "kurze Rochade", "lange Rochade"},
+            {"fr", "roque", "petit roque", "grand roque"},
+            {"es", "enroque", "enroque corto", "enroque largo"},
+            {"it", "arrocco", "arrocco corto", "arrocco lungo"},
+            {"pt", "roque", "roque curto", "roque longo"},
+            {"ro", "rocadă", "rocadă scurtă", "rocadă lungă"},
+            {"ru", "рокировка", "короткая рокировка", "длинная рокировка"},
+            {"tr", "rok", "kısa rok", "uzun rok"},
+            {"ar", "تبييت", "تبييت قصير", "تبييت طويل"},
+            {"fa", "قلعه", "قلعه‌ی کوتاه", "قلعه‌ی بلند"},
+            {"zh", "王车易位", "短易位", "长易位"},
+            {"zh-TW", "王車易位", "王車短易位", "王車長易位"}
+        };
+        for (String[] example : examples) {
+            String language = example[0];
+            DictatedMove generic = parse(example[1], language);
+            assertTrue(language, generic.matchesSan("O-O+"));
+            assertTrue(language, generic.matchesSan("O-O-O"));
+            assertFalse(language, generic.matchesSan("Ke2"));
+            DictatedMove shortCastle = parse(example[2], language);
+            assertTrue(language, shortCastle.matchesSan("O-O"));
+            assertFalse(language, shortCastle.matchesSan("O-O-O"));
+            DictatedMove longCastle = parse(example[3], language);
+            assertTrue(language, longCastle.matchesSan("O-O-O#"));
+            assertFalse(language, longCastle.matchesSan("O-O"));
+            for (String notation : new String[] {"oo", "00", "ooo", "000"}) {
+                assertTrue(
+                        language,
+                        parse(notation, language)
+                                .matchesSan(notation.length() == 2 ? "O-O" : "O-O-O"));
+            }
+        }
+        assertTrue(parse("rokeren", "nl").matchesSan("O-O"));
+        assertTrue(parse("roquer", "fr").matchesSan("O-O-O"));
+        assertTrue(parse("易位", "zh-TW").matchesSan("O-O"));
+        assertNull(parse("korte rokade", "en"));
+        assertNull(parse("grand roque court", "fr"));
+    }
+
+    @Test
+    public void acceptsShortCastlingAliases() {
+        for (String text :
+                new String[] {"castle short", "oo", "00", "O-O", "0-0", " Castle   SHORT "}) {
+            DictatedMove move = parse(text, "en");
+            assertTrue(text, move.matchesSan("O-O"));
+            assertTrue(text, move.matchesSan("O-O+"));
+            assertFalse(text, move.matchesSan("O-O-O"));
+            assertEquals("o-o", move.san);
+        }
+    }
+
+    @Test
+    public void acceptsLongCastlingAliases() {
+        for (String text : new String[] {"castle long", "ooo", "000", "O-O-O", "0-0-0"}) {
+            DictatedMove move = parse(text, "en");
+            assertTrue(text, move.matchesSan("O-O-O"));
+            assertTrue(text, move.matchesSan("O-O-O#"));
+            assertFalse(text, move.matchesSan("O-O"));
+            assertEquals("o-o-o", move.san);
+        }
+        assertTrue(parse("ooo+", "en").matchesSan("O-O-O+"));
+        assertFalse(parse("ooo+", "en").matchesSan("O-O-O"));
+        assertTrue(parse("00#", "en").matchesSan("O-O#"));
+    }
+
+    @Test
+    public void unspecifiedCastlingMatchesBothSidesForLegalMoveResolution() {
+        DictatedMove move = parse("castle", "en");
+        assertTrue(move.matchesSan("O-O"));
+        assertTrue(move.matchesSan("O-O-O"));
+        assertTrue(move.matchesSan("O-O+"));
+        assertTrue(move.matchesSan("O-O-O#"));
+        assertFalse(move.matchesSan("Ke2"));
+        assertFalse(move.matchesSanWithoutPromotion("e8=Q"));
+    }
+
+    @Test
+    public void rejectsIncompleteOrMalformedCastling() {
+        for (String text :
+                new String[] {
+                    "o",
+                    "0",
+                    "oooo",
+                    "0000",
+                    "castle shorts",
+                    "castleshort",
+                    "castle long short",
+                    "oo-",
+                    "o--o"
+                }) {
+            assertNull(text, parse(text, "en"));
+        }
+    }
+
+    @Test
     public void acceptsOmittedSanPromotionWithoutIgnoringExplicitPieces() {
         for (String text : new String[] {"e8", "pawn e8"}) {
             for (String piece : new String[] {"Q", "R", "B", "N"}) {
@@ -144,7 +243,8 @@ public class DictatedMoveTest {
                         },
                         new String[] {"knight", "bishop", "rook", "queen"},
                         new String[] {"pawn", "knight", "bishop", "rook", "queen", "king"},
-                        "takes|captures");
+                        "takes|captures",
+                        new String[] {"castle", "castle short", "castle long"});
         assertNull(
                 DictatedMove.parseUnambiguous(
                         "e two e four", Arrays.asList(vocabulary("en"), alternate).iterator()));
@@ -291,7 +391,12 @@ public class DictatedMoveTest {
                         string(document, "piece_queen"),
                         string(document, "piece_king")
                     },
-                    string(document, "move_input_captures"));
+                    string(document, "move_input_captures"),
+                    new String[] {
+                        string(document, "move_input_castle"),
+                        string(document, "tts_move_castle_short"),
+                        string(document, "tts_move_castle_long")
+                    });
         } catch (Exception error) {
             throw new AssertionError("Could not load vocabulary from " + source, error);
         }

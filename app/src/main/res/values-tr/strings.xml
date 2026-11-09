@@ -603,5 +603,6 @@
         <item>kale</item>
         <item>vezir</item>
     </string-array>
+    <string name="move_input_castle">rok</string>
     <string name="move_input_captures">alır</string>
 </resources>

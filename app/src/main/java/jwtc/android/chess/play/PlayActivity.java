@@ -297,7 +297,12 @@ public class PlayActivity extends ChessBoardActivity
                     vocabulary.getString(R.string.piece_queen),
                     vocabulary.getString(R.string.piece_king)
                 },
-                vocabulary.getString(R.string.move_input_captures));
+                vocabulary.getString(R.string.move_input_captures),
+                new String[] {
+                    vocabulary.getString(R.string.move_input_castle),
+                    vocabulary.getString(R.string.tts_move_castle_short),
+                    vocabulary.getString(R.string.tts_move_castle_long)
+                });
     }
 
     private boolean canApplyMoveEntry() {

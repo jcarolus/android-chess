@@ -23,12 +23,24 @@ final class DictatedMove {
         private final Map<String, Integer> promotions = new LinkedHashMap<>();
         private final Pattern move;
         private final Map<String, String> sanWords = new LinkedHashMap<>();
+        private final Map<String, String> castling = new LinkedHashMap<>();
 
         Vocabulary(
                 String[] rankWords,
                 String[] promotionWords,
                 String[] pieceWords,
-                String captures) {
+                String captures,
+                String[] castlingWords) {
+            if (castlingWords.length != 3) {
+                throw new IllegalArgumentException(
+                        "Expected generic, short and long castling words");
+            }
+            String[] castlingSan = {"castle", "o-o", "o-o-o"};
+            for (int i = 0; i < castlingWords.length; i++) {
+                for (String word : castlingWords[i].split("\\|")) {
+                    castling.put(normalize(word).replaceAll("\\s+", " "), castlingSan[i]);
+                }
+            }
             String[] symbols = {"", "n", "b", "r", "q", "k"};
             for (int i = 0; i < symbols.length; i++) {
                 for (String word : pieceWords[i].split("\\|")) {
@@ -114,6 +126,9 @@ final class DictatedMove {
 
     boolean matchesSan(String legalSan) {
         String expected = legalSan.toLowerCase(Locale.ROOT).replace("=", "");
+        if (san.equals("castle")) {
+            return expected.matches("o-o(?:-o)?[+#]?");
+        }
         return san.equals(expected) || san.equals(expected.replaceAll("[+#]$", ""));
     }
 
@@ -142,6 +157,10 @@ final class DictatedMove {
 
     private static DictatedMove parseSan(String text, Vocabulary vocabulary) {
         String value = normalize(text, Pattern.compile("[^\\p{L}\\p{M}\\p{N}\\s+#-]+"));
+        String castling = vocabulary.castling.get(value.replaceAll("\\s+", " "));
+        if (castling != null) {
+            return new DictatedMove(castling);
+        }
         for (Map.Entry<String, String> word : vocabulary.sanWords.entrySet()) {
             value =
                     value.replaceAll(
@@ -159,6 +178,11 @@ final class DictatedMove {
                             rank.getValue().toString());
         }
         value = value.replaceAll("\\s+", "");
+        if (value.matches("[o0]{2,3}[+#]?")) {
+            String suffix = value.replaceAll("[o0]", "");
+            return new DictatedMove(
+                    value.length() - suffix.length() == 2 ? "o-o" + suffix : "o-o-o" + suffix);
+        }
         if (!value.matches(
                 "(?:[kqrbn]?[a-h]?[1-8]?x?[a-h][1-8][qrbn]?|[o0]-[o0](?:-[o0])?)[+#]?")) {
             return null;

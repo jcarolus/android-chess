@@ -603,5 +603,6 @@
         <item>车|車</item>
         <item>后|後|皇后</item>
     </string-array>
+    <string name="move_input_castle">王车易位|易位</string>
     <string name="move_input_captures">吃</string>
 </resources>

@@ -620,5 +620,6 @@
         <item>رخ|قلعه</item>
         <item>وزیر|ملکه</item>
     </string-array>
+    <string name="move_input_castle">قلعه|قلعه رفتن</string>
     <string name="move_input_captures">می‌زند</string>
 </resources>

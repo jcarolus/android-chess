@@ -603,5 +603,6 @@
         <item>tour</item>
         <item>dame|reine|renne|rêne</item>
     </string-array>
+    <string name="move_input_castle">roque|roquer</string>
     <string name="move_input_captures">prend|capture</string>
 </resources>

@@ -706,5 +706,6 @@
     <string name="move_entry_wrong_turn">Wacht tot je aan zet bent in een lopende partij.</string>
     <string name="move_entry_promotion">Voeg een promotiestuk toe: dame, toren, loper of paard.</string>
     <string name="move_entry_review">%1$s (%2$s) spelen?</string>
+    <string name="move_input_castle">rokade|rokeren</string>
     <string name="move_input_captures">slaat|neemt</string>
 </resources>

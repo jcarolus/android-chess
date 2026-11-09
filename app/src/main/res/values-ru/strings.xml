@@ -603,5 +603,6 @@
         <item>ладья</item>
         <item>ферзь|королева</item>
     </string-array>
+    <string name="move_input_castle">рокировка</string>
     <string name="move_input_captures">бьет|бьёт|берет|берёт</string>
 </resources>

@@ -667,5 +667,6 @@
     <string name="hotspot_result_repetition">同一局面出現三次，這局棋以和局結束。</string>
     <string name="hotspot_result_fifty_moves">依五十步規則，這局棋以和局結束。</string>
     <string name="hotspot_result_insufficient_material">棋子不足以將死對手，這局棋以和局結束。</string>
+    <string name="move_input_castle">王車易位|易位</string>
     <string name="move_input_captures">吃</string>
 </resources>
