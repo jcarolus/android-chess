@@ -161,6 +161,31 @@ public class DictatedMoveTest {
     }
 
     @Test
+    public void acceptsOmittedCaptureMarkers() {
+        for (String text : new String[] {"bf3", "Bf3", "bishop f3"}) {
+            assertTrue(text, parse(text, "en").matchesSan("Bxf3"));
+            assertTrue(text, parse(text, "en").matchesSan("Bxf3+"));
+        }
+        assertTrue(parse("loper f3", "nl").matchesSan("Bxf3"));
+        assertTrue(parse("ef3", "en").matchesSan("exf3"));
+        assertTrue(parse("pawn e d8 queen", "en").matchesSan("exd8=Q+"));
+        assertTrue(parse("ed8", "en").matchesSanWithoutPromotion("exd8=N+"));
+    }
+
+    @Test
+    public void omittedCaptureMarkersPreserveOtherSanRequirements() {
+        assertFalse(parse("Bf3+", "en").matchesSan("Bxf3"));
+        assertFalse(parse("Rf3", "en").matchesSan("Rbxf3"));
+        assertFalse(parse("Rf3", "en").matchesSan("Rfxf3"));
+        assertTrue(parse("Rbf3", "en").matchesSan("Rbxf3"));
+        assertFalse(parse("Rbf3", "en").matchesSan("Rfxf3"));
+        assertFalse(parse("f3", "en").matchesSan("exf3"));
+        assertFalse(parse("Bxf3", "en").matchesSan("Bf3"));
+        assertFalse(parse("bishop captures f3", "en").matchesSan("Bf3"));
+        assertFalse(parse("ed8Q", "en").matchesSan("exd8=N"));
+    }
+
+    @Test
     public void acceptsPieceHomophonesInMovesAndPromotions() {
         String[][] examples = {
             {"en", "night", "N"},

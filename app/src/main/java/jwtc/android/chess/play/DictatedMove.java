@@ -129,6 +129,9 @@ final class DictatedMove {
         if (san.equals("castle")) {
             return expected.matches("o-o(?:-o)?[+#]?");
         }
+        if (!san.contains("x")) {
+            expected = expected.replace("x", "");
+        }
         return san.equals(expected) || san.equals(expected.replaceAll("[+#]$", ""));
     }
 
