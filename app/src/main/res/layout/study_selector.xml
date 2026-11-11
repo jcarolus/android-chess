@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
+
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/StudyTopic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/study_topic" />
+
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/StudyAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/study_author" />
+
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/StudyName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/study_name" />
+
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/StudyChapter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/study_chapter" />
+
+        <TextView
+            android:id="@+id/StudyStatus"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/StudyRetry"
+            style="?attr/chessButtonStyle"
+            android:layout_width="wrap_content"
+            android:text="@string/study_retry"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/StudySurprise"
+                style="?attr/chessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/study_surprise" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/StudyOpen"
+                style="?attr/chessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/study_open_chapter" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

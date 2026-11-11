@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lichess_studies">Studien</string>
+    <string name="study_topic">Thema</string>
+    <string name="study_author">Autor</string>
+    <string name="study_name">Studie</string>
+    <string name="study_chapter">Kapitel</string>
+    <string name="study_any_author">Alle Autoren</string>
+    <string name="study_topic_openings">Eröffnungen</string>
+    <string name="study_topic_strategy">Strategie</string>
+    <string name="study_topic_endgames">Endspiele</string>
+    <string name="study_topic_games">Kommentierte Partien</string>
+    <string name="study_title_by_author">%1$s von %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">Kapitel werden geladen…</string>
+    <string name="study_loading_chapter">Kapitel wird geladen…</string>
+    <string name="study_load_failed">Die Lichess-Studie konnte nicht geladen werden.</string>
+    <string name="study_rate_limited">Lichess begrenzt die Anfragen. Versuche es in einer Minute erneut.</string>
+    <string name="study_no_chapters">Diese Studie enthält keine unterstützten Kapitel.</string>
+    <string name="study_retry">Erneut versuchen</string>
+    <string name="study_open_chapter">Kapitel öffnen</string>
+    <string name="study_surprise">Überrasch mich</string>
+    <string name="study_show_comments">Kommentare anzeigen</string>
+    <string name="study_variations">Varianten</string>
+    <string name="study_before_move">Vor dem Zug: %1$s</string>
+    <string name="study_after_move">Nach dem Zug: %1$s</string>
+    <string name="study_pgn_evaluation">Studienbewertung: %1$s</string>
+    <string name="study_topic_championships">Schachweltmeisterschaften</string>
+</resources>

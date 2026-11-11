@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lichess_studies">Études</string>
+    <string name="study_topic">Thème</string>
+    <string name="study_author">Auteur</string>
+    <string name="study_name">Étude</string>
+    <string name="study_chapter">Chapitre</string>
+    <string name="study_any_author">Tous les auteurs</string>
+    <string name="study_topic_openings">Ouvertures</string>
+    <string name="study_topic_strategy">Stratégie</string>
+    <string name="study_topic_endgames">Finales</string>
+    <string name="study_topic_games">Parties commentées</string>
+    <string name="study_title_by_author">%1$s par %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">Chargement des chapitres…</string>
+    <string name="study_loading_chapter">Chargement du chapitre…</string>
+    <string name="study_load_failed">Impossible de charger cette étude Lichess.</string>
+    <string name="study_rate_limited">Lichess limite les requêtes. Réessayez dans une minute.</string>
+    <string name="study_no_chapters">Cette étude ne contient aucun chapitre compatible.</string>
+    <string name="study_retry">Réessayer</string>
+    <string name="study_open_chapter">Ouvrir le chapitre</string>
+    <string name="study_surprise">Surprenez-moi</string>
+    <string name="study_show_comments">Afficher les commentaires</string>
+    <string name="study_variations">Variantes</string>
+    <string name="study_before_move">Avant le coup : %1$s</string>
+    <string name="study_after_move">Après le coup : %1$s</string>
+    <string name="study_pgn_evaluation">Évaluation de l’étude : %1$s</string>
+    <string name="study_topic_championships">Championnats du monde d’échecs</string>
+</resources>

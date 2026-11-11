@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lichess_studies">研習</string>
+    <string name="study_topic">主題</string>
+    <string name="study_author">作者</string>
+    <string name="study_name">研習</string>
+    <string name="study_chapter">章節</string>
+    <string name="study_any_author">不限作者</string>
+    <string name="study_topic_openings">開局</string>
+    <string name="study_topic_strategy">戰略</string>
+    <string name="study_topic_endgames">殘局</string>
+    <string name="study_topic_games">評註棋局</string>
+    <string name="study_title_by_author">%1$s（作者：%2$s）</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">正在載入章節列表…</string>
+    <string name="study_loading_chapter">正在載入章節…</string>
+    <string name="study_load_failed">無法載入 Lichess 研習。</string>
+    <string name="study_rate_limited">Lichess 正在限制請求，請在一分鐘後重試。</string>
+    <string name="study_no_chapters">此研習沒有支援的章節。</string>
+    <string name="study_retry">重試</string>
+    <string name="study_open_chapter">開啟章節</string>
+    <string name="study_surprise">隨機選取</string>
+    <string name="study_show_comments">顯示評註</string>
+    <string name="study_variations">變著</string>
+    <string name="study_before_move">走棋前：%1$s</string>
+    <string name="study_after_move">走棋後：%1$s</string>
+    <string name="study_pgn_evaluation">研習評估：%1$s</string>
+    <string name="study_topic_championships">世界西洋棋錦標賽</string>
+</resources>

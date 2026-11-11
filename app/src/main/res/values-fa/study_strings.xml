@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lichess_studies">مطالعه‌ها</string>
+    <string name="study_topic">موضوع</string>
+    <string name="study_author">نویسنده</string>
+    <string name="study_name">مطالعه</string>
+    <string name="study_chapter">فصل</string>
+    <string name="study_any_author">همهٔ نویسندگان</string>
+    <string name="study_topic_openings">گشایش‌ها</string>
+    <string name="study_topic_strategy">راهبرد</string>
+    <string name="study_topic_endgames">آخر بازی</string>
+    <string name="study_topic_games">بازی‌های همراه با توضیح</string>
+    <string name="study_title_by_author">%1$s از %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">در حال بارگیری فصل‌ها…</string>
+    <string name="study_loading_chapter">در حال بارگیری فصل…</string>
+    <string name="study_load_failed">بارگیری مطالعهٔ Lichess ممکن نشد.</string>
+    <string name="study_rate_limited">Lichess تعداد درخواست‌ها را محدود کرده است. یک دقیقهٔ دیگر دوباره تلاش کنید.</string>
+    <string name="study_no_chapters">این مطالعه فصل سازگار ندارد.</string>
+    <string name="study_retry">تلاش دوباره</string>
+    <string name="study_open_chapter">باز کردن فصل</string>
+    <string name="study_surprise">غافلگیرم کن</string>
+    <string name="study_show_comments">نمایش توضیحات</string>
+    <string name="study_variations">شاخه‌ها</string>
+    <string name="study_before_move">پیش از حرکت: %1$s</string>
+    <string name="study_after_move">پس از حرکت: %1$s</string>
+    <string name="study_pgn_evaluation">ارزیابی مطالعه: %1$s</string>
+    <string name="study_topic_championships">مسابقات قهرمانی شطرنج جهان</string>
+</resources>

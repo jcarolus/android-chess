@@ -78,6 +78,10 @@ public class GameApi {
         return gameTree.getRoot();
     }
 
+    public String getRootComment() {
+        return gameTree.getRootComment();
+    }
+
     public Node getCurrentNode() {
         return currentNode;
     }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jwtc.android.chess.views.EngineEvaluationView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/StudyReaderEvaluation"
+    android:layout_width="match_parent"
+    android:layout_height="16dp"
+    android:visibility="invisible" />
