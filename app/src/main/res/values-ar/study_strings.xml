@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lichess_studies">الدراسات</string>
+    <string name="studies">الدراسات</string>
     <string name="study_topic">الموضوع</string>
     <string name="study_author">المؤلف</string>
     <string name="study_name">الدراسة</string>
     <string name="study_chapter">الفصل</string>
     <string name="study_any_author">أي مؤلف</string>
-    <string name="study_topic_openings">الافتتاحيات</string>
-    <string name="study_topic_strategy">الاستراتيجية</string>
-    <string name="study_topic_endgames">نهايات اللعب</string>
-    <string name="study_topic_games">مباريات مشروحة</string>
     <string name="study_title_by_author">%1$s من تأليف %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">جارٍ تحميل الفصول…</string>
     <string name="study_loading_chapter">جارٍ تحميل الفصل…</string>
-    <string name="study_load_failed">تعذّر تحميل دراسة Lichess.</string>
-    <string name="study_rate_limited">يحدّ Lichess من عدد الطلبات. أعد المحاولة بعد دقيقة.</string>
-    <string name="study_no_chapters">لا توجد فصول مدعومة في هذه الدراسة.</string>
     <string name="study_retry">إعادة المحاولة</string>
     <string name="study_open_chapter">افتح الفصل</string>
     <string name="study_surprise">فاجئني</string>
-    <string name="study_show_comments">إظهار التعليقات</string>
     <string name="study_variations">التفرعات</string>
     <string name="study_before_move">قبل النقلة: %1$s</string>
     <string name="study_after_move">بعد النقلة: %1$s</string>
     <string name="study_pgn_evaluation">تقييم الدراسة: %1$s</string>
-    <string name="study_topic_championships">بطولات العالم للشطرنج</string>
 </resources>

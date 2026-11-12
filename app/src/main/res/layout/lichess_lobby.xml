@@ -81,13 +81,6 @@
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
-                android:text="@string/lichess_studies"
-                android:id="@+id/ButtonStudies"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="@dimen/control_gap"
-                style="?attr/chessButtonStyle" />
-
-            <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_teams"
                 android:id="@+id/ButtonTeams"
                 android:layout_width="wrap_content"

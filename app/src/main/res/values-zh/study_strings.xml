@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lichess_studies">研习</string>
+    <string name="studies">研习</string>
     <string name="study_topic">主题</string>
     <string name="study_author">作者</string>
     <string name="study_name">研习</string>
     <string name="study_chapter">章节</string>
     <string name="study_any_author">不限作者</string>
-    <string name="study_topic_openings">开局</string>
-    <string name="study_topic_strategy">战略</string>
-    <string name="study_topic_endgames">残局</string>
-    <string name="study_topic_games">评注棋局</string>
     <string name="study_title_by_author">%1$s（作者：%2$s）</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">正在加载章节列表…</string>
     <string name="study_loading_chapter">正在加载章节…</string>
-    <string name="study_load_failed">无法加载 Lichess 研习。</string>
-    <string name="study_rate_limited">Lichess 正在限制请求，请在一分钟后重试。</string>
-    <string name="study_no_chapters">此研习没有受支持的章节。</string>
     <string name="study_retry">重试</string>
     <string name="study_open_chapter">打开章节</string>
     <string name="study_surprise">随机选取</string>
-    <string name="study_show_comments">显示评注</string>
     <string name="study_variations">变着</string>
     <string name="study_before_move">走棋前：%1$s</string>
     <string name="study_after_move">走棋后：%1$s</string>
     <string name="study_pgn_evaluation">研习评估：%1$s</string>
-    <string name="study_topic_championships">世界国际象棋锦标赛</string>
 </resources>

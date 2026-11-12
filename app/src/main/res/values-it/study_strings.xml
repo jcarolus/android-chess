@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lichess_studies">Studi</string>
+    <string name="studies">Studi</string>
     <string name="study_topic">Argomento</string>
     <string name="study_author">Autore</string>
     <string name="study_name">Studio</string>
     <string name="study_chapter">Capitolo</string>
     <string name="study_any_author">Qualsiasi autore</string>
-    <string name="study_topic_openings">Aperture</string>
-    <string name="study_topic_strategy">Strategia</string>
-    <string name="study_topic_endgames">Finali</string>
-    <string name="study_topic_games">Partite commentate</string>
     <string name="study_title_by_author">%1$s di %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Caricamento dei capitoli…</string>
     <string name="study_loading_chapter">Caricamento del capitolo…</string>
-    <string name="study_load_failed">Impossibile caricare lo studio di Lichess.</string>
-    <string name="study_rate_limited">Lichess sta limitando le richieste. Riprova tra un minuto.</string>
-    <string name="study_no_chapters">Questo studio non contiene capitoli supportati.</string>
     <string name="study_retry">Riprova</string>
     <string name="study_open_chapter">Apri capitolo</string>
     <string name="study_surprise">Sorprendimi</string>
-    <string name="study_show_comments">Mostra commenti</string>
     <string name="study_variations">Varianti</string>
     <string name="study_before_move">Prima della mossa: %1$s</string>
     <string name="study_after_move">Dopo la mossa: %1$s</string>
     <string name="study_pgn_evaluation">Valutazione dello studio: %1$s</string>
-    <string name="study_topic_championships">Campionati mondiali di scacchi</string>
 </resources>

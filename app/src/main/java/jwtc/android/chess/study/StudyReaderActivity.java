@@ -1,15 +1,16 @@
-package jwtc.android.chess.lichess.study;
+package jwtc.android.chess.study;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -19,30 +20,28 @@ import jwtc.android.chess.views.EngineEvaluationView;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.board.BoardConstants;
-import okhttp3.Call;
 
 public final class StudyReaderActivity extends ChessBoardActivity {
     private static final String STUDY_ID = "studyId";
     private static final String CHAPTER_ID = "chapterId";
-    private static final String BROADCAST = "broadcast";
+    private static final String COLLECTION_ID = "collectionId";
     private static final String TITLE = "studyTitle";
     private static final String AUTHOR = "studyAuthor";
 
     private View previous, next, variations, retry;
     private TextView chapterTitle, moveText, commentText, status;
-    private SwitchMaterial showComments;
     private EngineEvaluationView evaluation;
     private Node chosenContinuation;
-    private Call request;
+    private boolean loading;
     private boolean loaded;
     private int[] restoredPath;
     private int restoredContinuation = -1;
 
-    static Intent intent(Context context, StudyCatalog study, String chapterId) {
+    static Intent intent(Context context, StudyStore.Study study, String chapterId) {
         return new Intent(context, StudyReaderActivity.class)
                 .putExtra(STUDY_ID, study.id)
                 .putExtra(CHAPTER_ID, chapterId)
-                .putExtra(BROADCAST, study.broadcast)
+                .putExtra(COLLECTION_ID, study.collectionId)
                 .putExtra(TITLE, study.title)
                 .putExtra(AUTHOR, study.author);
     }
@@ -73,7 +72,6 @@ public final class StudyReaderActivity extends ChessBoardActivity {
         previous = findViewById(R.id.StudyPreviousMove);
         next = findViewById(R.id.StudyNextMove);
         variations = findViewById(R.id.StudyVariations);
-        showComments = findViewById(R.id.StudyShowComments);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
@@ -81,7 +79,6 @@ public final class StudyReaderActivity extends ChessBoardActivity {
         if (state != null) {
             restoredPath = state.getIntArray("path");
             restoredContinuation = state.getInt("continuation", -1);
-            showComments.setChecked(state.getBoolean("showComments"));
         }
         TextView title = findViewById(R.id.StudyReaderTitle);
         title.setText(
@@ -90,7 +87,6 @@ public final class StudyReaderActivity extends ChessBoardActivity {
                         getIntent().getStringExtra(TITLE),
                         getIntent().getStringExtra(AUTHOR)));
 
-        showComments.setOnCheckedChangeListener((button, checked) -> updateAnnotations());
         previous.setOnClickListener(
                 v -> {
                     chosenContinuation = null;
@@ -117,50 +113,39 @@ public final class StudyReaderActivity extends ChessBoardActivity {
     }
 
     private void loadChapter() {
-        if (request != null) {
+        if (loading) {
             return;
         }
         String studyId = getIntent().getStringExtra(STUDY_ID);
         String chapterId = getIntent().getStringExtra(CHAPTER_ID);
-        if (studyId == null || chapterId == null) {
+        String collectionId = getIntent().getStringExtra(COLLECTION_ID);
+        if (collectionId == null || studyId == null || chapterId == null) {
             finish();
             return;
         }
         status.setText(R.string.study_loading_chapter);
         retry.setVisibility(View.GONE);
         updatePosition();
-        String cached = findChapter(StudyDownload.cachedChapters(studyId), chapterId);
-        if (cached != null) {
-            showChapter(cached);
-        } else if (getIntent().getBooleanExtra(BROADCAST, false)) {
-            request =
-                    StudyDownload.chapters(
-                            studyId,
-                            true,
-                            chapters -> showChapter(findChapter(chapters, chapterId)));
-        } else {
-            request = StudyDownload.chapter(studyId, chapterId, this::showChapter);
-        }
-    }
-
-    private static String findChapter(List<StudyPgn.Chapter> chapters, String chapterId) {
-        if (chapters != null) {
-            for (StudyPgn.Chapter chapter : chapters) {
-                if (chapter.id.equals(chapterId)) {
-                    return chapter.pgn;
-                }
-            }
-        }
-        return null;
+        loading = true;
+        CompletableFuture.supplyAsync(() -> StudyStore.chapter(this, collectionId, studyId, chapterId))
+                .whenComplete(
+                        (pgn, error) ->
+                                runOnUiThread(
+                                        () -> {
+                                            if (isDestroyed() || isFinishing()) {
+                                                return;
+                                            }
+                                            if (error != null) {
+                                                Log.w("StudyReader", "Could not read study chapter", error);
+                                            }
+                                            showChapter(pgn);
+                                        }));
     }
 
     private void showChapter(String pgn) {
-        request = null;
+        loading = false;
         if (pgn == null || pgn.trim().isEmpty() || !gameApi.loadPGN(pgn)) {
-            status.setText(
-                    StudyDownload.isRateLimited()
-                            ? R.string.study_rate_limited
-                            : R.string.study_load_failed);
+            status.setText(R.string.study_load_failed);
             retry.setVisibility(View.VISIBLE);
             return;
         }
@@ -221,7 +206,6 @@ public final class StudyReaderActivity extends ChessBoardActivity {
         Node current = gameApi.getCurrentNode();
         previous.setEnabled(loaded && current.getParent() != null);
         next.setEnabled(loaded && nextMove() != null);
-        showComments.setEnabled(loaded);
         variations.setVisibility(
                 loaded && gameApi.getContinuations(current).size() > 1 ? View.VISIBLE : View.GONE);
         if (loaded) {
@@ -265,7 +249,7 @@ public final class StudyReaderActivity extends ChessBoardActivity {
     private void updateAnnotations() {
         String text = "";
         String score = "";
-        if (loaded && showComments.isChecked()) {
+        if (loaded) {
             PGNEntry current = gameApi.getCurrentNode().getEntry();
             Node continuation = nextMove();
             if (current == null) {
@@ -323,14 +307,7 @@ public final class StudyReaderActivity extends ChessBoardActivity {
         }
         state.putIntArray("path", restoredPath);
         state.putInt("continuation", restoredContinuation);
-        state.putBoolean("showComments", showComments.isChecked());
     }
 
-    @Override
-    protected void onDestroy() {
-        if (request != null) {
-            request.cancel();
-        }
-        super.onDestroy();
-    }
+
 }

@@ -150,6 +150,9 @@ public class ImportActivity extends BaseActivity implements ImportListener {
                 case ImportService.IMPORT_PRACTICE:
                     _tvWork.setText(R.string.importing_practice_positions);
                     break;
+                case ImportService.IMPORT_STUDIES:
+                    _tvWork.setText(R.string.importing_studies);
+                    break;
                 case ImportService.IMPORT_OPENINGS:
                     _tvWork.setText(R.string.importing_openings);
                     break;

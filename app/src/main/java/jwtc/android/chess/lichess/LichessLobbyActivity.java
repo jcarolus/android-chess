@@ -21,7 +21,6 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
-import jwtc.android.chess.lichess.study.StudySelectorDialog;
 import jwtc.android.chess.links.AppLink;
 import jwtc.android.chess.links.LinkActivity;
 import jwtc.android.chess.links.LinkSharing;
@@ -120,15 +119,6 @@ public class LichessLobbyActivity extends LichessBaseActivity
 
         MaterialButton buttonPuzzle = findViewById(R.id.ButtonPuzzle);
         buttonPuzzle.setOnClickListener(v -> openPuzzleDialog());
-
-        findViewById(R.id.ButtonStudies)
-                .setOnClickListener(
-                        v -> {
-                            if (getSupportFragmentManager().findFragmentByTag("studies") == null) {
-                                new StudySelectorDialog()
-                                        .showNow(getSupportFragmentManager(), "studies");
-                            }
-                        });
 
         MaterialButton buttonTeams = findViewById(R.id.ButtonTeams);
         buttonTeams.setOnClickListener(

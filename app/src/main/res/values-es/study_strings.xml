@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lichess_studies">Estudios</string>
+    <string name="studies">Estudios</string>
     <string name="study_topic">Tema</string>
     <string name="study_author">Autor</string>
     <string name="study_name">Estudio</string>
     <string name="study_chapter">Capítulo</string>
     <string name="study_any_author">Cualquier autor</string>
-    <string name="study_topic_openings">Aperturas</string>
-    <string name="study_topic_strategy">Estrategia</string>
-    <string name="study_topic_endgames">Finales</string>
-    <string name="study_topic_games">Partidas comentadas</string>
     <string name="study_title_by_author">%1$s de %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Cargando capítulos…</string>
     <string name="study_loading_chapter">Cargando capítulo…</string>
-    <string name="study_load_failed">No se pudo cargar el estudio de Lichess.</string>
-    <string name="study_rate_limited">Lichess está limitando las solicitudes. Inténtalo de nuevo en un minuto.</string>
-    <string name="study_no_chapters">Este estudio no tiene capítulos compatibles.</string>
     <string name="study_retry">Reintentar</string>
     <string name="study_open_chapter">Abrir capítulo</string>
     <string name="study_surprise">Sorpréndeme</string>
-    <string name="study_show_comments">Mostrar comentarios</string>
     <string name="study_variations">Variantes</string>
     <string name="study_before_move">Antes de la jugada: %1$s</string>
     <string name="study_after_move">Después de la jugada: %1$s</string>
     <string name="study_pgn_evaluation">Evaluación del estudio: %1$s</string>
-    <string name="study_topic_championships">Campeonatos Mundiales de Ajedrez</string>
 </resources>

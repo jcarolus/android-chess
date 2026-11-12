@@ -81,13 +81,6 @@
             app:alignItems="center"
             app:flexWrap="wrap">
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/StudyShowComments"
-                style="@style/ChessFlexItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/study_show_comments" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/StudyVariations"
                 style="?attr/chessButtonStyle"

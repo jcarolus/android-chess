@@ -23,6 +23,7 @@ import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.services.HMap;
+import jwtc.android.chess.study.StudyStore;
 
 public class ImportService extends Service {
     private static final String TAG = "ImportService";
@@ -31,6 +32,7 @@ public class ImportService extends Service {
     public static final int IMPORT_GAMES = 2;
     public static final int IMPORT_PRACTICE = 3;
     public static final int IMPORT_OPENINGS = 4;
+    public static final int IMPORT_STUDIES = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
     public static final int PICK_BINARY = 12;
@@ -175,7 +177,8 @@ public class ImportService extends Service {
         if (mode != IMPORT_GAMES
                 && mode != IMPORT_PUZZLES
                 && mode != IMPORT_PRACTICE
-                && mode != IMPORT_OPENINGS) {
+                && mode != IMPORT_OPENINGS
+                && mode != IMPORT_STUDIES) {
             latestIsImport = false;
             jobMode = mode;
             jobOutcome = null;
@@ -194,6 +197,7 @@ public class ImportService extends Service {
                         });
                 break;
             case IMPORT_GAMES:
+            case IMPORT_STUDIES:
                 if (uri != null) {
                     pipeline.start(
                             mode,
@@ -205,7 +209,9 @@ public class ImportService extends Service {
                                     return new ImportJob(
                                             mode,
                                             isZip(in) ? PgnSource.zip(in) : PgnSource.file(in),
-                                            new GameImportHandler(getContentResolver()));
+                                            mode == IMPORT_STUDIES
+                                                    ? item -> StudyStore.importChapter(this, item.pgn)
+                                                    : new GameImportHandler(getContentResolver()));
                                 } catch (Exception error) {
                                     in.close();
                                     throw error;

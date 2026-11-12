@@ -25,7 +25,7 @@ public class PGNProvider extends ContentProvider {
     private static final String TAG = "PGNProvider";
 
     private static final String DATABASE_NAME = "chess_pgn.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
     private static final String GAMES_TABLE_NAME = "games";
 
     private static final HashMap<String, String> sGamesProjectionMap;
@@ -34,6 +34,15 @@ public class PGNProvider extends ContentProvider {
     protected static final int GAMES_ID = 2;
 
     protected static UriMatcher sUriMatcher;
+
+    private static DatabaseHelper databaseHelper;
+
+    public static synchronized SQLiteOpenHelper getDatabaseHelper(Context context) {
+        if (databaseHelper == null) {
+            databaseHelper = new DatabaseHelper(context.getApplicationContext());
+        }
+        return databaseHelper;
+    }
 
     /** This class helps open, create, and upgrade the database file. */
     private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -57,6 +66,7 @@ public class PGNProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             Log.d(TAG, "DatabaseHelper.onCreate");
 
+            createStudyChaptersTable(db);
             db.execSQL(
                     "CREATE TABLE "
                             + GAMES_TABLE_NAME
@@ -137,10 +147,34 @@ public class PGNProvider extends ContentProvider {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.d(TAG, "DatabaseHelper.onUpgrade old version " + oldVersion + " to " + newVersion);
 
-            // We have only one upgrade currently:
-            if (oldVersion < DATABASE_VERSION) {
+            if (oldVersion < 5) {
                 upgradeAddResultColumn(db);
             }
+            if (oldVersion < 7) {
+                db.execSQL("DROP TABLE IF EXISTS study_chapters");
+                createStudyChaptersTable(db);
+            }
+        }
+
+        private static void createStudyChaptersTable(SQLiteDatabase db) {
+            db.execSQL(
+                    "CREATE TABLE studies ("
+                            + "collection_id TEXT NOT NULL,"
+                            + "study_id TEXT NOT NULL,"
+                            + "collection_name TEXT NOT NULL,"
+                            + "title TEXT NOT NULL,"
+                            + "author TEXT NOT NULL,"
+                            + "topic TEXT NOT NULL,"
+                            + "PRIMARY KEY (collection_id, study_id))");
+            db.execSQL(
+                    "CREATE TABLE study_chapters ("
+                            + "collection_id TEXT NOT NULL,"
+                            + "study_id TEXT NOT NULL,"
+                            + "chapter_id TEXT NOT NULL,"
+                            + "chapter_order INTEGER NOT NULL,"
+                            + "title TEXT NOT NULL,"
+                            + "pgn TEXT NOT NULL,"
+                            + "PRIMARY KEY (collection_id, study_id, chapter_id))");
         }
 
         @Override
@@ -259,11 +293,11 @@ public class PGNProvider extends ContentProvider {
         }
     }
 
-    private DatabaseHelper mOpenHelper;
+    private SQLiteOpenHelper mOpenHelper;
 
     @Override
     public boolean onCreate() {
-        mOpenHelper = new DatabaseHelper(getContext());
+        mOpenHelper = getDatabaseHelper(getContext());
 
         Log.i(TAG, "onCreate " + CONTENT_URI.toString());
 

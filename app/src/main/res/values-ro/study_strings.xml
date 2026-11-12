@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lichess_studies">Studii</string>
+    <string name="studies">Studii</string>
     <string name="study_topic">Subiect</string>
     <string name="study_author">Autor</string>
     <string name="study_name">Studiu</string>
     <string name="study_chapter">Capitol</string>
     <string name="study_any_author">Orice autor</string>
-    <string name="study_topic_openings">Deschideri</string>
-    <string name="study_topic_strategy">Strategie</string>
-    <string name="study_topic_endgames">Finaluri</string>
-    <string name="study_topic_games">Partide comentate</string>
     <string name="study_title_by_author">%1$s de %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Se încarcă lista capitolelor…</string>
     <string name="study_loading_chapter">Se încarcă capitolul…</string>
-    <string name="study_load_failed">Studiul Lichess nu a putut fi încărcat.</string>
-    <string name="study_rate_limited">Lichess limitează cererile. Încearcă din nou peste un minut.</string>
-    <string name="study_no_chapters">Acest studiu nu are capitole compatibile.</string>
     <string name="study_retry">Încearcă din nou</string>
     <string name="study_open_chapter">Deschide capitolul</string>
     <string name="study_surprise">Surprinde-mă</string>
-    <string name="study_show_comments">Afișează comentariile</string>
     <string name="study_variations">Variante</string>
     <string name="study_before_move">Înainte de mutare: %1$s</string>
     <string name="study_after_move">După mutare: %1$s</string>
     <string name="study_pgn_evaluation">Evaluarea studiului: %1$s</string>
-    <string name="study_topic_championships">Campionate mondiale de șah</string>
 </resources>

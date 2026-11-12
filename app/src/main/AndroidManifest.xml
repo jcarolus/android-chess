@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="317"
-    android:versionName="10.7.5">
+    android:versionCode="318"
+    android:versionName="10.7.6">
     <queries>
         <intent>
             <action
@@ -305,7 +305,11 @@
                 android:value=".lichess.LichessLobbyActivity" />
         </activity>
         <activity
-            android:name=".lichess.study.StudyReaderActivity"
+            android:name=".study.StudiesActivity"
+            android:label="@string/studies"
+            android:exported="false" />
+        <activity
+            android:name=".study.StudyReaderActivity"
             android:exported="false" />
 
         <provider
