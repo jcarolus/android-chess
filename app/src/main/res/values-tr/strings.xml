@@ -279,6 +279,10 @@
     <string name="options_play_white">Beyaz</string>
     <string name="options_quiescent_off">Sessizlik araması kapalı</string>
     <string name="options_quiescent_on">Sessizlik araması açık</string>
+    <string name="pgntool_delete_studies">Tüm çalışmaları sil</string>
+    <string name="pgntool_confirm_delete_studies">Tüm çalışmalar silinsin mi?</string>
+    <string name="pgntool_studies_deleted">Tüm çalışmalar silindi</string>
+    <string name="pgntool_delete_item_count">Silinecek öğe sayısı: %1$d</string>
     <string name="pgntool_confirm_delete_games">Emin misiniz?</string>
     <string name="pgntool_confirm_practice_reset">Sıfırlamak istediğinize emin misiniz?</string>
     <string name="pgntool_create_db_explanation">Açılış veritabanı oluştur</string>

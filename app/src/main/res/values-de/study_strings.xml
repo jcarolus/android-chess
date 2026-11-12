@@ -17,4 +17,6 @@
     <string name="study_before_move">Vor dem Zug: %1$s</string>
     <string name="study_after_move">Nach dem Zug: %1$s</string>
     <string name="study_pgn_evaluation">Studienbewertung: %1$s</string>
+    <string name="study_next_chapter">Nächstes Kapitel</string>
+    <string name="study_next_chapter_named">Kapitel: %1$s</string>
 </resources>

@@ -17,4 +17,6 @@
     <string name="study_before_move">Voor de zet: %1$s</string>
     <string name="study_after_move">Na de zet: %1$s</string>
     <string name="study_pgn_evaluation">Studie-evaluatie: %1$s</string>
+    <string name="study_next_chapter">Volgend hoofdstuk</string>
+    <string name="study_next_chapter_named">Hoofdstuk: %1$s</string>
 </resources>

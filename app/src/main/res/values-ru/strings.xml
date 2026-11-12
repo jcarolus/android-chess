@@ -279,6 +279,10 @@
     <string name="options_play_white">Белые</string>
     <string name="options_quiescent_off">Поиск тишины выключён</string>
     <string name="options_quiescent_on">Поиск тишины включён</string>
+    <string name="pgntool_delete_studies">Удалить все этюды</string>
+    <string name="pgntool_confirm_delete_studies">Удалить все этюды?</string>
+    <string name="pgntool_studies_deleted">Все этюды удалены</string>
+    <string name="pgntool_delete_item_count">Количество элементов для удаления: %1$d</string>
     <string name="pgntool_confirm_delete_games">Вы уверены?</string>
     <string name="pgntool_confirm_practice_reset">Вы уверены, что хотите сбросить?</string>
     <string name="pgntool_create_db_explanation">Создать базу дебютов</string>

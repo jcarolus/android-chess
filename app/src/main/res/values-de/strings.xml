@@ -289,6 +289,10 @@
     <string name="options_play_white">Weiß</string>
     <string name="options_quiescent_off">Quieszenz-Suche aus</string>
     <string name="options_quiescent_on">Quieszenz-Suche an</string>
+    <string name="pgntool_delete_studies">Alle Studien löschen</string>
+    <string name="pgntool_confirm_delete_studies">Alle Studien löschen?</string>
+    <string name="pgntool_studies_deleted">Alle Studien gelöscht</string>
+    <string name="pgntool_delete_item_count">Anzahl der zu löschenden Einträge: %1$d</string>
     <string name="pgntool_confirm_delete_games">Bist du sicher?</string>
     <string name="pgntool_confirm_practice_reset">Bist du sicher, dass du zurücksetzen willst?</string>
     <string name="pgntool_create_db_explanation">Eröffnungsdatenbank erstellen</string>

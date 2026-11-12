@@ -279,6 +279,10 @@
     <string name="options_play_white">白方</string>
     <string name="options_quiescent_off">安静搜索 关</string>
     <string name="options_quiescent_on">安静搜索 开</string>
+    <string name="pgntool_delete_studies">删除所有研习</string>
+    <string name="pgntool_confirm_delete_studies">要删除所有研习吗？</string>
+    <string name="pgntool_studies_deleted">已删除所有研习</string>
+    <string name="pgntool_delete_item_count">要删除的项目数：%1$d</string>
     <string name="pgntool_confirm_delete_games">你确定吗？</string>
     <string name="pgntool_confirm_practice_reset">确定要重置吗？</string>
     <string name="pgntool_create_db_explanation">创建开局数据库</string>

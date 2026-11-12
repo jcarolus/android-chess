@@ -17,4 +17,6 @@
     <string name="study_before_move">پیش از حرکت: %1$s</string>
     <string name="study_after_move">پس از حرکت: %1$s</string>
     <string name="study_pgn_evaluation">ارزیابی مطالعه: %1$s</string>
+    <string name="study_next_chapter">فصل بعدی</string>
+    <string name="study_next_chapter_named">فصل: %1$s</string>
 </resources>

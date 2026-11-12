@@ -71,6 +71,18 @@ public final class GameStore {
         return resolver.delete(MyPGNProvider.CONTENT_URI, "1=1", null);
     }
 
+    public int count() {
+        try (Cursor cursor =
+                resolver.query(
+                        MyPGNProvider.CONTENT_URI,
+                        new String[] {PGNColumns._ID},
+                        null,
+                        null,
+                        null)) {
+            return cursor == null ? 0 : cursor.getCount();
+        }
+    }
+
     /** The Games that match, as a cursor over {@link PGNColumns#COLUMNS} that the caller closes. */
     public Cursor query(GameFilter filter) {
         return resolver.query(

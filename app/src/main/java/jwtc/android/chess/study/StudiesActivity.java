@@ -2,6 +2,7 @@ package jwtc.android.chess.study;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,18 +55,6 @@ public final class StudiesActivity extends BaseActivity {
         for (View field : new View[] {collections, topics, authors, studies, chapters}) {
             field.setSaveFromParentEnabled(false);
         }
-        if (state != null) {
-            collectionId = state.getString("collection");
-            topic = state.getString("topic");
-            author = state.getString("author");
-            studyCollectionId = state.getString("studyCollection");
-            studyId = state.getString("study");
-            chapterId = state.getString("chapter");
-        }
-        ActivityResultLauncher<Intent> importResult =
-                registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        result -> loadLibrary());
         ActivityResultLauncher<String[]> pickFile =
                 registerForActivityResult(
                         new ActivityResultContracts.OpenDocument(),
@@ -75,7 +64,7 @@ public final class StudiesActivity extends BaseActivity {
                                 intent.setData(uri);
                                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 intent.putExtra("mode", ImportService.IMPORT_STUDIES);
-                                importResult.launch(intent);
+                                startActivity(intent);
                             }
                         });
         findViewById(R.id.StudyImport).setOnClickListener(v -> pickFile.launch(new String[] {"*/*"}));
@@ -100,7 +89,32 @@ public final class StudiesActivity extends BaseActivity {
                             chapterId = selected.chapters.get(chapter).id;
                             openChapter();
                         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences prefs = getPrefs();
+        collectionId = prefs.getString("studies_filter_collection", null);
+        topic = prefs.getString("studies_filter_topic", null);
+        author = prefs.getString("studies_filter_author", null);
+        studyCollectionId = prefs.getString("studies_selected_study_collection", null);
+        studyId = prefs.getString("studies_selected_study", null);
+        chapterId = prefs.getString("studies_selected_chapter", null);
         loadLibrary();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getPrefs().edit()
+                .putString("studies_filter_collection", collectionId)
+                .putString("studies_filter_topic", topic)
+                .putString("studies_filter_author", author)
+                .putString("studies_selected_study_collection", studyCollectionId)
+                .putString("studies_selected_study", studyId)
+                .putString("studies_selected_chapter", chapterId)
+                .apply();
     }
 
     private void loadLibrary() {
@@ -239,16 +253,5 @@ public final class StudiesActivity extends BaseActivity {
 
     private void openChapter() {
         startActivity(StudyReaderActivity.intent(this, selected, chapterId));
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle state) {
-        super.onSaveInstanceState(state);
-        state.putString("collection", collectionId);
-        state.putString("topic", topic);
-        state.putString("author", author);
-        state.putString("studyCollection", studyCollectionId);
-        state.putString("study", studyId);
-        state.putString("chapter", chapterId);
     }
 }

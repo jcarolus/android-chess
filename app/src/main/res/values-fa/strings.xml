@@ -314,6 +314,10 @@
     <string name="options_play_white">سفید</string>
     <string name="options_quiescent_off">جستجوی آرام خاموش</string>
     <string name="options_quiescent_on">جستجوی آرام روشن</string>
+    <string name="pgntool_delete_studies">حذف همهٔ مطالعه‌ها</string>
+    <string name="pgntool_confirm_delete_studies">همهٔ مطالعه‌ها حذف شوند؟</string>
+    <string name="pgntool_studies_deleted">همهٔ مطالعه‌ها حذف شدند</string>
+    <string name="pgntool_delete_item_count">تعداد موارد برای حذف: %1$d</string>
     <string name="pgntool_confirm_delete_games">مطمئن هستید؟</string>
     <string name="pgntool_confirm_practice_reset">مطمئن هستید که می‌خواهید بازنشانی کنید؟</string>
     <string name="pgntool_create_db_explanation">ساخت پایگاه‌داده‌ی آغازین</string>

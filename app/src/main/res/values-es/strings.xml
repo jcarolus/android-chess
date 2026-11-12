@@ -289,6 +289,10 @@
     <string name="options_play_white">Blancas</string>
     <string name="options_quiescent_off">Búsqueda de quietud desactivada</string>
     <string name="options_quiescent_on">Búsqueda de quietud activada</string>
+    <string name="pgntool_delete_studies">Eliminar todos los estudios</string>
+    <string name="pgntool_confirm_delete_studies">¿Eliminar todos los estudios?</string>
+    <string name="pgntool_studies_deleted">Se han eliminado todos los estudios</string>
+    <string name="pgntool_delete_item_count">Elementos que se eliminarán: %1$d</string>
     <string name="pgntool_confirm_delete_games">¿Estás seguro?</string>
     <string name="pgntool_confirm_practice_reset">¿Seguro que quieres reiniciar?</string>
     <string name="pgntool_create_db_explanation">Crear base de datos de aperturas</string>

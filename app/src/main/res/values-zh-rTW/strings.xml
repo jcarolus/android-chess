@@ -285,6 +285,10 @@
     <string name="options_play_white">白方</string>
     <string name="options_quiescent_off">靜止搜尋：關閉</string>
     <string name="options_quiescent_on">靜止搜尋：開啟</string>
+    <string name="pgntool_delete_studies">刪除所有研習</string>
+    <string name="pgntool_confirm_delete_studies">要刪除所有研習嗎？</string>
+    <string name="pgntool_studies_deleted">已刪除所有研習</string>
+    <string name="pgntool_delete_item_count">要刪除的項目數：%1$d</string>
     <string name="pgntool_confirm_delete_games">要刪除棋譜資料庫中的所有棋譜嗎？</string>
     <string name="pgntool_confirm_delete_practice">要刪除所有練習局面嗎？</string>
     <string name="pgntool_confirm_delete_puzzles">要刪除所有棋題局面嗎？</string>

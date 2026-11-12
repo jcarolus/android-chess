@@ -17,4 +17,6 @@
     <string name="study_before_move">Antes de la jugada: %1$s</string>
     <string name="study_after_move">Después de la jugada: %1$s</string>
     <string name="study_pgn_evaluation">Evaluación del estudio: %1$s</string>
+    <string name="study_next_chapter">Siguiente capítulo</string>
+    <string name="study_next_chapter_named">Capítulo: %1$s</string>
 </resources>

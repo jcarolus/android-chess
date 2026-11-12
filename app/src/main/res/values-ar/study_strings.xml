@@ -17,4 +17,6 @@
     <string name="study_before_move">قبل النقلة: %1$s</string>
     <string name="study_after_move">بعد النقلة: %1$s</string>
     <string name="study_pgn_evaluation">تقييم الدراسة: %1$s</string>
+    <string name="study_next_chapter">الفصل التالي</string>
+    <string name="study_next_chapter_named">الفصل: %1$s</string>
 </resources>

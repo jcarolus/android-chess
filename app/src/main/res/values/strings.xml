@@ -315,6 +315,10 @@
     <string name="options_play_white">White</string>
     <string name="options_quiescent_off">Quiescence search off</string>
     <string name="options_quiescent_on">Quiescence search on</string>
+    <string name="pgntool_delete_studies">Delete all studies</string>
+    <string name="pgntool_confirm_delete_studies">Delete all studies?</string>
+    <string name="pgntool_studies_deleted">All studies deleted</string>
+    <string name="pgntool_delete_item_count">Items to delete: %1$d</string>
     <string name="pgntool_confirm_delete_games">Delete all games from the game database?</string>
     <string name="pgntool_confirm_delete_practice">Delete all practice positions?</string>
     <string name="pgntool_confirm_delete_puzzles">Delete all puzzle positions?</string>

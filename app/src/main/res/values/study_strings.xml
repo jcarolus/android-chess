@@ -13,6 +13,8 @@
     <string name="study_load_failed">Could not load studies.</string>
     <string name="study_retry">Retry</string>
     <string name="study_open_chapter">Open chapter</string>
+    <string name="study_next_chapter">Next chapter</string>
+    <string name="study_next_chapter_named">Chapter: %1$s</string>
     <string name="study_surprise">Surprise me</string>
     <string name="study_variations">Variations</string>
     <string name="study_before_move">Before the move: %1$s</string>

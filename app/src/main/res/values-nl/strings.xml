@@ -315,6 +315,10 @@
     <string name="options_play_white">Wit</string>
     <string name="options_quiescent_off">Quiescence-zoekfunctie uit</string>
     <string name="options_quiescent_on">Quiescence-zoekfunctie aan</string>
+    <string name="pgntool_delete_studies">Alle studies verwijderen</string>
+    <string name="pgntool_confirm_delete_studies">Alle studies verwijderen?</string>
+    <string name="pgntool_studies_deleted">Alle studies zijn verwijderd</string>
+    <string name="pgntool_delete_item_count">Te verwijderen items: %1$d</string>
     <string name="pgntool_confirm_delete_games">Alle partijen uit de database verwijderen?</string>
     <string name="pgntool_confirm_delete_practice">Alle oefenstellingen verwijderen?</string>
     <string name="pgntool_confirm_delete_puzzles">Alle puzzelstellingen verwijderen?</string>

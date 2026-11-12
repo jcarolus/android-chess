@@ -17,4 +17,6 @@
     <string name="study_before_move">Antes do lance: %1$s</string>
     <string name="study_after_move">Depois do lance: %1$s</string>
     <string name="study_pgn_evaluation">Avaliação do estudo: %1$s</string>
+    <string name="study_next_chapter">Próximo capítulo</string>
+    <string name="study_next_chapter_named">Capítulo: %1$s</string>
 </resources>

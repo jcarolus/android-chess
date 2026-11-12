@@ -279,6 +279,10 @@
     <string name="options_play_white">Albele</string>
     <string name="options_quiescent_off">Căutare liniște inactivă</string>
     <string name="options_quiescent_on">Căutare liniște activă</string>
+    <string name="pgntool_delete_studies">Șterge toate studiile</string>
+    <string name="pgntool_confirm_delete_studies">Ștergi toate studiile?</string>
+    <string name="pgntool_studies_deleted">Toate studiile au fost șterse</string>
+    <string name="pgntool_delete_item_count">Elemente de șters: %1$d</string>
     <string name="pgntool_confirm_delete_games">Ești sigur?</string>
     <string name="pgntool_confirm_practice_reset">Sigur vrei să resetezi?</string>
     <string name="pgntool_create_db_explanation">Creează baza de deschideri</string>

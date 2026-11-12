@@ -17,4 +17,6 @@
     <string name="study_before_move">走棋前：%1$s</string>
     <string name="study_after_move">走棋后：%1$s</string>
     <string name="study_pgn_evaluation">研习评估：%1$s</string>
+    <string name="study_next_chapter">下一章</string>
+    <string name="study_next_chapter_named">章节：%1$s</string>
 </resources>

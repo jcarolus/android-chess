@@ -3,6 +3,7 @@ package jwtc.android.chess.study;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public final class StudyStore {
     private static final String STUDIES = "studies";
     private static final String CHAPTERS = "study_chapters";
     private static final String STUDY_KEY = "collection_id = ? AND study_id = ?";
+    private static final String CHAPTER_ORDER = "chapter_order, chapter_id";
 
     static final class Study {
         final String collectionId, collectionName, id, title, author, topic;
@@ -38,6 +40,16 @@ public final class StudyStore {
         Chapter(String id, String title) {
             this.id = id;
             this.title = title;
+        }
+    }
+
+    static final class ReaderChapter {
+        final String pgn;
+        final Chapter next;
+
+        ReaderChapter(String pgn, Chapter next) {
+            this.pgn = pgn;
+            this.next = next;
         }
     }
 
@@ -80,6 +92,23 @@ public final class StudyStore {
         }
     }
 
+    public static long countStudies(Context context) {
+        SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
+        return DatabaseUtils.queryNumEntries(db, STUDIES);
+    }
+
+    public static void deleteAll(Context context) {
+        SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete(CHAPTERS, null, null);
+            db.delete(STUDIES, null, null);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     static List<Study> library(Context context) {
         SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
         List<Study> studies = new ArrayList<>();
@@ -90,7 +119,7 @@ public final class StudyStore {
                                 + " FROM studies s JOIN study_chapters c"
                                 + " USING (collection_id, study_id)"
                                 + " ORDER BY s.collection_name COLLATE NOCASE, s.collection_id,"
-                                + " s.title COLLATE NOCASE, s.study_id, c.chapter_order, c.chapter_id",
+                                + " s.title COLLATE NOCASE, s.study_id, " + CHAPTER_ORDER,
                         null)) {
             Study study = null;
             while (rows.moveToNext()) {
@@ -104,8 +133,9 @@ public final class StudyStore {
         return studies;
     }
 
-    static String chapter(Context context, String collectionId, String studyId, String chapterId) {
+    static ReaderChapter chapter(Context context, String collectionId, String studyId, String chapterId) {
         SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
+        String pgn;
         try (Cursor rows =
                 db.query(
                         CHAPTERS,
@@ -115,8 +145,30 @@ public final class StudyStore {
                         null,
                         null,
                         null)) {
-            return rows.moveToFirst() ? rows.getString(0) : null;
+            if (!rows.moveToFirst()) {
+                return new ReaderChapter(null, null);
+            }
+            pgn = rows.getString(0);
         }
+        try (Cursor rows =
+                db.query(
+                        CHAPTERS,
+                        new String[] {"chapter_id", "title"},
+                        STUDY_KEY,
+                        new String[] {collectionId, studyId},
+                        null,
+                        null,
+                        CHAPTER_ORDER)) {
+            while (rows.moveToNext()) {
+                if (chapterId.equals(rows.getString(0))) {
+                    if (rows.moveToNext()) {
+                        return new ReaderChapter(pgn, new Chapter(rows.getString(0), rows.getString(1)));
+                    }
+                    break;
+                }
+            }
+        }
+        return new ReaderChapter(pgn, null);
     }
 
     private StudyStore() {}

@@ -17,4 +17,6 @@
     <string name="study_before_move">Înainte de mutare: %1$s</string>
     <string name="study_after_move">După mutare: %1$s</string>
     <string name="study_pgn_evaluation">Evaluarea studiului: %1$s</string>
+    <string name="study_next_chapter">Capitolul următor</string>
+    <string name="study_next_chapter_named">Capitol: %1$s</string>
 </resources>

@@ -223,6 +223,19 @@ public final class MateCollection {
         editor.apply();
     }
 
+    public static int countPositions(Context context, MateKind kind) {
+        try (Cursor rows =
+                context.getContentResolver()
+                        .query(
+                                kind.uri(),
+                                new String[] {MyPuzzleProvider.COL_ID},
+                                null,
+                                null,
+                                null)) {
+            return rows == null ? 0 : rows.getCount();
+        }
+    }
+
     /** Deletes every Position of the collection and resets the progress through it. */
     public static void clearCollection(Context context, MateKind kind) {
         context.getContentResolver().delete(kind.uri(), "1=1", null);

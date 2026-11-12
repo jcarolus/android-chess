@@ -17,4 +17,6 @@
     <string name="study_before_move">Avant le coup : %1$s</string>
     <string name="study_after_move">Après le coup : %1$s</string>
     <string name="study_pgn_evaluation">Évaluation de l’étude : %1$s</string>
+    <string name="study_next_chapter">Chapitre suivant</string>
+    <string name="study_next_chapter_named">Chapitre : %1$s</string>
 </resources>

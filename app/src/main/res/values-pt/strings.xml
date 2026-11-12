@@ -279,6 +279,10 @@
     <string name="options_play_white">Brancas</string>
     <string name="options_quiescent_off">Busca de quietude desativada</string>
     <string name="options_quiescent_on">Busca de quietude ativada</string>
+    <string name="pgntool_delete_studies">Excluir todos os estudos</string>
+    <string name="pgntool_confirm_delete_studies">Excluir todos os estudos?</string>
+    <string name="pgntool_studies_deleted">Todos os estudos foram excluídos</string>
+    <string name="pgntool_delete_item_count">Itens a excluir: %1$d</string>
     <string name="pgntool_confirm_delete_games">Tem certeza?</string>
     <string name="pgntool_confirm_practice_reset">Tem certeza que deseja reiniciar?</string>
     <string name="pgntool_create_db_explanation">Criar banco de aberturas</string>

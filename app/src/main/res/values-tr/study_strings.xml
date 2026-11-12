@@ -17,4 +17,6 @@
     <string name="study_before_move">Hamleden önce: %1$s</string>
     <string name="study_after_move">Hamleden sonra: %1$s</string>
     <string name="study_pgn_evaluation">Çalışma değerlendirmesi: %1$s</string>
+    <string name="study_next_chapter">Sonraki bölüm</string>
+    <string name="study_next_chapter_named">Bölüm: %1$s</string>
 </resources>

@@ -17,4 +17,6 @@
     <string name="study_before_move">Prima della mossa: %1$s</string>
     <string name="study_after_move">Dopo la mossa: %1$s</string>
     <string name="study_pgn_evaluation">Valutazione dello studio: %1$s</string>
+    <string name="study_next_chapter">Capitolo successivo</string>
+    <string name="study_next_chapter_named">Capitolo: %1$s</string>
 </resources>

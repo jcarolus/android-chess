@@ -7,6 +7,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public final class StudyReaderActivity extends ChessBoardActivity {
     private static final String AUTHOR = "studyAuthor";
 
     private View previous, next, variations, retry;
+    private Button nextChapter;
     private TextView chapterTitle, moveText, commentText, status;
     private EngineEvaluationView evaluation;
     private Node chosenContinuation;
@@ -71,6 +73,7 @@ public final class StudyReaderActivity extends ChessBoardActivity {
         retry = findViewById(R.id.StudyReaderRetry);
         previous = findViewById(R.id.StudyPreviousMove);
         next = findViewById(R.id.StudyNextMove);
+        nextChapter = findViewById(R.id.StudyNextChapter);
         variations = findViewById(R.id.StudyVariations);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
@@ -125,11 +128,12 @@ public final class StudyReaderActivity extends ChessBoardActivity {
         }
         status.setText(R.string.study_loading_chapter);
         retry.setVisibility(View.GONE);
+        nextChapter.setEnabled(false);
         updatePosition();
         loading = true;
         CompletableFuture.supplyAsync(() -> StudyStore.chapter(this, collectionId, studyId, chapterId))
                 .whenComplete(
-                        (pgn, error) ->
+                        (chapter, error) ->
                                 runOnUiThread(
                                         () -> {
                                             if (isDestroyed() || isFinishing()) {
@@ -138,8 +142,26 @@ public final class StudyReaderActivity extends ChessBoardActivity {
                                             if (error != null) {
                                                 Log.w("StudyReader", "Could not read study chapter", error);
                                             }
-                                            showChapter(pgn);
+                                            showNextChapter(chapter == null ? null : chapter.next);
+                                            showChapter(chapter == null ? null : chapter.pgn);
                                         }));
+    }
+
+    private void showNextChapter(StudyStore.Chapter chapter) {
+        if (chapter == null) {
+            nextChapter.setText(R.string.study_next_chapter);
+            nextChapter.setOnClickListener(null);
+            nextChapter.setEnabled(false);
+            return;
+        }
+        nextChapter.setText(getString(R.string.study_next_chapter_named, chapter.title));
+        nextChapter.setOnClickListener(
+                v -> {
+                    nextChapter.setEnabled(false);
+                    startActivity(new Intent(getIntent()).putExtra(CHAPTER_ID, chapter.id));
+                    finish();
+                });
+        nextChapter.setEnabled(true);
     }
 
     private void showChapter(String pgn) {
