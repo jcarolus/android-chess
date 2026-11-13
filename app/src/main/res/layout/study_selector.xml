@@ -48,12 +48,6 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/study_name" />
 
-            <jwtc.android.chess.views.FixedDropdownView
-                android:id="@+id/StudyChapter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/study_chapter" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,7 +66,7 @@
                     style="?attr/chessButtonStyle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:text="@string/study_open_chapter" />
+                    android:text="@string/gameslist_open" />
             </LinearLayout>
         </LinearLayout>
 

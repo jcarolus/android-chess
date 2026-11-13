@@ -33,11 +33,11 @@ public final class StudiesActivity extends BaseActivity {
     private final Random random = new Random();
     private List<Study> library = Collections.emptyList();
     private List<Study> filtered = Collections.emptyList();
-    private FixedDropdownView collections, topics, authors, studies, chapters;
+    private FixedDropdownView collections, topics, authors, studies;
     private View filters;
     private TextView status;
     private Study selected;
-    private String collectionId, topic, author, studyCollectionId, studyId, chapterId;
+    private String collectionId, topic, author, studyCollectionId, studyId;
     private int libraryRequest;
 
     @Override
@@ -51,8 +51,7 @@ public final class StudiesActivity extends BaseActivity {
         topics = findViewById(R.id.StudyTopic);
         authors = findViewById(R.id.StudyAuthor);
         studies = findViewById(R.id.StudyName);
-        chapters = findViewById(R.id.StudyChapter);
-        for (View field : new View[] {collections, topics, authors, studies, chapters}) {
+        for (View field : new View[] {collections, topics, authors, studies}) {
             field.setSaveFromParentEnabled(false);
         }
         ActivityResultLauncher<String[]> pickFile =
@@ -77,7 +76,7 @@ public final class StudiesActivity extends BaseActivity {
                                 Toast.makeText(this, DOWNLOADS.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
-        findViewById(R.id.StudyOpen).setOnClickListener(v -> openChapter());
+        findViewById(R.id.StudyOpen).setOnClickListener(v -> openChapter(0));
         findViewById(R.id.StudySurprise)
                 .setOnClickListener(
                         v -> {
@@ -85,9 +84,7 @@ public final class StudiesActivity extends BaseActivity {
                             studies.setSelection(index);
                             selectStudy(filtered.get(index));
                             int chapter = random.nextInt(selected.chapters.size());
-                            chapters.setSelection(chapter);
-                            chapterId = selected.chapters.get(chapter).id;
-                            openChapter();
+                            openChapter(chapter);
                         });
     }
 
@@ -100,7 +97,6 @@ public final class StudiesActivity extends BaseActivity {
         author = prefs.getString("studies_filter_author", null);
         studyCollectionId = prefs.getString("studies_selected_study_collection", null);
         studyId = prefs.getString("studies_selected_study", null);
-        chapterId = prefs.getString("studies_selected_chapter", null);
         loadLibrary();
     }
 
@@ -113,7 +109,6 @@ public final class StudiesActivity extends BaseActivity {
                 .putString("studies_filter_author", author)
                 .putString("studies_selected_study_collection", studyCollectionId)
                 .putString("studies_selected_study", studyId)
-                .putString("studies_selected_chapter", chapterId)
                 .apply();
     }
 
@@ -163,7 +158,9 @@ public final class StudiesActivity extends BaseActivity {
         LinkedHashSet<String> names = new LinkedHashSet<>();
         for (Study study : library) {
             if (collectionId == null || collectionId.equals(study.collectionId)) {
-                names.add(study.topic);
+                for (StudyStore.Chapter chapter : study.chapters) {
+                    names.add(chapter.topic);
+                }
             }
         }
         List<String> values = new ArrayList<>(names);
@@ -178,8 +175,12 @@ public final class StudiesActivity extends BaseActivity {
     private void showAuthors() {
         LinkedHashSet<String> names = new LinkedHashSet<>();
         for (Study study : library) {
-            if (matchesTopic(study)) {
-                names.add(study.author);
+            if (matchesCollection(study)) {
+                for (StudyStore.Chapter chapter : study.chapters) {
+                    if (chapter.author != null && (topic == null || topic.equals(chapter.topic))) {
+                        names.add(chapter.author);
+                    }
+                }
             }
         }
         List<String> values = new ArrayList<>(names);
@@ -204,9 +205,20 @@ public final class StudiesActivity extends BaseActivity {
         return position == 0 ? null : value;
     }
 
-    private boolean matchesTopic(Study study) {
-        return (collectionId == null || collectionId.equals(study.collectionId))
-                && (topic == null || topic.equals(study.topic));
+    private boolean matchesCollection(Study study) {
+        return collectionId == null || collectionId.equals(study.collectionId);
+    }
+
+    private boolean matchesFilters(Study study) {
+        if (matchesCollection(study)) {
+            for (StudyStore.Chapter chapter : study.chapters) {
+                if ((topic == null || topic.equals(chapter.topic))
+                        && (author == null || author.equals(chapter.author))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void showStudies() {
@@ -214,12 +226,13 @@ public final class StudiesActivity extends BaseActivity {
         List<String> labels = new ArrayList<>();
         int index = 0;
         for (Study study : library) {
-            if (matchesTopic(study) && (author == null || author.equals(study.author))) {
+            if (matchesFilters(study)) {
                 if (study.matches(studyCollectionId, studyId)) {
                     index = filtered.size();
                 }
                 filtered.add(study);
-                labels.add(getString(R.string.study_title_by_author, study.title, study.author));
+                labels.add(study.author == null ? study.title
+                        : getString(R.string.study_title_by_author, study.title, study.author));
             }
         }
         studies.setItems(labels);
@@ -229,29 +242,12 @@ public final class StudiesActivity extends BaseActivity {
     }
 
     private void selectStudy(Study study) {
-        if (!study.matches(studyCollectionId, studyId)) {
-            chapterId = null;
-        }
         selected = study;
         studyCollectionId = study.collectionId;
         studyId = study.id;
-        List<String> labels = new ArrayList<>();
-        int index = 0;
-        for (int i = 0; i < study.chapters.size(); i++) {
-            StudyStore.Chapter chapter = study.chapters.get(i);
-            labels.add(getString(R.string.study_chapter_choice, i + 1, chapter.title));
-            if (chapter.id.equals(chapterId)) {
-                index = i;
-            }
-        }
-        chapters.setItems(labels);
-        chapters.setSelection(index);
-        chapterId = study.chapters.get(index).id;
-        chapters.setOnItemClickListener(
-                (parent, row, position, id) -> chapterId = study.chapters.get(position).id);
     }
 
-    private void openChapter() {
-        startActivity(StudyReaderActivity.intent(this, selected, chapterId));
+    private void openChapter(int index) {
+        startActivity(StudyReaderActivity.intent(this, selected, index));
     }
 }

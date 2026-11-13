@@ -13,6 +13,7 @@
     <string name="study_load_failed">Could not load studies.</string>
     <string name="study_retry">Retry</string>
     <string name="study_open_chapter">Open chapter</string>
+    <string name="study_previous_chapter">Previous chapter</string>
     <string name="study_next_chapter">Next chapter</string>
     <string name="study_next_chapter_named">Chapter: %1$s</string>
     <string name="study_surprise">Surprise me</string>
@@ -26,5 +27,7 @@
     <string name="study_library_empty">No studies imported.</string>
     <string name="study_download_collections">Download collections</string>
     <string name="study_import">Import PGN or ZIP</string>
+    <string name="study_import_metadata">Study details</string>
+    <string name="study_import_value_required">Enter a value</string>
     <string name="importing_studies">Importing studies…</string>
 </resources>

@@ -1,7 +1,9 @@
 package jwtc.android.chess.study;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +43,6 @@ public class StudyPgnTest {
         assertEquals("Pawn structures", chapter.tags.get("StudyTopic"));
         assertEquals("intro", chapter.tags.get("ChapterId"));
         assertEquals("CC-BY-4.0", chapter.tags.get("License"));
-        assertEquals(2, chapter.order);
         assertEquals(pgn, chapter.pgn);
         PgnDocument document = Pgn.parse(chapter.pgn);
         assertEquals("Watch the center.", document.rootComment);
@@ -70,11 +71,26 @@ public class StudyPgnTest {
     }
 
     @Test
-    public void rejectsMissingMetadataInvalidOrderAndUnsupportedVariants() {
-        assertThrows(IllegalArgumentException.class, () -> StudyPgn.parseChapter("1. e4 *"));
+    public void acceptsStandardTagsAndIgnoresChapterOrder() {
+        StudyPgn.Chapter chapter = StudyPgn.parseChapter(
+                "[Event \"Round 1\"]\n[Topic \"Tactics\"]\n[ChapterOrder \"ignored\"]\n\n1. e4 *");
+        assertTrue(StudyPgn.needsTitle(chapter.tags));
+        assertEquals("Tactics", StudyPgn.topic(chapter.tags));
+        assertEquals("Round 1", StudyPgn.chapterTitle(chapter.tags));
+        assertNull(StudyPgn.value(chapter.tags, "StudyAuthor"));
+    }
+
+    @Test
+    public void prefersStudyTopicAndFallsBackToTopicForBlankValues() {
+        assertEquals("Pawn structures", StudyPgn.topic(Pgn.readTags(HEADERS + "[Topic \"Other\"]")));
+        assertEquals("Other", StudyPgn.topic(Pgn.readTags("[StudyTopic \"  \"]\n[Topic \"Other\"]")));
+    }
+
+    @Test
+    public void rejectsInvalidPgnAndUnsupportedVariants() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> StudyPgn.parseChapter(HEADERS.replace("[ChapterOrder \"2\"]", "[ChapterOrder \"0\"]") + MOVES));
+                () -> StudyPgn.parseChapter(HEADERS + "\n1. invalid *"));
         assertThrows(
                 IllegalArgumentException.class,
                 () -> StudyPgn.parseChapter(HEADERS + "[Variant \"Atomic\"]\n" + MOVES));

@@ -55,6 +55,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <LinearLayout
+            android:id="@+id/StudyChapterNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/StudyPreviousChapter"
+                style="?attr/chessImageButtonStyle"
+                android:contentDescription="@string/study_previous_chapter"
+                app:icon="@drawable/ic_chevron_left" />
+
+            <SeekBar
+                android:id="@+id/StudyChapterSeek"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/study_chapter"
+                android:saveEnabled="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/StudyNextChapter"
+                style="?attr/chessImageButtonStyle"
+                android:contentDescription="@string/study_next_chapter"
+                app:icon="@drawable/ic_chevron_right" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/StudyReaderTitle"
             style="@style/MyPaneTextStyle"
@@ -95,16 +125,6 @@
                 android:text="@string/pref_speech" />
 
         </com.google.android.flexbox.FlexboxLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/StudyNextChapter"
-            style="?attr/chessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/image_button_size"
-            android:enabled="false"
-            android:text="@string/study_next_chapter"
-            android:textAllCaps="false" />
 
         <TextView
             android:id="@+id/TextViewWhitePieces"

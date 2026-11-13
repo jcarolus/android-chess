@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jwtc.chess.Pgn;
 
-final class StudyPgn {
+public final class StudyPgn {
     private static final Pattern EVALUATION =
             Pattern.compile("\\[%eval\\s+(#?[+-]?\\d+(?:\\.\\d+)?)(?:,\\d+)?\\s*\\]");
     private static final Pattern DIRECTIVE =
@@ -13,34 +13,33 @@ final class StudyPgn {
 
     static final class Chapter {
         final Map<String, String> tags;
-        final int order;
         final String pgn;
 
-        Chapter(Map<String, String> tags, int order, String pgn) {
+        Chapter(Map<String, String> tags, String pgn) {
             this.tags = tags;
-            this.order = order;
             this.pgn = pgn;
         }
+    }
+
+    public static boolean needsTitle(Map<String, String> tags) {
+        return value(tags, "StudyTitle") == null;
+    }
+
+    public static String topic(Map<String, String> tags) {
+        String topic = value(tags, "StudyTopic");
+        return topic == null ? value(tags, "Topic") : topic;
+    }
+
+    static String value(Map<String, String> tags, String name) {
+        String value = tags.getOrDefault(name, "").trim();
+        return value.isEmpty() || value.equals("?") ? null : value;
     }
 
     static Chapter parseChapter(String pgn) {
         if (pgn.length() > Pgn.MAX_GAME_SIZE) {
             throw new IllegalArgumentException("Study chapter exceeds PGN size limit");
         }
-        Map<String, String> tags = Pgn.readTags(pgn);
-        for (String key :
-                new String[] {
-                    "CollectionId", "CollectionName", "StudyId", "StudyTitle", "StudyAuthor",
-                    "StudyTopic", "ChapterId", "ChapterName", "ChapterOrder"
-                }) {
-            if (tags.getOrDefault(key, "").trim().isEmpty()) {
-                throw new IllegalArgumentException("Missing study PGN tag " + key);
-            }
-        }
-        int order = Integer.parseInt(tags.get("ChapterOrder"));
-        if (order < 1) {
-            throw new IllegalArgumentException("ChapterOrder must be positive");
-        }
+        Map<String, String> tags = Pgn.parse(pgn).tags;
         String variant = tags.getOrDefault("Variant", "Standard");
         if (!"Standard".equalsIgnoreCase(variant)
                 && !"From Position".equalsIgnoreCase(variant)
@@ -48,20 +47,12 @@ final class StudyPgn {
                 && !"Fischerandom".equalsIgnoreCase(variant)) {
             throw new IllegalArgumentException("Unsupported study variant " + variant);
         }
-        Pgn.parse(pgn);
-        return new Chapter(tags, order, pgn);
+        return new Chapter(tags, pgn);
     }
 
     static String chapterTitle(Map<String, String> tags) {
-        String name = tags.get("ChapterName");
-        if (name != null) {
-            return name;
-        }
-        String white = tags.get("White");
-        String black = tags.get("Black");
-        return white != null && black != null
-                ? white + " – " + black
-                : tags.getOrDefault("Event", "");
+        String name = value(tags, "ChapterName");
+        return name == null ? value(tags, "Event") : name;
     }
 
     static String comment(String annotation) {

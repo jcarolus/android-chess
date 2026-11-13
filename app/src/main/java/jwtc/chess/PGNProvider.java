@@ -25,7 +25,7 @@ public class PGNProvider extends ContentProvider {
     private static final String TAG = "PGNProvider";
 
     private static final String DATABASE_NAME = "chess_pgn.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private static final String GAMES_TABLE_NAME = "games";
 
     private static final HashMap<String, String> sGamesProjectionMap;
@@ -150,31 +150,29 @@ public class PGNProvider extends ContentProvider {
             if (oldVersion < 5) {
                 upgradeAddResultColumn(db);
             }
-            if (oldVersion < 7) {
+            if (oldVersion < 8) {
                 db.execSQL("DROP TABLE IF EXISTS study_chapters");
+                db.execSQL("DROP TABLE IF EXISTS studies");
                 createStudyChaptersTable(db);
             }
         }
 
         private static void createStudyChaptersTable(SQLiteDatabase db) {
             db.execSQL(
-                    "CREATE TABLE studies ("
-                            + "collection_id TEXT NOT NULL,"
-                            + "study_id TEXT NOT NULL,"
-                            + "collection_name TEXT NOT NULL,"
-                            + "title TEXT NOT NULL,"
-                            + "author TEXT NOT NULL,"
-                            + "topic TEXT NOT NULL,"
-                            + "PRIMARY KEY (collection_id, study_id))");
-            db.execSQL(
                     "CREATE TABLE study_chapters ("
+                            + "id INTEGER PRIMARY KEY,"
                             + "collection_id TEXT NOT NULL,"
                             + "study_id TEXT NOT NULL,"
                             + "chapter_id TEXT NOT NULL,"
-                            + "chapter_order INTEGER NOT NULL,"
+                            + "collection_name TEXT NOT NULL,"
+                            + "study_title TEXT NOT NULL,"
+                            + "author TEXT,"
+                            + "topic TEXT NOT NULL,"
                             + "title TEXT NOT NULL,"
                             + "pgn TEXT NOT NULL,"
-                            + "PRIMARY KEY (collection_id, study_id, chapter_id))");
+                            + "UNIQUE (collection_id, study_id, chapter_id))");
+            db.execSQL("CREATE INDEX study_chapters_names ON study_chapters "
+                    + "(collection_name COLLATE NOCASE, study_title COLLATE NOCASE, topic, author)");
         }
 
         @Override

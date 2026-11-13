@@ -7,7 +7,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,25 +24,28 @@ import jwtc.chess.board.BoardConstants;
 
 public final class StudyReaderActivity extends ChessBoardActivity {
     private static final String STUDY_ID = "studyId";
-    private static final String CHAPTER_ID = "chapterId";
+    private static final String CHAPTER_INDEX = "chapterIndex";
     private static final String COLLECTION_ID = "collectionId";
     private static final String TITLE = "studyTitle";
     private static final String AUTHOR = "studyAuthor";
 
     private View previous, next, variations, retry;
-    private Button nextChapter;
+    private View chapterNavigation, previousChapter, nextChapter;
+    private SeekBar chapterSeek;
+    private List<StudyStore.Chapter> chapters;
+    private int chapterIndex;
+    private boolean seeking;
     private TextView chapterTitle, moveText, commentText, status;
     private EngineEvaluationView evaluation;
     private Node chosenContinuation;
-    private boolean loading;
     private boolean loaded;
     private int[] restoredPath;
     private int restoredContinuation = -1;
 
-    static Intent intent(Context context, StudyStore.Study study, String chapterId) {
+    static Intent intent(Context context, StudyStore.Study study, int chapterIndex) {
         return new Intent(context, StudyReaderActivity.class)
                 .putExtra(STUDY_ID, study.id)
-                .putExtra(CHAPTER_ID, chapterId)
+                .putExtra(CHAPTER_INDEX, chapterIndex)
                 .putExtra(COLLECTION_ID, study.collectionId)
                 .putExtra(TITLE, study.title)
                 .putExtra(AUTHOR, study.author);
@@ -73,22 +76,51 @@ public final class StudyReaderActivity extends ChessBoardActivity {
         retry = findViewById(R.id.StudyReaderRetry);
         previous = findViewById(R.id.StudyPreviousMove);
         next = findViewById(R.id.StudyNextMove);
+        chapterNavigation = findViewById(R.id.StudyChapterNavigation);
+        previousChapter = findViewById(R.id.StudyPreviousChapter);
         nextChapter = findViewById(R.id.StudyNextChapter);
+        chapterSeek = findViewById(R.id.StudyChapterSeek);
         variations = findViewById(R.id.StudyVariations);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
+        chapterIndex = getIntent().getIntExtra(CHAPTER_INDEX, 0);
         if (state != null) {
+            chapterIndex = state.getInt(CHAPTER_INDEX, chapterIndex);
             restoredPath = state.getIntArray("path");
             restoredContinuation = state.getInt("continuation", -1);
         }
         TextView title = findViewById(R.id.StudyReaderTitle);
-        title.setText(
-                getString(
-                        R.string.study_title_by_author,
-                        getIntent().getStringExtra(TITLE),
-                        getIntent().getStringExtra(AUTHOR)));
+        String author = getIntent().getStringExtra(AUTHOR);
+        String studyTitle = getIntent().getStringExtra(TITLE);
+        title.setText(author == null ? studyTitle
+                : getString(R.string.study_title_by_author, studyTitle, author));
+
+        previousChapter.setOnClickListener(v -> selectChapter(chapterIndex - 1));
+        nextChapter.setOnClickListener(v -> selectChapter(chapterIndex + 1));
+        chapterSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                seeking = true;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    showChapterTitle(progress);
+                    if (!seeking) {
+                        selectChapter(progress);
+                    }
+                }
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                seeking = false;
+                selectChapter(seekBar.getProgress());
+            }
+        });
 
         previous.setOnClickListener(
                 v -> {
@@ -102,7 +134,13 @@ public final class StudyReaderActivity extends ChessBoardActivity {
                     gameApi.stepInto(continuation);
                 });
         variations.setOnClickListener(v -> chooseVariation());
-        retry.setOnClickListener(v -> loadChapter());
+        retry.setOnClickListener(v -> {
+            if (chapters == null) {
+                loadChapters();
+            } else {
+                loadChapter();
+            }
+        });
 
         afterCreate();
         chessBoardView.setNextFocusRightId(R.id.StudyPreviousMove);
@@ -112,66 +150,92 @@ public final class StudyReaderActivity extends ChessBoardActivity {
                 findViewById(R.id.study_reader_controls),
                 null,
                 evaluation);
-        loadChapter();
+        loadChapters();
     }
 
-    private void loadChapter() {
-        if (loading) {
-            return;
-        }
+    private void loadChapters() {
         String studyId = getIntent().getStringExtra(STUDY_ID);
-        String chapterId = getIntent().getStringExtra(CHAPTER_ID);
         String collectionId = getIntent().getStringExtra(COLLECTION_ID);
-        if (collectionId == null || studyId == null || chapterId == null) {
+        if (collectionId == null || studyId == null) {
             finish();
             return;
         }
+        showLoading();
+        CompletableFuture.supplyAsync(() -> StudyStore.chapters(this, collectionId, studyId))
+                .whenComplete((result, error) -> runOnUiThread(() -> {
+                    if (isDestroyed() || isFinishing()) {
+                        return;
+                    }
+                    if (error != null || result.isEmpty()) {
+                        showLoadError(error);
+                        return;
+                    }
+                    chapters = result;
+                    chapterIndex = Math.min(chapterIndex, chapters.size() - 1);
+                    chapterSeek.setMax(chapters.size() - 1);
+                    chapterNavigation.setVisibility(chapters.size() > 1 ? View.VISIBLE : View.GONE);
+                    loadChapter();
+                }));
+    }
+
+    private void selectChapter(int index) {
+        if (chapterSeek.isEnabled() && index >= 0 && index < chapters.size() && index != chapterIndex) {
+            chapterIndex = index;
+            restoredPath = null;
+            restoredContinuation = -1;
+            loadChapter();
+        }
+    }
+
+    private void showChapterTitle(int index) {
+        chapterTitle.setText(getString(R.string.study_chapter_choice, index + 1, chapters.get(index).title));
+    }
+
+    private void showLoading() {
         status.setText(R.string.study_loading_chapter);
+        status.setVisibility(View.VISIBLE);
         retry.setVisibility(View.GONE);
-        nextChapter.setEnabled(false);
+        setChapterNavigationEnabled(false);
+        loaded = false;
+        chosenContinuation = null;
+        moveText.setText("");
         updatePosition();
-        loading = true;
-        CompletableFuture.supplyAsync(() -> StudyStore.chapter(this, collectionId, studyId, chapterId))
-                .whenComplete(
-                        (chapter, error) ->
-                                runOnUiThread(
-                                        () -> {
-                                            if (isDestroyed() || isFinishing()) {
-                                                return;
-                                            }
-                                            if (error != null) {
-                                                Log.w("StudyReader", "Could not read study chapter", error);
-                                            }
-                                            showNextChapter(chapter == null ? null : chapter.next);
-                                            showChapter(chapter == null ? null : chapter.pgn);
-                                        }));
     }
 
-    private void showNextChapter(StudyStore.Chapter chapter) {
-        if (chapter == null) {
-            nextChapter.setText(R.string.study_next_chapter);
-            nextChapter.setOnClickListener(null);
-            nextChapter.setEnabled(false);
-            return;
-        }
-        nextChapter.setText(getString(R.string.study_next_chapter_named, chapter.title));
-        nextChapter.setOnClickListener(
-                v -> {
-                    nextChapter.setEnabled(false);
-                    startActivity(new Intent(getIntent()).putExtra(CHAPTER_ID, chapter.id));
-                    finish();
-                });
-        nextChapter.setEnabled(true);
+    private void loadChapter() {
+        showLoading();
+        chapterSeek.setProgress(chapterIndex);
+        showChapterTitle(chapterIndex);
+        long id = chapters.get(chapterIndex).id;
+        CompletableFuture.supplyAsync(() -> StudyStore.chapterPgn(this, id))
+                .whenComplete((pgn, error) -> runOnUiThread(() -> {
+                    if (isDestroyed() || isFinishing()) {
+                        return;
+                    }
+                    setChapterNavigationEnabled(true);
+                    if (error != null || pgn == null || !gameApi.loadPGN(pgn)) {
+                        showLoadError(error);
+                    } else {
+                        showChapter();
+                    }
+                }));
     }
 
-    private void showChapter(String pgn) {
-        loading = false;
-        if (pgn == null || pgn.trim().isEmpty() || !gameApi.loadPGN(pgn)) {
-            status.setText(R.string.study_load_failed);
-            retry.setVisibility(View.VISIBLE);
-            return;
+    private void setChapterNavigationEnabled(boolean enabled) {
+        chapterSeek.setEnabled(enabled);
+        previousChapter.setEnabled(enabled && chapterIndex > 0);
+        nextChapter.setEnabled(enabled && chapterIndex < chapters.size() - 1);
+    }
+
+    private void showLoadError(Throwable error) {
+        if (error != null) {
+            Log.w("StudyReader", "Could not read study chapter", error);
         }
-        chapterTitle.setText(StudyPgn.chapterTitle(gameApi.pgnTags));
+        status.setText(R.string.study_load_failed);
+        retry.setVisibility(View.VISIBLE);
+    }
+
+    private void showChapter() {
         chessBoardView.setRotated("black".equalsIgnoreCase(gameApi.pgnTags.get("Orientation")));
         Node position = gameApi.getRootNode();
         if (restoredPath != null) {
@@ -327,6 +391,7 @@ public final class StudyReaderActivity extends ChessBoardActivity {
             restoredContinuation =
                     gameApi.getContinuations(gameApi.getCurrentNode()).indexOf(chosenContinuation);
         }
+        state.putInt(CHAPTER_INDEX, chapterIndex);
         state.putIntArray("path", restoredPath);
         state.putInt("continuation", restoredContinuation);
     }
