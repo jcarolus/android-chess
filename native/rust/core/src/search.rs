@@ -4,6 +4,9 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
 use table::{Entry, Table};
 const MATE: i32 = 100000;
+// Include mate scores inside the full window so a winning or losing line is built.
+const FULL_WINDOW: (i32, i32) = (-MATE - 1, MATE + 1);
+const ASPIRATION_MARGIN: i32 = 50;
 #[derive(Clone, Copy, Debug)]
 pub enum SearchLimit {
     Depth(u8),
@@ -122,6 +125,44 @@ impl<'a> Worker<'a> {
             best_at_ply: [None; 20],
             quiet_history: Box::new([[[0; 64]; 64]; 2]),
             pv: std::array::from_fn(|_| Vec::new()),
+        }
+    }
+
+    fn search_iteration(
+        &mut self,
+        p: &Position,
+        moves: &mut Vec<Move>,
+        depth: u8,
+        previous_pv: &[Move],
+        previous_score: Option<i32>,
+    ) -> Option<i32> {
+        let mut margin = ASPIRATION_MARGIN;
+        let (mut alpha, mut beta) = match previous_score {
+            Some(score) if score.abs() < MATE => (
+                (score - margin).max(FULL_WINDOW.0),
+                (score + margin).min(FULL_WINDOW.1),
+            ),
+            _ => FULL_WINDOW,
+        };
+        loop {
+            let window = (alpha, beta);
+            let score = if p.variant == Variant::Duck {
+                self.alpha_beta_duck(p, Some(moves), depth, 0, window, previous_pv)
+            } else {
+                self.alpha_beta(p, Some(moves), depth, 0, window, previous_pv)
+            };
+            if self.interrupted {
+                return None;
+            }
+            // Widen only the edge that the score reached.
+            if score <= alpha && alpha > FULL_WINDOW.0 {
+                alpha = (score - margin).max(FULL_WINDOW.0);
+            } else if score >= beta && beta < FULL_WINDOW.1 {
+                beta = (score + margin).min(FULL_WINDOW.1);
+            } else {
+                return Some(score);
+            }
+            margin *= 2;
         }
     }
 
@@ -602,29 +643,12 @@ pub fn search_with_progress(
     };
     let mut previous_pv = Vec::new();
     for depth in depths {
-        // The full root window includes mate scores so even a forced win or loss builds a line.
-        let score = if p.variant == Variant::Duck {
-            worker.alpha_beta_duck(
-                p,
-                Some(&mut moves),
-                depth,
-                0,
-                (-MATE - 1, MATE + 1),
-                &previous_pv,
-            )
-        } else {
-            worker.alpha_beta(
-                p,
-                Some(&mut moves),
-                depth,
-                0,
-                (-MATE - 1, MATE + 1),
-                &previous_pv,
-            )
-        };
-        if worker.interrupted {
+        let previous_score = result.has_evaluation.then_some(result.score);
+        let Some(score) =
+            worker.search_iteration(p, &mut moves, depth, &previous_pv, previous_score)
+        else {
             break;
-        }
+        };
         previous_pv.clone_from(&worker.pv[0]);
         result.completed_depth = depth;
         result.has_evaluation = true;
@@ -661,6 +685,53 @@ mod tests {
         worker.nodes = 0;
         let score = worker.quiesce(&p, depth, -MATE, MATE);
         (score, worker.nodes)
+    }
+
+    #[test]
+    fn aspiration_retries_both_failed_edges_and_builds_a_principal_variation() {
+        for (variant, fen) in [
+            (Variant::Standard, "7k/8/8/8/8/8/8/KR6 w - - 0 1"),
+            (Variant::Duck, "7k/8/8/3$4/8/8/8/K7 w - - 0 10"),
+        ] {
+            let p = Position::from_fen(variant, fen).unwrap();
+            let control = SearchControl::default();
+            let mut worker = Worker::new(&control, Instant::now(), None, true, &p);
+            let expected = worker
+                .search_iteration(&p, &mut p.legal_internal(), 3, &[], None)
+                .unwrap();
+            for offset in [-ASPIRATION_MARGIN, ASPIRATION_MARGIN] {
+                let mut worker = Worker::new(&control, Instant::now(), None, true, &p);
+                assert_eq!(
+                    worker.search_iteration(
+                        &p,
+                        &mut p.legal_internal(),
+                        3,
+                        &[],
+                        Some(expected + offset)
+                    ),
+                    Some(expected),
+                );
+                assert_eq!(worker.pv[0].len(), 3, "{variant:?}, offset {offset}");
+                let mut replay = p.clone();
+                for &m in &worker.pv[0] {
+                    let coordinate = replay.external(replay.turn, m);
+                    replay.apply(coordinate.as_str()).unwrap();
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn aspiration_finds_mate_outside_the_initial_window() {
+        let p = Position::from_fen(Variant::Standard, "7k/8/5KQ1/8/8/8/8/8 w - - 0 1").unwrap();
+        let control = SearchControl::default();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        assert_eq!(
+            worker.search_iteration(&p, &mut p.legal_internal(), 1, &[], Some(0)),
+            Some(MATE)
+        );
+        let m = worker.pv[0][0];
+        assert_eq!(p.make_unrecorded(m).game_state(), GameState::Mate);
     }
 
     #[test]
