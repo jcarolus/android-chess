@@ -535,7 +535,7 @@ impl Position {
         (0..6).find(|&p| self.pieces[t][p] & bit(s) != 0)
     }
     pub(crate) fn material(&self, t: usize) -> i32 {
-        (0..6)
+        (0..KING)
             .map(|p| self.pieces[t][p].count_ones() as i32 * VALUES[p])
             .sum()
     }
@@ -557,13 +557,7 @@ impl Position {
         }
     }
     pub(crate) fn mobility_with(&self, p: usize, t: usize, s: usize, occupied: u64) -> u64 {
-        self.range_with(p, t, s, occupied)
-            & !(self.own(t)
-                | if t == self.turn {
-                    self.duck.map(bit).unwrap_or(0)
-                } else {
-                    0
-                })
+        self.range_with(p, t, s, occupied) & !(self.own(t) | self.duck.map(bit).unwrap_or(0))
     }
     pub(crate) fn attacked(&self, t: usize, s: usize) -> bool {
         if s >= 64 {
@@ -1011,7 +1005,7 @@ impl Position {
             && self.pieces[self.turn ^ 1][KING] & (bit(27) | bit(28) | bit(35) | bit(36)) != 0
     }
 
-    fn dead_position_by_material(&self) -> bool {
+    pub(crate) fn dead_position_by_material(&self) -> bool {
         if !matches!(self.variant, Variant::Standard | Variant::Chess960) {
             return false;
         }

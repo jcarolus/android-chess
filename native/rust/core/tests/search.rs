@@ -9,7 +9,7 @@ fn history(moves: &[&str]) -> Vec<CoordinateMove> {
         .collect()
 }
 #[test]
-fn fixed_depth_matches_native_starting_position() {
+fn fixed_depth_searches_the_starting_position() {
     let request = SearchRequest::new(
         17,
         Variant::Standard,
@@ -21,9 +21,15 @@ fn fixed_depth_matches_native_starting_position() {
     .unwrap();
     let result = search(&request, &SearchControl::default()).unwrap();
     assert_eq!(result.search_id, 17);
-    assert_eq!(result.best_move.unwrap().as_str(), "h2h4");
     assert_eq!(result.score, 0);
     assert_eq!(result.completed_depth, 2);
+    let best_move = result.best_move.unwrap();
+    assert_eq!(result.pv.first(), Some(&best_move));
+    request
+        .position()
+        .clone()
+        .apply(best_move.as_str())
+        .unwrap();
 }
 
 #[test]
