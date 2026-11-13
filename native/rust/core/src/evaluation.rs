@@ -45,6 +45,10 @@ const PASSED_PAWN_AREA: [[u64; 64]; 2] = {
 };
 const CENTER: u64 = 0x00003C3C3C3C0000;
 impl Position {
+    pub(crate) fn plies_until_queen_mobility(&self) -> usize {
+        11usize.saturating_sub(self.ply)
+    }
+
     /// Static evaluation from the side to move; mate distances are not encoded.
     pub fn evaluate(&self) -> i32 {
         let t = self.turn;
@@ -184,7 +188,7 @@ impl Position {
             }
         }
         if p[QUEEN] != 0 {
-            if self.ply < 11 {
+            if self.plies_until_queen_mobility() > 0 {
                 let back = if t == 1 { 0xff00000000000000 } else { 0xff };
                 if p[QUEEN] & back == 0 {
                     value -= 60;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="319"
+    android:versionCode="320"
     android:versionName="10.7.8">
     <queries>
         <intent>

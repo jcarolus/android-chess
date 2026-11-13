@@ -153,14 +153,16 @@ const ZOBRIST: [u64; 781] = {
     let mut i = 0;
     while i < keys.len() {
         state = state.wrapping_add(0x9e37_79b9_7f4a_7c15);
-        let mut z = state;
-        z = (z ^ (z >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
-        z = (z ^ (z >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
-        keys[i] = z ^ (z >> 31);
+        keys[i] = mix_key(state);
         i += 1;
     }
     keys
 };
+const fn mix_key(mut key: u64) -> u64 {
+    key = (key ^ (key >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
+    key = (key ^ (key >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
+    key ^ (key >> 31)
+}
 fn piece_key(t: usize, p: usize, s: usize) -> u64 {
     ZOBRIST[(t * 6 + p) * 64 + s]
 }
@@ -280,9 +282,17 @@ impl Move {
                 .unwrap_or_default()
         ))
     }
+
+    pub(crate) fn same_piece_move(self, other: Self) -> bool {
+        self.from == other.from
+            && self.to == other.to
+            && self.promotion == other.promotion
+            && self.castle == other.castle
+    }
 }
 #[derive(Clone, PartialEq, Eq)]
 pub(crate) struct Repetition {
+    pub(crate) key: u64,
     pieces: [[u64; 6]; 2],
     turn: usize,
     rights: [u8; 2],
@@ -458,6 +468,14 @@ impl Position {
     /// same as its pieces alone.
     pub fn hash_key(&self) -> u64 {
         self.key
+    }
+    /// Variant and original castling rook files are fixed for one search.
+    pub(crate) fn search_key(&self) -> u64 {
+        let duck = self.duck.map_or(0, |square| square as u64 + 1);
+        let queen_phase = self.plies_until_queen_mobility() as u64;
+        let castling = u16::from_le_bytes(self.castling) as u64;
+        let state = self.halfmove as u64 | (castling << 32) | (queen_phase << 48) | (duck << 52);
+        self.key ^ mix_key(state)
     }
     /// The key built from scratch; `make_unrecorded` keeps `key` equal to it.
     fn computed_key(&self) -> u64 {
@@ -828,6 +846,7 @@ impl Position {
         ]
     }
     pub(crate) fn repetition(&self) -> Repetition {
+        let pseudo_ep_key = self.ep_key();
         let ep = self.ep.filter(|&to| {
             squares(self.pieces[self.turn][PAWN]).any(|from| {
                 if self.range(PAWN, self.turn, from) & bit(to) == 0 {
@@ -842,6 +861,7 @@ impl Position {
         });
         // Duck placement is intentionally excluded from repetition identity.
         Repetition {
+            key: mix_key(self.key ^ pseudo_ep_key ^ ep.map_or(0, |to| ZOBRIST[EP_KEYS + to % 8])),
             pieces: self.pieces,
             turn: self.turn,
             rights: self.rights(),
