@@ -171,6 +171,7 @@ impl<'a> Worker<'a> {
         let table_move = entry.map(|e| e.best_move);
         let mut scores = ordered_scores(p, moves, pv_move, table_move, self.best_at_ply[ply], None);
         let mut best = -MATE - 1;
+        let mut first_turn = true;
         for index in 0..moves.len() {
             pick(moves, &mut scores, index);
             let mut m = moves[index];
@@ -209,14 +210,11 @@ impl<'a> Worker<'a> {
                     };
                     let mut duck_board = next.clone();
                     duck_board.duck = turn.duck;
-                    let value = -self.alpha_beta_duck(
-                        &duck_board,
-                        None,
-                        depth - 1,
-                        ply + 1,
-                        (-beta, -alpha),
-                        pv_tail(previous_pv, turn),
-                    );
+                    let tail = pv_tail(previous_pv, turn);
+                    let value = self.search_child(first_turn, (alpha, beta), |worker, window| {
+                        worker.alpha_beta_duck(&duck_board, None, depth - 1, ply + 1, window, tail)
+                    });
+                    first_turn = false;
                     if value > best_duck {
                         best_duck = value;
                         m = turn;
@@ -229,6 +227,7 @@ impl<'a> Worker<'a> {
                 }
                 best_duck
             };
+            first_turn = false;
             self.leave(p, m, context);
             if value > best && !self.interrupted {
                 best = value;
@@ -243,6 +242,22 @@ impl<'a> Worker<'a> {
         }
         self.store(key, depth, ply, best, alpha_start, beta);
         best
+    }
+
+    fn search_child(
+        &mut self,
+        first: bool,
+        (alpha, beta): (i32, i32),
+        mut search: impl FnMut(&mut Self, (i32, i32)) -> i32,
+    ) -> i32 {
+        if !first && alpha + 1 < beta {
+            let score = -search(self, (-alpha - 1, -alpha));
+            // A probe inside the parent window needs a full search to establish the PV.
+            if self.interrupted || score <= alpha || score >= beta {
+                return score;
+            }
+        }
+        -search(self, (-beta, -alpha))
     }
 
     /// Records `p` as seen before `m` and returns the context restored by `leave`.
@@ -344,18 +359,14 @@ impl<'a> Worker<'a> {
             m.check = next.in_check();
             next.last_check = m.check;
             let context = self.enter(p, m);
-            let value = if depth == 1 {
-                -self.quiesce(&next, 5, -beta, -alpha)
-            } else {
-                -self.alpha_beta(
-                    &next,
-                    None,
-                    depth - 1,
-                    ply + 1,
-                    (-beta, -alpha),
-                    pv_tail(previous_pv, m),
-                )
-            };
+            let tail = pv_tail(previous_pv, m);
+            let value = self.search_child(index == 0, (alpha, beta), |worker, window| {
+                if depth == 1 {
+                    worker.quiesce(&next, 5, window.0, window.1)
+                } else {
+                    worker.alpha_beta(&next, None, depth - 1, ply + 1, window, tail)
+                }
+            });
             self.leave(p, m, context);
             if value > best && !self.interrupted {
                 best = value;
@@ -650,6 +661,69 @@ mod tests {
         worker.nodes = 0;
         let score = worker.quiesce(&p, depth, -MATE, MATE);
         (score, worker.nodes)
+    }
+
+    #[test]
+    fn a_later_move_inside_the_window_is_searched_again() {
+        let p = Position::from_fen(Variant::Standard, "7k/8/8/8/8/8/8/KR6 w - - 0 1").unwrap();
+        let control = SearchControl::default();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut windows = Vec::new();
+        let score = worker.search_child(false, (10, 30), |_, window| {
+            windows.push(window);
+            if windows.len() == 1 {
+                -11
+            } else {
+                -20
+            }
+        });
+        assert_eq!(score, 20);
+        assert_eq!(windows, [(-11, -10), (-30, -10)]);
+    }
+
+    #[test]
+    fn the_first_legal_move_after_an_illegal_candidate_builds_a_full_line() {
+        let p = Position::from_fen(Variant::Standard, "k3r3/8/8/8/8/8/4R3/4K3 w - - 0 1").unwrap();
+        let illegal = p
+            .pseudo_moves()
+            .into_iter()
+            .find(|m| m.coordinate().as_str() == "e2d2")
+            .unwrap();
+        let control = SearchControl::default();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let window = (-MATE - 1, MATE + 1);
+        let expected = worker.alpha_beta(&p, None, 2, 0, window, &[]);
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        assert_eq!(
+            worker.alpha_beta(&p, None, 2, 0, window, &[illegal]),
+            expected
+        );
+        assert_eq!(worker.pv[0].len(), 2);
+        let mut replay = p.clone();
+        for &m in &worker.pv[0] {
+            replay.apply(m.coordinate().as_str()).unwrap();
+        }
+    }
+
+    #[test]
+    fn cancellation_at_the_start_of_a_research_discards_its_pv() {
+        let p = Position::from_fen(Variant::Standard, "7k/8/8/8/8/8/8/KR6 w - - 0 1").unwrap();
+        let control = SearchControl::default();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut windows = Vec::new();
+        worker.search_child(false, (10, 30), |worker, window| {
+            windows.push(window);
+            if windows.len() == 1 {
+                control.stop();
+                -11
+            } else {
+                worker.alpha_beta(&p, None, 2, 0, window, &[])
+            }
+        });
+        assert_eq!(windows, [(-11, -10), (-30, -10)]);
+        assert!(worker.interrupted);
+        assert!(worker.pv[0].is_empty());
+        assert!(worker.table.probe(p.search_key()).is_none());
     }
 
     #[test]
