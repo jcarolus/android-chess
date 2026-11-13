@@ -92,6 +92,7 @@ struct Worker<'a> {
     repetition_key: u64,
     table: Table,
     best_at_ply: [Option<Move>; 20],
+    quiet_history: Box<[[[u16; 64]; 64]; 2]>,
     pv: [Vec<Move>; 20],
 }
 impl<'a> Worker<'a> {
@@ -119,6 +120,7 @@ impl<'a> Worker<'a> {
                 .fold(0, u64::wrapping_add),
             table: Table::new(),
             best_at_ply: [None; 20],
+            quiet_history: Box::new([[[0; 64]; 64]; 2]),
             pv: std::array::from_fn(|_| Vec::new()),
         }
     }
@@ -126,7 +128,7 @@ impl<'a> Worker<'a> {
     fn alpha_beta_duck(
         &mut self,
         p: &Position,
-        moves: &mut [Move],
+        moves: Option<&mut [Move]>,
         depth: u8,
         ply: usize,
         (mut alpha, beta): (i32, i32),
@@ -139,6 +141,24 @@ impl<'a> Worker<'a> {
         if p.drawn_in_search(&self.seen[self.seen_from..]) {
             return 0;
         }
+        let alpha_start = alpha;
+        let key = if depth > 0 { p.search_key() } else { 0 };
+        let entry = if depth > 0 {
+            self.table.probe(key)
+        } else {
+            None
+        };
+        if let Some(score) = entry.and_then(|e| e.cutoff(self.repetition_key, depth, alpha, beta)) {
+            return score;
+        }
+        let mut generated;
+        let moves = match moves {
+            Some(moves) => moves,
+            None => {
+                generated = p.pseudo_moves();
+                &mut generated
+            }
+        };
         if moves.is_empty() {
             self.nodes += 1;
             return MATE;
@@ -147,21 +167,14 @@ impl<'a> Worker<'a> {
             self.nodes += 1;
             return p.evaluate();
         }
-        let alpha_start = alpha;
-        let key = p.search_key();
-        let entry = self.table.probe(key);
-        if let Some(score) = entry.and_then(|e| e.cutoff(self.repetition_key, depth, alpha, beta)) {
-            return score;
-        }
         let pv_move = previous_pv.first().copied();
         let table_move = entry.map(|e| e.best_move);
-        let mut scores = ordered_scores(p, moves, pv_move, table_move, self.best_at_ply[ply]);
+        let mut scores = ordered_scores(p, moves, pv_move, table_move, self.best_at_ply[ply], None);
         let mut best = -MATE - 1;
         for index in 0..moves.len() {
             pick(moves, &mut scores, index);
             let mut m = moves[index];
             let next = p.make_unrecorded(m);
-            let children = next.pseudo_moves();
             let mut line = Vec::new();
             let context = self.enter(p, m);
             let value = if next.pieces.iter().any(|p| p[KING] == 0) {
@@ -171,11 +184,7 @@ impl<'a> Worker<'a> {
             } else {
                 let mut best_duck = -MATE - 1;
                 // Prefer destinations of the opponent's non-capturing moves.
-                let mut candidates: Vec<_> = children
-                    .iter()
-                    .filter(|m| !m.capture && next.occupied() & bit(m.to) == 0)
-                    .map(|m| m.to)
-                    .collect();
+                let mut candidates = duck_placement_candidates(&next);
                 // A restricted candidate set must not force a stalemate win for the opponent.
                 if candidates.iter().all(|&square| {
                     let mut placed = next.clone();
@@ -200,10 +209,9 @@ impl<'a> Worker<'a> {
                     };
                     let mut duck_board = next.clone();
                     duck_board.duck = turn.duck;
-                    let mut replies = duck_board.pseudo_moves();
                     let value = -self.alpha_beta_duck(
                         &duck_board,
-                        &mut replies,
+                        None,
                         depth - 1,
                         ply + 1,
                         (-beta, -alpha),
@@ -284,7 +292,7 @@ impl<'a> Worker<'a> {
     fn alpha_beta(
         &mut self,
         p: &Position,
-        moves: &mut Vec<Move>,
+        moves: Option<&mut Vec<Move>>,
         depth: u8,
         ply: usize,
         (mut alpha, beta): (i32, i32),
@@ -306,12 +314,21 @@ impl<'a> Worker<'a> {
         if let Some(score) = entry.and_then(|e| e.cutoff(self.repetition_key, depth, alpha, beta)) {
             return score;
         }
+        let mut generated;
+        let moves = match moves {
+            Some(moves) => moves,
+            None => {
+                generated = p.pseudo_moves();
+                &mut generated
+            }
+        };
         let mut scores = ordered_scores(
             p,
             moves,
             previous_pv.first().copied(),
             entry.map(|e| e.best_move),
             self.best_at_ply[ply],
+            Some(&self.quiet_history[p.turn]),
         );
         let mut best = -MATE - 1;
         let mut index = 0;
@@ -324,16 +341,15 @@ impl<'a> Worker<'a> {
                 scores.swap_remove(index);
                 continue;
             }
-            let mut children = next.pseudo_moves();
             m.check = next.in_check();
             next.last_check = m.check;
             let context = self.enter(p, m);
             let value = if depth == 1 {
-                -self.quiesce(&next, &mut children, 5, -beta, -alpha)
+                -self.quiesce(&next, 5, -beta, -alpha)
             } else {
                 -self.alpha_beta(
                     &next,
-                    &mut children,
+                    None,
                     depth - 1,
                     ply + 1,
                     (-beta, -alpha),
@@ -352,7 +368,15 @@ impl<'a> Worker<'a> {
                 }
             }
             alpha = alpha.max(best);
-            if best >= beta || self.interrupted {
+            if self.interrupted {
+                break;
+            }
+            if best >= beta {
+                if !m.capture && m.promotion.is_none() {
+                    let history = &mut self.quiet_history[p.turn][m.from][m.to];
+                    // Bound the bonus so learned quiet moves stay below tactical moves.
+                    *history = (*history + u16::from(depth).pow(2)).min(8192);
+                }
                 break;
             }
             index += 1;
@@ -364,14 +388,7 @@ impl<'a> Worker<'a> {
         self.store(key, depth, ply, best, alpha_start, beta);
         best
     }
-    fn quiesce(
-        &mut self,
-        p: &Position,
-        moves: &mut Vec<Move>,
-        depth: u8,
-        mut alpha: i32,
-        beta: i32,
-    ) -> i32 {
+    fn quiesce(&mut self, p: &Position, depth: u8, mut alpha: i32, beta: i32) -> i32 {
         if self.stopped() {
             return alpha;
         }
@@ -389,8 +406,8 @@ impl<'a> Worker<'a> {
             // Checked leaves must distinguish mate from static evaluation even
             // when tactical search is disabled. Stop at the first legal reply.
             if p.last_check
-                && !moves.iter().any(|m| {
-                    let next = p.make_unrecorded(*m);
+                && !p.pseudo_moves().into_iter().any(|m| {
+                    let next = p.make_unrecorded(m);
                     !next.attacked(p.turn, next.king(p.turn))
                 })
             {
@@ -404,10 +421,11 @@ impl<'a> Worker<'a> {
             }
             alpha = alpha.max(value);
         }
+        let mut moves = p.pseudo_moves();
         let mut scores: Vec<_> = moves.iter().map(|m| score_move(p, *m)).collect();
         let mut index = 0;
         while index < moves.len() {
-            pick(moves, &mut scores, index);
+            pick(&mut moves, &mut scores, index);
             let m = moves[index];
             let mut next = p.make_unrecorded(m);
             if next.attacked(p.turn, next.king(p.turn)) {
@@ -422,9 +440,8 @@ impl<'a> Worker<'a> {
                 || next.last_check
                 || next.hill_won()
             {
-                let mut children = next.pseudo_moves();
                 let context = self.enter(p, m);
-                let value = -self.quiesce(&next, &mut children, depth - 1, -beta, -alpha);
+                let value = -self.quiesce(&next, depth - 1, -beta, -alpha);
                 self.leave(p, m, context);
                 if value > alpha {
                     alpha = value;
@@ -441,6 +458,21 @@ impl<'a> Worker<'a> {
         alpha
     }
 }
+fn duck_placement_candidates(p: &Position) -> Vec<usize> {
+    let mut unavailable = p.occupied();
+    p.pseudo_moves()
+        .into_iter()
+        .filter_map(|m| {
+            let destination = bit(m.to);
+            if m.capture || unavailable & destination != 0 {
+                return None;
+            }
+            unavailable |= destination;
+            Some(m.to)
+        })
+        .collect()
+}
+
 fn pv_tail(previous: &[Move], m: Move) -> &[Move] {
     match previous.split_first() {
         Some((hint, tail)) if hint.same_piece_move(m) && hint.duck == m.duck => tail,
@@ -454,6 +486,7 @@ fn ordered_scores(
     pv_move: Option<Move>,
     table_move: Option<Move>,
     recent_move: Option<Move>,
+    quiet_history: Option<&[[u16; 64]; 64]>,
 ) -> Vec<i32> {
     moves
         .iter()
@@ -465,7 +498,12 @@ fn ordered_scores(
             } else if recent_move.is_some_and(|hint| hint.same_piece_move(m)) {
                 score_move(p, m).max(100000)
             } else {
-                score_move(p, m)
+                let base = score_move(p, m);
+                if !m.capture && m.promotion.is_none() {
+                    base + quiet_history.map_or(0, |history| i32::from(history[m.from][m.to]))
+                } else {
+                    base
+                }
             }
         })
         .collect()
@@ -555,9 +593,23 @@ pub fn search_with_progress(
     for depth in depths {
         // The full root window includes mate scores so even a forced win or loss builds a line.
         let score = if p.variant == Variant::Duck {
-            worker.alpha_beta_duck(p, &mut moves, depth, 0, (-MATE - 1, MATE + 1), &previous_pv)
+            worker.alpha_beta_duck(
+                p,
+                Some(&mut moves),
+                depth,
+                0,
+                (-MATE - 1, MATE + 1),
+                &previous_pv,
+            )
         } else {
-            worker.alpha_beta(p, &mut moves, depth, 0, (-MATE - 1, MATE + 1), &previous_pv)
+            worker.alpha_beta(
+                p,
+                Some(&mut moves),
+                depth,
+                0,
+                (-MATE - 1, MATE + 1),
+                &previous_pv,
+            )
         };
         if worker.interrupted {
             break;
@@ -596,9 +648,48 @@ mod tests {
         let control = SearchControl::default();
         let mut worker = Worker::new(&control, Instant::now(), None, enabled, &p);
         worker.nodes = 0;
-        let mut moves = p.pseudo_moves();
-        let score = worker.quiesce(&p, &mut moves, depth, -MATE, MATE);
+        let score = worker.quiesce(&p, depth, -MATE, MATE);
         (score, worker.nodes)
+    }
+
+    #[test]
+    fn duck_placement_candidates_keep_each_destination_in_first_seen_order() {
+        let p = Position::from_fen(Variant::Duck, "7k/8/8/8/3$4/8/8/KN3N2 w - - 0 1").unwrap();
+        let mut expected = Vec::new();
+        let mut duplicates = 0;
+        for m in p.pseudo_moves() {
+            if !m.capture && p.occupied() & bit(m.to) == 0 {
+                if expected.contains(&m.to) {
+                    duplicates += 1;
+                } else {
+                    expected.push(m.to);
+                }
+            }
+        }
+        assert!(duplicates > 0);
+        assert_eq!(duck_placement_candidates(&p), expected);
+    }
+
+    #[test]
+    fn a_quiet_beta_cutoff_improves_move_ordering_for_the_moving_side() {
+        let p = Position::from_fen(Variant::Standard, "7k/8/8/8/8/8/8/KR6 w - - 0 1").unwrap();
+        let control = SearchControl::default();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        worker.alpha_beta(&p, None, 1, 0, (-MATE, -MATE + 1), &[]);
+        let m = worker.pv[0][0];
+        assert_eq!(worker.quiet_history[p.turn][m.from][m.to], 1);
+        assert_eq!(worker.quiet_history[p.turn ^ 1][m.from][m.to], 0);
+        assert_eq!(
+            ordered_scores(
+                &p,
+                &[m],
+                None,
+                None,
+                None,
+                Some(&worker.quiet_history[p.turn])
+            ),
+            [score_move(&p, m) + 1]
+        );
     }
 
     #[test]
@@ -662,7 +753,7 @@ mod tests {
         );
         worker.table.store(entry);
         assert_eq!(
-            worker.alpha_beta(&p, &mut moves, 2, 0, (0, 1000), &[]),
+            worker.alpha_beta(&p, Some(&mut moves), 2, 0, (0, 1000), &[]),
             1000
         );
         assert!(worker.pv[0].is_empty());
@@ -680,7 +771,7 @@ mod tests {
             draw
         );
         assert_ne!(
-            worker.alpha_beta(&fresh, &mut moves, 2, 0, (0, 1000), &[]),
+            worker.alpha_beta(&fresh, Some(&mut moves), 2, 0, (0, 1000), &[]),
             1000
         );
         assert!(!worker.pv[0].is_empty());
@@ -712,9 +803,16 @@ mod tests {
                         let mut moves = p.legal_internal();
                         let window = (-MATE - 1, MATE + 1);
                         let score = if variant == Variant::Duck {
-                            worker.alpha_beta_duck(&p, &mut moves, depth, 0, window, &previous_pv)
+                            worker.alpha_beta_duck(
+                                &p,
+                                Some(&mut moves),
+                                depth,
+                                0,
+                                window,
+                                &previous_pv,
+                            )
                         } else {
-                            worker.alpha_beta(&p, &mut moves, depth, 0, window, &previous_pv)
+                            worker.alpha_beta(&p, Some(&mut moves), depth, 0, window, &previous_pv)
                         };
                         scores.push(score);
                         previous_pv.clone_from(&worker.pv[0]);
@@ -758,7 +856,7 @@ mod tests {
                 .filter(|&m| p.external(p.turn, m).as_str() == castle)
                 .collect();
             assert_eq!(moves.len(), 1);
-            worker.alpha_beta(&p, &mut moves, 2, 0, (-MATE - 1, MATE + 1), &[]);
+            worker.alpha_beta(&p, Some(&mut moves), 2, 0, (-MATE - 1, MATE + 1), &[]);
             assert_eq!(p.external(p.turn, worker.pv[0][0]).as_str(), castle);
             let mut replay = p.clone();
             for &m in &worker.pv[0] {
