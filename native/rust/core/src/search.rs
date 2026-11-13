@@ -61,6 +61,20 @@ impl SearchControl {
         self.stopped.store(true, Ordering::Relaxed);
     }
 }
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+struct TableContext {
+    variant: Variant,
+    rook_file: [[usize; 2]; 2],
+    quiescence: bool,
+}
+
+/// Retains search entries across requests. Each request has its own search control.
+#[derive(Default)]
+pub struct SearchSession {
+    cache: Option<(TableContext, Table)>,
+}
+
 #[derive(Clone, Debug)]
 pub struct SearchResult {
     pub search_id: u64,
@@ -93,7 +107,7 @@ struct Worker<'a> {
     /// Entries of `seen` before this index precede an irreversible move.
     seen_from: usize,
     repetition_key: u64,
-    table: Table,
+    table: &'a mut Table,
     best_at_ply: [Option<Move>; 20],
     quiet_history: Box<[[[u16; 64]; 64]; 2]>,
     pv: [Vec<Move>; 20],
@@ -105,6 +119,7 @@ impl<'a> Worker<'a> {
         budget: Option<Duration>,
         quiescence: bool,
         p: &Position,
+        table: &'a mut Table,
     ) -> Self {
         Worker {
             control,
@@ -121,7 +136,7 @@ impl<'a> Worker<'a> {
                 .iter()
                 .map(|r| r.key)
                 .fold(0, u64::wrapping_add),
-            table: Table::new(),
+            table,
             best_at_ply: [None; 20],
             quiet_history: Box::new([[[0; 64]; 64]; 2]),
             pv: std::array::from_fn(|_| Vec::new()),
@@ -602,86 +617,235 @@ pub fn search(request: &SearchRequest, control: &SearchControl) -> Result<Search
 pub fn search_with_progress(
     request: &SearchRequest,
     control: &SearchControl,
-    mut publish: impl FnMut(SearchEvent),
+    publish: impl FnMut(SearchEvent),
 ) -> Result<SearchResult, Error> {
-    let start = Instant::now();
-    let p = &request.position;
-    let mut result = SearchResult {
-        search_id: request.id,
-        best_move: None,
-        score: 0,
-        completed_depth: 0,
-        has_evaluation: false,
-        nodes: 0,
-        pv: vec![],
-        interrupted: false,
-        elapsed_micros: 0,
-    };
-    match p.game_state() {
-        GameState::Play | GameState::Check => {}
-        state => {
-            result.score = match state {
-                GameState::Mate | GameState::HillWin => -MATE,
-                GameState::DuckStalemateWin => MATE,
-                _ => 0,
-            };
-            result.has_evaluation = true;
-            result.elapsed_micros = start.elapsed().as_micros() as u64;
-            publish(SearchEvent::Finished(result.clone()));
-            return Ok(result);
-        }
-    }
-    let budget = match request.limit {
-        SearchLimit::TimeMillis(ms) => Some(Duration::from_millis(ms as u64)),
-        _ => None,
-    };
-    let mut worker = Worker::new(control, start, budget, request.options.quiescence, p);
-    let mut moves = p.legal_internal();
-    let depths = match request.limit {
-        SearchLimit::Depth(depth) => depth..=depth,
-        _ => 1..=14,
-    };
-    let mut previous_pv = Vec::new();
-    for depth in depths {
-        let previous_score = result.has_evaluation.then_some(result.score);
-        let Some(score) =
-            worker.search_iteration(p, &mut moves, depth, &previous_pv, previous_score)
-        else {
-            break;
+    SearchSession::default().search_with_progress(request, control, publish)
+}
+
+impl SearchSession {
+    pub fn search_with_progress(
+        &mut self,
+        request: &SearchRequest,
+        control: &SearchControl,
+        mut publish: impl FnMut(SearchEvent),
+    ) -> Result<SearchResult, Error> {
+        let start = Instant::now();
+        let p = &request.position;
+        let mut result = SearchResult {
+            search_id: request.id,
+            best_move: None,
+            score: 0,
+            completed_depth: 0,
+            has_evaluation: false,
+            nodes: 0,
+            pv: vec![],
+            interrupted: false,
+            elapsed_micros: 0,
         };
-        previous_pv.clone_from(&worker.pv[0]);
-        result.completed_depth = depth;
-        result.has_evaluation = true;
-        result.score = score;
-        // Movers alternate along the line, starting with the root's side to move.
-        result.pv = worker.pv[0]
-            .iter()
-            .enumerate()
-            .map(|(i, m)| p.external(p.turn ^ (i % 2), *m))
-            .collect();
-        result.best_move = result.pv.first().cloned();
+        match p.game_state() {
+            GameState::Play | GameState::Check => {}
+            state => {
+                result.score = match state {
+                    GameState::Mate | GameState::HillWin => -MATE,
+                    GameState::DuckStalemateWin => MATE,
+                    _ => 0,
+                };
+                result.has_evaluation = true;
+                result.elapsed_micros = start.elapsed().as_micros() as u64;
+                publish(SearchEvent::Finished(result.clone()));
+                return Ok(result);
+            }
+        }
+        let budget = match request.limit {
+            SearchLimit::TimeMillis(ms) => Some(Duration::from_millis(ms as u64)),
+            _ => None,
+        };
+        let context = TableContext {
+            variant: p.variant,
+            rook_file: p.rook_file,
+            quiescence: request.options.quiescence,
+        };
+        let (cached_context, table) = self.cache.get_or_insert_with(|| (context, Table::new()));
+        table.new_search(*cached_context != context);
+        *cached_context = context;
+        let mut worker = Worker::new(control, start, budget, request.options.quiescence, p, table);
+        let mut moves = p.legal_internal();
+        let depths = match request.limit {
+            SearchLimit::Depth(depth) => depth..=depth,
+            _ => 1..=14,
+        };
+        let mut previous_pv = Vec::new();
+        for depth in depths {
+            let previous_score = result.has_evaluation.then_some(result.score);
+            let Some(score) =
+                worker.search_iteration(p, &mut moves, depth, &previous_pv, previous_score)
+            else {
+                break;
+            };
+            previous_pv.clone_from(&worker.pv[0]);
+            result.completed_depth = depth;
+            result.has_evaluation = true;
+            result.score = score;
+            // Movers alternate along the line, starting with the root's side to move.
+            result.pv = worker.pv[0]
+                .iter()
+                .enumerate()
+                .map(|(i, m)| p.external(p.turn ^ (i % 2), *m))
+                .collect();
+            result.best_move = result.pv.first().cloned();
+            result.nodes = worker.nodes;
+            result.elapsed_micros = start.elapsed().as_micros() as u64;
+            publish(SearchEvent::Progress(result.clone()));
+            if score == MATE || budget.is_some_and(|b| worker.start.elapsed() > b / 3) {
+                break;
+            }
+        }
+        result.interrupted = worker.interrupted;
         result.nodes = worker.nodes;
         result.elapsed_micros = start.elapsed().as_micros() as u64;
-        publish(SearchEvent::Progress(result.clone()));
-        if score == MATE || budget.is_some_and(|b| worker.start.elapsed() > b / 3) {
-            break;
-        }
+        publish(SearchEvent::Finished(result.clone()));
+        Ok(result)
     }
-    result.interrupted = worker.interrupted;
-    result.nodes = worker.nodes;
-    result.elapsed_micros = start.elapsed().as_micros() as u64;
-    publish(SearchEvent::Finished(result.clone()));
-    Ok(result)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    #[test]
+    fn session_reuses_a_child_position_and_a_stop_is_local_to_one_search() {
+        let fen = "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 w - - 0 10";
+        let options = SearchOptions { quiescence: true };
+        let parent = SearchRequest::new(
+            1,
+            Variant::Standard,
+            fen,
+            vec![],
+            SearchLimit::Depth(4),
+            options,
+        )
+        .unwrap();
+        let mut session = SearchSession::default();
+        let control = SearchControl::default();
+        let parent_result = session
+            .search_with_progress(&parent, &control, |_| {})
+            .unwrap();
+        let child = SearchRequest::new(
+            2,
+            Variant::Standard,
+            fen,
+            vec![parent_result.best_move.unwrap()],
+            SearchLimit::Depth(3),
+            options,
+        )
+        .unwrap();
+        let child_key = child.position().search_key();
+        assert!(session.cache.as_ref().unwrap().1.probe(child_key).is_some());
+
+        control.stop();
+        let stopped = session
+            .search_with_progress(&child, &control, |_| {})
+            .unwrap();
+        assert!(stopped.interrupted);
+        assert!(stopped.best_move.is_none());
+        assert!(session.cache.as_ref().unwrap().1.probe(child_key).is_some());
+
+        let control = SearchControl::default();
+        let warm = session
+            .search_with_progress(&child, &control, |_| {})
+            .unwrap();
+        let cold = search(&child, &control).unwrap();
+        assert!(!warm.interrupted);
+        assert_eq!(warm.search_id, 2);
+        assert_eq!(warm.completed_depth, cold.completed_depth);
+        assert_eq!(warm.score, cold.score);
+        assert_eq!(warm.best_move.as_ref(), warm.pv.first());
+        assert_eq!(warm.pv.len(), 3);
+        let mut replay = child.position().clone();
+        for m in warm.pv {
+            replay.apply(m.as_str()).unwrap();
+        }
+    }
+
+    #[test]
+    fn session_clears_entries_when_search_context_changes() {
+        let standard = "8/4k3/8/8/8/8/8/1R2K1R1 w - - 0 10";
+        let chess960 = "8/4k3/8/8/8/8/8/1R2K1R1 w KQ - 0 10";
+        let other_rook_files = "8/4k3/8/8/8/8/8/R3K2R w KQ - 0 10";
+        for ((variant, fen, quiescence), (next_variant, next_fen, next_quiescence)) in [
+            (
+                (Variant::Standard, standard, true),
+                (Variant::Standard, standard, false),
+            ),
+            (
+                (Variant::Standard, standard, true),
+                (Variant::Chess960, standard, true),
+            ),
+            (
+                (Variant::Chess960, chess960, true),
+                (Variant::Chess960, other_rook_files, true),
+            ),
+        ] {
+            let request = |variant, fen, quiescence| {
+                SearchRequest::new(
+                    1,
+                    variant,
+                    fen,
+                    vec![],
+                    SearchLimit::Depth(1),
+                    SearchOptions { quiescence },
+                )
+                .unwrap()
+            };
+            let mut session = SearchSession::default();
+            let first = request(variant, fen, quiescence);
+            let key = first.position().search_key();
+            let control = SearchControl::default();
+            session
+                .search_with_progress(&first, &control, |_| {})
+                .unwrap();
+            assert!(session.cache.as_ref().unwrap().1.probe(key).is_some());
+
+            // Stop before any entry can be written under the new settings.
+            control.stop();
+            let next = request(next_variant, next_fen, next_quiescence);
+            session
+                .search_with_progress(&next, &control, |_| {})
+                .unwrap();
+            assert!(session.cache.as_ref().unwrap().1.probe(key).is_none());
+        }
+    }
+
+    #[test]
+    fn warm_mate_search_still_returns_the_line_used_to_count_mate_distance() {
+        let request = SearchRequest::new(
+            1,
+            Variant::Standard,
+            "7k/8/5KQ1/8/8/8/8/8 w - - 0 1",
+            vec![],
+            SearchLimit::TimeMillis(60_000),
+            SearchOptions { quiescence: false },
+        )
+        .unwrap();
+        let mut session = SearchSession::default();
+        let control = SearchControl::default();
+        for _ in 0..2 {
+            let result = session
+                .search_with_progress(&request, &control, |_| {})
+                .unwrap();
+            assert_eq!(result.score, MATE);
+            assert_eq!(result.pv.len(), 1);
+            let mut replay = request.position().clone();
+            replay.apply(result.pv[0].as_str()).unwrap();
+            assert_eq!(replay.game_state(), GameState::Mate);
+        }
+    }
+
     fn quiescence(fen: &str, depth: u8, enabled: bool) -> (i32, u64) {
         let p = Position::from_fen(Variant::Standard, fen).unwrap();
         let control = SearchControl::default();
-        let mut worker = Worker::new(&control, Instant::now(), None, enabled, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, enabled, &p, &mut table);
         worker.nodes = 0;
         let score = worker.quiesce(&p, depth, -MATE, MATE);
         (score, worker.nodes)
@@ -695,12 +859,14 @@ mod tests {
         ] {
             let p = Position::from_fen(variant, fen).unwrap();
             let control = SearchControl::default();
-            let mut worker = Worker::new(&control, Instant::now(), None, true, &p);
+            let mut table = Table::new();
+            let mut worker = Worker::new(&control, Instant::now(), None, true, &p, &mut table);
             let expected = worker
                 .search_iteration(&p, &mut p.legal_internal(), 3, &[], None)
                 .unwrap();
             for offset in [-ASPIRATION_MARGIN, ASPIRATION_MARGIN] {
-                let mut worker = Worker::new(&control, Instant::now(), None, true, &p);
+                let mut table = Table::new();
+                let mut worker = Worker::new(&control, Instant::now(), None, true, &p, &mut table);
                 assert_eq!(
                     worker.search_iteration(
                         &p,
@@ -725,7 +891,8 @@ mod tests {
     fn aspiration_finds_mate_outside_the_initial_window() {
         let p = Position::from_fen(Variant::Standard, "7k/8/5KQ1/8/8/8/8/8 w - - 0 1").unwrap();
         let control = SearchControl::default();
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p, &mut table);
         assert_eq!(
             worker.search_iteration(&p, &mut p.legal_internal(), 1, &[], Some(0)),
             Some(MATE)
@@ -738,7 +905,8 @@ mod tests {
     fn a_later_move_inside_the_window_is_searched_again() {
         let p = Position::from_fen(Variant::Standard, "7k/8/8/8/8/8/8/KR6 w - - 0 1").unwrap();
         let control = SearchControl::default();
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p, &mut table);
         let mut windows = Vec::new();
         let score = worker.search_child(false, (10, 30), |_, window| {
             windows.push(window);
@@ -761,10 +929,12 @@ mod tests {
             .find(|m| m.coordinate().as_str() == "e2d2")
             .unwrap();
         let control = SearchControl::default();
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p, &mut table);
         let window = (-MATE - 1, MATE + 1);
         let expected = worker.alpha_beta(&p, None, 2, 0, window, &[]);
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p, &mut table);
         assert_eq!(
             worker.alpha_beta(&p, None, 2, 0, window, &[illegal]),
             expected
@@ -780,7 +950,8 @@ mod tests {
     fn cancellation_at_the_start_of_a_research_discards_its_pv() {
         let p = Position::from_fen(Variant::Standard, "7k/8/8/8/8/8/8/KR6 w - - 0 1").unwrap();
         let control = SearchControl::default();
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p, &mut table);
         let mut windows = Vec::new();
         worker.search_child(false, (10, 30), |worker, window| {
             windows.push(window);
@@ -819,7 +990,8 @@ mod tests {
     fn a_quiet_beta_cutoff_improves_move_ordering_for_the_moving_side() {
         let p = Position::from_fen(Variant::Standard, "7k/8/8/8/8/8/8/KR6 w - - 0 1").unwrap();
         let control = SearchControl::default();
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p, &mut table);
         worker.alpha_beta(&p, None, 1, 0, (-MATE, -MATE + 1), &[]);
         let m = worker.pv[0][0];
         assert_eq!(worker.quiet_history[p.turn][m.from][m.to], 1);
@@ -875,7 +1047,8 @@ mod tests {
         let fresh = Position::from_fen(Variant::Standard, &p.fen()).unwrap();
         assert_eq!(p.search_key(), fresh.search_key());
         let control = SearchControl::default();
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &p);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &p, &mut table);
         let mut moves = p.legal_internal();
         let draw = moves
             .iter()
@@ -903,7 +1076,8 @@ mod tests {
         );
         assert!(worker.pv[0].is_empty());
 
-        let mut worker = Worker::new(&control, Instant::now(), None, false, &fresh);
+        let mut table = Table::new();
+        let mut worker = Worker::new(&control, Instant::now(), None, false, &fresh, &mut table);
         let mut moves = fresh.legal_internal();
         let context = worker.enter(&fresh, draw);
         assert!(!fresh
@@ -939,9 +1113,9 @@ mod tests {
             let control = SearchControl::default();
             for quiescence in [false, true] {
                 let mut reference = None;
-                for table in [Table::with_slots(0), Table::new()] {
-                    let mut worker = Worker::new(&control, Instant::now(), None, quiescence, &p);
-                    worker.table = table;
+                for mut table in [Table::with_slots(0), Table::new()] {
+                    let mut worker =
+                        Worker::new(&control, Instant::now(), None, quiescence, &p, &mut table);
                     let mut previous_pv = Vec::new();
                     let mut scores = Vec::new();
                     for depth in 1..=depth {
@@ -993,7 +1167,8 @@ mod tests {
         ] {
             let p = Position::from_fen(Variant::Chess960, fen).unwrap();
             let control = SearchControl::default();
-            let mut worker = Worker::new(&control, Instant::now(), None, true, &p);
+            let mut table = Table::new();
+            let mut worker = Worker::new(&control, Instant::now(), None, true, &p, &mut table);
             // Isolate the castling branch so evaluation changes cannot hide it behind another move.
             let mut moves: Vec<_> = p
                 .legal_internal()

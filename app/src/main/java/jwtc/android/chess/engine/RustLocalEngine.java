@@ -12,6 +12,7 @@ public final class RustLocalEngine extends EngineApi {
     private final ArrayList<Runnable> completions = new ArrayList<>();
     private Thread worker;
     private long handle;
+    private long session;
     private boolean destroyed;
     private GameApi.PositionSnapshot deliveryPosition;
 
@@ -107,6 +108,13 @@ public final class RustLocalEngine extends EngineApi {
     private void launch(RustSearchRequest request, GameApi.PositionSnapshot snapshot, String fen) {
         try {
             deliveryPosition = gameApi.getPositionSnapshot(gameApi.getCurrentNode());
+            if (session == 0) {
+                session = RustNative.createSession();
+                if (session == 0) {
+                    throw new IllegalStateException("Rust search session allocation failed");
+                }
+            }
+            final long ownedSession = session;
             handle = RustNative.create();
             if (handle == 0) {
                 throw new IllegalStateException("Rust search allocation failed");
@@ -121,6 +129,7 @@ public final class RustLocalEngine extends EngineApi {
                                 try {
                                     result =
                                             RustNative.search(
+                                                    ownedSession,
                                                     ownedHandle,
                                                     request,
                                                     progress ->
@@ -155,6 +164,9 @@ public final class RustLocalEngine extends EngineApi {
                                     synchronized (RustLocalEngine.this) {
                                         RustNative.destroy(ownedHandle);
                                         handle = 0;
+                                        if (destroyed) {
+                                            releaseSession();
+                                        }
                                     }
                                 }
                                 final RustSearchResult completed = result;
@@ -268,7 +280,7 @@ public final class RustLocalEngine extends EngineApi {
                 }
             }
         } finally {
-            // A replacement may start only after final delivery and native destruction.
+            // A replacement may start only after final delivery.
             worker = null;
             ArrayList<Runnable> callbacks = new ArrayList<>(completions);
             completions.clear();
@@ -437,5 +449,15 @@ public final class RustLocalEngine extends EngineApi {
     public synchronized void destroy() {
         destroyed = true;
         abort(null);
+        if (handle == 0) {
+            releaseSession();
+        }
+    }
+
+    private void releaseSession() {
+        if (session != 0) {
+            RustNative.destroySession(session);
+            session = 0;
+        }
     }
 }

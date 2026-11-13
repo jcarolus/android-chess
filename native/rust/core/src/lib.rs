@@ -5,5 +5,5 @@ mod evaluation;
 mod search;
 pub use search::{
     search, search_with_progress, SearchControl, SearchEvent, SearchLimit, SearchOptions,
-    SearchRequest, SearchResult,
+    SearchRequest, SearchResult, SearchSession,
 };

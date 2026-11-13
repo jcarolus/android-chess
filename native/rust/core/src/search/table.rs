@@ -16,6 +16,7 @@ pub(super) struct Entry {
     depth: u8,
     score: i32,
     bound: Bound,
+    generation: u32,
     pub(super) best_move: Move,
 }
 
@@ -41,6 +42,7 @@ impl Entry {
             depth,
             score,
             bound,
+            generation: 0,
             best_move,
         }
     }
@@ -66,6 +68,7 @@ impl Entry {
 
 pub(super) struct Table {
     slots: Vec<Option<Entry>>,
+    generation: u32,
 }
 
 impl Table {
@@ -78,7 +81,15 @@ impl Table {
         debug_assert!(slots == 0 || slots.is_power_of_two());
         Self {
             slots: vec![None; slots],
+            generation: 0,
         }
+    }
+
+    pub(super) fn new_search(&mut self, clear: bool) {
+        if clear {
+            self.slots.fill(None);
+        }
+        self.generation = self.generation.wrapping_add(1);
     }
 
     fn index(&self, key: u64) -> usize {
@@ -93,12 +104,17 @@ impl Table {
             .filter(|e| e.key == key)
     }
 
-    pub(super) fn store(&mut self, entry: Entry) {
+    pub(super) fn store(&mut self, mut entry: Entry) {
         let index = self.index(entry.key);
+        entry.generation = self.generation;
         if let Some(slot) = self.slots.get_mut(index) {
             if slot.is_none_or(|old| {
-                entry.depth > old.depth
-                    || (entry.depth == old.depth
+                // Discount old entries by two plies per search for replacement only.
+                let age = self.generation.wrapping_sub(old.generation).min(8) as i32;
+                let priority = i32::from(old.depth) - 2 * age;
+                let depth = i32::from(entry.depth);
+                depth > priority
+                    || (depth == priority
                         && (entry.bound == Bound::Exact || old.bound != Bound::Exact))
             }) {
                 *slot = Some(entry);
@@ -150,5 +166,22 @@ mod tests {
         assert_eq!(table.probe(1).unwrap().bound, Bound::Lower);
         table.store(entry(1, 4, 10, (0, 20)));
         assert_eq!(table.probe(1).unwrap().bound, Bound::Exact);
+    }
+
+    #[test]
+    fn entries_survive_new_searches_and_lose_replacement_priority_with_age() {
+        let mut table = Table::with_slots(1);
+        table.store(entry(0, 6, 10, (0, 20)));
+        table.new_search(false);
+        table.store(entry(1, 3, 10, (0, 20)));
+        assert!(table.probe(0).is_some());
+
+        table.new_search(false);
+        table.store(entry(1, 3, 10, (0, 20)));
+        assert!(table.probe(0).is_none());
+        assert!(table.probe(1).is_some());
+
+        table.new_search(true);
+        assert!(table.probe(1).is_none());
     }
 }

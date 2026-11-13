@@ -2,6 +2,7 @@
 use chess_core::*;
 use std::ffi::{c_char, c_void, CStr};
 use std::panic::{catch_unwind, AssertUnwindSafe};
+use std::sync::{Mutex, TryLockError};
 #[repr(C)]
 pub struct NativeResult {
     id: u64,
@@ -18,6 +19,18 @@ pub struct NativeResult {
 #[no_mangle]
 pub extern "C" fn rust_chess_create() -> *mut SearchControl {
     Box::into_raw(Box::new(SearchControl::default()))
+}
+#[no_mangle]
+pub extern "C" fn rust_chess_create_session() -> *mut Mutex<SearchSession> {
+    Box::into_raw(Box::new(Mutex::new(SearchSession::default())))
+}
+/// # Safety
+/// Consume a session handle exactly once after its search calls have finished.
+#[no_mangle]
+pub unsafe extern "C" fn rust_chess_destroy_session(session: *mut Mutex<SearchSession>) {
+    if !session.is_null() {
+        drop(Box::from_raw(session));
+    }
 }
 /// # Safety
 /// `control` must be a live handle from rust_chess_create, retained during this call.
@@ -46,8 +59,10 @@ unsafe fn text<'a>(p: *const c_char) -> Result<&'a str, Error> {
 /// # Safety
 /// All strings must be NUL-terminated and live for the call. The history array
 /// has `count` elements, output is writable, and control remains owned by JNI.
+/// A non-null session must be a live handle retained for the call.
 #[no_mangle]
 pub unsafe extern "C" fn rust_chess_search(
+    session: *const Mutex<SearchSession>,
     control: *const SearchControl,
     id: u64,
     variant: i32,
@@ -112,7 +127,7 @@ pub unsafe extern "C" fn rust_chess_search(
         } else {
             -1
         };
-        search_with_progress(&request, control, |event| {
+        let publish = |event| {
             let (result, finished) = match event {
                 SearchEvent::Progress(result) => (result, false),
                 SearchEvent::Finished(result) => (result, true),
@@ -142,7 +157,24 @@ pub unsafe extern "C" fn rust_chess_search(
                     callback(context, output);
                 }
             }
-        })?;
+        };
+        if let Some(session) = session.as_ref() {
+            let mut search = match session.try_lock() {
+                Ok(search) => search,
+                Err(TryLockError::Poisoned(error)) => {
+                    let mut search = error.into_inner();
+                    *search = SearchSession::default();
+                    session.clear_poison();
+                    search
+                }
+                Err(TryLockError::WouldBlock) => {
+                    return Err(Error("Search session is busy".into()))
+                }
+            };
+            search.search_with_progress(&request, control, publish)?;
+        } else {
+            search_with_progress(&request, control, publish)?;
+        }
         Ok(())
     }));
     match result {
