@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.IntConsumer;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.study.StudyStore.Study;
 import jwtc.android.chess.tools.ImportActivity;
@@ -248,6 +249,13 @@ public final class StudiesActivity extends BaseActivity {
     }
 
     private void openChapter(int index) {
-        startActivity(StudyReaderActivity.intent(this, selected, index));
+        startActivity(
+                AnalyzeActivity.studyIntent(
+                        this,
+                        selected.collectionId,
+                        selected.id,
+                        selected.title,
+                        selected.author,
+                        index));
     }
 }

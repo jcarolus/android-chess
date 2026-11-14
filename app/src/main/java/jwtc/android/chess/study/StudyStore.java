@@ -31,9 +31,10 @@ public final class StudyStore {
         }
     }
 
-    static final class Chapter {
-        final long id;
-        final String title, topic, author;
+    public static final class Chapter {
+        public final long id;
+        public final String title;
+        final String topic, author;
 
         Chapter(Cursor row) {
             id = row.getLong(6);
@@ -130,7 +131,7 @@ public final class StudyStore {
         return library;
     }
 
-    static List<Chapter> chapters(Context context, String collectionId, String studyId) {
+    public static List<Chapter> chapters(Context context, String collectionId, String studyId) {
         SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
         List<Chapter> chapters = new ArrayList<>();
         try (Cursor rows = db.rawQuery(
@@ -144,13 +145,21 @@ public final class StudyStore {
         return chapters;
     }
 
-    static String chapterPgn(Context context, long id) {
+    public static String chapterPgn(Context context, long id) {
         SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
         try (Cursor row = db.query(
                 CHAPTERS, new String[] {"pgn"}, "id = ?", new String[] {Long.toString(id)},
                 null, null, null)) {
             return row.moveToFirst() ? row.getString(0) : null;
         }
+    }
+
+    public static void saveChapterPgn(Context context, long id, String pgn) {
+        ContentValues row = new ContentValues();
+        row.put("pgn", pgn);
+        PGNProvider.getDatabaseHelper(context)
+                .getWritableDatabase()
+                .update(CHAPTERS, row, "id = ?", new String[] {Long.toString(id)});
     }
 
     private StudyStore() {}

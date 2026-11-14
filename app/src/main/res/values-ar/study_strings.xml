@@ -9,8 +9,6 @@
     <string name="study_title_by_author">%1$s من تأليف %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">جارٍ تحميل الفصول…</string>
-    <string name="study_loading_chapter">جارٍ تحميل الفصل…</string>
-    <string name="study_retry">إعادة المحاولة</string>
     <string name="study_open_chapter">افتح الفصل</string>
     <string name="study_surprise">فاجئني</string>
     <string name="study_variations">التفرعات</string>

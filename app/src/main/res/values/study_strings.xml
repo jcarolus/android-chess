@@ -9,9 +9,7 @@
     <string name="study_title_by_author">%1$s by %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Loading chapters…</string>
-    <string name="study_loading_chapter">Loading chapter…</string>
     <string name="study_load_failed">Could not load studies.</string>
-    <string name="study_retry">Retry</string>
     <string name="study_open_chapter">Open chapter</string>
     <string name="study_previous_chapter">Previous chapter</string>
     <string name="study_next_chapter">Next chapter</string>

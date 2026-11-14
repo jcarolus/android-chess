@@ -9,8 +9,6 @@
     <string name="study_title_by_author">%1$s از %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">در حال بارگیری فصل‌ها…</string>
-    <string name="study_loading_chapter">در حال بارگیری فصل…</string>
-    <string name="study_retry">تلاش دوباره</string>
     <string name="study_open_chapter">باز کردن فصل</string>
     <string name="study_surprise">غافلگیرم کن</string>
     <string name="study_variations">شاخه‌ها</string>

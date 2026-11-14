@@ -9,8 +9,6 @@
     <string name="study_title_by_author">%1$s door %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Hoofdstukken laden…</string>
-    <string name="study_loading_chapter">Hoofdstuk laden…</string>
-    <string name="study_retry">Opnieuw proberen</string>
     <string name="study_open_chapter">Hoofdstuk openen</string>
     <string name="study_surprise">Verras me</string>
     <string name="study_variations">Varianten</string>

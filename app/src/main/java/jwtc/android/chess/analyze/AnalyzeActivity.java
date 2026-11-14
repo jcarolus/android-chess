@@ -1,5 +1,6 @@
 package jwtc.android.chess.analyze;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -8,13 +9,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,10 +34,13 @@ import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
+import jwtc.android.chess.study.StudyChapterNavigation;
+import jwtc.android.chess.study.StudyStore;
 import jwtc.android.chess.views.EngineEvaluationView;
 import jwtc.chess.GameRecord;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.PGNEntry;
+import jwtc.chess.PgnComment;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -45,6 +50,12 @@ public class AnalyzeActivity extends ChessBoardActivity {
     public static final String EXTRA_PGN = "analysisPgn";
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
+    private static final String EXTRA_STUDY_COLLECTION = "analysisStudyCollection";
+    private static final String EXTRA_STUDY_ID = "analysisStudyId";
+    private static final String EXTRA_STUDY_TITLE = "analysisStudyTitle";
+    private static final String EXTRA_STUDY_AUTHOR = "analysisStudyAuthor";
+    private static final String EXTRA_STUDY_CHAPTER = "analysisStudyChapter";
+    private static final String PREF_STUDY_ENGINE = "studyEngineEnabled";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
     private static final int REQUEST_MENU = 1;
     private static final int REQUEST_SAVE_GAME_TO_FILE = 2;
@@ -71,7 +82,31 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private List<Node> navigationLine = new ArrayList<>();
     private Analysis analysis;
     private View buttonBackToMain;
-    private FlexboxLayout layoutVariations;
+    private View buttonVariations;
+    private TextView textViewComment;
+    private SwitchMaterial switchEngine;
+    // Studies start without the engine so its evaluation does not give away the answers.
+    private boolean engineEnabled;
+    private StudyChapterNavigation chapterNavigation;
+    private List<StudyStore.Chapter> studyChapters;
+    private int chapterIndex;
+    // The chapter PGN as last read from or written to the study, to skip unchanged saves.
+    private String studySavedPgn;
+
+    public static Intent studyIntent(
+            Context context,
+            String collectionId,
+            String studyId,
+            String title,
+            String author,
+            int chapterIndex) {
+        return new Intent(context, AnalyzeActivity.class)
+                .putExtra(EXTRA_STUDY_COLLECTION, collectionId)
+                .putExtra(EXTRA_STUDY_ID, studyId)
+                .putExtra(EXTRA_STUDY_TITLE, title)
+                .putExtra(EXTRA_STUDY_AUTHOR, author)
+                .putExtra(EXTRA_STUDY_CHAPTER, chapterIndex);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,7 +135,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                             public void onChanged() {
                                 updateNavigation();
                                 updateMoveSummary();
-                                showCachedEvaluation();
+                                updateEvaluation();
                             }
 
                             @Override
@@ -112,7 +147,22 @@ public class AnalyzeActivity extends ChessBoardActivity {
                                 }
                             }
                         });
-        layoutVariations = findViewById(R.id.LayoutVariations);
+        buttonVariations = findViewById(R.id.ButtonVariations);
+        buttonVariations.setOnClickListener(v -> chooseVariation());
+        textViewComment = findViewById(R.id.TextViewComment);
+        findViewById(R.id.ButtonEditComment).setOnClickListener(v -> editComment());
+        switchEngine = findViewById(R.id.SwitchEngine);
+        engineEnabled = !isStudy() || getPrefs().getBoolean(PREF_STUDY_ENGINE, false);
+        if (isStudy()) {
+            chapterIndex =
+                    restoredSession != null && sessionId.equals(restoredSession.getString("id"))
+                            ? restoredSession.getInt("chapter")
+                            : getIntent().getIntExtra(EXTRA_STUDY_CHAPTER, 0);
+            switchEngine.setVisibility(View.VISIBLE);
+            switchEngine.setChecked(engineEnabled);
+            switchEngine.setOnCheckedChangeListener(
+                    (button, checked) -> setEngineEnabled(checked));
+        }
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         textViewAnalysisMove = findViewById(R.id.TextViewAnalysisMove);
@@ -161,9 +211,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
         findViewById(R.id.ButtonPrevious).setOnClickListener(v -> gameApi.undoMove());
         buttonNext.setOnClickListener(
                 v -> {
-                    int index = navigationLine.indexOf(gameApi.getCurrentNode());
-                    if (index >= 0 && index + 1 < navigationLine.size()) {
-                        gameApi.goTo(navigationLine.get(index + 1));
+                    Node next = nextMove();
+                    if (next != null) {
+                        gameApi.goTo(next);
                     }
                 });
         MenuDialog menuDialog =
@@ -209,20 +259,29 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 fen = prefs.getString("FEN", null);
                 fromGamePgnPref = !getIntent().hasExtra(EXTRA_GAME_ID) && pgn != null;
             }
+            if (isStudy() && !loadStudyChapters()) {
+                doToast(getString(R.string.study_load_failed));
+                finish();
+                return;
+            }
             if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))) {
                 gameApi.loadPGN(restoredSession.getString("pgn"));
-                Node node = gameApi.getRootNode();
-                int[] path = restoredSession.getIntArray("path");
-                if (path != null) {
-                    for (int index : path) {
-                        List<Node> children = gameApi.getContinuations(node);
-                        if (index < 0 || index >= children.size()) {
-                            break;
-                        }
-                        node = children.get(index);
-                    }
+                Node node = nodeAt(restoredSession.getIntArray("path"));
+                List<Node> line = pathTo(nodeAt(restoredSession.getIntArray("line")));
+                if (line.contains(node)) {
+                    navigationLine = line;
                 }
                 gameApi.goTo(node);
+                if (isStudy()) {
+                    studySavedPgn = gameApi.exportFullPGN();
+                    applyStudyOrientation();
+                }
+            } else if (isStudy()) {
+                if (!loadChapter()) {
+                    doToast(getString(R.string.study_load_failed));
+                    finish();
+                    return;
+                }
             } else {
                 if (lGameID > 0 && loadGame()) {
                     Log.d(TAG, "Loaded game " + lGameID);
@@ -289,12 +348,11 @@ public class AnalyzeActivity extends ChessBoardActivity {
             }
             return;
         }
-        String engineId = prefs.getString(AnalysisSettingsDialog.PREF_ENGINE, null);
-        int millis = AnalysisSettingsDialog.getTimeMillis(prefs);
         AnalysisResults.Saved saved = readAnalysisState(restoredSession);
-        analysis.resume(engineId, millis, saved);
+        if (engineEnabled) {
+            startEngine(saved);
+        }
         restoredSession = null;
-        showEngineWarning();
         rebuildBoard();
         updatePieceDescriptions();
     }
@@ -319,6 +377,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
         analysis.reset();
         navigationLine = new ArrayList<>();
         evaluationView.clearEvaluation();
+        if (isStudy()) {
+            chapterIndex = intent.getIntExtra(EXTRA_STUDY_CHAPTER, 0);
+        }
     }
 
     @Override
@@ -331,17 +392,11 @@ public class AnalyzeActivity extends ChessBoardActivity {
         Bundle session = new Bundle();
         session.putString("id", sessionId);
         session.putString("pgn", gameApi.exportFullPGN());
-        ArrayList<Integer> reversed = new ArrayList<>();
-        for (Node node = gameApi.getCurrentNode();
-                node.getParent() != null;
-                node = node.getParent()) {
-            reversed.add(gameApi.getContinuations(node.getParent()).indexOf(node));
+        session.putIntArray("path", pathOf(gameApi.getCurrentNode()));
+        if (!navigationLine.isEmpty()) {
+            session.putIntArray("line", pathOf(navigationLine.get(navigationLine.size() - 1)));
         }
-        int[] path = new int[reversed.size()];
-        for (int i = 0; i < path.length; i++) {
-            path[i] = reversed.get(path.length - 1 - i);
-        }
-        session.putIntArray("path", path);
+        session.putInt("chapter", chapterIndex);
         analysis.save().writeTo(session);
         outState.putBundle("analysisSession", session);
     }
@@ -360,14 +415,37 @@ public class AnalyzeActivity extends ChessBoardActivity {
         boolean onMainLine = gameApi.isOnMainLine();
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
         boolean changed = analysis.selectPosition();
-        updateMoveSummary();
-        updateVariations();
         updateNavigation();
+        updateMoveSummary();
+        buttonVariations.setVisibility(
+                gameApi.getContinuations(gameApi.getCurrentNode()).size() > 1
+                        ? View.VISIBLE
+                        : View.GONE);
+        updateComment();
         if (changed && analysis.isActive()) {
             evaluationView.clearEvaluation();
         }
-        showCachedEvaluation();
+        updateEvaluation();
         analysis.startNextAnalysis();
+    }
+
+    private void updateEvaluation() {
+        if (engineEnabled) {
+            evaluationView.setVisibility(View.VISIBLE);
+            showCachedEvaluation();
+            return;
+        }
+        String score = PgnComment.evaluation(commentAfter(gameApi.getCurrentNode()));
+        evaluationView.setVisibility(score.isEmpty() ? View.INVISIBLE : View.VISIBLE);
+        if (score.isEmpty()) {
+            return;
+        }
+        if (score.startsWith("#")) {
+            evaluationView.setEvaluation(score.startsWith("#-") ? -1000 : 1000);
+        } else {
+            evaluationView.setEvaluation(Float.parseFloat(score));
+        }
+        evaluationView.setContentDescription(getString(R.string.study_pgn_evaluation, score));
     }
 
     private void showCachedEvaluation() {
@@ -384,6 +462,31 @@ public class AnalyzeActivity extends ChessBoardActivity {
                                 : evaluation.value > 0 ? 1000 : -1000)
                         : evaluation.value / 100.0f;
         evaluationView.setEvaluation(value);
+    }
+
+    private void startEngine(AnalysisResults.Saved saved) {
+        SharedPreferences prefs = getPrefs();
+        analysis.resume(
+                prefs.getString(AnalysisSettingsDialog.PREF_ENGINE, null),
+                AnalysisSettingsDialog.getTimeMillis(prefs),
+                saved);
+        showEngineWarning();
+    }
+
+    private void setEngineEnabled(boolean enabled) {
+        if (enabled == engineEnabled) {
+            return;
+        }
+        engineEnabled = enabled;
+        getPrefs().edit().putBoolean(PREF_STUDY_ENGINE, enabled).apply();
+        if (enabled) {
+            // Results computed earlier on this screen stay cached while the engine is off.
+            startEngine(null);
+        } else {
+            analysis.pause();
+        }
+        evaluationView.clearEvaluation();
+        rebuildBoard();
     }
 
     private void restartAnalysis() {
@@ -453,37 +556,211 @@ public class AnalyzeActivity extends ChessBoardActivity {
             lastScrolledNode = current;
         }
         findViewById(R.id.ButtonPrevious).setEnabled(current.getParent() != null);
-        buttonNext.setEnabled(index >= 0 && index + 1 < navigationLine.size());
+        buttonNext.setEnabled(nextMove() != null);
     }
 
-    private void updateVariations() {
-        layoutVariations.removeAllViews();
-        List<Node> continuations = gameApi.getContinuations(gameApi.getCurrentNode());
-        layoutVariations.setVisibility(continuations.size() > 1 ? View.VISIBLE : View.GONE);
-        if (continuations.size() < 2) {
+    /** The move Next plays: the selected line's continuation, else the preferred one. */
+    private Node nextMove() {
+        Node current = gameApi.getCurrentNode();
+        int index = navigationLine.indexOf(current);
+        return index >= 0 && index + 1 < navigationLine.size()
+                ? navigationLine.get(index + 1)
+                : current.getNext();
+    }
+
+    private void chooseVariation() {
+        Node current = gameApi.getCurrentNode();
+        List<Node> continuations = gameApi.getContinuations(current);
+        String[] moves = new String[continuations.size()];
+        for (int i = 0; i < continuations.size(); i++) {
+            Node node = continuations.get(i);
+            PGNEntry entry = node.getEntry();
+            moves[i] =
+                    gameApi.getMoveNumber(node)
+                            + " "
+                            + getMoveDescription(false, entry.sMove, entry.move);
+        }
+        new ChessAlertDialogBuilder(this)
+                .setTitle(R.string.study_variations)
+                .setSingleChoiceItems(
+                        moves,
+                        continuations.indexOf(nextMove()),
+                        (dialog, index) -> {
+                            followLine(continuations.get(index));
+                            dialog.dismiss();
+                        })
+                .setNegativeButton(R.string.button_cancel, null)
+                .show();
+    }
+
+    /** Selects the line through the given continuation and its preferred moves after it. */
+    private void followLine(Node continuation) {
+        List<Node> line = pathTo(continuation);
+        for (Node node = continuation.getNext(); node != null; node = node.getNext()) {
+            line.add(node);
+        }
+        navigationLine = line;
+        updateNavigation();
+        updateComment();
+    }
+
+    private static String commentAfter(Node node) {
+        PGNEntry entry = node.getEntry();
+        return entry == null ? null : entry.sAnnotation;
+    }
+
+    private String currentComment() {
+        Node current = gameApi.getCurrentNode();
+        return current.getParent() == null ? gameApi.getRootComment() : commentAfter(current);
+    }
+
+    private void updateComment() {
+        String text = PgnComment.text(currentComment());
+        if (!text.isEmpty() && gameApi.getCurrentNode().getParent() != null) {
+            text = getString(R.string.study_after_move, text);
+        }
+        Node next = nextMove();
+        if (next != null) {
+            String before = PgnComment.text(next.getLeadingComment());
+            if (!before.isEmpty()) {
+                if (!text.isEmpty()) {
+                    text += "\n\n";
+                }
+                text += getString(R.string.study_before_move, before);
+            }
+        }
+        if (!text.contentEquals(textViewComment.getText())) {
+            textViewComment.setText(text);
+        }
+        textViewComment.setVisibility(text.isEmpty() ? View.GONE : View.VISIBLE);
+    }
+
+    private void editComment() {
+        Node node = gameApi.getCurrentNode();
+        String comment = currentComment();
+        View content = getLayoutInflater().inflate(R.layout.analysis_comment, null);
+        EditText input = content.findViewById(R.id.AnalysisComment);
+        input.setText(PgnComment.text(comment));
+        new ChessAlertDialogBuilder(this)
+                .setTitle(
+                        node.getParent() == null
+                                ? R.string.analysis_start_comment_title
+                                : R.string.analysis_comment_title)
+                .setView(content)
+                .setNegativeButton(R.string.button_cancel, null)
+                .setPositiveButton(
+                        R.string.button_ok,
+                        (dialog, which) -> {
+                            gameApi.setAnnotation(
+                                    node, PgnComment.withText(comment, input.getText().toString()));
+                            updateComment();
+                            updateEvaluation();
+                        })
+                .show();
+    }
+
+    private List<Node> pathTo(Node target) {
+        List<Node> path = new ArrayList<>();
+        for (Node node = target; node != null; node = node.getParent()) {
+            path.add(0, node);
+        }
+        return path;
+    }
+
+    private int[] pathOf(Node target) {
+        List<Node> path = pathTo(target);
+        int[] indices = new int[path.size() - 1];
+        for (int i = 1; i < path.size(); i++) {
+            indices[i - 1] = gameApi.getContinuations(path.get(i - 1)).indexOf(path.get(i));
+        }
+        return indices;
+    }
+
+    private Node nodeAt(int[] path) {
+        Node node = gameApi.getRootNode();
+        if (path != null) {
+            for (int index : path) {
+                List<Node> children = gameApi.getContinuations(node);
+                if (index < 0 || index >= children.size()) {
+                    break;
+                }
+                node = children.get(index);
+            }
+        }
+        return node;
+    }
+
+    private boolean isStudy() {
+        return getIntent().hasExtra(EXTRA_STUDY_ID);
+    }
+
+    private boolean loadStudyChapters() {
+        String collectionId = getIntent().getStringExtra(EXTRA_STUDY_COLLECTION);
+        String studyId = getIntent().getStringExtra(EXTRA_STUDY_ID);
+        studyChapters =
+                collectionId == null || studyId == null
+                        ? new ArrayList<>()
+                        : StudyStore.chapters(this, collectionId, studyId);
+        if (studyChapters.isEmpty()) {
+            return false;
+        }
+        chapterIndex = Math.max(0, Math.min(chapterIndex, studyChapters.size() - 1));
+        if (chapterNavigation == null) {
+            chapterNavigation =
+                    new StudyChapterNavigation(findViewById(R.id.root_layout), this::selectChapter);
+        }
+        chapterNavigation.show(
+                getIntent().getStringExtra(EXTRA_STUDY_TITLE),
+                getIntent().getStringExtra(EXTRA_STUDY_AUTHOR),
+                studyChapters,
+                chapterIndex);
+        return true;
+    }
+
+    /** Loads the selected chapter at its starting position, where the introduction is. */
+    private boolean loadChapter() {
+        String pgn = StudyStore.chapterPgn(this, studyChapters.get(chapterIndex).id);
+        if (pgn == null || !gameApi.loadPGN(pgn)) {
+            return false;
+        }
+        studySavedPgn = gameApi.exportFullPGN();
+        applyStudyOrientation();
+        gameApi.goTo(gameApi.getRootNode());
+        return true;
+    }
+
+    private void applyStudyOrientation() {
+        chessBoardView.setRotated("black".equalsIgnoreCase(gameApi.pgnTags.get("Orientation")));
+    }
+
+    private void selectChapter(int index) {
+        saveStudy();
+        int previous = chapterIndex;
+        analysis.reset();
+        navigationLine = new ArrayList<>();
+        lastScrolledNode = null;
+        evaluationView.clearEvaluation();
+        chapterIndex = index;
+        if (!loadChapter()) {
+            doToast(getString(R.string.study_load_failed));
+            chapterIndex = previous;
+            loadChapter();
+        }
+        chapterNavigation.setIndex(chapterIndex);
+        if (engineEnabled) {
+            startEngine(null);
+        }
+        rebuildBoard();
+    }
+
+    private void saveStudy() {
+        if (!sessionLoaded || studyChapters == null) {
             return;
         }
-        // Child zero is the preferred continuation; the remaining children are variations.
-        for (int i = 1; i < continuations.size(); i++) {
-            Node continuation = continuations.get(i);
-            PGNEntry entry = continuation.getEntry();
-            String move = gameApi.getMoveNumber(continuation) + " " + entry.sMove;
-            if (entry.duckMove != -1) {
-                move += "@" + Pos.toString(entry.duckMove);
-            }
-            MaterialButton button = new MaterialButton(this);
-            FlexboxLayout.LayoutParams params =
-                    new FlexboxLayout.LayoutParams(
-                            FlexboxLayout.LayoutParams.WRAP_CONTENT,
-                            FlexboxLayout.LayoutParams.WRAP_CONTENT);
-            params.setMarginEnd(Math.round(4 * getResources().getDisplayMetrics().density));
-            button.setLayoutParams(params);
-            button.setMinWidth(0);
-            button.setMinimumWidth(0);
-            button.setText(move);
-            button.setAllCaps(false);
-            button.setOnClickListener(v -> gameApi.goTo(continuation));
-            layoutVariations.addView(button);
+        String pgn = gameApi.exportFullPGN();
+        if (!pgn.equals(studySavedPgn)) {
+            StudyStore.saveChapterPgn(this, studyChapters.get(chapterIndex).id, pgn);
+            studySavedPgn = pgn;
         }
     }
 
@@ -497,7 +774,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         }
         Node current = gameApi.getCurrentNode();
         // Keep the previous announcement until all results needed for feedback are ready.
-        if (!analysis.summary(current).ready) {
+        if (engineEnabled && !analysis.summary(current).ready) {
             return;
         }
 
@@ -534,7 +811,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         displayedEngineMove = null;
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
-        if (gameApi.isDuckVariant()) {
+        if (gameApi.isDuckVariant() || !engineEnabled) {
             return;
         }
 
@@ -591,6 +868,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
             } else if (fromGamePgnPref) {
                 getPrefs().edit().putString("game_pgn", gameApi.exportFullPGN()).apply();
+            } else {
+                saveStudy();
             }
         }
         super.onPause();

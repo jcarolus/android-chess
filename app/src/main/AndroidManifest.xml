@@ -308,9 +308,6 @@
             android:name=".study.StudiesActivity"
             android:label="@string/studies"
             android:exported="false" />
-        <activity
-            android:name=".study.StudyReaderActivity"
-            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

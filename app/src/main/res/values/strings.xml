@@ -595,6 +595,10 @@
     <string name="analysis_black_to_move">Black to move</string>
     <string name="analysis_variation">Variation</string>
     <string name="analysis_back_to_main">Back to main</string>
+    <string name="analysis_edit_comment">Comment</string>
+    <string name="analysis_comment_title">Comment after the move</string>
+    <string name="analysis_start_comment_title">Comment before the first move</string>
+    <string name="analysis_engine">Engine</string>
     <string name="pgn_return_main_line">Return to main line</string>
     <string name="pgn_promote_variation">Make preferred continuation</string>
     <string name="pgn_delete_variation">Delete variation</string>

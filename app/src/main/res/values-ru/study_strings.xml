@@ -9,8 +9,6 @@
     <string name="study_title_by_author">%1$s — %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Загрузка списка глав…</string>
-    <string name="study_loading_chapter">Загрузка главы…</string>
-    <string name="study_retry">Повторить</string>
     <string name="study_open_chapter">Открыть главу</string>
     <string name="study_surprise">Удивите меня</string>
     <string name="study_variations">Варианты</string>

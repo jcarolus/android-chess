@@ -1,16 +1,9 @@
 package jwtc.android.chess.study;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import jwtc.chess.Pgn;
 
 public final class StudyPgn {
-    private static final Pattern EVALUATION =
-            Pattern.compile("\\[%eval\\s+(#?[+-]?\\d+(?:\\.\\d+)?)(?:,\\d+)?\\s*\\]");
-    private static final Pattern DIRECTIVE =
-            Pattern.compile("\\[%(?:anno|cal|csl|clk|emt|eval)\\s+[^\\]]*\\]");
-
     static final class Chapter {
         final Map<String, String> tags;
         final String pgn;
@@ -53,15 +46,6 @@ public final class StudyPgn {
     static String chapterTitle(Map<String, String> tags) {
         String name = value(tags, "ChapterName");
         return name == null ? value(tags, "Event") : name;
-    }
-
-    static String comment(String annotation) {
-        return DIRECTIVE.matcher(annotation).replaceAll("").trim();
-    }
-
-    static String evaluation(String annotation) {
-        Matcher matcher = EVALUATION.matcher(annotation);
-        return matcher.find() ? matcher.group(1) : "";
     }
 
     private StudyPgn() {}

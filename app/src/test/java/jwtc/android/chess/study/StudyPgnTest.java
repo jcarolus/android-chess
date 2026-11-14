@@ -95,14 +95,4 @@ public class StudyPgnTest {
                 IllegalArgumentException.class,
                 () -> StudyPgn.parseChapter(HEADERS + "[Variant \"Atomic\"]\n" + MOVES));
     }
-
-    @Test
-    public void separatesStudyTextFromPgnDirectivesAndScores() {
-        String annotation =
-                "[%anno \"Author\", user] Protect the knight. [%cal Ge2e4][%csl Ge4]\n[%eval -0.25,22]";
-        assertEquals("Protect the knight.", StudyPgn.comment(annotation));
-        assertEquals("-0.25", StudyPgn.evaluation(annotation));
-        assertEquals("#-3", StudyPgn.evaluation("[%eval #-3]"));
-        assertEquals("", StudyPgn.evaluation("No score."));
-    }
 }

@@ -9,8 +9,6 @@
     <string name="study_title_by_author">%1$s — %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Bölümler yükleniyor…</string>
-    <string name="study_loading_chapter">Bölüm yükleniyor…</string>
-    <string name="study_retry">Tekrar dene</string>
     <string name="study_open_chapter">Bölümü aç</string>
     <string name="study_surprise">Beni şaşırt</string>
     <string name="study_variations">Varyantlar</string>

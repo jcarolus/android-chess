@@ -9,8 +9,6 @@
     <string name="study_title_by_author">%1$s di %2$s</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">Caricamento dei capitoli…</string>
-    <string name="study_loading_chapter">Caricamento del capitolo…</string>
-    <string name="study_retry">Riprova</string>
     <string name="study_open_chapter">Apri capitolo</string>
     <string name="study_surprise">Sorprendimi</string>
     <string name="study_variations">Varianti</string>

@@ -9,8 +9,6 @@
     <string name="study_title_by_author">%1$s（作者：%2$s）</string>
     <string name="study_chapter_choice">%1$d. %2$s</string>
     <string name="study_loading_chapters">正在載入章節列表…</string>
-    <string name="study_loading_chapter">正在載入章節…</string>
-    <string name="study_retry">重試</string>
     <string name="study_open_chapter">開啟章節</string>
     <string name="study_surprise">隨機選取</string>
     <string name="study_variations">變著</string>

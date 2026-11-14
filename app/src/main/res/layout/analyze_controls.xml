@@ -44,6 +44,55 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/StudyHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/StudyTitle"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/StudyChapterTitle"
+                style="@style/MyHeaderTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/StudyChapterNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/StudyPreviousChapter"
+                    style="?attr/chessImageButtonStyle"
+                    android:contentDescription="@string/study_previous_chapter"
+                    app:icon="@drawable/ic_chevron_left" />
+
+                <SeekBar
+                    android:id="@+id/StudyChapterSeek"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/study_chapter"
+                    android:saveEnabled="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/StudyNextChapter"
+                    style="?attr/chessImageButtonStyle"
+                    android:contentDescription="@string/study_next_chapter"
+                    app:icon="@drawable/ic_chevron_right" />
+            </LinearLayout>
+        </LinearLayout>
+
         <TableLayout
             android:id="@+id/LayoutHistory"
             android:layout_width="match_parent"
@@ -139,15 +188,45 @@
                 android:visibility="invisible" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/TextViewComment"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:accessibilityLiveRegion="polite"
+            android:visibility="gone" />
+
         <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/LayoutVariations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:flexDirection="row"
             app:flexWrap="wrap"
             app:justifyContent="flex_start"
-            app:alignItems="center"
-            android:visibility="gone" />
+            app:alignItems="center">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonVariations"
+                style="?attr/chessButtonStyle"
+                android:layout_width="wrap_content"
+                android:text="@string/study_variations"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonEditComment"
+                style="?attr/chessButtonStyle"
+                android:layout_width="wrap_content"
+                android:text="@string/analysis_edit_comment" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchEngine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ChessFlexItem"
+                android:text="@string/analysis_engine"
+                android:visibility="gone" />
+        </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
