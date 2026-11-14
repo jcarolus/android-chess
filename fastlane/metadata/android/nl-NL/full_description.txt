@@ -1,0 +1,36 @@
+Schaken voor Android is een gratis, opensource schaakapp zonder advertenties. Speel offline of online, los puzzels op, bestudeer stellingen en bewaar je partijen op één plek.
+
+SPEEL OP JOUW MANIER
+
+• Speel offline tegen de ingebouwde schaakengine.
+• Speel online via Lichess of FICS.
+• Maak of accepteer Lichess-uitdagingen en speel verder in lopende partijen.
+• Kies standaardschaak, Chess960 of eendenschaak.
+• Zet je eigen stellingen op het bord.
+
+OEFEN EN VERBETER JE SPEL
+
+• Los puzzels van Lichess op.
+• Oefen met een verzameling mat-in-twee-puzzels en oefenstellingen.
+• Verken openingen met de ingebouwde ECO-openingsverkenner.
+• Blader door zetten en bekijk volledige partijen.
+
+BEHEER JE PARTIJEN
+
+Bewaar partijen in een lokale database en zoek op speler, evenement, datum of resultaat. Bewerk opgeslagen partijen, importeer en exporteer partijbestanden en deel stellingen of partijen via andere apps.
+
+TOEGANKELIJK SCHAKEN
+
+Schaken voor Android ondersteunt schermlezers zoals TalkBack. Gesproken beschrijvingen van velden, stukken, zetten en bedieningselementen helpen je bij het navigeren en spelen.
+
+Als gewoon slepen lastig is, kun je de optionele modus Toegankelijk slepen gebruiken om stukken te verplaatsen. Je kunt de wachttijden afstemmen op je manier van spelen. Deze modus is bedoeld voor gebruik zonder TalkBack.
+
+SPEEL OP EEN GROTER SCHERM
+
+Cast het schaakbord naar een tv of scherm met Chromecast, zodat anderen de partij op een groter scherm kunnen volgen.
+
+GEBRUIK JE FAVORIETE SCHAAKENGINE
+
+Naast de ingebouwde schaakengine ondersteunt Schaken voor Android het Open Exchange Protocol (OEX). Daarmee kun je compatibele schaakengines van andere ontwikkelaars gebruiken zodra je die hebt geïnstalleerd.
+
+Van een snelle offline partij tot online spelen via Lichess, tactiek oefenen of je partijen terugvinden in een doorzoekbare database: met Schaken voor Android heb je overal een toegankelijk schaakbord bij de hand.

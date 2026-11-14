@@ -119,7 +119,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEco"
                 app:icon="@drawable/ic_signpost_split"
-                android:contentDescription="ECO openings"
+                android:contentDescription="@string/eco_openings_description"
                 style="?attr/chessImageButtonStyle" />
 
             <TextView

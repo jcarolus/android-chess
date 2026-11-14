@@ -279,6 +279,10 @@
     <string name="options_play_white">Blancs</string>
     <string name="options_quiescent_off">Recherche de quiétude désactivée</string>
     <string name="options_quiescent_on">Recherche de quiétude activée</string>
+    <string name="pgntool_delete_studies">Supprimer toutes les études</string>
+    <string name="pgntool_confirm_delete_studies">Supprimer toutes les études ?</string>
+    <string name="pgntool_studies_deleted">Toutes les études ont été supprimées</string>
+    <string name="pgntool_delete_item_count">Éléments à supprimer : %1$d</string>
     <string name="pgntool_confirm_delete_games">Êtes-vous sûr ?</string>
     <string name="pgntool_confirm_practice_reset">Voulez-vous vraiment réinitialiser ?</string>
     <string name="pgntool_create_db_explanation">Créer une base d’ouvertures</string>
@@ -548,7 +552,6 @@
     <string name="analysis_move_mistake">Erreur</string>
     <string name="analysis_move_blunder">Erreur grave</string>
     <string name="analysis_move_forced">Forcé</string>
-    <string name="analysis_move_pending">Analyse du coup…</string>
     <string name="analysis_move_unavailable">Analyse indisponible</string>
     <string name="analysis_white_to_move">Trait aux Blancs</string>
     <string name="analysis_black_to_move">Trait aux Noirs</string>
@@ -566,7 +569,6 @@
     <string name="analysis_builtin_warning">Pour une meilleure analyse, installez un moteur d’échecs compatible avec OEX.</string>
     <string name="analysis_dont_show_again">Ne plus afficher</string>
     <string name="analysis_continue">Continuer</string>
-    <string name="analysis_duck_unsupported">L’analyse des échecs canard n’est pas prise en charge.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Roi de la colline</string>
@@ -583,6 +585,25 @@
     <string name="share_lichess_profile">Partager mon profil Lichess</string>
     <string name="app_link_invalid">Ce lien Chess est invalide ou non pris en charge.</string>
     <string name="app_link_too_large">Cette partie est trop longue pour un lien. Partagez plutôt la partie complète au format PGN.</string>
-    <string name="app_link_no_engine">Aucune analyse par moteur pour cette variante. Vous pouvez parcourir les positions et les coups.</string>
     <string name="share_failed">Impossible de partager la partie. Veuillez réessayer.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>un|une</item>
+        <item>deux</item>
+        <item>trois</item>
+        <item>quatre</item>
+        <item>cinq</item>
+        <item>six</item>
+        <item>sept</item>
+        <item>huit</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cavalier</item>
+        <item>fou</item>
+        <item>tour</item>
+        <item>dame|reine|renne|rêne</item>
+    </string-array>
+    <string name="move_input_castle">roque|roquer</string>
+    <string name="move_input_captures">prend|capture</string>
 </resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Études</string>
+    <string name="study_topic">Thème</string>
+    <string name="study_author">Auteur</string>
+    <string name="study_name">Étude</string>
+    <string name="study_chapter">Chapitre</string>
+    <string name="study_any_author">Tous les auteurs</string>
+    <string name="study_title_by_author">%1$s par %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">Chargement des chapitres…</string>
+    <string name="study_open_chapter">Ouvrir le chapitre</string>
+    <string name="study_surprise">Surprenez-moi</string>
+    <string name="study_variations">Variantes</string>
+    <string name="study_before_move">Avant le coup : %1$s</string>
+    <string name="study_after_move">Après le coup : %1$s</string>
+    <string name="study_pgn_evaluation">Évaluation de l’étude : %1$s</string>
+    <string name="study_next_chapter">Chapitre suivant</string>
+    <string name="study_next_chapter_named">Chapitre : %1$s</string>
+</resources>

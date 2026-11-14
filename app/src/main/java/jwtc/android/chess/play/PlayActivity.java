@@ -3,6 +3,8 @@ package jwtc.android.chess.play;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,17 +16,19 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodSubtype;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -35,6 +39,7 @@ import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
@@ -44,18 +49,17 @@ import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameRecord;
+import jwtc.chess.GameTree.Node;
+import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
-
 import org.json.JSONArray;
-
-import java.util.ArrayList;
-import java.util.Locale;
 
 public class PlayActivity extends ChessBoardActivity
         implements EngineListener,
@@ -109,6 +113,204 @@ public class PlayActivity extends ChessBoardActivity
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
     private View boardTopLayout, boardBottomLayout, layoutHistory, layoutEco;
+
+    public static final String PREF_MOVE_ENTRY = "play_move_entry";
+    public static final String PREF_CONFIRM_MOVE_ENTRY = "play_confirm_move_entry";
+
+    private MoveEntryField moveEntry;
+    private Node moveEntryPosition;
+    private boolean moveEntryTurn;
+    private int moveEntryRevision;
+    private boolean reviewingMove;
+
+    private void updateMoveEntry() {
+        if (moveEntry == null) {
+            return;
+        }
+        Node position = gameApi.getCurrentNode();
+        boolean available =
+                getPrefs().getBoolean(PREF_MOVE_ENTRY, false) && !gameApi.isDuckVariant();
+        boolean playerTurn =
+                available && !gameApi.isEnded() && (!vsCPU || gameApi.getTurn() == myTurn);
+        boolean positionChanged = position != moveEntryPosition;
+        if (positionChanged || playerTurn != moveEntryTurn) {
+            moveEntryRevision++;
+            moveEntry.resetConnection(true);
+        }
+        moveEntryPosition = position;
+        moveEntryTurn = playerTurn;
+        moveEntry.setVisibility(available ? View.VISIBLE : View.GONE);
+    }
+
+    private void submitMoveEntry(String text) {
+        if (reviewingMove || moveEntry.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        if (!canApplyMoveEntry()) {
+            moveEntry.setError(getString(R.string.move_entry_wrong_turn));
+            return;
+        }
+        DictatedMove coordinates = parseMoveEntry(text);
+        if (coordinates == null) {
+            moveEntry.setError(getString(R.string.move_entry_format));
+            return;
+        }
+        PositionMove move =
+                coordinates.san == null
+                        ? gameApi.resolveTextMove(
+                                coordinates.from, coordinates.to, coordinates.promotion)
+                        : gameApi.resolveSanMove(coordinates::matchesSan);
+        PositionMove promotion = null;
+        if (move == null) {
+            if (coordinates.san != null) {
+                promotion = gameApi.resolveSanPromotion(coordinates::matchesSanWithoutPromotion);
+            } else if (coordinates.promotion < 0) {
+                promotion =
+                        gameApi.resolveTextMove(
+                                coordinates.from, coordinates.to, BoardConstants.QUEEN);
+            }
+        }
+        if (promotion != null) {
+            int from = Move.getFrom(promotion.move);
+            int to = Move.getTo(promotion.move);
+            int revision = moveEntryRevision;
+            int textRevision = moveEntry.textRevision();
+            moveEntry.setError(null);
+            reviewingMove = true;
+            boolean[] selectedPiece = {false};
+            promotionDialog(
+                            piece -> {
+                                selectedPiece[0] = true;
+                                reviewingMove = false;
+                                moveEntry.resetConnection(false);
+                                if (revision == moveEntryRevision
+                                        && canApplyMoveEntry()
+                                        && textRevision == moveEntry.textRevision()) {
+                                    PositionMove selected =
+                                            gameApi.resolveTextMove(from, to, piece);
+                                    if (selected != null
+                                            && (coordinates.san == null
+                                                    || coordinates.matchesSanWithoutPromotion(
+                                                            selected.san))) {
+                                        confirmMoveEntry(coordinates, selected);
+                                    } else {
+                                        moveEntry.setError(getString(R.string.move_entry_illegal));
+                                    }
+                                }
+                            })
+                    .setOnDismissListener(
+                            dialog -> {
+                                if (!selectedPiece[0]) {
+                                    reviewingMove = false;
+                                    moveEntry.resetConnection(false);
+                                }
+                            })
+                    .show();
+            return;
+        }
+        if (move == null) {
+            moveEntry.setError(getString(R.string.move_entry_illegal));
+            return;
+        }
+        confirmMoveEntry(coordinates, move);
+    }
+
+    private void confirmMoveEntry(DictatedMove coordinates, PositionMove move) {
+        moveEntry.setError(null);
+        int revision = moveEntryRevision;
+        int textRevision = moveEntry.textRevision();
+        Runnable apply =
+                () -> {
+                    if (revision == moveEntryRevision
+                            && canApplyMoveEntry()
+                            && textRevision == moveEntry.textRevision()) {
+                        gameApi.move(move.move, -1);
+                    }
+                };
+        boolean review = getPrefs().getBoolean(PREF_CONFIRM_MOVE_ENTRY, false);
+        boolean overwrite = gameApi.hasContinuationToOverwrite();
+        if (!review && !overwrite) {
+            apply.run();
+            return;
+        }
+        String description = coordinates.san == null ? coordinates.describe() : move.san;
+        if (review && Move.isPromotionMove(move.move)) {
+            description +=
+                    " "
+                            + getResources()
+                                    .getStringArray(R.array.promotionpieces)[
+                                    BoardConstants.QUEEN - Move.getPromotionPiece(move.move)];
+        }
+        String message =
+                review
+                        ? getString(R.string.move_entry_review, description, move.san)
+                        : getString(R.string.title_overwrite_main_line);
+        if (review && overwrite) {
+            message += "\n" + getString(R.string.title_overwrite_main_line);
+        }
+        reviewingMove = true;
+        new ChessAlertDialogBuilder(this)
+                .setMessage(message)
+                .setPositiveButton(R.string.alert_yes, (dialog, which) -> apply.run())
+                .setNegativeButton(R.string.alert_no, null)
+                .setOnDismissListener(
+                        dialog -> {
+                            reviewingMove = false;
+                            moveEntry.resetConnection(false);
+                        })
+                .show();
+    }
+
+    private DictatedMove parseMoveEntry(String text) {
+        InputMethodSubtype keyboard =
+                getSystemService(InputMethodManager.class).getCurrentInputMethodSubtype();
+        String languageTag = keyboard == null ? "" : keyboard.getLanguageTag();
+        if (keyboard != null && languageTag.isEmpty()) {
+            languageTag = keyboard.getLocale().replace('_', '-');
+        }
+        Locale locale = Locale.forLanguageTag(languageTag);
+        if (!locale.getLanguage().isEmpty()) {
+            return DictatedMove.parse(text, moveEntryVocabulary(locale));
+        }
+
+        // Some keyboards expose no subtype language in handwriting mode.
+        return DictatedMove.parseUnambiguous(
+                text,
+                Arrays.stream(getResources().getStringArray(R.array.move_input_languages))
+                        .map(Locale::forLanguageTag)
+                        .map(this::moveEntryVocabulary)
+                        .iterator());
+    }
+
+    private DictatedMove.Vocabulary moveEntryVocabulary(Locale locale) {
+        Configuration configuration = new Configuration(getResources().getConfiguration());
+        configuration.setLocale(locale);
+        Resources vocabulary = createConfigurationContext(configuration).getResources();
+        return new DictatedMove.Vocabulary(
+                vocabulary.getStringArray(R.array.move_input_ranks),
+                vocabulary.getStringArray(R.array.move_input_promotions),
+                new String[] {
+                    vocabulary.getString(R.string.piece_pawn),
+                    vocabulary.getString(R.string.piece_knight),
+                    vocabulary.getString(R.string.piece_bishop),
+                    vocabulary.getString(R.string.piece_rook),
+                    vocabulary.getString(R.string.piece_queen),
+                    vocabulary.getString(R.string.piece_king)
+                },
+                vocabulary.getString(R.string.move_input_captures),
+                new String[] {
+                    vocabulary.getString(R.string.move_input_castle),
+                    vocabulary.getString(R.string.tts_move_castle_short),
+                    vocabulary.getString(R.string.tts_move_castle_long)
+                });
+    }
+
+    private boolean canApplyMoveEntry() {
+        return moveEntryTurn
+                && moveEntryPosition == gameApi.getCurrentNode()
+                && !gameApi.isEnded()
+                && (!vsCPU || gameApi.getTurn() == myTurn);
+    }
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -181,6 +383,14 @@ public class PlayActivity extends ChessBoardActivity
 
         afterCreate();
 
+        moveEntry = new MoveEntryField(this, this::submitMoveEntry);
+        moveEntry.setVisibility(View.GONE);
+        ((ViewGroup) findViewById(R.id.play_board_bottom))
+                .addView(
+                        moveEntry,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
         final View controlsLayout = findViewById(R.id.play_controls);
@@ -209,11 +419,7 @@ public class PlayActivity extends ChessBoardActivity
         final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU, R.array.play_menu);
 
         MaterialButton buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(
-                v -> {
-                    menuDialog.setKingOfTheHill(gameApi.isKingOfTheHillVariant());
-                    menuDialog.show();
-                });
+        buttonMenu.setOnClickListener(v -> menuDialog.show());
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -288,6 +494,7 @@ public class PlayActivity extends ChessBoardActivity
                     } else {
                         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
                     }
+                    chessBoardView.invalidatePieces();
                     rebuildBoard();
                     applyCapturedPiecesVisibility();
                     capturedWhitePieces.invalidatePieces();
@@ -324,8 +531,14 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     @Override
+    protected boolean reusesPieceViews() {
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        chessBoardView.invalidatePieces();
 
         SharedPreferences prefs = getPrefs();
 
@@ -398,6 +611,7 @@ public class PlayActivity extends ChessBoardActivity
             gameApi.newGame();
         }
 
+        updateMoveEntry();
         new Handler(Looper.getMainLooper()).postDelayed(this::playIfEngineMove, 500);
     }
 
@@ -443,6 +657,9 @@ public class PlayActivity extends ChessBoardActivity
 
     @Override
     protected void onPause() {
+        moveEntryRevision++;
+        moveEntryTurn = false;
+        moveEntry.resetConnection(true);
         super.onPause();
 
         if (engineSession != null) {
@@ -656,12 +873,14 @@ public class PlayActivity extends ChessBoardActivity
 
     @Override
     public void onPlayerResigned(int color) {
+        updateMoveEntry();
         Log.d(TAG, "onPlayerResigned " + color);
         feedbackPlayerResigned(color, textViewLastMove);
     }
 
     @Override
     public void onDrawAgreed() {
+        updateMoveEntry();
         Log.d(TAG, "onDrawAgreed");
         feedbackDrawAgreed(textViewLastMove);
     }
@@ -697,6 +916,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateGUI() {
+        updateMoveEntry();
         updateSelectedSquares();
         updateCapturedPieces();
         updateSeekBar();
@@ -706,6 +926,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateLastMove() {
+        updateMoveEntry();
         final int state = chessStateToR(gameApi.getState());
         String sState = "";
         // in play or mate are clear from last move.
@@ -865,9 +1086,6 @@ public class PlayActivity extends ChessBoardActivity
                             PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
                     startActivityForResult(intent, REQUEST_SETUP);
                 } else if (item.equals(getString(R.string.menu_analyse_game))) {
-                    if (gameApi.isKingOfTheHillVariant()) {
-                        return;
-                    }
                     intent = new Intent(this, AnalyzeActivity.class);
                     intent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
                     startActivity(intent);

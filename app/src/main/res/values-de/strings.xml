@@ -289,6 +289,10 @@
     <string name="options_play_white">Weiß</string>
     <string name="options_quiescent_off">Quieszenz-Suche aus</string>
     <string name="options_quiescent_on">Quieszenz-Suche an</string>
+    <string name="pgntool_delete_studies">Alle Studien löschen</string>
+    <string name="pgntool_confirm_delete_studies">Alle Studien löschen?</string>
+    <string name="pgntool_studies_deleted">Alle Studien gelöscht</string>
+    <string name="pgntool_delete_item_count">Anzahl der zu löschenden Einträge: %1$d</string>
     <string name="pgntool_confirm_delete_games">Bist du sicher?</string>
     <string name="pgntool_confirm_practice_reset">Bist du sicher, dass du zurücksetzen willst?</string>
     <string name="pgntool_create_db_explanation">Eröffnungsdatenbank erstellen</string>
@@ -558,7 +562,6 @@
     <string name="analysis_move_mistake">Fehler</string>
     <string name="analysis_move_blunder">Grober Fehler</string>
     <string name="analysis_move_forced">Erzwungen</string>
-    <string name="analysis_move_pending">Zug wird analysiert…</string>
     <string name="analysis_move_unavailable">Analyse nicht verfügbar</string>
     <string name="analysis_white_to_move">Weiß am Zug</string>
     <string name="analysis_black_to_move">Schwarz am Zug</string>
@@ -576,7 +579,6 @@
     <string name="analysis_builtin_warning">Installiere für eine bessere Analyse eine OEX-kompatible Schachengine.</string>
     <string name="analysis_dont_show_again">Nicht mehr anzeigen</string>
     <string name="analysis_continue">Weiter</string>
-    <string name="analysis_duck_unsupported">Die Analyse von Entenschach wird nicht unterstützt.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">König des Hügels</string>
@@ -593,6 +595,25 @@
     <string name="share_lichess_profile">Mein Lichess-Profil teilen</string>
     <string name="app_link_invalid">Dieser Chess-Link ist ungültig oder wird nicht unterstützt.</string>
     <string name="app_link_too_large">Diese Partie ist zu groß für einen Link. Teile die vollständige Partie stattdessen als PGN.</string>
-    <string name="app_link_no_engine">Für diese Variante ist keine Engine-Analyse verfügbar. Du kannst das Brett und die Züge ansehen.</string>
     <string name="share_failed">Die Partie konnte nicht geteilt werden. Bitte versuche es erneut.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>eins|ein</item>
+        <item>zwei</item>
+        <item>drei</item>
+        <item>vier</item>
+        <item>fünf</item>
+        <item>sechs</item>
+        <item>sieben</item>
+        <item>acht</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>springer</item>
+        <item>läufer</item>
+        <item>turm</item>
+        <item>dame|königin</item>
+    </string-array>
+    <string name="move_input_castle">Rochade|rochieren</string>
+    <string name="move_input_captures">schlägt|nimmt</string>
 </resources>

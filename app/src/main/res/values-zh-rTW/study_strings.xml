@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">研習</string>
+    <string name="study_topic">主題</string>
+    <string name="study_author">作者</string>
+    <string name="study_name">研習</string>
+    <string name="study_chapter">章節</string>
+    <string name="study_any_author">不限作者</string>
+    <string name="study_title_by_author">%1$s（作者：%2$s）</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">正在載入章節列表…</string>
+    <string name="study_open_chapter">開啟章節</string>
+    <string name="study_surprise">隨機選取</string>
+    <string name="study_variations">變著</string>
+    <string name="study_before_move">走棋前：%1$s</string>
+    <string name="study_after_move">走棋後：%1$s</string>
+    <string name="study_pgn_evaluation">研習評估：%1$s</string>
+    <string name="study_next_chapter">下一章</string>
+    <string name="study_next_chapter_named">章節：%1$s</string>
+</resources>

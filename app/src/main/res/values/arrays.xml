@@ -192,6 +192,7 @@
         <item>@string/pgntool_delete_practice</item>
         <item>@string/pgntool_import_puzzle</item>
         <item>@string/pgntool_delete_puzzles</item>
+        <item>@string/pgntool_delete_studies</item>
         <item>@string/pgntool_help</item>
     </string-array>
     <string-array name="tileKeyArray">

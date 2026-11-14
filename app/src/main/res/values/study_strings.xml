@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Studies</string>
+    <string name="study_topic">Topic</string>
+    <string name="study_author">Author</string>
+    <string name="study_name">Study</string>
+    <string name="study_chapter">Chapter</string>
+    <string name="study_any_author">Any author</string>
+    <string name="study_title_by_author">%1$s by %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">Loading chapters…</string>
+    <string name="study_load_failed">Could not load studies.</string>
+    <string name="study_open_chapter">Open chapter</string>
+    <string name="study_previous_chapter">Previous chapter</string>
+    <string name="study_next_chapter">Next chapter</string>
+    <string name="study_next_chapter_named">Chapter: %1$s</string>
+    <string name="study_surprise">Surprise me</string>
+    <string name="study_variations">Variations</string>
+    <string name="study_before_move">Before the move: %1$s</string>
+    <string name="study_after_move">After the move: %1$s</string>
+    <string name="study_pgn_evaluation">Study evaluation: %1$s</string>
+    <string name="study_collection">Collection</string>
+    <string name="study_any_collection">Any collection</string>
+    <string name="study_any_topic">Any topic</string>
+    <string name="study_library_empty">No studies imported.</string>
+    <string name="study_download_collections">Download collections</string>
+    <string name="study_import">Import PGN or ZIP</string>
+    <string name="study_import_metadata">Study details</string>
+    <string name="study_import_value_required">Enter a value</string>
+    <string name="importing_studies">Importing studies…</string>
+</resources>

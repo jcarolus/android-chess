@@ -32,6 +32,7 @@ import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
+import jwtc.android.chess.study.StudiesActivity;
 import jwtc.android.chess.tools.AdvancedActivity;
 
 public class StartBaseActivity extends AppCompatActivity {
@@ -127,6 +128,8 @@ public class StartBaseActivity extends AppCompatActivity {
                                 R.drawable.wifi,
                                 R.string.start_wifiboard,
                                 HotspotBoardActivity.class),
+                        new StartItem(
+                                R.drawable.start_studies, R.string.studies, StudiesActivity.class),
                         new StartItem(
                                 R.drawable.database,
                                 R.string.start_database,

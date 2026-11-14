@@ -314,6 +314,10 @@
     <string name="options_play_white">سفید</string>
     <string name="options_quiescent_off">جستجوی آرام خاموش</string>
     <string name="options_quiescent_on">جستجوی آرام روشن</string>
+    <string name="pgntool_delete_studies">حذف همهٔ مطالعه‌ها</string>
+    <string name="pgntool_confirm_delete_studies">همهٔ مطالعه‌ها حذف شوند؟</string>
+    <string name="pgntool_studies_deleted">همهٔ مطالعه‌ها حذف شدند</string>
+    <string name="pgntool_delete_item_count">تعداد موارد برای حذف: %1$d</string>
     <string name="pgntool_confirm_delete_games">مطمئن هستید؟</string>
     <string name="pgntool_confirm_practice_reset">مطمئن هستید که می‌خواهید بازنشانی کنید؟</string>
     <string name="pgntool_create_db_explanation">ساخت پایگاه‌داده‌ی آغازین</string>
@@ -565,7 +569,6 @@
     <string name="analysis_move_mistake">اشتباه</string>
     <string name="analysis_move_blunder">اشتباه فاحش</string>
     <string name="analysis_move_forced">اجباری</string>
-    <string name="analysis_move_pending">در حال تحلیل حرکت…</string>
     <string name="analysis_move_unavailable">تحلیل در دسترس نیست</string>
     <string name="analysis_white_to_move">نوبت سفید</string>
     <string name="analysis_black_to_move">نوبت سیاه</string>
@@ -583,7 +586,6 @@
     <string name="analysis_builtin_warning">برای تحلیل بهتر، یک موتور شطرنج سازگار با OEX نصب کنید.</string>
     <string name="analysis_dont_show_again">دیگر نشان نده</string>
     <string name="analysis_continue">ادامه</string>
-    <string name="analysis_duck_unsupported">تحلیل شطرنج اردک پشتیبانی نمی‌شود.</string>
     <string name="new_game_variant_standard">استاندارد</string>
     <string name="new_game_variant_duck">اردک</string>
     <string name="new_game_variant_king_of_the_hill">شاه تپه</string>
@@ -600,6 +602,25 @@
     <string name="share_lichess_profile">اشتراک‌گذاری نمایهٔ Lichess من</string>
     <string name="app_link_invalid">این پیوند Chess نامعتبر است یا پشتیبانی نمی‌شود.</string>
     <string name="app_link_too_large">این بازی برای اشتراک‌گذاری با پیوند بیش از حد بزرگ است. بازی کامل را با قالب PGN به اشتراک بگذارید.</string>
-    <string name="app_link_no_engine">تحلیل موتور برای این گونه در دسترس نیست. می‌توانید صفحه و حرکت‌ها را مرور کنید.</string>
     <string name="share_failed">اشتراک‌گذاری بازی ممکن نشد. دوباره تلاش کنید.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>یک</item>
+        <item>دو</item>
+        <item>سه</item>
+        <item>چهار</item>
+        <item>پنج</item>
+        <item>شش</item>
+        <item>هفت</item>
+        <item>هشت</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>اسب</item>
+        <item>فیل</item>
+        <item>رخ|قلعه</item>
+        <item>وزیر|ملکه</item>
+    </string-array>
+    <string name="move_input_castle">قلعه|قلعه رفتن</string>
+    <string name="move_input_captures">می‌زند</string>
 </resources>

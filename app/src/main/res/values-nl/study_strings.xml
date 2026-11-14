@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Studies</string>
+    <string name="study_topic">Onderwerp</string>
+    <string name="study_author">Auteur</string>
+    <string name="study_name">Studie</string>
+    <string name="study_chapter">Hoofdstuk</string>
+    <string name="study_any_author">Elke auteur</string>
+    <string name="study_title_by_author">%1$s door %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">Hoofdstukken laden…</string>
+    <string name="study_open_chapter">Hoofdstuk openen</string>
+    <string name="study_surprise">Verras me</string>
+    <string name="study_variations">Varianten</string>
+    <string name="study_before_move">Voor de zet: %1$s</string>
+    <string name="study_after_move">Na de zet: %1$s</string>
+    <string name="study_pgn_evaluation">Studie-evaluatie: %1$s</string>
+    <string name="study_next_chapter">Volgend hoofdstuk</string>
+    <string name="study_next_chapter_named">Hoofdstuk: %1$s</string>
+</resources>

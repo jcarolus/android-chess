@@ -6,27 +6,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
-import java.util.ArrayList;
-import java.util.Arrays;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 
 public class MenuDialog extends ResultDialog<Bundle> {
-    public void setKingOfTheHill(boolean active) {
-        ArrayList<String> items =
-                new ArrayList<>(
-                        Arrays.asList(
-                                getContext().getResources().getStringArray(R.array.play_menu)));
-        if (active) {
-            items.remove(getContext().getString(R.string.menu_analyse_game));
-            items.remove(getContext().getString(R.string.menu_setup));
-        }
-        ListView list = findViewById(R.id.ListMenu);
-        list.setAdapter(
-                new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, items));
-    }
-
     public MenuDialog(
             @NonNull Context context,
             ResultDialogListener<Bundle> listener,

@@ -53,11 +53,14 @@ synchronously on the search worker for progress and returns the final result;
 Java posts both to the main thread in order, without polling JNI. N/s and display
 text are calculated in Java, never in the core. Evaluation counts include
 one initial root count, each quiescence evaluation and terminal alpha-beta leaf.
-Duck preserves the separate native alpha-beta algorithm: depth counts full turns,
-quiescence is unused, and placement candidates are the opponent’s non-capturing
-move destinations in their original order, including duplicates. Legal turn
-generation still exposes every valid empty placement square. The JNI result
-buffers accommodate promotion-plus-placement coordinates and fifteen full PV turns.
+Duck uses a separate alpha-beta search. Depth counts full turns and quiescence
+is unused. Search orders legal placements by king safety, capture and recapture
+blockers, king escapes, and the replies they prevent. It learns placement
+history from cutoffs and can reuse a legal complete turn from the same piece
+position with a different duck square. Narrow child searches can skip late quiet
+placements and reuse an already searched opponent reply. Legal turn generation
+exposes every valid empty placement square. The JNI result buffers accommodate
+promotion-plus-placement coordinates and fifteen full PV turns.
 
 The principal variation tracks the selected line separately from the per-ply
 best-move ordering heuristic, without changing move ordering or tie-breaking.

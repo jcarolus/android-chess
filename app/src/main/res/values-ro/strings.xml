@@ -279,6 +279,10 @@
     <string name="options_play_white">Albele</string>
     <string name="options_quiescent_off">Căutare liniște inactivă</string>
     <string name="options_quiescent_on">Căutare liniște activă</string>
+    <string name="pgntool_delete_studies">Șterge toate studiile</string>
+    <string name="pgntool_confirm_delete_studies">Ștergi toate studiile?</string>
+    <string name="pgntool_studies_deleted">Toate studiile au fost șterse</string>
+    <string name="pgntool_delete_item_count">Elemente de șters: %1$d</string>
     <string name="pgntool_confirm_delete_games">Ești sigur?</string>
     <string name="pgntool_confirm_practice_reset">Sigur vrei să resetezi?</string>
     <string name="pgntool_create_db_explanation">Creează baza de deschideri</string>
@@ -548,7 +552,6 @@
     <string name="analysis_move_mistake">Greșeală</string>
     <string name="analysis_move_blunder">Greșeală gravă</string>
     <string name="analysis_move_forced">Forțată</string>
-    <string name="analysis_move_pending">Se analizează mutarea…</string>
     <string name="analysis_move_unavailable">Analiză indisponibilă</string>
     <string name="analysis_white_to_move">Albul la mutare</string>
     <string name="analysis_black_to_move">Negrul la mutare</string>
@@ -566,7 +569,6 @@
     <string name="analysis_builtin_warning">Pentru o analiză mai bună, instalează un motor de șah compatibil cu OEX.</string>
     <string name="analysis_dont_show_again">Nu mai afișa</string>
     <string name="analysis_continue">Continuă</string>
-    <string name="analysis_duck_unsupported">Analiza pentru șahul cu rața nu este acceptată.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Regele dealului</string>
@@ -583,6 +585,25 @@
     <string name="share_lichess_profile">Distribuie profilul meu Lichess</string>
     <string name="app_link_invalid">Acest link Chess este invalid sau incompatibil.</string>
     <string name="app_link_too_large">Partida este prea mare pentru un link. Distribuie partida completă în format PGN.</string>
-    <string name="app_link_no_engine">Analiza motorului nu este disponibilă pentru această variantă. Poți explora tabla și mutările.</string>
     <string name="share_failed">Partida nu a putut fi distribuită. Încearcă din nou.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>unu|una</item>
+        <item>doi|două</item>
+        <item>trei</item>
+        <item>patru</item>
+        <item>cinci</item>
+        <item>șase</item>
+        <item>șapte</item>
+        <item>opt</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cal</item>
+        <item>nebun</item>
+        <item>turn</item>
+        <item>damă|regină</item>
+    </string-array>
+    <string name="move_input_castle">rocadă</string>
+    <string name="move_input_captures">ia|capturează</string>
 </resources>

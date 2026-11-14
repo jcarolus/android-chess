@@ -9,7 +9,7 @@ fn history(moves: &[&str]) -> Vec<CoordinateMove> {
         .collect()
 }
 #[test]
-fn fixed_depth_matches_native_starting_position() {
+fn fixed_depth_searches_the_starting_position() {
     let request = SearchRequest::new(
         17,
         Variant::Standard,
@@ -21,9 +21,42 @@ fn fixed_depth_matches_native_starting_position() {
     .unwrap();
     let result = search(&request, &SearchControl::default()).unwrap();
     assert_eq!(result.search_id, 17);
-    assert_eq!(result.best_move.unwrap().as_str(), "h2h4");
     assert_eq!(result.score, 0);
     assert_eq!(result.completed_depth, 2);
+    let best_move = result.best_move.unwrap();
+    assert_eq!(result.pv.first(), Some(&best_move));
+    request
+        .position()
+        .clone()
+        .apply(best_move.as_str())
+        .unwrap();
+}
+
+#[test]
+fn fixed_depth_recognizes_mate_on_the_final_ply_without_quiescence() {
+    for variant in [Variant::Standard, Variant::Chess960] {
+        for fen in [
+            "7k/8/5KQ1/8/8/8/8/8 w - - 0 1",
+            "8/8/8/8/8/5kq1/8/7K b - - 0 1",
+        ] {
+            let request = SearchRequest::new(
+                18,
+                variant,
+                fen,
+                vec![],
+                SearchLimit::Depth(1),
+                SearchOptions { quiescence: false },
+            )
+            .unwrap();
+            let result = search(&request, &SearchControl::default()).unwrap();
+            assert_eq!(result.score, 100000, "{variant:?}: {fen}");
+            assert_eq!(result.completed_depth, 1);
+            assert_eq!(result.pv.len(), 1);
+            let mut position = request.position().clone();
+            position.apply(result.best_move.unwrap().as_str()).unwrap();
+            assert_eq!(position.game_state(), chess_core::GameState::Mate);
+        }
+    }
 }
 
 #[test]

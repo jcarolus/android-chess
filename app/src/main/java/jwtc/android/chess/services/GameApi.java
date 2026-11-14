@@ -10,6 +10,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import jwtc.android.chess.engine.RustBoard;
 import jwtc.android.chess.engine.RustSearchRequest;
@@ -35,6 +36,7 @@ public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
     private final RustBoard board;
+    private final Map<Node, RustBoard.Snapshot> recordedPositions;
     public static final int MAX_PGN_SIZE = Pgn.MAX_GAME_SIZE;
 
     public final HashMap<String, String> pgnTags; //
@@ -76,6 +78,10 @@ public class GameApi {
 
     public Node getRootNode() {
         return gameTree.getRoot();
+    }
+
+    public String getRootComment() {
+        return gameTree.getRootComment();
     }
 
     public Node getCurrentNode() {
@@ -169,9 +175,27 @@ public class GameApi {
             }
             return null;
         }
+
+        /** Resolves a search turn, whose Duck placement is a suffix on the piece move. */
+        public PositionMove findTurn(String uci) {
+            int placement = uci == null ? -1 : uci.indexOf('@');
+            if (placement == -1) {
+                return findMove(uci);
+            }
+            PositionMove pieceMove = findMove(uci.substring(0, placement));
+            if (pieceMove == null) {
+                return null;
+            }
+            try {
+                int duck = Pos.fromString(uci.substring(placement + 1));
+                return new PositionMove(pieceMove.move, pieceMove.san, duck);
+            } catch (Exception invalidSquare) {
+                return null;
+            }
+        }
     }
 
-    /** Main-thread only; both placement and history must match before cloning the live board. */
+    /** Main-thread only; both placement and history must match the live board. */
     public boolean isCurrentPosition(PositionSnapshot position) {
         return pendingDuckMove == null
                 && position.fen.equals(board.toFEN())
@@ -180,28 +204,36 @@ public class GameApi {
 
     public static final class PositionMove {
         public final int move;
+        public final int duckMove;
         public final String uci;
         public final String san;
 
         private PositionMove(int move, String san) {
+            this(move, san, -1);
+        }
+
+        private PositionMove(int move, String san, int duckMove) {
             this.move = move;
-            this.san = san;
+            this.duckMove = duckMove;
+            String placement = duckMove == -1 ? "" : "@" + Pos.toString(duckMove);
+            this.san = san + placement;
             this.uci =
                     Pos.toString(Move.getFrom(move))
                             + Pos.toString(Move.getTo(move))
                             + (Move.isPromotionMove(move)
                                     ? "pnbrqk".charAt(Move.getPromotionPiece(move))
-                                    : "");
+                                    : "")
+                            + placement;
         }
     }
 
-    RustSearchRequest.Variant rustVariant() {
+    public RustSearchRequest.Variant rustVariant() {
         return board.variant();
     }
 
-    private List<PositionMove> rustLegalMoves() {
+    private static List<PositionMove> positionMoves(List<RustBoard.LegalMove> legalMoves) {
         List<PositionMove> moves = new ArrayList<>();
-        for (RustBoard.LegalMove move : board.legalMoves()) {
+        for (RustBoard.LegalMove move : legalMoves) {
             moves.add(new PositionMove(move.packed, move.san));
         }
         return moves;
@@ -227,13 +259,24 @@ public class GameApi {
         if (pendingDuckMove != null || !gameTree.contains(node)) {
             return null;
         }
+        if (recordedPositions != null) {
+            RustBoard.Snapshot position = recordedPositions.get(node);
+            return new PositionSnapshot(
+                    position.fen(),
+                    node.getTurn(),
+                    node.getBoardState(),
+                    positionMoves(position.moves),
+                    gameTree.getInitialFen(),
+                    gameTree.pathTo(node),
+                    gameTree.positionCommand(node));
+        }
         Node original = currentNode;
         try {
             if (!navigateTo(node)) {
                 return null;
             }
             String fen = board.toFEN();
-            List<PositionMove> moves = rustLegalMoves();
+            List<PositionMove> moves = positionMoves(board.legalMoves());
             return new PositionSnapshot(
                     fen,
                     board.getTurn(),
@@ -258,15 +301,32 @@ public class GameApi {
         gameVariant = board.variant();
         gameTree = new GameTree(initialFen, board.getState(), board.getTurn());
         currentNode = gameTree.getRoot();
+        rememberRecordedPosition();
         pendingDuckMove = null;
         importedResult = null;
         treeChanged = true;
     }
 
     public GameApi() {
+        this(false);
+    }
+
+    public static GameApi forAnalysis() {
+        return new GameApi(true);
+    }
+
+    private GameApi(boolean retainRecordedPositions) {
         this.board = new RustBoard();
+        // Positions remain available while their nodes are part of the game.
+        recordedPositions = retainRecordedPositions ? new WeakHashMap<>() : null;
         pgnTags = new HashMap<String, String>();
         resetPGNHistory();
+    }
+
+    private void rememberRecordedPosition() {
+        if (recordedPositions != null) {
+            recordedPositions.put(currentNode, board.capturePosition());
+        }
     }
 
     protected GameApi(String initialFen, RustSearchRequest.Variant variant) {
@@ -336,6 +396,59 @@ public class GameApi {
         }
         dispatchState();
         return true;
+    }
+
+    /** Resolves a coordinate entry with explicit promotion and king-to-rook castling. */
+    public PositionMove resolveTextMove(int from, int to, int promotion) {
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if (Move.getFrom(move.packed) != from
+                    || Move.isPromotionMove(move.packed) != (promotion >= 0)
+                    || (promotion >= 0 && Move.getPromotionPiece(move.packed) != promotion)) {
+                continue;
+            }
+            int destination = Move.getTo(move.packed);
+            if (Move.isOO(move.packed) || Move.isOOO(move.packed)) {
+                if (isChess960Variant()) {
+                    if (move.coordinate.equals(Pos.toString(from) + Pos.toString(to))) {
+                        return new PositionMove(move.packed, move.san);
+                    }
+                    continue;
+                }
+                destination = Pos.fromColAndRow(Move.isOO(move.packed) ? 7 : 0, Pos.row(from));
+            }
+            if (destination == to) {
+                return new PositionMove(move.packed, move.san);
+            }
+        }
+        return null;
+    }
+
+    /** Resolves SAN against legal moves without changing the position. */
+    public PositionMove resolveSanMove(java.util.function.Predicate<String> matches) {
+        PositionMove result = null;
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if (matches.test(move.san)) {
+                if (result != null) {
+                    return null;
+                }
+                result = new PositionMove(move.packed, move.san);
+            }
+        }
+        return result;
+    }
+
+    /** Resolves an omitted SAN promotion only when all choices move the same pawn. */
+    public PositionMove resolveSanPromotion(java.util.function.Predicate<String> matches) {
+        PositionMove result = null;
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if (Move.isPromotionMove(move.packed) && matches.test(move.san)) {
+                if (result != null && !Move.equalPositions(result.move, move.packed)) {
+                    return null;
+                }
+                result = new PositionMove(move.packed, move.san);
+            }
+        }
+        return result;
     }
 
     public boolean requestMove(int from, int to) {
@@ -455,7 +568,11 @@ public class GameApi {
 
     public boolean stepBack() {
         if (pendingDuckMove != null) {
-            board.undo();
+            if (recordedPositions != null) {
+                restoreRecordedPosition(currentNode);
+            } else {
+                board.undo();
+            }
             pendingDuckMove = null;
             dispatchNavigation();
             return true;
@@ -498,6 +615,12 @@ public class GameApi {
     private boolean navigateTo(Node target) {
         if (!gameTree.contains(target)) {
             return false;
+        }
+        if (recordedPositions != null) {
+            if (target != currentNode) {
+                restoreRecordedPosition(target);
+            }
+            return true;
         }
         Node original = currentNode;
         Node common = currentNode, other = target;
@@ -546,20 +669,34 @@ public class GameApi {
     }
 
     private void restoreBoard(Node target, PGNEntry pending) {
-        if (!board.initFEN(gameTree.getInitialFen(), gameVariant)) {
-            throw new IllegalStateException("Cannot restore starting board");
-        }
-        currentNode = gameTree.getRoot();
-        for (Node node : gameTree.pathTo(target)) {
-            if (!replay(node.getEntry())) {
-                throw new IllegalStateException("Cannot restore recorded move");
+        if (recordedPositions != null) {
+            restoreRecordedPosition(target);
+        } else {
+            if (!board.initFEN(gameTree.getInitialFen(), gameVariant)) {
+                throw new IllegalStateException("Cannot restore starting board");
             }
-            currentNode = node;
+            currentNode = gameTree.getRoot();
+            for (Node node : gameTree.pathTo(target)) {
+                if (!replay(node.getEntry())) {
+                    throw new IllegalStateException("Cannot restore recorded move");
+                }
+                currentNode = node;
+            }
         }
         pendingDuckMove = pending;
         if (pending != null && !replay(pending)) {
             throw new IllegalStateException("Cannot restore pending duck move");
         }
+    }
+
+    private void restoreRecordedPosition(Node target) {
+        List<RustBoard.Snapshot> path = new ArrayList<>(target.getPly() + 1);
+        path.add(recordedPositions.get(gameTree.getRoot()));
+        for (Node step : gameTree.pathTo(target)) {
+            path.add(recordedPositions.get(step));
+        }
+        board.restorePath(path);
+        currentNode = target;
     }
 
     /** Returns to the preferred sibling of the nearest variation ancestor. */
@@ -1306,11 +1443,13 @@ public class GameApi {
         if (overwriteContinuation && !loadingPgn) {
             currentNode =
                     gameTree.replaceContinuation(old, entry, board.getState(), board.getTurn());
+            rememberRecordedPosition();
             importedResult = null;
             treeChanged = true;
             return;
         }
         currentNode = gameTree.append(old, entry, board.getState(), board.getTurn(), !loadingPgn);
+        rememberRecordedPosition();
         if (old.getChildren().size() != previousChildren && gameTree.isMainLine(currentNode)) {
             if (!loadingPgn) {
                 importedResult = null;

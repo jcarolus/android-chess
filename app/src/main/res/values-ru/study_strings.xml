@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Этюды</string>
+    <string name="study_topic">Тема</string>
+    <string name="study_author">Автор</string>
+    <string name="study_name">Этюд</string>
+    <string name="study_chapter">Глава</string>
+    <string name="study_any_author">Любой автор</string>
+    <string name="study_title_by_author">%1$s — %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">Загрузка списка глав…</string>
+    <string name="study_open_chapter">Открыть главу</string>
+    <string name="study_surprise">Удивите меня</string>
+    <string name="study_variations">Варианты</string>
+    <string name="study_before_move">Перед ходом: %1$s</string>
+    <string name="study_after_move">После хода: %1$s</string>
+    <string name="study_pgn_evaluation">Оценка в этюде: %1$s</string>
+    <string name="study_next_chapter">Следующая глава</string>
+    <string name="study_next_chapter_named">Глава: %1$s</string>
+</resources>

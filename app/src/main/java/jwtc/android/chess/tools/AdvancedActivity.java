@@ -16,6 +16,7 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
+import jwtc.android.chess.study.StudyStore;
 
 public class AdvancedActivity extends BaseActivity {
 
@@ -57,42 +58,38 @@ public class AdvancedActivity extends BaseActivity {
                         startActivityForResult(i, ImportService.IMPORT_OPENINGS);
 
                     } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_games))) {
-
-                        openConfirmDialog(
-                                getString(R.string.pgntool_confirm_delete_games),
-                                getString(R.string.button_ok),
-                                getString(R.string.button_cancel),
-                                () -> {
-                                    new GameStore(AdvancedActivity.this.getContentResolver())
-                                            .deleteAll();
-                                    doToast(getString(R.string.pgntool_games_deleted));
-                                },
-                                null);
+                        GameStore games = new GameStore(getContentResolver());
+                        confirmDeletion(
+                                R.string.pgntool_confirm_delete_games,
+                                games.count(),
+                                games::deleteAll,
+                                R.string.pgntool_games_deleted);
 
                     } else if (arrString[arg2].equals(
                             getString(R.string.pgntool_delete_practice))) {
-                        openConfirmDialog(
-                                getString(R.string.pgntool_confirm_delete_practice),
-                                getString(R.string.button_ok),
-                                getString(R.string.button_cancel),
-                                () -> {
-                                    MateCollection.clearCollection(
-                                            this, MateKind.PRACTICE_POSITIONS);
-                                    doToast(getString(R.string.pgntool_practice_deleted));
-                                },
-                                null);
+                        confirmDeletion(
+                                R.string.pgntool_confirm_delete_practice,
+                                MateCollection.countPositions(this, MateKind.PRACTICE_POSITIONS),
+                                () ->
+                                        MateCollection.clearCollection(
+                                                this, MateKind.PRACTICE_POSITIONS),
+                                R.string.pgntool_practice_deleted);
 
                     } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_puzzles))) {
-                        openConfirmDialog(
-                                getString(R.string.pgntool_confirm_delete_puzzles),
-                                getString(R.string.button_ok),
-                                getString(R.string.button_cancel),
-                                () -> {
-                                    MateCollection.clearCollection(
-                                            this, MateKind.MATE_IN_TWO_PUZZLES);
-                                    doToast(getString(R.string.pgntool_puzzles_deleted));
-                                },
-                                null);
+                        confirmDeletion(
+                                R.string.pgntool_confirm_delete_puzzles,
+                                MateCollection.countPositions(this, MateKind.MATE_IN_TWO_PUZZLES),
+                                () ->
+                                        MateCollection.clearCollection(
+                                                this, MateKind.MATE_IN_TWO_PUZZLES),
+                                R.string.pgntool_puzzles_deleted);
+
+                    } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_studies))) {
+                        confirmDeletion(
+                                R.string.pgntool_confirm_delete_studies,
+                                StudyStore.countStudies(this),
+                                () -> StudyStore.deleteAll(this),
+                                R.string.pgntool_studies_deleted);
 
                     } else if (arrString[arg2].equals(getString(R.string.pgntool_help))) {
                         showHelp(R.string.advanced_help);
@@ -110,9 +107,9 @@ public class AdvancedActivity extends BaseActivity {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putString("UCIEngine", null);
                             editor.commit();
-                            doToast("Engine " + sEngine + " uninstalled");
+                            doToast(getString(R.string.engine_uninstalled, sEngine));
                         } else {
-                            doToast("No engine installed");
+                            doToast(getString(R.string.engine_not_installed));
                         }
                     } else if (arrString[arg2].equals(
                             getString(R.string.pgntool_unset_uci_database))) {
@@ -128,9 +125,9 @@ public class AdvancedActivity extends BaseActivity {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putString("UCIDatabase", null);
                             editor.commit();
-                            doToast("Database " + sDatabase + " uninstalled");
+                            doToast(getString(R.string.opening_database_uninstalled, sDatabase));
                         } else {
-                            doToast("No database installed");
+                            doToast(getString(R.string.opening_database_not_installed));
                         }
                     } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
 
@@ -167,6 +164,18 @@ public class AdvancedActivity extends BaseActivity {
                         startActivityForResult(intent, ImportService.PICK_BINARY);
                     }
                 });
+    }
+
+    private void confirmDeletion(int question, long count, Runnable delete, int deletedMessage) {
+        openConfirmDialog(
+                getString(question) + "\n\n" + getString(R.string.pgntool_delete_item_count, count),
+                getString(R.string.button_ok),
+                getString(R.string.button_cancel),
+                () -> {
+                    delete.run();
+                    doToast(getString(deletedMessage));
+                },
+                null);
     }
 
     @Override

@@ -1,12 +1,16 @@
 package jwtc.android.chess.engine;
 
-/** Search-only JNI adapter. Each search handle is confined to its owning worker. */
+/** Search-only JNI adapter with separate handles for session state and search cancellation. */
 public final class RustNative {
     static {
         System.loadLibrary("rust-chess-jni");
     }
 
     static native long create();
+
+    static native long createSession();
+
+    static native void destroySession(long session);
 
     static native void stop(long handle);
 
@@ -17,6 +21,7 @@ public final class RustNative {
     }
 
     private static native RustSearchResult search(
+            long session,
             long handle,
             long id,
             int variant,
@@ -33,7 +38,13 @@ public final class RustNative {
 
     static RustSearchResult search(
             long handle, RustSearchRequest request, ProgressListener listener) {
+        return search(0, handle, request, listener);
+    }
+
+    static RustSearchResult search(
+            long session, long handle, RustSearchRequest request, ProgressListener listener) {
         return search(
+                session,
                 handle,
                 request.searchId,
                 request.variant.ordinal(),

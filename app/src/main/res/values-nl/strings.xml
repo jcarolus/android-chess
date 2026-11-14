@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="advanced_help">
+    <![CDATA[
+        <h3>Geavanceerd</h3>
+        <p>Maak of importeer hier je eigen materiaal.</p>
+
+        <h4>Partijdatabase exporteren naar de SD-kaart</h4>
+        <p>Je kunt alle partijen in de database exporteren naar één PGN-bestand op de SD-kaart.
+            Het bestand heet chess.pgn. Een bestaand bestand met die naam wordt overschreven.</p>
+
+        <h4>Partijen importeren in de database</h4>
+        <p>Gebruik deze optie om partijen aan de database toe te voegen. Blader naar een
+            PGN-bestand en selecteer het om te importeren.</p>
+
+        <h4>Alle partijen uit de database verwijderen</h4>
+        <p>Gebruik deze optie om de partijdatabase leeg te maken. Maak eerst een reservekopie
+            op de SD-kaart. Je kunt deze actie niet ongedaan maken.</p>
+
+        <h4>Oefenset maken</h4>
+        <p>Maakt oefenstellingen uit partijen die eindigen in schaakmat. Blader naar het bestand
+            dat je wilt verwerken. Overgeslagen partijen eindigden meestal zonder schaakmat of
+            stonden al in de oefenset.</p>
+
+        <h4>Oefenset herstellen</h4>
+        <p>Wil je opnieuw beginnen met oefenen? Hiermee stel je ook je gemiddelde oplostijd terug.</p>
+    ]]>
+    </string>
+    <string name="alert_no">Nee</string>
+    <string name="alert_ok">OK</string>
+    <string name="alert_yes">Ja</string>
+    <string name="app_name">Schaken</string>
+    <string name="app_name_help">Help</string>
+    <string name="app_name_import">Importeren</string>
+    <string name="app_name_pgntools">Geavanceerd</string>
+    <string name="app_name_play">Spelen</string>
+    <string name="app_name_playonline">Online spelen</string>
+    <string name="app_name_save_games">Opgeslagen partijen</string>
+    <string name="app_name_setup">Stelling opzetten</string>
+    <string name="attacked_by_pieces">Aangevallen door %1$s</string>
+    <string name="defended_by_pieces">Verdedigd door %1$s</string>
+    <string name="button_cancel">Annuleren</string>
+    <string name="button_close">Sluiten</string>
+    <string name="button_engine_play_description">Engine laten spelen</string>
+    <string name="button_login">Inloggen</string>
+    <string name="button_menu_description">Menu</string>
+    <string name="button_next_move_description">Volgende zet</string>
+    <string name="button_next_position">Volgende stelling</string>
+    <string name="button_ok">OK</string>
+    <string name="button_previous_move_description">Vorige zet</string>
+    <string name="button_previous_position">Vorige stelling</string>
+    <string name="button_register">Registreren</string>
+    <string name="button_reset_position">Stelling herstellen</string>
+    <string name="button_save">Opslaan</string>
+    <string name="button_save_copy">Kopie opslaan</string>
+    <string name="chessboard_hint_color_scheme">Kleurenschema</string>
+    <string name="chessboard_hint_piece_set">Stukkenset</string>
+    <string name="chessboard_hint_tile_effect">Veldeffect</string>
+    <string name="choice_delete">Verwijderen</string>
+    <string name="choice_edit">Bewerken</string>
+    <string name="choice_level_1">1 sec.</string>
+    <string name="choice_level_2">2 sec.</string>
+    <string name="choice_level_3">4 sec.</string>
+    <string name="choice_level_4">8 sec.</string>
+    <string name="choice_level_5">10 sec.</string>
+    <string name="choice_level_6">20 sec.</string>
+    <string name="choice_level_7">30 sec.</string>
+    <string name="choice_level_8">1 minuut</string>
+    <string name="choice_level_9">5 minuten</string>
+    <string name="choice_random">Willekeurig</string>
+    <string name="color_scheme_blue">Blauw</string>
+    <string name="color_scheme_brown">Bruin</string>
+    <string name="color_scheme_green">Groen</string>
+    <string name="color_scheme_grey">Grijs</string>
+    <string name="color_scheme_orange">Oranje</string>
+    <string name="color_scheme_pink">Roze</string>
+    <string name="color_scheme_purple">Paars</string>
+    <string name="color_scheme_custom">Aangepast</string>
+    <string name="color_scheme_eink">Grijstinten (e-ink)</string>
+    <string name="custom_square_colors">Aangepaste veldkleuren</string>
+    <string name="custom_dark_square_color">Donker veld</string>
+    <string name="custom_light_square_color">Licht veld</string>
+    <string name="choose_dark_square_color">Kies een kleur voor de donkere velden</string>
+    <string name="choose_light_square_color">Kies een kleur voor de lichte velden</string>
+    <string name="color_hue">Kleurtoon</string>
+    <string name="color_saturation">Verzadiging</string>
+    <string name="color_lightness">Lichtheid</string>
+    <string name="color_scheme_red">Rood</string>
+    <string name="color_scheme_yellow">Geel</string>
+    <string name="copied_clipboard_success">Partij naar het klembord gekopieerd</string>
+    <string name="gamepreferences">Partijinstellingen</string>
+    <string name="globalpreferences">Algemene instellingen</string>
+    <string name="hotspot_black">♚ Zwart</string>
+    <string name="hotspot_connect">Verbinden</string>
+    <string name="hotspot_connection_settings">Verbindingsinstellingen</string>
+    <string name="hotspot_client">Client</string>
+    <string name="hotspot_client_help">Schakel Host uit en verbind met de wifi-hotspot van de host.</string>
+    <string name="hotspot_copy_ip">IP-adres kopiëren</string>
+    <string name="hotspot_copy_ip_success">IP-adres naar het klembord gekopieerd</string>
+    <string name="hotspot_disconnect">Verbinding verbreken</string>
+    <string name="hotspot_draw">Remise</string>
+    <string name="hotspot_host">Host</string>
+    <string name="hotspot_host_help">Schakel Host in als dit apparaat de wifi-hotspot aanmaakt.</string>
+    <string name="hotspot_host_ip_hint">IP-adres van de host</string>
+    <string name="hotspot_local_ip_unavailable">Het lokale wifi-IP-adres kon niet worden bepaald.</string>
+    <string name="hotspot_local_ip_value">Je IP-adres: %1$s</string>
+    <string name="hotspot_local_wifi_client_help">Voer het IP-adres in van de host op hetzelfde lokale wifinetwerk.</string>
+    <string name="hotspot_local_wifi_host_help">Deel het IP-adres van dit apparaat met de andere speler op hetzelfde lokale wifinetwerk.</string>
+    <string name="hotspot_local_wifi_share_host_help">Deel het IP-adres van dit apparaat met toeschouwers op hetzelfde lokale wifinetwerk.</string>
+    <string name="hotspot_mode_hotspot">Hotspot</string>
+    <string name="hotspot_mode_local_wifi">Lokaal wifinetwerk</string>
+    <string name="hotspot_name_hint">Je naam</string>
+    <string name="hotspot_new">Nieuw</string>
+    <string name="hotspot_resign">Opgeven</string>
+    <string name="hotspot_share">Delen</string>
+    <string name="hotspot_share_host_help">Schakel Host en Delen in om dit bord aan toeschouwers te tonen.</string>
+    <string name="hotspot_status_connecting">Bezig met verbinden</string>
+    <string name="hotspot_status_disconnected">De verbinding met je tegenstander is verbroken</string>
+    <string name="hotspot_status_draw_declined">Remiseaanbod afgewezen.</string>
+    <string name="hotspot_status_draw_sent">Remiseaanbod verstuurd.</string>
+    <string name="hotspot_status_host_ip_required">Voer eerst het IP-adres van de host in.</string>
+    <string name="hotspot_status_name_required">Voer eerst je naam in.</string>
+    <string name="hotspot_status_observer_connected_host">Er is een toeschouwer verbonden.</string>
+    <string name="hotspot_status_observing">Aan het kijken</string>
+    <string name="hotspot_status_opponent_connected_client">Je tegenstander is verbonden. Wacht tot die een nieuwe partij start.</string>
+    <string name="hotspot_status_opponent_connected_host">Je tegenstander is verbonden. Start een nieuwe partij.</string>
+    <string name="hotspot_status_waiting">Wachten op verbinding met je tegenstander</string>
+    <string name="hotspot_status_waiting_observer">Wachten op verbinding met toeschouwers</string>
+    <string name="hotspot_start_hosting">Hosten starten</string>
+    <string name="hotspot_stop_share">Stoppen met delen</string>
+    <string name="hotspot_white">♔ Wit</string>
+    <string name="ics_client_handle">Gebruikersnaam</string>
+    <string name="ics_client_password">Wachtwoord</string>
+    <string name="ics_error">Er is iets misgegaan. Probeer het later opnieuw.</string>
+    <string name="ics_examine">Bekijken</string>
+    <string name="ics_finger">Samenvatting</string>
+    <string name="ics_follow">Volgen</string>
+    <string name="ics_game_over">Partij afgelopen</string>
+    <string name="ics_gamenumber">Partijnummer</string>
+    <string name="ics_history">Geschiedenis</string>
+    <string name="ics_historygamenumber">Partijnummer in de geschiedenis</string>
+    <string name="ics_lost_connection">De verbinding met de server is verbroken.</string>
+    <string name="ics_match">Uitdagen</string>
+    <string name="ics_menu_challenges">Uitdagingen</string>
+    <string name="ics_menu_console">Console</string>
+    <string name="ics_menu_draw">Remise</string>
+    <string name="ics_menu_flag">Tijdoverschrijding claimen</string>
+    <string name="ics_menu_games">Partijen</string>
+    <string name="ics_menu_players">Spelers</string>
+    <string name="ics_menu_puzzlebot_mate">Puzzlebot mat</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot studie</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot tactiek</string>
+    <string name="ics_menu_resign">Opgeven</string>
+    <string name="ics_menu_resume">Hervatten</string>
+    <string name="ics_menu_seek">Tegenstander zoeken</string>
+    <string name="ics_menu_stored">Opgeslagen</string>
+    <string name="ics_menu_top_blitz">Topspelers blitz</string>
+    <string name="ics_menu_top_standard">Topspelers standaard</string>
+    <string name="ics_notification_text">Tik om te spelen</string>
+    <string name="ics_notification_title">Schaken door Jeroen</string>
+    <string name="ics_offer_rematch">Revanche aanbieden</string>
+    <string name="ics_offers_abort">Je tegenstander wil de partij afbreken.\nGa je akkoord?</string>
+    <string name="ics_offers_adjourn">Je tegenstander wil de partij verdagen.\nGa je akkoord?</string>
+    <string name="ics_offers_draw">Je tegenstander biedt remise aan.\nGa je akkoord?</string>
+    <string name="ics_offers_takeback">Je tegenstander wil een zet terugnemen.\nGa je akkoord?</string>
+    <string name="ics_playerone">Speler 1</string>
+    <string name="ics_playertwo">Speler 2</string>
+    <string name="ics_quit">Afsluiten?</string>
+    <string name="ics_request_sent">Verzoek verstuurd</string>
+    <string name="ics_seekchallenge">Uitdaging</string>
+    <string name="ics_seekcolor">Kleur</string>
+    <string name="ics_seekformula">Formule</string>
+    <string name="ics_seekmanual">Handmatig accepteren</string>
+    <string name="ics_seekplayer">Speler</string>
+    <string name="ics_seekrangemax">Maximumrating</string>
+    <string name="ics_seekrangemin">Minimumrating</string>
+    <string name="ics_seekrated">Partij met rating</string>
+    <string name="ics_seekseek">Zoeken</string>
+    <string name="ics_seektime">Tijd (min.)</string>
+    <string name="ics_seektimeinc">Tijdstoeslag (sec.)</string>
+    <string name="ics_seekvariant">Variant</string>
+    <string name="ics_typegamenumber">Voer het partijnummer in van</string>
+    <string name="ics_unfollow">Niet meer volgen</string>
+    <string name="last_black_move_description">%1$s. Wit aan zet</string>
+    <string name="last_white_move_description">%1$s. Zwart aan zet</string>
+    <string name="lichess_challenge_by_cancelled">Uitdaging van %1$s geannuleerd</string>
+    <string name="lichess_challenge_by_declined">Uitdaging afgewezen door %1$s</string>
+    <string name="lichess_challenge_dialog_button_accept">Accepteren</string>
+    <string name="lichess_challenge_dialog_button_decline">Afwijzen</string>
+    <string name="lichess_challenge_dialog_message_rated">Met rating</string>
+    <string name="lichess_challenge_dialog_message_rating">met rating %1$s</string>
+    <string name="lichess_challenge_dialog_message_time_control">Speeltempo: %1$s</string>
+    <string name="lichess_challenge_dialog_message_unrated">Zonder rating</string>
+    <string name="lichess_challenge_dialog_message_variant">Variant: %1$s</string>
+    <string name="lichess_challenge_posted">Uitdaging geplaatst</string>
+    <string name="lichess_confirm_offer_draw">Wil je remise aanbieden?</string>
+    <string name="lichess_confirm_resign">Wil je opgeven?</string>
+    <string name="lichess_create_challenge_color">Kleur</string>
+    <string name="lichess_create_challenge_color_black">Zwart</string>
+    <string name="lichess_create_challenge_color_random">Willekeurig</string>
+    <string name="lichess_create_challenge_color_white">Wit</string>
+    <string name="lichess_create_challenge_player">Tegenstander</string>
+    <string name="lichess_create_challenge_player_required">Voer eerst een tegenstander in.</string>
+    <string name="lichess_create_challenge_player_invalid">Dit is geen geldige Lichess-gebruikersnaam.</string>
+    <string name="lichess_create_challenge_rated">Met rating</string>
+    <string name="lichess_create_challenge_time">Tijd</string>
+    <string name="lichess_create_challenge_time_control">Speeltempo</string>
+    <string name="lichess_create_challenge_time_correspondence">Correspondentie</string>
+    <string name="lichess_create_challenge_time_days">Dagen per zet</string>
+    <string name="lichess_create_challenge_time_increment">Tijdstoeslag (sec.)</string>
+    <string name="lichess_create_challenge_time_minutes">Minuten</string>
+    <string name="lichess_create_challenge_title">Uitdaging aanmaken</string>
+    <string name="lichess_create_challenge_variant">Variant</string>
+    <string name="lichess_create_challenge_variant_chess960">Chess960</string>
+    <string name="lichess_create_challenge_variant_standard">Standaard</string>
+    <string name="lichess_create_seek_title">Zoekopdracht aanmaken</string>
+    <string name="lichess_game_cancel_move">Zet annuleren</string>
+    <string name="lichess_game_confirm_move">%1$s bevestigen</string>
+    <string name="lichess_game_confirm_moves">Zetten bevestigen</string>
+    <string name="lichess_game_disconnected">De verbinding met de partij is verbroken. Controleer je internetverbinding en probeer het opnieuw.</string>
+    <string name="lichess_game_not_board_compatible">Je kunt deze partij hier niet spelen. De Lichess Board API ondersteunt alleen rapid, klassiek en correspondentie. Speel blitz- en bulletpartijen op lichess.org.</string>
+    <string name="lichess_swiss_not_playable">hier niet speelbaar</string>
+    <string name="lichess_swiss_not_board_compatible">Je kunt dit toernooi hier niet spelen. De Board API ondersteunt alleen Zwitserse toernooien in standaard of Chess960 met een rapid- of klassiek speeltempo. Meld je aan en speel op lichess.org.</string>
+    <string name="lichess_game_state_aborted">Partij afgebroken</string>
+    <string name="lichess_game_state_created">Partij aangemaakt</string>
+    <string name="lichess_game_state_mate">Partij geëindigd in schaakmat</string>
+    <string name="lichess_game_state_resigned">Partij geëindigd doordat een speler opgaf</string>
+    <string name="lichess_game_winner">Winnaar: %1$s</string>
+    <string name="lichess_games_connection_error_retry">Je partijen konden niet worden opgehaald. Over 5 seconden volgt een nieuwe verbindingspoging.</string>
+    <string name="lichess_lobby_button_challenge">Uitdagen</string>
+    <string name="lichess_lobby_button_logout">Uitloggen</string>
+    <string name="lichess_lobby_button_seek">Zoeken</string>
+    <string name="lichess_lobby_connected">Je bent verbonden met Lichess</string>
+    <string name="lichess_lobby_handle">gebruikersnaam</string>
+    <string name="lichess_lobby_ongoing_games">Lopende partijen</string>
+    <string name="lichess_login_intro">Als je op Inloggen tikt, ga je naar Lichess om in te loggen</string>
+    <string name="lichess_my_challenge_closed">Uitdaging gesloten</string>
+    <string name="lichess_my_seek_closed">Zoekopdracht gesloten</string>
+    <string name="lichess_opponent_offers_draw">Je tegenstander biedt remise aan. Tik op Remise om te accepteren</string>
+    <string name="lichess_play_button_draw">Remise</string>
+    <string name="lichess_play_button_resign">Opgeven</string>
+    <string name="lichess_seek_posted">Zoekopdracht geplaatst</string>
+    <string name="lichess_save_game_to_file">Opslaan als bestand</string>
+    <string name="lichess_save_game_to_database">Opslaan in database</string>
+    <string name="lichess_starting">Bezig met starten…</string>
+    <string name="match_option_color_black">Zwart</string>
+    <string name="match_option_color_random">Willekeurig</string>
+    <string name="match_option_color_white">Wit</string>
+    <string name="menu_abort">Afbreken</string>
+    <string name="menu_clip_pgn">Partij naar klembord</string>
+    <string name="menu_flip">Bord draaien</string>
+    <string name="menu_fromclip">Partij van klembord</string>
+    <string name="menu_game_settings">Partijinstellingen</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_load_game">Partij laden</string>
+    <string name="menu_new">Nieuwe partij</string>
+    <string name="menu_new_960">Nieuwe willekeurige Fischer-partij / 960</string>
+    <string name="menu_new_command">Nieuw commando</string>
+    <string name="menu_new_command_message">Typ \u003cNR\u003e achter het commando als je geen antwoord wilt\nVoorbeeld: tell ChessMaster \u003cNR\u003e\n</string>
+    <string name="menu_new_duck">Nieuwe partij eendenschaak</string>
+    <string name="menu_open_game">Partijbestand openen</string>
+    <string name="menu_open_position_file">Stellingsbestand openen</string>
+    <string name="menu_prefs">Instellingen</string>
+    <string name="menu_save_game">Partij opslaan in database</string>
+    <string name="menu_save_game_to_file">Partij opslaan als bestand</string>
+    <string name="menu_save_position_to_file">Stelling opslaan als bestand</string>
+    <string name="menu_set_clock">Klok instellen</string>
+    <string name="menu_setup">Stelling opzetten</string>
+    <string name="msg_ics_enter_handle">Voer je gebruikersnaam in</string>
+    <string name="msg_ics_enter_password">Voer je wachtwoord in</string>
+    <string name="msg_setup_castle_black">Zwart</string>
+    <string name="msg_setup_castle_white">Wit</string>
+    <string name="msg_setup_clear">Bord wissen</string>
+    <string name="msg_setup_enpassant">En-passantveld</string>
+    <string name="msg_setup_random">Willekeurig</string>
+    <string name="msg_setup_reset">Herstellen</string>
+    <string name="msg_setup_turn">Aan zet</string>
+    <string name="msg_setup_turn_black">zwart</string>
+    <string name="msg_setup_turn_white">wit</string>
+    <string name="game_ready_as_white">De partij staat klaar. Je speelt met wit.</string>
+    <string name="game_ready_as_black">De partij staat klaar. Je speelt met zwart.</string>
+    <string name="new_game_as_black">Nieuwe partij. Je speelt met zwart</string>
+    <string name="new_game_as_white">Nieuwe partij. Je speelt met wit</string>
+    <string name="online_help">
+    <![CDATA[
+        <p>Met <strong>FICS: Free Internet Chess Server</strong> kun je online tegen duizenden
+            schakers spelen.<br/>
+            Let op: als je apparaat overschakelt naar een ander internettoegangspunt, kan de
+            verbinding wegvallen. Timeseal is niet beschikbaar.<br/>
+        </p>
+        <h4>Menu</h4>
+        <strong>Uitdagingen</strong><br/>
+        Hier zie je spelers die een tegenstander zoeken. Tik op een speler om de uitdaging aan
+        te nemen.<br/>
+        <strong>Tegenstander zoeken</strong><br/>
+        Maak je eigen uitdaging. Als je de gebruikersnaam van een speler invult, daag je die
+        speler rechtstreeks uit.<br/>
+        <strong>Partijen</strong><br/>
+        Bekijk partijen die online worden gespeeld. Je herkent een grootmeester aan GM voor
+        de gebruikersnaam.<br/>
+        <strong>Spelers</strong><br/>
+        Hier zie je beschikbare spelers en hun ratings.<br/>
+    ]]>
+    </string>
+    <string name="options_level_ply">Zoekdiepte (halve zetten)</string>
+    <string name="options_level_time">Denktijd per zet</string>
+    <string name="options_engine_builtin">Ingebouwd</string>
+    <string name="options_engine_oex">OEX</string>
+    <string name="options_engine_oex_unavailable">Er zijn geen OEX-engines gevonden op dit apparaat.</string>
+    <string name="options_engine_oex_duck_disabled">OEX is niet beschikbaar voor eendenschaak.</string>
+    <string name="options_engine_unavailable_short">Niet beschikbaar</string>
+    <string name="options_play_android">Speler tegen Android</string>
+    <string name="options_play_black">Zwart</string>
+    <string name="options_play_human">Speler tegen speler</string>
+    <string name="options_play_white">Wit</string>
+    <string name="options_quiescent_off">Quiescence-zoekfunctie uit</string>
+    <string name="options_quiescent_on">Quiescence-zoekfunctie aan</string>
+    <string name="pgntool_delete_studies">Alle studies verwijderen</string>
+    <string name="pgntool_confirm_delete_studies">Alle studies verwijderen?</string>
+    <string name="pgntool_studies_deleted">Alle studies zijn verwijderd</string>
+    <string name="pgntool_delete_item_count">Te verwijderen items: %1$d</string>
+    <string name="pgntool_confirm_delete_games">Alle partijen uit de database verwijderen?</string>
+    <string name="pgntool_confirm_delete_practice">Alle oefenstellingen verwijderen?</string>
+    <string name="pgntool_confirm_delete_puzzles">Alle puzzelstellingen verwijderen?</string>
+    <string name="pgntool_confirm_practice_reset">Weet je zeker dat je opnieuw wilt beginnen?</string>
+    <string name="pgntool_create_db_explanation">Openingsdatabase aanmaken</string>
+    <string name="pgntool_delete_games">Alle partijen uit de database verwijderen</string>
+    <string name="pgntool_delete_practice">Alle oefenstellingen verwijderen</string>
+    <string name="pgntool_delete_puzzles">Alle puzzelstellingen verwijderen</string>
+    <string name="pgntool_games_deleted">Alle partijen zijn verwijderd</string>
+    <string name="pgntool_practice_deleted">Alle oefenstellingen zijn verwijderd</string>
+    <string name="pgntool_puzzles_deleted">Alle puzzelstellingen zijn verwijderd</string>
+    <string name="pgntool_export_explanation">Partijdatabase exporteren</string>
+    <string name="pgntool_help">Help</string>
+    <string name="pgntool_import_busy">Er loopt al een import</string>
+    <string name="importing_games">Partijen importeren…</string>
+    <string name="importing_puzzles">Puzzels importeren…</string>
+    <string name="importing_practice_positions">Oefenstellingen importeren…</string>
+    <string name="importing_openings">Openingen importeren…</string>
+    <string name="pgntool_import_explanation">Partijen importeren in de database</string>
+    <string name="pgntool_import_practice">Oefenset importeren</string>
+    <string name="pgntool_import_puzzle">Puzzels importeren</string>
+    <string name="pgntool_point_db_explanation">Openingsdatabase instellen</string>
+    <string name="pgntool_reset_practice">Opnieuw beginnen met oefenen</string>
+    <string name="pgntool_unset_uci_database">UCI-database verwijderen</string>
+    <string name="pgntool_unset_uci_engine">UCI-engine verwijderen</string>
+    <string name="piece_bishop">Loper</string>
+    <string name="piece_black">Zwart</string>
+    <string name="piece_duck">Eend</string>
+    <string name="piece_king">Koning</string>
+    <string name="piece_knight">Paard</string>
+    <string name="piece_pawn">Pion</string>
+    <string name="piece_queen">Dame</string>
+    <string name="piece_rook">Toren</string>
+    <string name="piece_white">Wit</string>
+    <string name="pieceset_alpha">Alpha</string>
+    <string name="pieceset_california">California</string>
+    <string name="pieceset_chessnut">Chessnut</string>
+    <string name="pieceset_companion">Companion</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes van flugsio (CC BY-SA 4.0), Firi van James Faure en Kiwen-suwi van neverRare (CC BY 4.0), en Celtic en Spatial van Maurizio Monge (MIT). De afbeeldingen zijn aangepast voor Android. Firi heeft andere kleuren gekregen. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_leipzig">Leipzig</string>
+    <string name="pieceset_merida">Merida</string>
+    <string name="pieceset_staunty">Staunty</string>
+    <string name="playonlinepreferences">Instellingen voor online spelen</string>
+    <string name="practice_help">Vind het schaakmat. Daar kunnen meerdere zetten voor nodig zijn.</string>
+    <string name="practice_set_reset">De oefenset is hersteld</string>
+    <string name="pref_field_color_descriptions">Licht of donker opnemen in veldbeschrijvingen</string>
+    <string name="pref_include_attackers_defenders_descriptions">Aanvallers en verdedigers opnemen in veldbeschrijvingen</string>
+    <string name="pref_fullscreen">Volledig scherm inschakelen</string>
+    <string name="pref_fullscreen_desc">Aanbevolen voor kleine schermen en liggende weergave. Anders passen sommige onderdelen mogelijk niet op het scherm.</string>
+    <string name="pref_icsautosought">Uitdagingen automatisch vernieuwen</string>
+    <string name="pref_icsautosought_desc">Vernieuw het scherm met uitdagingen automatisch</string>
+    <string name="pref_icsconsolecharactersize">Lettergrootte van de console</string>
+    <string name="pref_icsconsolecharactersize_desc">Pas de lettergrootte in de console aan</string>
+    <string name="pref_icscustomcommand">Aangepaste commando’s</string>
+    <string name="pref_icscustomcommand_desc">Maak je eigen commando’s</string>
+    <string name="pref_icsnotification">Melding bij nieuwe partij</string>
+    <string name="pref_icstimewarning">Waarschuwing bij weinig tijd</string>
+    <string name="pref_icstimewarning_desc">Je hoort getik zodra je resterende tijd de waarschuwingsdrempel bereikt</string>
+    <string name="pref_icstimewarningsecs">Waarschuwingsdrempel (sec.)</string>
+    <string name="pref_icstimewarningsecs_desc">Bij hoeveel seconden resterende tijd moet de waarschuwing beginnen?</string>
+    <string name="pref_last_move_over_empty_square">Kondig de laatste zet na een pauze aan als je over een leeg veld sleept</string>
+    <string name="pref_protect_last_move_speech">Onderbreek het uitspreken van de laatste zet niet</string>
+    <string name="pref_minimal">Minimale bediening</string>
+    <string name="pref_night_mode">Nachtmodus</string>
+    <string name="pref_night_mode_desc">Gebruik altijd de nachtmodus in de app</string>
+    <string name="pref_eink_mode">E-inkinstellingen toepassen</string>
+    <string name="pref_eink_mode_desc">Voor e-papierschermen. Schakelt de nachtmodus uit en de drie instellingen hieronder in. Kiest ook Alpha-stukken, een bord in grijstinten, volledig scherm, minimale bediening en geen stukanimaties. Elke instelling blijft afzonderlijk aanpasbaar.</string>
+    <string name="pref_disable_drag">Tikken om te zetten</string>
+    <string name="pref_disable_drag_desc">Verplaats een stuk door eerst op het stuk en dan op het doelveld te tikken</string>
+    <string name="pref_eink_theme">E-inkthema</string>
+    <string name="pref_eink_theme_desc">Zwart-witte schermen en dialoogvensters met omlijnde knoppen en zonder rimpeleffecten</string>
+    <string name="pref_reduce_animations">Minder animaties</string>
+    <string name="pref_reduce_animations_desc">Verberg de voortgangsbalk van de engine en schakel pulsende knoppen en lijstanimaties uit om sporen op trage schermen te voorkomen</string>
+    <string name="pref_showCoords">Coördinaten</string>
+    <string name="pref_show_blindfold">Blindschaken</string>
+    <string name="pref_show_possible_moves">Mogelijke zetten tonen</string>
+    <string name="pref_use_piece_animation">Stukken animeren</string>
+    <string name="pref_show_captured_pieces">Geslagen stukken tonen indien beschikbaar</string>
+    <string name="pref_show_pieces_descriptions">Posities van stukken beschrijven</string>
+    <string name="pref_show_accessibility_drag_toggle">Schakelaar voor toegankelijk slepen tonen</string>
+    <string name="pref_sound">Geluid</string>
+    <string name="pref_haptic_feedback">Trilfeedback gebruiken</string>
+    <string name="pref_speech">Spraak</string>
+    <string name="pref_user_long_move_descriptions">Volledige zetbeschrijving gebruiken</string>
+    <string name="pref_add_turn_in_move_description">Vermelden wie aan zet is in zetbeschrijvingen</string>
+    <string name="tts_locale_not_supported">Tekst-naar-spraak ondersteunt je taalinstelling niet</string>
+    <string name="tts_not_loaded">Tekst-naar-spraak kon niet worden geladen</string>
+    <string name="tts_example_move">Loper slaat G7, schaak</string>
+    <string name="tts_selected">Geselecteerd</string>
+    <string name="tts_move_takes">slaat</string>
+    <string name="tts_move_en_passant">en passant</string>
+    <string name="tts_move_promotes_to">promoveert tot %1$s</string>
+    <string name="tts_move_checkmate">schaakmat</string>
+    <string name="tts_move_castle_long">lange rokade</string>
+    <string name="tts_move_castle_short">korte rokade</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Toegankelijk slepen</string>
+    <string name="pref_accessibility_drag_delay_desc">Wachttijd bij toegankelijk slepen</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Wachttijd om de laatste zet op een leeg veld te herhalen</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Schakel TalkBack uit om toegankelijk slepen te gebruiken.</string>
+    <string name="pref_speech_pitch_desc">Toonhoogte</string>
+    <string name="pref_speech_rate_desc">Spreeksnelheid</string>
+    <string name="pref_speech_engine">Spraakengine</string>
+    <string name="pref_speech_engine_system_default">Standaardengine van het systeem</string>
+    <string name="pref_speech_voice">Taal of stem</string>
+    <string name="pref_speech_voice_system_default">Systeemstandaard</string>
+    <string name="pref_turn">Kleur</string>
+    <string name="pref_turn_desc">Met welke kleur je speelt</string>
+    <string name="pref_vs_cpu">Tegen de computer</string>
+    <string name="pref_vs_cpu_desc">Speel tegen de computer of schaakengine</string>
+    <string name="pref_wakelock">Scherm aanhouden</string>
+    <string name="pref_wakelock_desc">Voorkomt dat je telefoon in slaapstand gaat</string>
+    <string name="preferences">Instellingen</string>
+    <string name="prefs_icsendgamedialog">Dialoogvenster na afloop</string>
+    <string name="prefs_icsendgamesummary">Wil je na afloop van een partij een venster krijgen om de partij op te slaan?</string>
+    <string name="prefs_icsnotificationsummary">Toon een pictogram wanneer een partij begint</string>
+    <string name="puzzle_already_solved">(stelling al opgelost)</string>
+    <string name="puzzle_correct_move">Dat is de juiste zet</string>
+    <string name="puzzle_help">Vind mat in twee.\nBron: EL ARTE DEL MATE EN DOS van Eduardo Sadier</string>
+    <string name="puzzle_not_correct_move">is niet de verwachte zet</string>
+    <string name="puzzle_show">Tonen</string>
+    <string name="savegame_black">Zwart</string>
+    <string name="savegame_event">Evenement</string>
+    <string name="gameslist_load_failed">Deze partij kon niet worden geladen.</string>
+    <string name="gameslist_filter_switch_black_description">Filter op zwartspeler in- of uitschakelen</string>
+    <string name="gameslist_filter_switch_date_after_description">Filter op begindatum in- of uitschakelen</string>
+    <string name="gameslist_filter_switch_date_before_description">Filter op einddatum in- of uitschakelen</string>
+    <string name="gameslist_filter_switch_event_description">Filter op evenement in- of uitschakelen</string>
+    <string name="gameslist_filter_switch_result_description">Filter op resultaat in- of uitschakelen</string>
+    <string name="gameslist_open">Openen</string>
+    <string name="gameslist_analyze">Analyseren</string>
+    <string name="gameslist_filters_description">Filters</string>
+    <string name="gameslist_previous_game_description">Vorige partij</string>
+    <string name="gameslist_next_game_description">Volgende partij</string>
+    <string name="gameslist_view_board">Bord</string>
+    <string name="gameslist_view_list">Lijst</string>
+    <string name="gameslist_filter_date_after">Datum na</string>
+    <string name="gameslist_filter_date_before">Datum voor</string>
+    <string name="gameslist_filter_result">Resultaat</string>
+    <string name="gameslist_filter_order_by">Sorteren op</string>
+    <string name="gameslist_filter_order_direction">Sorteerrichting</string>
+    <string name="gameslist_result_count">Resultaten: %1$d</string>
+    <string name="gameslist_game_of_total">Partij %1$d van %2$d</string>
+    <string name="gameslist_filter_switch_white_description">Filter op witspeler in- of uitschakelen</string>
+    <string name="savegame_white">Wit</string>
+    <string name="square_color_description_light">Licht veld</string>
+    <string name="square_color_description_dark">Donker veld</string>
+    <string name="square_selected_with_duck_description">Geselecteerd: %1$s op %2$s</string>
+    <string name="square_selected_with_piece_description">Geselecteerd: %1$s %2$s %3$s</string>
+    <string name="square_with_duck_description">%1$s op %2$s</string>
+    <string name="square_with_color_and_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s</string>
+    <string name="start_accessibility_preferences">Toegankelijkheidsinstellingen</string>
+    <string name="start_boardpreferences">Bordinstellingen</string>
+    <string name="start_database">Partijdatabase</string>
+    <string name="start_wifiboard">Wifibord</string>
+    <string name="start_ics">Freechess</string>
+    <string name="start_lichess">Lichess</string>
+    <string name="start_pgn">Geavanceerd</string>
+    <string name="start_play">Spelen</string>
+    <string name="start_practice">Oefenen</string>
+    <string name="start_puzzles">Puzzels</string>
+    <string name="start_website">Website van de ontwikkelaar</string>
+    <string name="state_black_forfeits_time">zwart verliest op tijd</string>
+    <string name="state_black_resigned">zwart geeft op</string>
+    <string name="state_check">schaak</string>
+    <string name="state_draw_50">remise (vijftigzettenregel)</string>
+    <string name="state_draw_agreement">remise overeengekomen</string>
+    <string name="state_draw_material">remise (onvoldoende materiaal)</string>
+    <string name="state_draw_repeat">remise (driemaal dezelfde stelling)</string>
+    <string name="state_draw_stalemate">remise (pat)</string>
+    <string name="state_mate">schaakmat</string>
+    <string name="state_play">in uitvoering</string>
+    <string name="state_white_forfeits_time">wit verliest op tijd</string>
+    <string name="state_white_resigned">wit geeft op</string>
+    <string name="tile_diagonal_stripes">diagonale strepen</string>
+    <string name="tile_double_shade">dubbele schaduw</string>
+    <string name="tile_none">geen</string>
+    <string name="tile_single_shade">enkele schaduw</string>
+    <string name="time_warning_10">10 seconden</string>
+    <string name="time_warning_25">25 seconden</string>
+    <string name="time_warning_45">45 seconden</string>
+    <string name="time_warning_5">5 seconden</string>
+    <string name="time_warning_60">1 minuut</string>
+    <string name="time_warning_minutes">Nog %1$d minuten</string>
+    <string name="time_warning_minutes_single">Nog %1$d minuut</string>
+    <string name="time_warning_seconds">Nog %1$d seconden</string>
+    <string name="time_warning_seconds_single">Nog %1$d seconde</string>
+    <string name="title_castle">Rokeren?</string>
+    <string name="title_pick_engine">Engine</string>
+    <string name="title_challenge">Uitdaging</string>
+    <string name="title_overwrite_main_line">Hoofdvariant vanaf deze stelling overschrijven?</string>
+    <string name="title_delete_game">Partij verwijderen</string>
+    <string name="title_edit_command">Commando bewerken</string>
+    <string name="title_edit_or_delete">Bewerken of verwijderen?</string>
+    <string name="title_error">Fout</string>
+    <string name="title_menu">Menu</string>
+    <string name="title_offers_abort">Verzoek om af te breken</string>
+    <string name="title_offers_adjourn">Verzoek om te verdagen</string>
+    <string name="title_offers_draw">Remiseaanbod</string>
+    <string name="title_offers_takeback">Verzoek om een zet terug te nemen</string>
+    <string name="title_pick_time">Denktijd per zet</string>
+    <string name="title_pick_ply">Zoekdiepte (halve zetten)</string>
+    <string name="title_pick_promo">Kies een promotiestuk</string>
+    <string name="title_save_game">Partij opslaan</string>
+    <string name="toast_challenge_posted">Uitdaging geplaatst</string>
+    <string name="lichess_service_unavailable">De Lichess-service kon niet worden gestart. Probeer het opnieuw.</string>
+    <string name="lichess_lobby_button_puzzle">Puzzel</string>
+    <string name="lichess_puzzle_title">Puzzel ophalen</string>
+    <string name="lichess_challenge_rated">Met rating</string>
+    <string name="lichess_puzzle_difficulty">Moeilijkheid</string>
+    <string name="lichess_puzzle_angle">Thema</string>
+    <string name="lichess_puzzle_solved_rated">Puzzel opgelost! Rating %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Opgelost met fouten. Rating %1$s</string>
+    <string name="lichess_lobby_button_teams">Teams</string>
+    <string name="lichess_swiss_title">Kies een team om de Zwitserse toernooien te bekijken</string>
+    <string name="lichess_swiss_my_teams">Mijn teams</string>
+    <string name="lichess_swiss_all_teams">Alle teams</string>
+    <string name="lichess_team_search">Zoeken</string>
+    <string name="lichess_team_search_hint">Teams zoeken…</string>
+    <string name="lichess_team_search_results">Zoeken: %1$s</string>
+    <string name="lichess_swiss_tournaments">Zwitserse toernooien</string>
+    <string name="lichess_swiss_back">Terug</string>
+    <string name="lichess_swiss_prev">Vorige</string>
+    <string name="lichess_swiss_next">Volgende</string>
+    <string name="lichess_swiss_page">Pagina %1$d / %2$d</string>
+    <string name="lichess_swiss_join">Meedoen</string>
+    <string name="lichess_swiss_withdraw">Afmelden</string>
+    <string name="lichess_team_join">Lid worden</string>
+    <string name="lichess_team_leave">Team verlaten</string>
+    <string name="lichess_team_members">%1$d leden</string>
+    <string name="lichess_swiss_players">%1$d spelers</string>
+    <string name="lichess_swiss_starts_at">begint %1$s</string>
+    <string name="lichess_swiss_detail_info">%1$s · ronde %2$d/%3$d · %4$d spelers</string>
+    <string name="lichess_swiss_no_teams">Je bent nog geen lid van een team. Tik op \"Alle teams\" om een team te zoeken.</string>
+    <string name="lichess_swiss_no_tournaments">Geen toernooien gevonden.</string>
+    <string name="lichess_team_join_message_hint">Bericht (als het team aanvragen beoordeelt)</string>
+    <string name="lichess_team_join_password_hint">Wachtwoord (indien vereist)</string>
+    <string name="lichess_team_joined">Lid geworden van %1$s</string>
+    <string name="lichess_team_left">%1$s verlaten</string>
+    <string name="lichess_swiss_joined">Aangemeld voor het toernooi</string>
+    <string name="lichess_swiss_status_created">Binnenkort</string>
+    <string name="lichess_swiss_status_started">Bezig</string>
+    <string name="lichess_swiss_status_finished">Afgelopen</string>
+    <string name="black_player_forfeits_on_time">Zwart verloor op tijd</string>
+    <string name="black_player_resigned">Zwart heeft opgegeven</string>
+    <string name="players_agreed_draw">Remise overeengekomen</string>
+    <string name="white_player_forfeits_on_time">Wit verloor op tijd</string>
+    <string name="white_player_resigned">Wit heeft opgegeven</string>
+    <string name="analysis_main_line">Hoofdvariant</string>
+    <string name="analysis_engine_likes">Voorkeurszet van de engine:</string>
+    <string name="analysis_engine_matches">De laatste zet komt overeen met de aanbeveling van de engine</string>
+    <string name="analysis_move_best">Beste</string>
+    <string name="analysis_move_excellent">Uitstekend</string>
+    <string name="analysis_move_okay">Redelijk</string>
+    <string name="analysis_move_inaccuracy">Onnauwkeurigheid</string>
+    <string name="analysis_move_mistake">Fout</string>
+    <string name="analysis_move_blunder">Blunder</string>
+    <string name="analysis_move_forced">Gedwongen</string>
+    <string name="analysis_move_unavailable">Analyse niet beschikbaar</string>
+    <string name="analysis_white_to_move">Wit aan zet</string>
+    <string name="analysis_black_to_move">Zwart aan zet</string>
+    <string name="analysis_variation">Variant</string>
+    <string name="analysis_back_to_main">Terug naar de hoofdvariant</string>
+    <string name="pgn_return_main_line">Terug naar de hoofdvariant</string>
+    <string name="pgn_promote_variation">Als voorkeursvervolg instellen</string>
+    <string name="pgn_delete_variation">Variant verwijderen</string>
+    <string name="engine_evaluation_score">Enginebeoordeling: %1$+.1f pionnen (positief betekent voordeel voor wit)</string>
+    <string name="engine_evaluation_pending">Enginebeoordeling niet beschikbaar</string>
+    <string name="analysis_settings">Analyse-instellingen</string>
+    <string name="analysis_time_budget">Tijd per stelling (seconden)</string>
+    <string name="analysis_time_invalid">Voer een getal van 0 tot %1$d in.</string>
+    <string name="analysis_move_position">Stelling na de zet</string>
+    <string name="analysis_builtin_warning">Installeer een OEX-compatibele schaakengine voor betere analyses.</string>
+    <string name="analysis_dont_show_again">Niet meer tonen</string>
+    <string name="analysis_continue">Doorgaan</string>
+    <string name="menu_analyse_game">Partij analyseren</string>
+    <string name="menu_new_king_of_the_hill">Nieuwe partij King of the Hill</string>
+    <string name="state_hill_win">De koning heeft de heuvel bereikt</string>
+    <string name="state_duck_stalemate_win">Geen zetten meer mogelijk. Dat levert winst op bij eendenschaak</string>
+    <string name="options_engine_oex_variant_disabled">Deze variant gebruikt de ingebouwde engine.</string>
+    <string name="new_game_variant_standard">Standaard</string>
+    <string name="new_game_variant_duck">Eendenschaak</string>
+    <string name="new_game_variant_king_of_the_hill">King of the Hill</string>
+    <string name="new_game_variant_chess960">Fischer random / 960</string>
+    <string name="options_target_elo">Gewenste Elo (bij benadering)</string>
+    <string name="options_target_elo_hint">De werkelijke speelsterkte hangt af van de engine en de denktijd.</string>
+    <string name="options_target_elo_checking">Beschikbare speelsterktes controleren…</string>
+    <string name="options_full_strength">Volledige speelsterkte</string>
+    <string name="share_game_link">Link naar partij delen</string>
+    <string name="share_position_link">Link naar stelling delen</string>
+    <string name="share_pgn">PGN delen</string>
+    <string name="share_chess_link">Delen</string>
+    <string name="share_invitation">Uitnodiging delen</string>
+    <string name="share_lichess_profile">Mijn Lichess-profiel delen</string>
+    <string name="app_link_invalid">Deze schaaklink is ongeldig of wordt niet ondersteund.</string>
+    <string name="app_link_too_large">Deze partij is te groot om als link te delen. Deel de volledige partij als PGN.</string>
+    <string name="share_failed">Delen is mislukt. Probeer het opnieuw.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>een|één</item>
+        <item>twee</item>
+        <item>drie</item>
+        <item>vier</item>
+        <item>vijf</item>
+        <item>zes</item>
+        <item>zeven</item>
+        <item>acht</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>paard|paart</item>
+        <item>loper</item>
+        <item>toren</item>
+        <item>dame|koningin|konining</item>
+    </string-array>
+    <string name="practice_finished_position">Deze stelling is afgelopen</string>
+    <string name="practice_completed_collection">Je hebt alle puzzels opgelost!</string>
+    <string name="import_start_failed">De import kon niet worden gestart</string>
+    <string name="import_failed">De import is mislukt</string>
+    <string name="engine_uninstalled">Engine %1$s is verwijderd</string>
+    <string name="engine_not_installed">Er is geen engine geïnstalleerd</string>
+    <string name="opening_database_uninstalled">Database %1$s is verwijderd</string>
+    <string name="opening_database_not_installed">Er is geen database geïnstalleerd</string>
+    <string name="setup_use_illegal_position">Deze ongeldige stelling gebruiken?</string>
+    <string name="clock_minutes_hint">Minuten</string>
+    <string name="clock_increment_hint">Tijdstoeslag in seconden</string>
+    <string name="import_added">Toegevoegd</string>
+    <string name="import_ignored">Overgeslagen</string>
+    <string name="pgn_date_hint">PGN-datum</string>
+    <string name="eco_openings_description">ECO-openingen</string>
+    <string name="hotspot_result_game_over">Partij afgelopen</string>
+    <string name="hotspot_result_defeat">Verloren</string>
+    <string name="hotspot_result_victory">Gewonnen!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s heeft opgegeven.</string>
+    <string name="hotspot_result_you_resigned">Je hebt opgegeven.</string>
+    <string name="hotspot_result_mate_lost">Je hebt verloren door schaakmat.</string>
+    <string name="hotspot_result_mate_won">Je hebt gewonnen door schaakmat.</string>
+    <string name="hotspot_result_draw">De partij is remise.</string>
+    <string name="hotspot_result_stalemate">De partij is remise door pat.</string>
+    <string name="hotspot_result_repetition">De partij is remise doordat dezelfde stelling driemaal is bereikt.</string>
+    <string name="hotspot_result_fifty_moves">De partij is remise volgens de vijftigzettenregel.</string>
+    <string name="hotspot_result_insufficient_material">De partij is remise door onvoldoende materiaal.</string>
+
+    <string-array name="levels_ply">
+        <item>1 halve zet</item>
+        <item>2 halve zetten</item>
+        <item>3 halve zetten</item>
+        <item>4 halve zetten</item>
+        <item>5 halve zetten</item>
+        <item>6 halve zetten</item>
+        <item>7 halve zetten</item>
+        <item>8 halve zetten</item>
+        <item>9 halve zetten</item>
+        <item>10 halve zetten</item>
+    </string-array>
+    <string-array name="match_variant">
+        <item>Standaard</item>
+        <item>Chess 960 (experimenteel)</item>
+    </string-array>
+    <string-array name="field_files">
+        <item>geen</item>
+        <item>a</item>
+        <item>b</item>
+        <item>c</item>
+        <item>d</item>
+        <item>e</item>
+        <item>f</item>
+        <item>g</item>
+        <item>h</item>
+    </string-array>
+
+    <string name="pref_move_entry">Zetten invoeren als tekst in Spelen</string>
+    <string name="pref_confirm_move_entry">Tekstzetten controleren voor uitvoering</string>
+    <string name="move_entry_hint">Zet, bijvoorbeeld e2 e4</string>
+    <string name="move_entry_format">Voer een zet in, bijvoorbeeld e2e4, Nf3 of paard f3.</string>
+    <string name="move_entry_illegal">Die zet is niet toegestaan in deze stelling.</string>
+    <string name="move_entry_wrong_turn">Wacht tot je aan zet bent in een lopende partij.</string>
+    <string name="move_entry_promotion">Voeg een promotiestuk toe: dame, toren, loper of paard.</string>
+    <string name="move_entry_review">%1$s (%2$s) spelen?</string>
+    <string name="move_input_castle">rokade|rokeren</string>
+    <string name="move_input_captures">slaat|neemt</string>
+</resources>

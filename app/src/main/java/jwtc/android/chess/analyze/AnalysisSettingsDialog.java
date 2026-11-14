@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineSession;
@@ -27,11 +28,18 @@ final class AnalysisSettingsDialog {
         return Math.max(MIN_MILLIS, Math.min(MAX_SECONDS * 1000, prefs.getInt(PREF_TIME, 1000)));
     }
 
-    static void show(Context context, SharedPreferences prefs, Runnable onSaved) {
+    static void show(
+            Context context,
+            SharedPreferences prefs,
+            boolean requiresBuiltinEngine,
+            Runnable onSaved) {
         View content = LayoutInflater.from(context).inflate(R.layout.analysis_settings, null);
         FixedDropdownView engine = content.findViewById(R.id.AnalysisEngine);
         EditText time = content.findViewById(R.id.AnalysisTime);
-        List<OexEngineDescriptor> engines = new OexEngineResolver(context).resolveEngines();
+        List<OexEngineDescriptor> engines =
+                requiresBuiltinEngine
+                        ? Collections.emptyList()
+                        : new OexEngineResolver(context).resolveEngines();
         List<String> labels = new ArrayList<>();
         String preferred = prefs.getString(PREF_ENGINE, null);
         int selected = EngineSession.LOCAL_ENGINE_ID.equals(preferred) ? engines.size() : 0;
@@ -44,8 +52,7 @@ final class AnalysisSettingsDialog {
         labels.add(context.getString(R.string.options_engine_builtin));
         engine.setItems(labels);
         engine.setSelection(selected);
-        engine.setVisibility(View.VISIBLE);
-        content.findViewById(R.id.AnalysisNoEngines).setVisibility(View.GONE);
+        engine.getTextInputLayout().setEnabled(!requiresBuiltinEngine);
         time.setText(
                 BigDecimal.valueOf(getTimeMillis(prefs), 3).stripTrailingZeros().toPlainString());
 
@@ -92,17 +99,13 @@ final class AnalysisSettingsDialog {
                                             }
                                             SharedPreferences.Editor editor =
                                                     prefs.edit().putInt(PREF_TIME, millis);
-                                            if (engine.getSelectedItemPosition()
-                                                    == engines.size()) {
-                                                editor.putString(
-                                                        PREF_ENGINE, EngineSession.LOCAL_ENGINE_ID);
-                                            } else {
+                                            if (!requiresBuiltinEngine) {
+                                                int index = engine.getSelectedItemPosition();
                                                 editor.putString(
                                                         PREF_ENGINE,
-                                                        engines.get(
-                                                                        engine
-                                                                                .getSelectedItemPosition())
-                                                                .getId());
+                                                        index == engines.size()
+                                                                ? EngineSession.LOCAL_ENGINE_ID
+                                                                : engines.get(index).getId());
                                             }
                                             editor.apply();
                                             dialog.dismiss();

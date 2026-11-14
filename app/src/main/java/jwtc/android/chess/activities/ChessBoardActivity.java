@@ -110,30 +110,32 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
             return gameApi.requestDuckMove(to);
         } else if (gameApi.isPromotionMove(from, to)) {
 
-            final String[] items = getResources().getStringArray(R.array.promotionpieces);
-
-            ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
-            builder.setTitle(R.string.title_pick_promo);
-            builder.setCancelable(false);
-            builder.setSingleChoiceItems(
-                    items,
-                    0,
-                    (dialog, item) -> {
-                        dialog.dismiss();
-                        gameApi.setPromo(4 - item);
-                        if (!gameApi.requestMove(from, to)) {
-                            rebuildBoard();
-                        }
-                    });
-            builder.create().show();
-
-            //            if (_vibrator != null) {
-            //                _vibrator.vibrate(40L);
-            //            }
+            promotionDialog(
+                            piece -> {
+                                gameApi.setPromo(piece);
+                                if (!gameApi.requestMove(from, to)) {
+                                    rebuildBoard();
+                                }
+                            })
+                    .show();
 
             return true;
         }
         return gameApi.requestMove(from, to);
+    }
+
+    protected ChessAlertDialogBuilder promotionDialog(java.util.function.IntConsumer selected) {
+        ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
+        builder.setTitle(R.string.title_pick_promo)
+                .setCancelable(false)
+                .setSingleChoiceItems(
+                        getResources().getStringArray(R.array.promotionpieces),
+                        0,
+                        (dialog, item) -> {
+                            dialog.dismiss();
+                            selected.accept(4 - item);
+                        });
+        return builder;
     }
 
     @Override
@@ -813,10 +815,13 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void rebuildBoard() {
-
+        boolean reusePieces = reusesPieceViews();
         cancelMoveAnimation();
-        chessBoardView.removePieces();
+        if (!reusePieces) {
+            chessBoardView.removePieces();
+        }
         chessBoardView.removeLabels();
+        ChessPieceView[] existingPieces = reusePieces ? chessBoardView.piecesBySquare() : null;
 
         final int state = gameApi.getState();
         final int turn = gameApi.getTurn();
@@ -886,11 +891,17 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                 piece = gameApi.pieceAt(color, i);
             }
 
+            ChessPieceView existing = existingPieces == null ? null : existingPieces[i];
+            if (existing != null && (existing.getPiece() != piece || existing.getColor() != color)) {
+                chessBoardView.removeView(existing);
+                existing = null;
+            }
             if (piece != BoardConstants.FIELD) {
-                ChessPieceView p = new ChessPieceView(this, color, piece, i);
-                p.setOnTouchListener(myTouchListener);
-
-                chessBoardView.addView(p);
+                if (existing == null) {
+                    ChessPieceView p = new ChessPieceView(this, color, piece, i);
+                    p.setOnTouchListener(myTouchListener);
+                    chessBoardView.addView(p);
+                }
 
                 if (piece == BoardConstants.KING) {
                     if (color == BoardConstants.WHITE && labelForWhiteKing != null) {
@@ -917,6 +928,10 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
 
         updateSelectedSquares();
         DisplayedPosition.publish(gameApi);
+    }
+
+    protected boolean reusesPieceViews() {
+        return false;
     }
 
     private void startMoveAnimation(int from, int to, int color, int piece) {
@@ -1325,7 +1340,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         String sRet = "";
         if (includeAttackersAndDefendersInFieldDescription) {
             int[] positions =
-                    gameApi.getAttackerPositionsTo(
+                    attackersForDescription(
                             pos,
                             gameApi.getTurn() == BoardConstants.BLACK
                                     ? BoardConstants.WHITE
@@ -1337,7 +1352,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                         R.string.attacked_by_pieces,
                                         getPieceDescriptionsForPosition(positions));
             }
-            positions = gameApi.getAttackerPositionsTo(pos, gameApi.getTurn());
+            positions = attackersForDescription(pos, gameApi.getTurn());
             if (positions.length > 0) {
                 sRet +=
                         ". "
@@ -1348,6 +1363,10 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         return sRet;
+    }
+
+    protected int[] attackersForDescription(int square, int color) {
+        return gameApi.getAttackerPositionsTo(square, color);
     }
 
     protected String getPieceDescriptionsForPosition(int[] positions) {
@@ -1498,9 +1517,17 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                         selectPosition(toPos);
                                     } else {
                                         markMoveEnteredByDragging(fromPos, toPos);
-                                        pieceViewFrom.setPos(toPos);
-                                        chessBoardView.layoutChild(pieceViewFrom);
-                                        requestMove(fromPos, toPos);
+                                        if (reusesPieceViews()) {
+                                            // A committed move will reconcile the board. A rejected
+                                            // move or a pending promotion keeps the piece here.
+                                            if (!requestMove(fromPos, toPos)) {
+                                                clearPendingDraggedMove();
+                                            }
+                                        } else {
+                                            pieceViewFrom.setPos(toPos);
+                                            chessBoardView.layoutChild(pieceViewFrom);
+                                            requestMove(fromPos, toPos);
+                                        }
                                         selectPosition(-1);
                                     }
                                     ChessBoardActivity.this.updateSelectedSquares();

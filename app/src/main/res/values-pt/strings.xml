@@ -279,6 +279,10 @@
     <string name="options_play_white">Brancas</string>
     <string name="options_quiescent_off">Busca de quietude desativada</string>
     <string name="options_quiescent_on">Busca de quietude ativada</string>
+    <string name="pgntool_delete_studies">Excluir todos os estudos</string>
+    <string name="pgntool_confirm_delete_studies">Excluir todos os estudos?</string>
+    <string name="pgntool_studies_deleted">Todos os estudos foram excluídos</string>
+    <string name="pgntool_delete_item_count">Itens a excluir: %1$d</string>
     <string name="pgntool_confirm_delete_games">Tem certeza?</string>
     <string name="pgntool_confirm_practice_reset">Tem certeza que deseja reiniciar?</string>
     <string name="pgntool_create_db_explanation">Criar banco de aberturas</string>
@@ -548,7 +552,6 @@
     <string name="analysis_move_mistake">Erro</string>
     <string name="analysis_move_blunder">Erro grave</string>
     <string name="analysis_move_forced">Forçada</string>
-    <string name="analysis_move_pending">Analisando jogada…</string>
     <string name="analysis_move_unavailable">Análise indisponível</string>
     <string name="analysis_white_to_move">Vez das brancas</string>
     <string name="analysis_black_to_move">Vez das pretas</string>
@@ -566,7 +569,6 @@
     <string name="analysis_builtin_warning">Para uma análise melhor, instale um motor de xadrez compatível com OEX.</string>
     <string name="analysis_dont_show_again">Não mostrar novamente</string>
     <string name="analysis_continue">Continuar</string>
-    <string name="analysis_duck_unsupported">A análise de xadrez de pato não é suportada.</string>
     <string name="new_game_variant_standard">Padrão</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Rei da colina</string>
@@ -583,6 +585,25 @@
     <string name="share_lichess_profile">Partilhar o meu perfil Lichess</string>
     <string name="app_link_invalid">Este link do Chess é inválido ou não é suportado.</string>
     <string name="app_link_too_large">Esta partida é demasiado grande para um link. Partilha a partida completa em PGN.</string>
-    <string name="app_link_no_engine">A análise do motor não está disponível para esta variante. Podes explorar o tabuleiro e as jogadas.</string>
     <string name="share_failed">Não foi possível partilhar a partida. Tenta novamente.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>um|uma</item>
+        <item>dois|duas</item>
+        <item>três</item>
+        <item>quatro</item>
+        <item>cinco</item>
+        <item>seis</item>
+        <item>sete</item>
+        <item>oito</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cavalo</item>
+        <item>bispo</item>
+        <item>torre</item>
+        <item>dama|rainha</item>
+    </string-array>
+    <string name="move_input_castle">roque</string>
+    <string name="move_input_captures">toma|captura</string>
 </resources>

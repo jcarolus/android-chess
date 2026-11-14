@@ -279,6 +279,10 @@
     <string name="options_play_white">Bianchi</string>
     <string name="options_quiescent_off">Ricerca quiete disattiva</string>
     <string name="options_quiescent_on">Ricerca quiete attiva</string>
+    <string name="pgntool_delete_studies">Elimina tutti gli studi</string>
+    <string name="pgntool_confirm_delete_studies">Eliminare tutti gli studi?</string>
+    <string name="pgntool_studies_deleted">Tutti gli studi sono stati eliminati</string>
+    <string name="pgntool_delete_item_count">Elementi da eliminare: %1$d</string>
     <string name="pgntool_confirm_delete_games">Sei sicuro?</string>
     <string name="pgntool_confirm_practice_reset">Vuoi davvero reimpostare?</string>
     <string name="pgntool_create_db_explanation">Crea database aperture</string>
@@ -548,7 +552,6 @@
     <string name="analysis_move_mistake">Errore</string>
     <string name="analysis_move_blunder">Errore grave</string>
     <string name="analysis_move_forced">Forzata</string>
-    <string name="analysis_move_pending">Analisi della mossa…</string>
     <string name="analysis_move_unavailable">Analisi non disponibile</string>
     <string name="analysis_white_to_move">Tocca al Bianco</string>
     <string name="analysis_black_to_move">Tocca al Nero</string>
@@ -566,7 +569,6 @@
     <string name="analysis_builtin_warning">Per un’analisi migliore, installa un motore scacchistico compatibile con OEX.</string>
     <string name="analysis_dont_show_again">Non mostrare più</string>
     <string name="analysis_continue">Continua</string>
-    <string name="analysis_duck_unsupported">L’analisi degli scacchi con l’anatra non è supportata.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Re della collina</string>
@@ -583,6 +585,25 @@
     <string name="share_lichess_profile">Condividi il mio profilo Lichess</string>
     <string name="app_link_invalid">Questo link di Chess non è valido o non è supportato.</string>
     <string name="app_link_too_large">Questa partita è troppo grande per un link. Condividi la partita completa in formato PGN.</string>
-    <string name="app_link_no_engine">Analisi del motore non disponibile per questa variante. Puoi esplorare la scacchiera e le mosse.</string>
     <string name="share_failed">Impossibile condividere la partita. Riprova.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>uno|un</item>
+        <item>due</item>
+        <item>tre</item>
+        <item>quattro</item>
+        <item>cinque</item>
+        <item>sei</item>
+        <item>sette</item>
+        <item>otto</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cavallo</item>
+        <item>alfiere</item>
+        <item>torre</item>
+        <item>donna|regina</item>
+    </string-array>
+    <string name="move_input_castle">arrocco|arroccare</string>
+    <string name="move_input_captures">prende|cattura</string>
 </resources>

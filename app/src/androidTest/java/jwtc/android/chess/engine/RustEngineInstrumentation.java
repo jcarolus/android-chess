@@ -26,6 +26,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
     private boolean analysisOnly;
     private boolean importOnly;
     private boolean ownershipOnly;
+    private boolean textMoveOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -34,6 +35,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         analysisOnly = arguments != null && "analysis".equals(arguments.getString("suite"));
         importOnly = arguments != null && "import".equals(arguments.getString("suite"));
         ownershipOnly = arguments != null && "ownership".equals(arguments.getString("suite"));
+        textMoveOnly = arguments != null && "text-move".equals(arguments.getString("suite"));
         start();
     }
 
@@ -41,6 +43,12 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (textMoveOnly) {
+                textMoveEntry();
+                report.putString("stream", "Text move resolution and execution passed\n");
+                finish(-1, report);
+                return;
+            }
             if (ownershipOnly) {
                 boardOwnership();
                 report.putString(
@@ -99,6 +107,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionDuckTurns(true);
             sessionDuckPendingAndStale();
             duckPositionIdentity();
+            textMoveEntry();
             gameApiSanDisambiguationUsesRustBoardApi();
             gameApiPromotionRequiresLegalMove();
             ecoLookupPreservesLivePosition();
@@ -110,6 +119,52 @@ public final class RustEngineInstrumentation extends Instrumentation {
             report.putString("stream", "FAIL: " + error + "\n");
             finish(0, report);
         }
+    }
+
+    private void textMoveEntry() {
+        runOnMainSync(
+                () -> {
+                    GameApi game = new GameApi();
+                    check(
+                            game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
+                            "Text Chess960 castling setup failed");
+                    check(game.resolveTextMove(60, 63, -1) == null, "Empty rook square accepted");
+                    GameApi.PositionMove textCastle = game.resolveTextMove(60, 62, -1);
+                    check(textCastle != null, "Text Chess960 king-to-rook castle rejected");
+                    game.move(textCastle.move, -1);
+                    check(game.getCurrentPly() == 1, "Text Chess960 castle was not recorded");
+
+                    GameApi standard = new GameApi();
+                    check(
+                            standard.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true),
+                            "Text standard castling setup failed");
+                    check(
+                            standard.resolveTextMove(60, 62, -1) == null,
+                            "King destination accepted");
+                    check(
+                            standard.resolveTextMove(60, 63, -1) != null,
+                            "Rook destination rejected");
+                    GameApi promotion = new GameApi();
+                    check(
+                            promotion.initFEN("8/P6k/8/8/8/8/7K/8 w - - 0 1", true),
+                            "Text promotion setup failed");
+                    check(
+                            promotion.resolveTextMove(8, 0, -1) == null,
+                            "Missing promotion accepted");
+                    GameApi.PositionMove knight =
+                            promotion.resolveTextMove(8, 0, BoardConstants.KNIGHT);
+                    check(knight != null && knight.uci.equals("a7a8n"), "Explicit knight rejected");
+                    GameApi enPassant = new GameApi();
+                    check(
+                            enPassant.initFEN("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", true),
+                            "Text en passant setup failed");
+                    GameApi.PositionMove capture = enPassant.resolveTextMove(28, 19, -1);
+                    check(capture != null, "Text en passant rejected");
+                    enPassant.move(capture.move, -1);
+                    check(
+                            enPassant.getFEN().startsWith("4k3/8/3P4/8/"),
+                            "En passant did not remove the pawn");
+                });
     }
 
     private void kingOfTheHillPersistence() throws Exception {

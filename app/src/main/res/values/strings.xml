@@ -315,6 +315,10 @@
     <string name="options_play_white">White</string>
     <string name="options_quiescent_off">Quiescence search off</string>
     <string name="options_quiescent_on">Quiescence search on</string>
+    <string name="pgntool_delete_studies">Delete all studies</string>
+    <string name="pgntool_confirm_delete_studies">Delete all studies?</string>
+    <string name="pgntool_studies_deleted">All studies deleted</string>
+    <string name="pgntool_delete_item_count">Items to delete: %1$d</string>
     <string name="pgntool_confirm_delete_games">Delete all games from the game database?</string>
     <string name="pgntool_confirm_delete_practice">Delete all practice positions?</string>
     <string name="pgntool_confirm_delete_puzzles">Delete all puzzle positions?</string>
@@ -585,12 +589,16 @@
     <string name="analysis_move_mistake">Mistake</string>
     <string name="analysis_move_blunder">Blunder</string>
     <string name="analysis_move_forced">Forced</string>
-    <string name="analysis_move_pending">Analyzing move…</string>
     <string name="analysis_move_unavailable">Analysis unavailable</string>
     <string name="analysis_white_to_move">White to move</string>
     <string name="analysis_black_to_move">Black to move</string>
     <string name="analysis_variation">Variation</string>
     <string name="analysis_back_to_main">Back to main</string>
+    <string name="analysis_edit_comment">Edit comment</string>
+    <string name="analysis_comment_hint">Tap to add a comment</string>
+    <string name="analysis_comment_title">Comment after the move</string>
+    <string name="analysis_start_comment_title">Comment before the first move</string>
+    <string name="analysis_engine">Engine</string>
     <string name="pgn_return_main_line">Return to main line</string>
     <string name="pgn_promote_variation">Make preferred continuation</string>
     <string name="pgn_delete_variation">Delete variation</string>
@@ -603,12 +611,10 @@
     <string name="analysis_builtin_warning">For better analysis, install an OEX-compatible chess engine.</string>
     <string name="analysis_dont_show_again">Don\'t show again</string>
     <string name="analysis_continue">Continue</string>
-    <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
     <string name="menu_analyse_game">Analyse game</string>
     <string name="menu_new_king_of_the_hill">New King of the Hill game</string>
     <string name="state_hill_win">King reached the hill</string>
     <string name="state_duck_stalemate_win">No moves left, which wins in Duck chess</string>
-    <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
     <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
@@ -626,6 +632,68 @@
     <string name="share_lichess_profile">Share my Lichess profile</string>
     <string name="app_link_invalid">This Chess link is invalid or unsupported.</string>
     <string name="app_link_too_large">This game is too large to share as a link. Share the complete game as PGN instead.</string>
-    <string name="app_link_no_engine">Engine analysis is unavailable for this variant. You can browse the board and moves.</string>
     <string name="share_failed">Could not share the game. Please try again.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_languages" translatable="false">
+        <item>en</item>
+        <item>ar</item>
+        <item>de</item>
+        <item>es</item>
+        <item>fa</item>
+        <item>fr</item>
+        <item>it</item>
+        <item>nl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>tr</item>
+        <item>zh</item>
+        <item>zh-TW</item>
+    </string-array>
+    <string-array name="move_input_ranks">
+        <item>one</item>
+        <item>two</item>
+        <item>three</item>
+        <item>four</item>
+        <item>five</item>
+        <item>six</item>
+        <item>seven</item>
+        <item>eight</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>knight|night</item>
+        <item>bishop</item>
+        <item>rook</item>
+        <item>queen</item>
+    </string-array>
+    <string name="practice_finished_position">Finished position</string>
+    <string name="practice_completed_collection">You completed all puzzles!</string>
+    <string name="import_start_failed">Could not start import</string>
+    <string name="import_failed">Import failed</string>
+    <string name="engine_uninstalled">Engine %1$s uninstalled</string>
+    <string name="engine_not_installed">No engine installed</string>
+    <string name="opening_database_uninstalled">Database %1$s uninstalled</string>
+    <string name="opening_database_not_installed">No database installed</string>
+    <string name="setup_use_illegal_position">Use illegal position?</string>
+    <string name="clock_minutes_hint">Minutes</string>
+    <string name="clock_increment_hint">Increment in seconds</string>
+    <string name="import_added">Added</string>
+    <string name="import_ignored">Ignored</string>
+    <string name="pgn_date_hint">PGN date</string>
+    <string name="eco_openings_description">ECO openings</string>
+    <string name="hotspot_result_game_over">Game over</string>
+    <string name="hotspot_result_defeat">Defeat</string>
+    <string name="hotspot_result_victory">Victory!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s has resigned.</string>
+    <string name="hotspot_result_you_resigned">You resigned.</string>
+    <string name="hotspot_result_mate_lost">You lost by checkmate.</string>
+    <string name="hotspot_result_mate_won">You won by checkmate.</string>
+    <string name="hotspot_result_draw">The game is a draw.</string>
+    <string name="hotspot_result_stalemate">The game is a draw by stalemate.</string>
+    <string name="hotspot_result_repetition">The game is a draw by 3-fold repetition.</string>
+    <string name="hotspot_result_fifty_moves">The game is a draw by the 50-move rule.</string>
+    <string name="hotspot_result_insufficient_material">The game is a draw by insufficient material.</string>
+    <string name="move_input_castle">castle</string>
+    <string name="move_input_captures">takes|captures</string>
 </resources>

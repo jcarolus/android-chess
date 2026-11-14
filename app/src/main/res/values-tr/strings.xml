@@ -279,6 +279,10 @@
     <string name="options_play_white">Beyaz</string>
     <string name="options_quiescent_off">Sessizlik araması kapalı</string>
     <string name="options_quiescent_on">Sessizlik araması açık</string>
+    <string name="pgntool_delete_studies">Tüm çalışmaları sil</string>
+    <string name="pgntool_confirm_delete_studies">Tüm çalışmalar silinsin mi?</string>
+    <string name="pgntool_studies_deleted">Tüm çalışmalar silindi</string>
+    <string name="pgntool_delete_item_count">Silinecek öğe sayısı: %1$d</string>
     <string name="pgntool_confirm_delete_games">Emin misiniz?</string>
     <string name="pgntool_confirm_practice_reset">Sıfırlamak istediğinize emin misiniz?</string>
     <string name="pgntool_create_db_explanation">Açılış veritabanı oluştur</string>
@@ -548,7 +552,6 @@
     <string name="analysis_move_mistake">Hata</string>
     <string name="analysis_move_blunder">Büyük hata</string>
     <string name="analysis_move_forced">Zorunlu</string>
-    <string name="analysis_move_pending">Hamle analiz ediliyor…</string>
     <string name="analysis_move_unavailable">Analiz kullanılamıyor</string>
     <string name="analysis_white_to_move">Beyazın sırası</string>
     <string name="analysis_black_to_move">Siyahın sırası</string>
@@ -566,7 +569,6 @@
     <string name="analysis_builtin_warning">Daha iyi analiz için OEX uyumlu bir satranç motoru yükleyin.</string>
     <string name="analysis_dont_show_again">Bir daha gösterme</string>
     <string name="analysis_continue">Devam et</string>
-    <string name="analysis_duck_unsupported">Ördek satrancı için analiz desteklenmiyor.</string>
     <string name="new_game_variant_standard">Standart</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Tepenin Şahı</string>
@@ -583,6 +585,25 @@
     <string name="share_lichess_profile">Lichess profilimi paylaş</string>
     <string name="app_link_invalid">Bu Chess bağlantısı geçersiz veya desteklenmiyor.</string>
     <string name="app_link_too_large">Bu oyun bağlantı olarak paylaşmak için çok büyük. Oyunun tamamını PGN olarak paylaşın.</string>
-    <string name="app_link_no_engine">Bu varyant için motor analizi kullanılamıyor. Tahtayı ve hamleleri inceleyebilirsiniz.</string>
     <string name="share_failed">Oyun paylaşılamadı. Lütfen tekrar deneyin.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>bir</item>
+        <item>iki</item>
+        <item>üç</item>
+        <item>dört</item>
+        <item>beş</item>
+        <item>altı</item>
+        <item>yedi</item>
+        <item>sekiz</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>at</item>
+        <item>fil</item>
+        <item>kale</item>
+        <item>vezir</item>
+    </string-array>
+    <string name="move_input_castle">rok</string>
+    <string name="move_input_captures">alır</string>
 </resources>

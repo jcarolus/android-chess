@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.FixedDropdownView;
 
@@ -36,6 +37,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
     private final ArrayList<String> speechVoiceNames = new ArrayList<>();
     private final ArrayList<String> speechEnginePackages = new ArrayList<>();
 
+    private CheckBox checkBoxMoveEntry, checkBoxConfirmMoveEntry;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +48,10 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
 
         checkBoxShowPiecesDescriptions = findViewById(R.id.CheckBoxShowPiecesDescriptions);
+        checkBoxMoveEntry = findViewById(R.id.CheckBoxMoveEntry);
+        checkBoxConfirmMoveEntry = findViewById(R.id.CheckBoxConfirmMoveEntry);
+        checkBoxMoveEntry.setOnCheckedChangeListener(
+                (button, checked) -> checkBoxConfirmMoveEntry.setEnabled(checked));
         checkBoxShowAccessibilityDrag = findViewById(R.id.CheckBoxShowAccessibilityDrag);
         checkBoxFieldColorDescriptions = findViewById(R.id.CheckBoxFieldColorDescriptions);
         checkBoxLastMoveWhenOverEmptySquare =
@@ -156,6 +163,10 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         sliderAccessibilityDelay.setValue(accessibilityDragDwellMs);
         sliderAccessibilityLastMoveDelay.setValue(accessibilityDragLastMoveDelayMs);
 
+        checkBoxMoveEntry.setChecked(prefs.getBoolean(PlayActivity.PREF_MOVE_ENTRY, false));
+        checkBoxConfirmMoveEntry.setEnabled(checkBoxMoveEntry.isChecked());
+        checkBoxConfirmMoveEntry.setChecked(
+                prefs.getBoolean(PlayActivity.PREF_CONFIRM_MOVE_ENTRY, false));
         checkBoxShowAccessibilityDrag.setChecked(
                 prefs.getBoolean("show_accessibility_drag_toggle", false));
         checkBoxFieldColorDescriptions.setChecked(
@@ -182,6 +193,9 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
+        editor.putBoolean(PlayActivity.PREF_MOVE_ENTRY, checkBoxMoveEntry.isChecked());
+        editor.putBoolean(
+                PlayActivity.PREF_CONFIRM_MOVE_ENTRY, checkBoxConfirmMoveEntry.isChecked());
         editor.putBoolean("show_pieces_descriptions", checkBoxShowPiecesDescriptions.isChecked());
         editor.putFloat("speechRate", sliderSpeechRate.getValue());
         editor.putFloat("speechPitch", sliderSpeechPitch.getValue());

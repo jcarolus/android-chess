@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Çalışmalar</string>
+    <string name="study_topic">Konu</string>
+    <string name="study_author">Yazar</string>
+    <string name="study_name">Çalışma</string>
+    <string name="study_chapter">Bölüm</string>
+    <string name="study_any_author">Tüm yazarlar</string>
+    <string name="study_title_by_author">%1$s — %2$s</string>
+    <string name="study_chapter_choice">%1$d. %2$s</string>
+    <string name="study_loading_chapters">Bölümler yükleniyor…</string>
+    <string name="study_open_chapter">Bölümü aç</string>
+    <string name="study_surprise">Beni şaşırt</string>
+    <string name="study_variations">Varyantlar</string>
+    <string name="study_before_move">Hamleden önce: %1$s</string>
+    <string name="study_after_move">Hamleden sonra: %1$s</string>
+    <string name="study_pgn_evaluation">Çalışma değerlendirmesi: %1$s</string>
+    <string name="study_next_chapter">Sonraki bölüm</string>
+    <string name="study_next_chapter_named">Bölüm: %1$s</string>
+</resources>

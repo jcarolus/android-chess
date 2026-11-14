@@ -1,7 +1,6 @@
 package jwtc.android.chess.tools;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,13 +15,13 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 import jwtc.android.chess.helpers.GameStore;
-import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.services.HMap;
+import jwtc.android.chess.R;
 
 public class ImportService extends Service {
     private static final String TAG = "ImportService";
@@ -31,6 +30,7 @@ public class ImportService extends Service {
     public static final int IMPORT_GAMES = 2;
     public static final int IMPORT_PRACTICE = 3;
     public static final int IMPORT_OPENINGS = 4;
+    public static final int IMPORT_STUDIES = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
     public static final int PICK_BINARY = 12;
@@ -90,6 +90,19 @@ public class ImportService extends Service {
             };
 
     private final Handler importDelivery = new Handler(Looper.getMainLooper());
+    private StudyPrompt studyPrompt;
+    private volatile boolean destroyed;
+
+    public static final class StudyPrompt {
+        final String filename;
+        final StudyImport.Defaults defaults;
+        private final CompletableFuture<Boolean> answer = new CompletableFuture<>();
+
+        StudyPrompt(String filename, StudyImport.Defaults defaults) {
+            this.filename = filename;
+            this.defaults = defaults;
+        }
+    }
     private final ImportPipeline pipeline =
             new ImportPipeline(
                     command -> new Thread(command, "ImportPipeline").start(),
@@ -137,6 +150,9 @@ public class ImportService extends Service {
         this.listeners.add(listener);
         if (latestIsImport) {
             pipeline.replay(listener);
+            if (studyPrompt != null) {
+                listener.onStudyMetadataRequired(studyPrompt);
+            }
         } else if (jobRunning) {
             listener.OnImportStarted(jobMode);
             listener.OnImportProgress(jobMode, jobSucceeded, jobFailed);
@@ -175,7 +191,8 @@ public class ImportService extends Service {
         if (mode != IMPORT_GAMES
                 && mode != IMPORT_PUZZLES
                 && mode != IMPORT_PRACTICE
-                && mode != IMPORT_OPENINGS) {
+                && mode != IMPORT_OPENINGS
+                && mode != IMPORT_STUDIES) {
             latestIsImport = false;
             jobMode = mode;
             jobOutcome = null;
@@ -193,24 +210,21 @@ public class ImportService extends Service {
                                     new PuzzleImportHandler(importApi, getContentResolver()));
                         });
                 break;
+            case IMPORT_STUDIES:
+                if (uri != null) {
+                    pipeline.start(mode, () -> {
+                        StudyImport study = new StudyImport(this, getUriDisplayName(uri),
+                                () -> openPgnSource(uri), this::askStudyMetadata);
+                        return new ImportJob(mode, study, study);
+                    });
+                }
+                break;
             case IMPORT_GAMES:
                 if (uri != null) {
                     pipeline.start(
                             mode,
-                            () -> {
-                                InputStream in =
-                                        new BufferedInputStream(
-                                                getContentResolver().openInputStream(uri));
-                                try {
-                                    return new ImportJob(
-                                            mode,
-                                            isZip(in) ? PgnSource.zip(in) : PgnSource.file(in),
-                                            new GameImportHandler(getContentResolver()));
-                                } catch (Exception error) {
-                                    in.close();
-                                    throw error;
-                                }
-                            });
+                            () -> new ImportJob(mode, openPgnSource(uri),
+                                    new GameImportHandler(getContentResolver())));
                 }
                 break;
             case IMPORT_PRACTICE:
@@ -337,6 +351,44 @@ public class ImportService extends Service {
                 && header[3] == 4;
     }
 
+    private PgnSource openPgnSource(Uri uri) throws IOException {
+        InputStream stream = getContentResolver().openInputStream(uri);
+        if (stream == null) {
+            throw new IOException("Could not open PGN source");
+        }
+        InputStream input = new BufferedInputStream(stream);
+        try {
+            return isZip(input) ? PgnSource.zip(input) : PgnSource.file(input);
+        } catch (IOException error) {
+            input.close();
+            throw error;
+        }
+    }
+
+    private boolean askStudyMetadata(String filename, StudyImport.Defaults defaults) throws Exception {
+        StudyPrompt prompt = new StudyPrompt(filename, defaults);
+        importDelivery.post(() -> {
+            if (destroyed) {
+                prompt.answer.complete(false);
+                return;
+            }
+            studyPrompt = prompt;
+            for (ImportListener listener : new ArrayList<>(listeners)) {
+                listener.onStudyMetadataRequired(prompt);
+            }
+        });
+        return prompt.answer.get();
+    }
+
+    void answerStudyPrompt(StudyPrompt prompt, String title, String topic, boolean accepted) {
+        if (studyPrompt == prompt) {
+            studyPrompt = null;
+            prompt.defaults.title = title;
+            prompt.defaults.topic = topic;
+            prompt.answer.complete(accepted);
+        }
+    }
+
     /** The file the user picked, or the bundled asset when none was picked. */
     private InputStream openInput(@Nullable Uri uri, String assetName) throws java.io.IOException {
         return uri == null
@@ -347,7 +399,12 @@ public class ImportService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
+        destroyed = true;
         pipeline.cancel();
+        if (studyPrompt != null) {
+            answerStudyPrompt(studyPrompt, null, null, false);
+        }
+        super.onDestroy();
     }
 
     public class LocalBinder extends Binder {
@@ -356,24 +413,20 @@ public class ImportService extends Service {
         }
     }
 
-    protected String getUriDisplayName(Context context, Uri uri) throws URISyntaxException {
-        Log.d(TAG, "getUriDisplayName " + uri.getScheme());
-
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            Cursor cursor = null;
-            try {
-                cursor = context.getContentResolver().query(uri, null, null, null, null);
-                if (cursor.moveToFirst()) {
-                    return Utils.getColumnString(cursor, OpenableColumns.DISPLAY_NAME);
+    private String getUriDisplayName(Uri uri) {
+        try (Cursor cursor = getContentResolver().query(
+                uri, new String[] {OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                String name = cursor.getString(0);
+                if (name != null && !name.trim().isEmpty()) {
+                    return name;
                 }
-            } catch (Exception e) {
-                Log.d(TAG, e.getMessage());
             }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getLastPathSegment();
+        } catch (RuntimeException error) {
+            Log.w(TAG, "Could not read the import filename", error);
         }
-
-        return null;
+        String name = uri.getLastPathSegment();
+        return name == null || name.trim().isEmpty() ? getString(R.string.studies) : name;
     }
 
     protected String collectGameDatabaseAsPGN() {
