@@ -815,10 +815,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void rebuildBoard() {
-        rebuildBoard(false);
-    }
-
-    protected final void rebuildBoard(boolean reusePieces) {
+        boolean reusePieces = reusesPieceViews();
         cancelMoveAnimation();
         if (!reusePieces) {
             chessBoardView.removePieces();
@@ -931,6 +928,10 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
 
         updateSelectedSquares();
         DisplayedPosition.publish(gameApi);
+    }
+
+    protected boolean reusesPieceViews() {
+        return false;
     }
 
     private void startMoveAnimation(int from, int to, int color, int piece) {
@@ -1516,9 +1517,17 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                         selectPosition(toPos);
                                     } else {
                                         markMoveEnteredByDragging(fromPos, toPos);
-                                        pieceViewFrom.setPos(toPos);
-                                        chessBoardView.layoutChild(pieceViewFrom);
-                                        requestMove(fromPos, toPos);
+                                        if (reusesPieceViews()) {
+                                            // A committed move will reconcile the board. A rejected
+                                            // move or a pending promotion keeps the piece here.
+                                            if (!requestMove(fromPos, toPos)) {
+                                                clearPendingDraggedMove();
+                                            }
+                                        } else {
+                                            pieceViewFrom.setPos(toPos);
+                                            chessBoardView.layoutChild(pieceViewFrom);
+                                            requestMove(fromPos, toPos);
+                                        }
                                         selectPosition(-1);
                                     }
                                     ChessBoardActivity.this.updateSelectedSquares();

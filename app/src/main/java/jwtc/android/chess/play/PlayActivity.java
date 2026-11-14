@@ -494,6 +494,7 @@ public class PlayActivity extends ChessBoardActivity
                     } else {
                         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
                     }
+                    chessBoardView.invalidatePieces();
                     rebuildBoard();
                     applyCapturedPiecesVisibility();
                     capturedWhitePieces.invalidatePieces();
@@ -530,8 +531,14 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     @Override
+    protected boolean reusesPieceViews() {
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        chessBoardView.invalidatePieces();
 
         SharedPreferences prefs = getPrefs();
 

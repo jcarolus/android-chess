@@ -403,13 +403,18 @@ public class AnalyzeActivity extends ChessBoardActivity {
     }
 
     @Override
+    protected boolean reusesPieceViews() {
+        return true;
+    }
+
+    @Override
     public void rebuildBoard() {
         if (includeAttackersAndDefendersInFieldDescription) {
             boardDescriptions.show(gameApi.rustVariant(), gameApi.getFEN());
         } else {
             boardDescriptions.clear();
         }
-        rebuildBoard(true);
+        super.rebuildBoard();
         boolean whiteToMove = gameApi.getTurn() == BoardConstants.WHITE;
         imageAnalysisTurn.setImageResource(
                 whiteToMove ? R.drawable.turnwhite : R.drawable.turnblack);
