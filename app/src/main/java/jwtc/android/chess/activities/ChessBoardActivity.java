@@ -815,10 +815,16 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void rebuildBoard() {
+        rebuildBoard(false);
+    }
 
+    protected final void rebuildBoard(boolean reusePieces) {
         cancelMoveAnimation();
-        chessBoardView.removePieces();
+        if (!reusePieces) {
+            chessBoardView.removePieces();
+        }
         chessBoardView.removeLabels();
+        ChessPieceView[] existingPieces = reusePieces ? chessBoardView.piecesBySquare() : null;
 
         final int state = gameApi.getState();
         final int turn = gameApi.getTurn();
@@ -888,11 +894,17 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                 piece = gameApi.pieceAt(color, i);
             }
 
+            ChessPieceView existing = existingPieces == null ? null : existingPieces[i];
+            if (existing != null && (existing.getPiece() != piece || existing.getColor() != color)) {
+                chessBoardView.removeView(existing);
+                existing = null;
+            }
             if (piece != BoardConstants.FIELD) {
-                ChessPieceView p = new ChessPieceView(this, color, piece, i);
-                p.setOnTouchListener(myTouchListener);
-
-                chessBoardView.addView(p);
+                if (existing == null) {
+                    ChessPieceView p = new ChessPieceView(this, color, piece, i);
+                    p.setOnTouchListener(myTouchListener);
+                    chessBoardView.addView(p);
+                }
 
                 if (piece == BoardConstants.KING) {
                     if (color == BoardConstants.WHITE && labelForWhiteKing != null) {
@@ -1327,7 +1339,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         String sRet = "";
         if (includeAttackersAndDefendersInFieldDescription) {
             int[] positions =
-                    gameApi.getAttackerPositionsTo(
+                    attackersForDescription(
                             pos,
                             gameApi.getTurn() == BoardConstants.BLACK
                                     ? BoardConstants.WHITE
@@ -1339,7 +1351,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                         R.string.attacked_by_pieces,
                                         getPieceDescriptionsForPosition(positions));
             }
-            positions = gameApi.getAttackerPositionsTo(pos, gameApi.getTurn());
+            positions = attackersForDescription(pos, gameApi.getTurn());
             if (positions.length > 0) {
                 sRet +=
                         ". "
@@ -1350,6 +1362,10 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         return sRet;
+    }
+
+    protected int[] attackersForDescription(int square, int color) {
+        return gameApi.getAttackerPositionsTo(square, color);
     }
 
     protected String getPieceDescriptionsForPosition(int[] positions) {

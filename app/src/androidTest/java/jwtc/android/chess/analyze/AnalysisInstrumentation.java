@@ -2,7 +2,9 @@ package jwtc.android.chess.analyze;
 
 import android.app.Instrumentation;
 import android.os.Bundle;
+import android.os.Looper;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -10,13 +12,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.engine.EngineEvaluation;
 import jwtc.android.chess.engine.EngineSession;
+import jwtc.android.chess.engine.RustSearchRequest;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.GameTree.Node;
+import jwtc.chess.board.BoardPosition;
 import jwtc.chess.board.BoardConstants;
 
 /** Exercises Analysis ownership through the real Local Engine, without an Activity. */
 public final class AnalysisInstrumentation {
     public static void verify(Instrumentation instrumentation) throws Exception {
+        verifyBoardDescriptions(instrumentation);
         verifyRecordedPositions();
         verifyStandard(instrumentation);
         verifyVariant(instrumentation, "[Variant \"Duck\"]\n\n1. e4@d5 *", true);
@@ -24,6 +29,55 @@ public final class AnalysisInstrumentation {
                 instrumentation,
                 "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*",
                 false);
+    }
+
+    private static void verifyBoardDescriptions(Instrumentation instrumentation) throws Exception {
+        int e4 = BoardPosition.square("e4");
+        int d5 = BoardPosition.square("d5");
+        CountDownLatch ready = new CountDownLatch(1);
+        AtomicReference<AnalysisBoardDescriptions> owner = new AtomicReference<>();
+        AtomicReference<int[]> delivered = new AtomicReference<>();
+        try {
+            instrumentation.runOnMainSync(
+                    () -> {
+                        AnalysisBoardDescriptions descriptions =
+                                new AnalysisBoardDescriptions(
+                                        () -> {
+                                            if (Looper.myLooper() == Looper.getMainLooper()) {
+                                                delivered.set(
+                                                        owner.get().attackersFor(
+                                                                e4, BoardConstants.BLACK));
+                                            }
+                                            ready.countDown();
+                                        });
+                        owner.set(descriptions);
+                        descriptions.show(
+                                RustSearchRequest.Variant.STANDARD,
+                                "7k/8/8/8/8/8/8/K7 w - - 0 1");
+                        descriptions.show(
+                                RustSearchRequest.Variant.STANDARD,
+                                "7k/8/8/3p4/8/8/8/K7 w - - 0 1");
+                        check(
+                                descriptions.attackersFor(e4, BoardConstants.BLACK).length == 0,
+                                "Square exposed attack details before delivery");
+                    });
+            check(ready.await(5, TimeUnit.SECONDS), "No square description delivered");
+            check(Arrays.equals(delivered.get(), new int[] {d5}),
+                    "Square received stale attackers or a callback off the UI thread");
+            instrumentation.runOnMainSync(
+                    () -> {
+                        owner.get().clear();
+                        check(
+                                owner.get().attackersFor(e4, BoardConstants.BLACK).length == 0,
+                                "Cleared Position retained attack details");
+                    });
+        } finally {
+            instrumentation.runOnMainSync(() -> {
+                if (owner.get() != null) {
+                    owner.get().close();
+                }
+            });
+        }
     }
 
     private static void verifyRecordedPositions() {

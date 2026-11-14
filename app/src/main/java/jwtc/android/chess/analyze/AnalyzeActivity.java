@@ -82,6 +82,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private Node lastScrolledNode;
     private List<Node> navigationLine = new ArrayList<>();
     private Analysis analysis;
+    private final AnalysisBoardDescriptions boardDescriptions =
+            new AnalysisBoardDescriptions(this::updateSelectedSquares);
     private View buttonBackToMain;
     private View buttonVariations;
     private TextView textViewComment;
@@ -268,6 +270,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        chessBoardView.invalidatePieces();
 
         SharedPreferences prefs = getPrefs();
 
@@ -401,7 +404,12 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     @Override
     public void rebuildBoard() {
-        super.rebuildBoard();
+        if (includeAttackersAndDefendersInFieldDescription) {
+            boardDescriptions.show(gameApi.rustVariant(), gameApi.getFEN());
+        } else {
+            boardDescriptions.clear();
+        }
+        rebuildBoard(true);
         boolean whiteToMove = gameApi.getTurn() == BoardConstants.WHITE;
         imageAnalysisTurn.setImageResource(
                 whiteToMove ? R.drawable.turnwhite : R.drawable.turnblack);
@@ -423,6 +431,11 @@ public class AnalyzeActivity extends ChessBoardActivity {
         }
         updateEvaluation();
         analysis.startNextAnalysis();
+    }
+
+    @Override
+    protected int[] attackersForDescription(int square, int color) {
+        return boardDescriptions.attackersFor(square, color);
     }
 
     private void updateEvaluation() {
@@ -531,6 +544,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     @Override
     protected void onDestroy() {
+        boardDescriptions.close();
         if (analysisDialog != null) {
             analysisDialog.dismiss();
             analysisDialog = null;
@@ -858,6 +872,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     @Override
     protected void onPause() {
+        boardDescriptions.clear();
         analysis.pause();
         if (sessionLoaded) {
             if (lGameID > 0) {

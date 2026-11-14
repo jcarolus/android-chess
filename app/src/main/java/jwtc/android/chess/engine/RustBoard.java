@@ -559,11 +559,16 @@ public final class RustBoard {
         if (query() == null) {
             return new int[0];
         }
+        return attackersForPosition(variant, toFEN(), square, colour);
+    }
+
+    public static int[] attackersForPosition(
+            RustSearchRequest.Variant variant, String fen, int square, int colour) {
         String[] positions =
                 RustBoardResult.words(
                         RustBoardNative.attackers(
                                         variant,
-                                        toFEN(),
+                                        fen,
                                         new String[0],
                                         colour == BoardConstants.WHITE,
                                         Pos.toString(square))

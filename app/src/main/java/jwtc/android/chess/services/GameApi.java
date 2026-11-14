@@ -227,7 +227,7 @@ public class GameApi {
         }
     }
 
-    RustSearchRequest.Variant rustVariant() {
+    public RustSearchRequest.Variant rustVariant() {
         return board.variant();
     }
 
