@@ -2,7 +2,9 @@ package jwtc.android.chess.engine;
 
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.GameTree.Node;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -14,7 +16,8 @@ public final class RustLocalEngine extends EngineApi {
     private long handle;
     private long session;
     private boolean destroyed;
-    private GameApi.PositionSnapshot deliveryPosition;
+    private Node deliveryNode;
+    private String deliveryFen;
 
     public RustLocalEngine(GameApi gameApi) {
         this.gameApi = gameApi;
@@ -66,11 +69,15 @@ public final class RustLocalEngine extends EngineApi {
         }
         long id = beginSearch(SearchPurpose.ANALYSIS);
         RustSearchRequest.Variant variant = variant();
+        boolean quiescence = quiescentSearchOn;
         launch(
-                new RustSearchRequest(
-                        id, variant, fen, new String[0], 0, millis, quiescentSearchOn),
+                id,
+                variant,
                 null,
-                fen);
+                fen,
+                () ->
+                        new RustSearchRequest(
+                                id, variant, fen, new String[0], 0, millis, quiescence));
     }
 
     private void start(
@@ -81,11 +88,15 @@ public final class RustLocalEngine extends EngineApi {
                 throw new IllegalArgumentException("Missing position");
             }
             RustSearchRequest.Variant variant = variant();
+            boolean quiescence = quiescentSearchOn;
             launch(
-                    RustSearchRequest.fromSnapshot(
-                            id, position, depth, millis, quiescentSearchOn, variant),
+                    id,
+                    variant,
                     position,
-                    position.fen);
+                    position.fen,
+                    () ->
+                            RustSearchRequest.fromSnapshot(
+                                    id, position, depth, millis, quiescence, variant));
         } catch (RuntimeException | LinkageError error) {
             reportError(id, error);
         }
@@ -102,12 +113,20 @@ public final class RustLocalEngine extends EngineApi {
     }
 
     private boolean positionIsCurrent() {
-        return deliveryPosition != null && gameApi.isCurrentPosition(deliveryPosition);
+        return !gameApi.hasPendingDuckMove()
+                && deliveryNode == gameApi.getCurrentNode()
+                && deliveryFen.equals(gameApi.getFEN());
     }
 
-    private void launch(RustSearchRequest request, GameApi.PositionSnapshot snapshot, String fen) {
+    private void launch(
+            long id,
+            RustSearchRequest.Variant variant,
+            GameApi.PositionSnapshot snapshot,
+            String fen,
+            Supplier<RustSearchRequest> prepareRequest) {
         try {
-            deliveryPosition = gameApi.getPositionSnapshot(gameApi.getCurrentNode());
+            deliveryNode = gameApi.getCurrentNode();
+            deliveryFen = gameApi.getFEN();
             if (session == 0) {
                 session = RustNative.createSession();
                 if (session == 0) {
@@ -127,6 +146,7 @@ public final class RustLocalEngine extends EngineApi {
                                 RustSearchResult result = null;
                                 Throwable failure = null;
                                 try {
+                                    RustSearchRequest request = prepareRequest.get();
                                     result =
                                             RustNative.search(
                                                     ownedSession,
@@ -136,10 +156,8 @@ public final class RustLocalEngine extends EngineApi {
                                                             updateHandler.post(
                                                                     () ->
                                                                             deliverProgress(
-                                                                                    request.searchId,
-                                                                                    snapshot,
-                                                                                    fen,
-                                                                                    request.variant,
+                                                                                    id, snapshot,
+                                                                                    fen, variant,
                                                                                     progress)));
                                     if (playing
                                             && result != null
@@ -172,21 +190,14 @@ public final class RustLocalEngine extends EngineApi {
                                 final RustSearchResult completed = result;
                                 final Throwable error = failure;
                                 updateHandler.post(
-                                        () ->
-                                                finish(
-                                                        request.searchId,
-                                                        snapshot,
-                                                        fen,
-                                                        request.variant,
-                                                        completed,
-                                                        error));
+                                        () -> finish(id, snapshot, fen, variant, completed, error));
                             },
                             "RustLocalEngine");
             updateHandler.post(
                     () -> {
-                        if (isCurrentSearch(request.searchId) && !destroyed) {
+                        if (isCurrentSearch(id) && !destroyed) {
                             for (EngineListener listener : new ArrayList<>(listeners)) {
-                                if (!isCurrentSearch(request.searchId) || destroyed) {
+                                if (!isCurrentSearch(id) || destroyed) {
                                     break;
                                 }
                                 listener.OnEngineStarted();
@@ -200,7 +211,7 @@ public final class RustLocalEngine extends EngineApi {
                 handle = 0;
             }
             worker = null;
-            reportError(request.searchId, error);
+            reportError(id, error);
         }
     }
 

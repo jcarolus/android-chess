@@ -17,12 +17,63 @@ import jwtc.chess.board.BoardConstants;
 /** Exercises Analysis ownership through the real Local Engine, without an Activity. */
 public final class AnalysisInstrumentation {
     public static void verify(Instrumentation instrumentation) throws Exception {
+        verifyRecordedPositions();
         verifyStandard(instrumentation);
         verifyVariant(instrumentation, "[Variant \"Duck\"]\n\n1. e4@d5 *", true);
         verifyVariant(
                 instrumentation,
                 "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*",
                 false);
+    }
+
+    private static void verifyRecordedPositions() {
+        GameApi game = GameApi.forAnalysis();
+        for (String pgn :
+                new String[] {
+                    "1. Nf3 Nf6 (1... d5 2. d4) 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
+                    "[Variant \"Duck\"]\n\n1. e4@d5 (1. d4@e5 d5@e4) e5@d4 2. Nf3@c6 *",
+                    "[Variant \"Fischerandom\"]\n"
+                        + "[FEN \"4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1\"]\n\n"
+                        + "1. O-O (1. O-O-O) *"
+                }) {
+            // Compare with the live board's replay, including history-dependent terminal states.
+            GameApi replayed = new GameApi();
+            check(game.loadPGN(pgn) && replayed.loadPGN(pgn), "Cannot load recorded positions");
+            verifyLine(game, game.getRootNode(), replayed, replayed.getRootNode());
+        }
+        String fen = game.getFEN();
+        check(!game.loadPGN("1. e4 e5 2. Ke4 *"), "Accepted an invalid replacement");
+        check(game.isChess960Variant() && fen.equals(game.getFEN()), "Rollback lost Chess 960");
+
+        check(game.loadPGN("1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 *"), "Cannot load repetition");
+        check(
+                game.goTo(game.getRootNode()) && game.goTo(game.getMainLineNodes().get(6)),
+                "Cannot return to recorded position");
+        check(game.requestMove("Ng8"), "Cannot play from recorded position");
+        check(game.getEngineState() == BoardConstants.DRAW_REPEAT, "Restored board lost history");
+    }
+
+    private static void verifyLine(GameApi game, Node node, GameApi replayed, Node reference) {
+        Node displayed = game.getCurrentNode();
+        GameApi.PositionSnapshot snapshot = game.getPositionSnapshot(node);
+        check(game.getCurrentNode() == displayed, "Reading a recorded position moved the board");
+        check(game.goTo(node) && replayed.goTo(reference), "Cannot navigate to recorded position");
+        GameApi.PositionSnapshot expected = replayed.getPositionSnapshot(reference);
+        check(
+                snapshot.fen.equals(expected.fen) && snapshot.fen.equals(game.getFEN()),
+                "Recorded position differs from replay");
+        check(
+                snapshot.state == expected.state && snapshot.state == game.getEngineState(),
+                "Recorded state differs from replay");
+        check(snapshot.positionCommand.equals(expected.positionCommand), "Move history differs");
+        check(snapshot.moves.size() == expected.moves.size(), "Legal move count differs");
+        for (GameApi.PositionMove move : expected.moves) {
+            GameApi.PositionMove recorded = snapshot.findMove(move.uci);
+            check(recorded != null && recorded.san.equals(move.san), "Recorded SAN differs");
+        }
+        for (int i = 0; i < node.getChildren().size(); i++) {
+            verifyLine(game, node.getChildren().get(i), replayed, reference.getChildren().get(i));
+        }
     }
 
     private static void verifyStandard(Instrumentation instrumentation) throws Exception {
@@ -35,7 +86,7 @@ public final class AnalysisInstrumentation {
         try {
             instrumentation.runOnMainSync(
                     () -> {
-                        GameApi board = new GameApi();
+                        GameApi board = GameApi.forAnalysis();
                         check(board.loadPGN("1. e4 *"), "Cannot load Analysis Game");
                         game.set(board);
                         Analysis analysis =
@@ -110,7 +161,8 @@ public final class AnalysisInstrumentation {
                         analysis.selectPosition();
                         Node root = board.getCurrentNode();
                         Analysis.Summary earlier = analysis.summary(root);
-                        AnalysisResults.Result rootResult = analysis.result(analysis.position(root));
+                        AnalysisResults.Result rootResult =
+                                analysis.result(analysis.position(root));
                         check(
                                 earlier.recommendation != null
                                         && earlier.recommendation.uci.equals(rootResult.bestMove),
@@ -170,7 +222,7 @@ public final class AnalysisInstrumentation {
         try {
             instrumentation.runOnMainSync(
                     () -> {
-                        GameApi board = new GameApi();
+                        GameApi board = GameApi.forAnalysis();
                         check(board.loadPGN(pgn), "Cannot load variant game");
                         game[0] = board;
                         Analysis analysis =

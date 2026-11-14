@@ -126,7 +126,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         evaluationView = findViewById(R.id.engine_evaluation);
-        gameApi = new GameApi();
+        gameApi = GameApi.forAnalysis();
         analysis =
                 new Analysis(
                         this,
@@ -134,7 +134,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
                         new Analysis.Listener() {
                             @Override
                             public void onChanged() {
-                                updateNavigation();
                                 updateMoveSummary();
                                 updateEvaluation();
                             }
@@ -211,13 +210,31 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 null,
                 landscape ? null : evaluationView,
                 landscape ? 24 : 0);
-        findViewById(R.id.ButtonPrevious).setOnClickListener(v -> gameApi.undoMove());
+        View buttonPrevious = findViewById(R.id.ButtonPrevious);
+        buttonPrevious.setOnClickListener(v -> gameApi.undoMove());
+        buttonPrevious.setOnLongClickListener(
+                v -> {
+                    if (gameApi.hasPendingDuckMove()) {
+                        gameApi.undoMove();
+                    }
+                    gameApi.goTo(gameApi.getRootNode());
+                    return true;
+                });
         buttonNext.setOnClickListener(
                 v -> {
                     Node next = nextMove();
                     if (next != null) {
                         gameApi.goTo(next);
                     }
+                });
+        buttonNext.setOnLongClickListener(
+                v -> {
+                    Node end = navigationLine.get(navigationLine.size() - 1);
+                    while (end.getNext() != null) {
+                        end = end.getNext();
+                    }
+                    gameApi.goTo(end);
+                    return true;
                 });
         MenuDialog menuDialog =
                 new MenuDialog(this, this::onMenuSelected, REQUEST_MENU, R.array.analyze_menu);
@@ -479,7 +496,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
             showEngineWarning();
             evaluationView.clearEvaluation();
             updateMoveSummary();
-            updateNavigation();
             analysis.startNextAnalysis();
         }
     }
@@ -539,8 +555,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
                     .scrollToPositionWithOffset(Math.max(0, index - 1), 0);
             lastScrolledNode = current;
         }
-        findViewById(R.id.ButtonPrevious).setEnabled(current.getParent() != null);
-        buttonNext.setEnabled(nextMove() != null);
+        boolean pendingDuckMove = gameApi.hasPendingDuckMove();
+        findViewById(R.id.ButtonPrevious).setEnabled(pendingDuckMove || current.getParent() != null);
+        buttonNext.setEnabled(!pendingDuckMove && nextMove() != null);
     }
 
     /** The move Next plays: the selected line's continuation, else the preferred one. */

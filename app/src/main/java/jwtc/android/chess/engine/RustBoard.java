@@ -102,6 +102,42 @@ public final class RustBoard {
         }
     }
 
+    /** A completed Position and its legal moves, ready to display without native replay. */
+    public static final class Snapshot {
+        private final Frame frame;
+        private final RustSearchRequest.Variant variant;
+        public final List<LegalMove> moves;
+
+        private Snapshot(Frame frame, RustSearchRequest.Variant variant, List<LegalMove> moves) {
+            this.frame = frame;
+            this.variant = variant;
+            this.moves = moves;
+        }
+
+        public String fen() {
+            return frame.fen;
+        }
+    }
+
+    public synchronized Snapshot capturePosition() {
+        return new Snapshot(current(), variant, legalMoves());
+    }
+
+    /** Installs the recorded path so subsequent moves still have their repetition history. */
+    public synchronized void restorePath(List<Snapshot> path) {
+        if (replay != null) {
+            replay.reset();
+        }
+        Snapshot root = path.get(0);
+        initialFen = root.fen();
+        variant = root.variant;
+        frames.clear();
+        for (Snapshot snapshot : path) {
+            frames.add(snapshot.frame);
+        }
+        legal = path.get(path.size() - 1).moves;
+    }
+
     public RustBoard() {
         initFEN(START);
     }
