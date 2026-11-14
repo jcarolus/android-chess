@@ -1,4 +1,5 @@
 use crate::position::*;
+mod duck;
 mod table;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
@@ -7,6 +8,7 @@ const MATE: i32 = 100000;
 // Include mate scores inside the full window so a winning or losing line is built.
 const FULL_WINDOW: (i32, i32) = (-MATE - 1, MATE + 1);
 const ASPIRATION_MARGIN: i32 = 50;
+const MAX_SEARCH_DEPTH: u8 = 15;
 #[derive(Clone, Copy, Debug)]
 pub enum SearchLimit {
     Depth(u8),
@@ -34,7 +36,7 @@ impl SearchRequest {
         options: SearchOptions,
     ) -> Result<Self, Error> {
         match limit {
-            SearchLimit::Depth(1..=15) | SearchLimit::TimeMillis(1..) => {}
+            SearchLimit::Depth(1..=MAX_SEARCH_DEPTH) | SearchLimit::TimeMillis(1..) => {}
             _ => return Err(invalid("Depth must be 1..15 or time must be positive")),
         }
         let mut position = Position::from_fen(variant, starting_position)?;
@@ -110,6 +112,7 @@ struct Worker<'a> {
     table: &'a mut Table,
     best_at_ply: [Option<Move>; 20],
     quiet_history: Box<[[[u16; 64]; 64]; 2]>,
+    duck_history: Option<Box<duck::History>>,
     pv: [Vec<Move>; 20],
 }
 impl<'a> Worker<'a> {
@@ -139,6 +142,7 @@ impl<'a> Worker<'a> {
             table,
             best_at_ply: [None; 20],
             quiet_history: Box::new([[[0; 64]; 64]; 2]),
+            duck_history: (p.variant == Variant::Duck).then(|| Box::new(duck::History::new())),
             pv: std::array::from_fn(|_| Vec::new()),
         }
     }
@@ -179,125 +183,6 @@ impl<'a> Worker<'a> {
             }
             margin *= 2;
         }
-    }
-
-    fn alpha_beta_duck(
-        &mut self,
-        p: &Position,
-        moves: Option<&mut [Move]>,
-        depth: u8,
-        ply: usize,
-        (mut alpha, beta): (i32, i32),
-        previous_pv: &[Move],
-    ) -> i32 {
-        self.pv[ply].clear();
-        if self.stopped() {
-            return alpha;
-        }
-        if p.drawn_in_search(&self.seen[self.seen_from..]) {
-            return 0;
-        }
-        let alpha_start = alpha;
-        let key = if depth > 0 { p.search_key() } else { 0 };
-        let entry = if depth > 0 {
-            self.table.probe(key)
-        } else {
-            None
-        };
-        if let Some(score) = entry.and_then(|e| e.cutoff(self.repetition_key, depth, alpha, beta)) {
-            return score;
-        }
-        let mut generated;
-        let moves = match moves {
-            Some(moves) => moves,
-            None => {
-                generated = p.pseudo_moves();
-                &mut generated
-            }
-        };
-        if moves.is_empty() {
-            self.nodes += 1;
-            return MATE;
-        }
-        if depth == 0 {
-            self.nodes += 1;
-            return p.evaluate();
-        }
-        let pv_move = previous_pv.first().copied();
-        let table_move = entry.map(|e| e.best_move);
-        let mut scores = ordered_scores(p, moves, pv_move, table_move, self.best_at_ply[ply], None);
-        let mut best = -MATE - 1;
-        let mut first_turn = true;
-        for index in 0..moves.len() {
-            pick(moves, &mut scores, index);
-            let mut m = moves[index];
-            let next = p.make_unrecorded(m);
-            let mut line = Vec::new();
-            let context = self.enter(p, m);
-            let value = if next.pieces.iter().any(|p| p[KING] == 0) {
-                -next.evaluate()
-            } else if next.drawn_in_search(&self.seen[self.seen_from..]) {
-                0
-            } else {
-                let mut best_duck = -MATE - 1;
-                // Prefer destinations of the opponent's non-capturing moves.
-                let mut candidates = duck_placement_candidates(&next);
-                // A restricted candidate set must not force a stalemate win for the opponent.
-                if candidates.iter().all(|&square| {
-                    let mut placed = next.clone();
-                    placed.duck = Some(square);
-                    placed.pseudo_moves().is_empty()
-                }) {
-                    candidates = (0..64)
-                        .filter(|&square| next.occupied() & bit(square) == 0)
-                        .collect();
-                }
-                let placement_hint = pv_move
-                    .filter(|hint| hint.same_piece_move(m))
-                    .or_else(|| table_move.filter(|hint| hint.same_piece_move(m)))
-                    .and_then(|hint| hint.duck);
-                if let Some(index) = candidates.iter().position(|&s| Some(s) == placement_hint) {
-                    candidates[..=index].rotate_right(1);
-                }
-                for square in candidates {
-                    let turn = Move {
-                        duck: Some(square),
-                        ..m
-                    };
-                    let mut duck_board = next.clone();
-                    duck_board.duck = turn.duck;
-                    let tail = pv_tail(previous_pv, turn);
-                    let value = self.search_child(first_turn, (alpha, beta), |worker, window| {
-                        worker.alpha_beta_duck(&duck_board, None, depth - 1, ply + 1, window, tail)
-                    });
-                    first_turn = false;
-                    if value > best_duck {
-                        best_duck = value;
-                        m = turn;
-                        line = self.pv[ply + 1].clone();
-                    }
-                    alpha = alpha.max(best_duck);
-                    if best_duck >= beta || self.interrupted {
-                        break;
-                    }
-                }
-                best_duck
-            };
-            first_turn = false;
-            self.leave(p, m, context);
-            if value > best && !self.interrupted {
-                best = value;
-                self.best_at_ply[ply] = Some(m);
-                self.pv[ply] = vec![m];
-                self.pv[ply].extend(line);
-            }
-            alpha = alpha.max(best);
-            if best >= beta || self.interrupted {
-                break;
-            }
-        }
-        self.store(key, depth, ply, best, alpha_start, beta);
-        best
     }
 
     fn search_child(
@@ -525,21 +410,6 @@ impl<'a> Worker<'a> {
         alpha
     }
 }
-fn duck_placement_candidates(p: &Position) -> Vec<usize> {
-    let mut unavailable = p.occupied();
-    p.pseudo_moves()
-        .into_iter()
-        .filter_map(|m| {
-            let destination = bit(m.to);
-            if m.capture || unavailable & destination != 0 {
-                return None;
-            }
-            unavailable |= destination;
-            Some(m.to)
-        })
-        .collect()
-}
-
 fn pv_tail(previous: &[Move], m: Move) -> &[Move] {
     match previous.split_first() {
         Some((hint, tail)) if hint.same_piece_move(m) && hint.duck == m.duck => tail,
@@ -675,6 +545,7 @@ impl SearchSession {
             _ => 1..=14,
         };
         let mut previous_pv = Vec::new();
+        let mut stable_duck_iterations = 0;
         for depth in depths {
             let previous_score = result.has_evaluation.then_some(result.score);
             let Some(score) =
@@ -682,6 +553,14 @@ impl SearchSession {
             else {
                 break;
             };
+            if p.variant == Variant::Duck {
+                let duck = worker.pv[0].first().and_then(|m| m.duck);
+                if duck.is_some() && duck == previous_pv.first().and_then(|m: &Move| m.duck) {
+                    stable_duck_iterations += 1;
+                } else {
+                    stable_duck_iterations = 0;
+                }
+            }
             previous_pv.clone_from(&worker.pv[0]);
             result.completed_depth = depth;
             result.has_evaluation = true;
@@ -689,6 +568,7 @@ impl SearchSession {
             // Movers alternate along the line, starting with the root's side to move.
             result.pv = worker.pv[0]
                 .iter()
+                .take(usize::from(MAX_SEARCH_DEPTH))
                 .enumerate()
                 .map(|(i, m)| p.external(p.turn ^ (i % 2), *m))
                 .collect();
@@ -696,7 +576,14 @@ impl SearchSession {
             result.nodes = worker.nodes;
             result.elapsed_micros = start.elapsed().as_micros() as u64;
             publish(SearchEvent::Progress(result.clone()));
-            if score == MATE || budget.is_some_and(|b| worker.start.elapsed() > b / 3) {
+            let soft_budget = budget.map(|budget| {
+                if p.variant != Variant::Duck || depth < 2 || stable_duck_iterations >= 2 {
+                    budget / 3
+                } else {
+                    budget / 2
+                }
+            });
+            if score == MATE || soft_budget.is_some_and(|b| worker.start.elapsed() > b) {
                 break;
             }
         }
@@ -784,6 +671,10 @@ mod tests {
             (
                 (Variant::Chess960, chess960, true),
                 (Variant::Chess960, other_rook_files, true),
+            ),
+            (
+                (Variant::Duck, standard, true),
+                (Variant::Standard, standard, true),
             ),
         ] {
             let request = |variant, fen, quiescence| {
@@ -966,24 +857,6 @@ mod tests {
         assert!(worker.interrupted);
         assert!(worker.pv[0].is_empty());
         assert!(worker.table.probe(p.search_key()).is_none());
-    }
-
-    #[test]
-    fn duck_placement_candidates_keep_each_destination_in_first_seen_order() {
-        let p = Position::from_fen(Variant::Duck, "7k/8/8/8/3$4/8/8/KN3N2 w - - 0 1").unwrap();
-        let mut expected = Vec::new();
-        let mut duplicates = 0;
-        for m in p.pseudo_moves() {
-            if !m.capture && p.occupied() & bit(m.to) == 0 {
-                if expected.contains(&m.to) {
-                    duplicates += 1;
-                } else {
-                    expected.push(m.to);
-                }
-            }
-        }
-        assert!(duplicates > 0);
-        assert_eq!(duck_placement_candidates(&p), expected);
     }
 
     #[test]

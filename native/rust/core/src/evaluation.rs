@@ -118,7 +118,23 @@ impl Position {
         } else if self.variant == Variant::Duck {
             let king = self.king(t);
             let mobility = self.mobility_with(KING, t, king, occ).count_ones() as i32;
-            5 * mobility - VALUES[PAWN] * i32::from(self.attacked(t, king))
+            let attacked = i32::from(self.attacked(t, king));
+            let danger = if t == self.turn {
+                let old_duck = self.duck.map_or(0, bit);
+                let mut blockable = 0i32;
+                let mut unblockable = 0;
+                for path in self.king_capture_paths(t) {
+                    if path & !old_duck == 0 {
+                        unblockable += 1;
+                    } else {
+                        blockable += 1;
+                    }
+                }
+                attacked.max(unblockable + (blockable - 1).max(0))
+            } else {
+                attacked
+            };
+            5 * mobility - VALUES[PAWN] * danger
         } else if self.castling[t] & 8 != 0 {
             60
         } else if self.castling[t] == 0 {

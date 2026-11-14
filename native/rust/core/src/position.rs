@@ -189,6 +189,20 @@ fn slide(directions: std::ops::Range<usize>, occupied: u64, s: usize) -> u64 {
     }
     result
 }
+pub(crate) fn between(from: usize, to: usize) -> u64 {
+    let row = to as i32 / 8 - from as i32 / 8;
+    let file = to as i32 % 8 - from as i32 % 8;
+    if row != 0 && file != 0 && row.abs() != file.abs() {
+        return 0;
+    }
+    let step = 8 * row.signum() + file.signum();
+    let mut mask = 0;
+    for offset in 1..row.abs().max(file.abs()) {
+        mask |= bit((from as i32 + offset * step) as usize);
+    }
+    mask
+}
+
 pub(crate) fn bit(s: usize) -> u64 {
     1u64 << s
 }
@@ -471,11 +485,18 @@ impl Position {
     }
     /// Variant and original castling rook files are fixed for one search.
     pub(crate) fn search_key(&self) -> u64 {
-        let duck = self.duck.map_or(0, |square| square as u64 + 1);
+        self.search_key_with_duck(self.duck)
+    }
+    fn search_key_with_duck(&self, duck: Option<usize>) -> u64 {
+        let duck = duck.map_or(0, |square| square as u64 + 1);
         let queen_phase = self.plies_until_queen_mobility() as u64;
         let castling = u16::from_le_bytes(self.castling) as u64;
         let state = self.halfmove as u64 | (castling << 32) | (queen_phase << 48) | (duck << 52);
         self.key ^ mix_key(state)
+    }
+    pub(crate) fn duckless_search_key(&self) -> u64 {
+        debug_assert_eq!(self.variant, Variant::Duck);
+        self.search_key_with_duck(None) ^ 0xe3b1_07de_b326_a8c9
     }
     /// The key built from scratch; `make_unrecorded` keeps `key` equal to it.
     fn computed_key(&self) -> u64 {
@@ -569,6 +590,25 @@ impl Position {
         // would capture.
         let occupied = self.occupied();
         (0..6).any(|p| self.pieces[t ^ 1][p] & self.range_with(p, t, s, occupied) != 0)
+    }
+    /// Interposition squares for each capture of this king with the duck lifted.
+    pub(crate) fn king_capture_paths(&self, side: usize) -> impl Iterator<Item = u64> + '_ {
+        debug_assert_eq!(self.variant, Variant::Duck);
+        let king = self.king(side);
+        let occupied = self.own(0) | self.own(1);
+        self.pieces[side ^ 1]
+            .into_iter()
+            .enumerate()
+            .flat_map(move |(piece, enemies)| {
+                let attackers = enemies & self.range_with(piece, side, king, occupied);
+                squares(attackers).map(move |attacker| {
+                    if matches!(piece, BISHOP | ROOK | QUEEN) {
+                        between(king, attacker)
+                    } else {
+                        0
+                    }
+                })
+            })
     }
     pub fn in_check(&self) -> bool {
         self.variant != Variant::Duck && self.attacked(self.turn, self.king(self.turn))
@@ -864,7 +904,7 @@ impl Position {
     }
     /// A copy of the board state that leaves out the game history and the
     /// repetition list, so it never allocates.
-    fn without_records(&self) -> Self {
+    pub(crate) fn without_records(&self) -> Self {
         Self {
             pieces: self.pieces,
             turn: self.turn,
