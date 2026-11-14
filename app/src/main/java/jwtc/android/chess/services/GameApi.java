@@ -173,6 +173,24 @@ public class GameApi {
             }
             return null;
         }
+
+        /** Resolves a search turn, whose Duck placement is a suffix on the piece move. */
+        public PositionMove findTurn(String uci) {
+            int placement = uci == null ? -1 : uci.indexOf('@');
+            if (placement == -1) {
+                return findMove(uci);
+            }
+            PositionMove pieceMove = findMove(uci.substring(0, placement));
+            if (pieceMove == null) {
+                return null;
+            }
+            try {
+                int duck = Pos.fromString(uci.substring(placement + 1));
+                return new PositionMove(pieceMove.move, pieceMove.san, duck);
+            } catch (Exception invalidSquare) {
+                return null;
+            }
+        }
     }
 
     /** Main-thread only; both placement and history must match before cloning the live board. */
@@ -184,18 +202,26 @@ public class GameApi {
 
     public static final class PositionMove {
         public final int move;
+        public final int duckMove;
         public final String uci;
         public final String san;
 
         private PositionMove(int move, String san) {
+            this(move, san, -1);
+        }
+
+        private PositionMove(int move, String san, int duckMove) {
             this.move = move;
-            this.san = san;
+            this.duckMove = duckMove;
+            String placement = duckMove == -1 ? "" : "@" + Pos.toString(duckMove);
+            this.san = san + placement;
             this.uci =
                     Pos.toString(Move.getFrom(move))
                             + Pos.toString(Move.getTo(move))
                             + (Move.isPromotionMove(move)
                                     ? "pnbrqk".charAt(Move.getPromotionPiece(move))
-                                    : "");
+                                    : "")
+                            + placement;
         }
     }
 

@@ -578,7 +578,6 @@
     <string name="analysis_builtin_warning">لتحليل أفضل، ثبّت محرك شطرنج متوافقًا مع OEX.</string>
     <string name="analysis_dont_show_again">عدم الإظهار مجددًا</string>
     <string name="analysis_continue">متابعة</string>
-    <string name="analysis_duck_unsupported">تحليل شطرنج البطة غير مدعوم.</string>
     <string name="new_game_variant_standard">قياسي</string>
     <string name="new_game_variant_duck">البطة</string>
     <string name="new_game_variant_king_of_the_hill">ملك التل</string>
@@ -595,7 +594,6 @@
     <string name="share_lichess_profile">مشاركة ملفي على Lichess</string>
     <string name="app_link_invalid">رابط Chess هذا غير صالح أو غير مدعوم.</string>
     <string name="app_link_too_large">هذه المباراة أكبر من أن تتم مشاركتها كرابط. شارك المباراة كاملة بصيغة PGN بدلاً من ذلك.</string>
-    <string name="app_link_no_engine">تحليل المحرك غير متاح لهذا النوع. يمكنك استعراض الرقعة والنقلات.</string>
     <string name="share_failed">تعذرت مشاركة المباراة. يرجى المحاولة مجددًا.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

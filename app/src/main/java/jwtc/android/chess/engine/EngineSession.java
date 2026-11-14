@@ -39,14 +39,14 @@ public final class EngineSession {
     }
 
     /**
-     * Session for Analysis: an available OEX Engine unless the built-in Engine was picked or none
-     * is installed (see {@link EnginePolicy#forAnalysis}). The built-in choice is the Rust Engine.
+     * Session for Analysis: an available OEX Engine unless the built-in Rust Engine was picked, the
+     * variant requires it, or no OEX Engine is installed.
      */
     public static EngineSession forAnalysis(
             Context context, GameApi gameApi, EngineListener listener, String oexEngineId) {
         EngineSession session = new EngineSession(context, gameApi, listener);
         boolean oexAvailable =
-                !gameApi.isDuckVariant()
+                !gameApi.requiresBuiltinEngine()
                         && !LOCAL_ENGINE_ID.equals(oexEngineId)
                         && OexEngine.hasAvailableEngines(context);
         if (EnginePolicy.forAnalysis(oexAvailable) == EnginePolicy.Backend.OEX) {

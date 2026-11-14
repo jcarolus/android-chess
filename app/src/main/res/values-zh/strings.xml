@@ -569,7 +569,6 @@
     <string name="analysis_builtin_warning">为获得更好的分析，请安装兼容 OEX 的国际象棋引擎。</string>
     <string name="analysis_dont_show_again">不再显示</string>
     <string name="analysis_continue">继续</string>
-    <string name="analysis_duck_unsupported">不支持鸭子棋分析。</string>
     <string name="new_game_variant_standard">标准</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">占山为王</string>
@@ -586,7 +585,6 @@
     <string name="share_lichess_profile">分享我的 Lichess 个人资料</string>
     <string name="app_link_invalid">此 Chess 链接无效或不受支持。</string>
     <string name="app_link_too_large">棋局过大，无法通过链接分享。请改为分享完整的 PGN 棋局。</string>
-    <string name="app_link_no_engine">此变体不支持引擎分析。您可以浏览棋盘和着法。</string>
     <string name="share_failed">无法分享棋局。请重试。</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

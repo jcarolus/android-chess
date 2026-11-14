@@ -602,12 +602,10 @@
     <string name="analysis_builtin_warning">Installeer een OEX-compatibele schaakengine voor betere analyses.</string>
     <string name="analysis_dont_show_again">Niet meer tonen</string>
     <string name="analysis_continue">Doorgaan</string>
-    <string name="analysis_duck_unsupported">Analyse van eendenschaak wordt niet ondersteund.</string>
     <string name="menu_analyse_game">Partij analyseren</string>
     <string name="menu_new_king_of_the_hill">Nieuwe partij King of the Hill</string>
     <string name="state_hill_win">De koning heeft de heuvel bereikt</string>
     <string name="state_duck_stalemate_win">Geen zetten meer mogelijk. Dat levert winst op bij eendenschaak</string>
-    <string name="analysis_king_of_the_hill_unsupported">Analyse is niet beschikbaar voor partijen King of the Hill.</string>
     <string name="options_engine_oex_variant_disabled">Deze variant gebruikt de ingebouwde engine.</string>
     <string name="new_game_variant_standard">Standaard</string>
     <string name="new_game_variant_duck">Eendenschaak</string>
@@ -625,7 +623,6 @@
     <string name="share_lichess_profile">Mijn Lichess-profiel delen</string>
     <string name="app_link_invalid">Deze schaaklink is ongeldig of wordt niet ondersteund.</string>
     <string name="app_link_too_large">Deze partij is te groot om als link te delen. Deel de volledige partij als PGN.</string>
-    <string name="app_link_no_engine">Engineanalyse is niet beschikbaar voor deze variant. Je kunt het bord en de zetten wel bekijken.</string>
     <string name="share_failed">Delen is mislukt. Probeer het opnieuw.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

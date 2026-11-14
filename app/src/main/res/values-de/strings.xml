@@ -579,7 +579,6 @@
     <string name="analysis_builtin_warning">Installiere für eine bessere Analyse eine OEX-kompatible Schachengine.</string>
     <string name="analysis_dont_show_again">Nicht mehr anzeigen</string>
     <string name="analysis_continue">Weiter</string>
-    <string name="analysis_duck_unsupported">Die Analyse von Entenschach wird nicht unterstützt.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">König des Hügels</string>
@@ -596,7 +595,6 @@
     <string name="share_lichess_profile">Mein Lichess-Profil teilen</string>
     <string name="app_link_invalid">Dieser Chess-Link ist ungültig oder wird nicht unterstützt.</string>
     <string name="app_link_too_large">Diese Partie ist zu groß für einen Link. Teile die vollständige Partie stattdessen als PGN.</string>
-    <string name="app_link_no_engine">Für diese Variante ist keine Engine-Analyse verfügbar. Du kannst das Brett und die Züge ansehen.</string>
     <string name="share_failed">Die Partie konnte nicht geteilt werden. Bitte versuche es erneut.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

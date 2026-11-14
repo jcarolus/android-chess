@@ -590,12 +590,10 @@
     <string name="analysis_builtin_warning">想要更好的分析結果，請安裝相容 OEX 的西洋棋引擎。</string>
     <string name="analysis_dont_show_again">不再顯示</string>
     <string name="analysis_continue">繼續</string>
-    <string name="analysis_duck_unsupported">不支援分析鴨子棋。</string>
     <string name="menu_analyse_game">分析棋局</string>
     <string name="menu_new_king_of_the_hill">新局：山丘之王</string>
     <string name="state_hill_win">國王抵達山丘</string>
     <string name="state_duck_stalemate_win">無棋可走，在鴨子棋中算獲勝</string>
-    <string name="analysis_king_of_the_hill_unsupported">山丘之王棋局無法分析。</string>
     <string name="options_engine_oex_variant_disabled">這個變體使用內建引擎。</string>
     <string name="new_game_variant_standard">標準</string>
     <string name="new_game_variant_duck">鴨子棋</string>
@@ -613,7 +611,6 @@
     <string name="share_lichess_profile">分享我的 Lichess 個人資料</string>
     <string name="app_link_invalid">這個西洋棋連結無效或不受支援。</string>
     <string name="app_link_too_large">這局棋太大，無法用連結分享。請改用 PGN 分享完整棋譜。</string>
-    <string name="app_link_no_engine">這個變體無法使用引擎分析，但你仍可瀏覽棋盤與棋步。</string>
     <string name="share_failed">無法分享棋局，請再試一次。</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

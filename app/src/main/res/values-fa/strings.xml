@@ -586,7 +586,6 @@
     <string name="analysis_builtin_warning">برای تحلیل بهتر، یک موتور شطرنج سازگار با OEX نصب کنید.</string>
     <string name="analysis_dont_show_again">دیگر نشان نده</string>
     <string name="analysis_continue">ادامه</string>
-    <string name="analysis_duck_unsupported">تحلیل شطرنج اردک پشتیبانی نمی‌شود.</string>
     <string name="new_game_variant_standard">استاندارد</string>
     <string name="new_game_variant_duck">اردک</string>
     <string name="new_game_variant_king_of_the_hill">شاه تپه</string>
@@ -603,7 +602,6 @@
     <string name="share_lichess_profile">اشتراک‌گذاری نمایهٔ Lichess من</string>
     <string name="app_link_invalid">این پیوند Chess نامعتبر است یا پشتیبانی نمی‌شود.</string>
     <string name="app_link_too_large">این بازی برای اشتراک‌گذاری با پیوند بیش از حد بزرگ است. بازی کامل را با قالب PGN به اشتراک بگذارید.</string>
-    <string name="app_link_no_engine">تحلیل موتور برای این گونه در دسترس نیست. می‌توانید صفحه و حرکت‌ها را مرور کنید.</string>
     <string name="share_failed">اشتراک‌گذاری بازی ممکن نشد. دوباره تلاش کنید.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

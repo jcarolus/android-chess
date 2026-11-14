@@ -166,8 +166,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                             : getIntent().getIntExtra(EXTRA_STUDY_CHAPTER, 0);
             switchEngine.setVisibility(View.VISIBLE);
             switchEngine.setChecked(engineEnabled);
-            switchEngine.setOnCheckedChangeListener(
-                    (button, checked) -> setEngineEnabled(checked));
+            switchEngine.setOnCheckedChangeListener((button, checked) -> setEngineEnabled(checked));
         }
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
@@ -228,7 +227,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private void onMenuSelected(int requestCode, Bundle data) {
         String item = data.getString("item");
         if (getString(R.string.analysis_settings).equals(item)) {
-            AnalysisSettingsDialog.show(this, getPrefs(), this::restartAnalysis);
+            AnalysisSettingsDialog.show(
+                    this, getPrefs(), gameApi.requiresBuiltinEngine(), this::restartAnalysis);
         } else if (getString(R.string.share_chess_link).equals(item)) {
             LinkSharing.show(this, gameApi);
         } else if (getString(R.string.menu_save_game).equals(item)) {
@@ -329,27 +329,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
             saveToFile(pendingSaveUri, gameApi.exportFullPGN());
             pendingSaveUri = null;
         }
-        if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
-            analysis.pause();
-            if (getIntent().hasExtra(LinkActivity.EXTRA_PATH)) {
-                restoredSession = null;
-                rebuildBoard();
-                updatePieceDescriptions();
-                return;
-            }
-            if (analysisDialog == null) {
-                analysisDialog =
-                        new ChessAlertDialogBuilder(this)
-                                .setMessage(
-                                        gameApi.isKingOfTheHillVariant()
-                                                ? R.string.analysis_king_of_the_hill_unsupported
-                                                : R.string.analysis_duck_unsupported)
-                                .setPositiveButton(R.string.button_ok, (dialog, which) -> finish())
-                                .setOnCancelListener(dialog -> finish())
-                                .show();
-            }
-            return;
-        }
         AnalysisResults.Saved saved = readAnalysisState(restoredSession);
         if (engineEnabled) {
             startEngine(saved);
@@ -419,10 +398,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
         boolean changed = analysis.selectPosition();
         updateNavigation();
         updateMoveSummary();
-        buttonVariations.setVisibility(
-                gameApi.getContinuations(gameApi.getCurrentNode()).size() > 1
-                        ? View.VISIBLE
-                        : View.GONE);
+        buttonVariations.setEnabled(
+                gameApi.getContinuations(gameApi.getCurrentNode()).size() > 1);
         updateComment();
         if (changed && analysis.isActive()) {
             evaluationView.clearEvaluation();
@@ -451,16 +428,20 @@ public class AnalyzeActivity extends ChessBoardActivity {
     }
 
     private void showCachedEvaluation() {
+        if (gameApi.hasPendingDuckMove()) {
+            return;
+        }
         PositionSnapshot current = analysis.position(gameApi.getCurrentNode());
         AnalysisResults.Result result = analysis.result(current);
         if (result == null || result.evaluation == null) {
             return;
         }
         EngineEvaluation evaluation = result.evaluation;
+        int winner = AnalysisResults.terminalWinner(current);
         float value =
                 evaluation.mate
-                        ? (current.state == BoardConstants.MATE
-                                ? (current.turn == BoardConstants.WHITE ? -1000 : 1000)
+                        ? (winner != -1
+                                ? (winner == BoardConstants.WHITE ? 1000 : -1000)
                                 : evaluation.value > 0 ? 1000 : -1000)
                         : evaluation.value / 100.0f;
         evaluationView.setEvaluation(value);
@@ -504,7 +485,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
     }
 
     private void showEngineWarning() {
-        if (!analysis.isBuiltin()
+        if (gameApi.requiresBuiltinEngine()
+                || !analysis.isBuiltin()
                 || engineWarningAcknowledged
                 || analysisDialog != null
                 || getPrefs().getBoolean(PREF_HIDE_ENGINE_WARNING, false)) {
@@ -776,13 +758,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     private void updateMoveSummary() {
         updateAnalysisSummary();
-        if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
-            textViewLastMove.setText(
-                    getLastMoveAndTurnDescription(false)
-                            + ". "
-                            + getString(R.string.app_link_no_engine));
-            return;
-        }
         Node current = gameApi.getCurrentNode();
         // Keep the previous announcement until all results needed for feedback are ready.
         if (engineEnabled && !analysis.summary(current).ready) {
@@ -817,13 +792,13 @@ public class AnalyzeActivity extends ChessBoardActivity {
         displayedEngineMove = null;
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
-        if (gameApi.isDuckVariant() || !engineEnabled) {
+        if (!engineEnabled || gameApi.hasPendingDuckMove()) {
             return;
         }
 
         Analysis.Summary summary = analysis.summary(current);
         if (summary.recommendation != null) {
-            showEngineMove(summary.branchPoint, summary.recommendation);
+            showEngineMove(current, summary.recommendation);
         }
         if (entry == null) {
             return;

@@ -611,12 +611,10 @@
     <string name="analysis_builtin_warning">For better analysis, install an OEX-compatible chess engine.</string>
     <string name="analysis_dont_show_again">Don\'t show again</string>
     <string name="analysis_continue">Continue</string>
-    <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
     <string name="menu_analyse_game">Analyse game</string>
     <string name="menu_new_king_of_the_hill">New King of the Hill game</string>
     <string name="state_hill_win">King reached the hill</string>
     <string name="state_duck_stalemate_win">No moves left, which wins in Duck chess</string>
-    <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
     <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
@@ -634,7 +632,6 @@
     <string name="share_lichess_profile">Share my Lichess profile</string>
     <string name="app_link_invalid">This Chess link is invalid or unsupported.</string>
     <string name="app_link_too_large">This game is too large to share as a link. Share the complete game as PGN instead.</string>
-    <string name="app_link_no_engine">Engine analysis is unavailable for this variant. You can browse the board and moves.</string>
     <string name="share_failed">Could not share the game. Please try again.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

@@ -569,7 +569,6 @@
     <string name="analysis_builtin_warning">Daha iyi analiz için OEX uyumlu bir satranç motoru yükleyin.</string>
     <string name="analysis_dont_show_again">Bir daha gösterme</string>
     <string name="analysis_continue">Devam et</string>
-    <string name="analysis_duck_unsupported">Ördek satrancı için analiz desteklenmiyor.</string>
     <string name="new_game_variant_standard">Standart</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Tepenin Şahı</string>
@@ -586,7 +585,6 @@
     <string name="share_lichess_profile">Lichess profilimi paylaş</string>
     <string name="app_link_invalid">Bu Chess bağlantısı geçersiz veya desteklenmiyor.</string>
     <string name="app_link_too_large">Bu oyun bağlantı olarak paylaşmak için çok büyük. Oyunun tamamını PGN olarak paylaşın.</string>
-    <string name="app_link_no_engine">Bu varyant için motor analizi kullanılamıyor. Tahtayı ve hamleleri inceleyebilirsiniz.</string>
     <string name="share_failed">Oyun paylaşılamadı. Lütfen tekrar deneyin.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

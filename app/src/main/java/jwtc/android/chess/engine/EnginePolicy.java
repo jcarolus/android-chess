@@ -18,10 +18,7 @@ public final class EnginePolicy {
         return !requiresBuiltinEngine && prefersOex && oexAvailable ? Backend.OEX : Backend.RUST;
     }
 
-    /**
-     * Analysis uses an available OEX Engine, otherwise the built-in Rust Engine. Callers report no
-     * OEX Engine as available for Duck.
-     */
+    /** Analysis uses an available OEX Engine when the variant and engine preference allow it. */
     public static Backend forAnalysis(boolean oexAvailable) {
         return oexAvailable ? Backend.OEX : Backend.RUST;
     }

@@ -569,7 +569,6 @@
     <string name="analysis_builtin_warning">Pour une meilleure analyse, installez un moteur d’échecs compatible avec OEX.</string>
     <string name="analysis_dont_show_again">Ne plus afficher</string>
     <string name="analysis_continue">Continuer</string>
-    <string name="analysis_duck_unsupported">L’analyse des échecs canard n’est pas prise en charge.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Roi de la colline</string>
@@ -586,7 +585,6 @@
     <string name="share_lichess_profile">Partager mon profil Lichess</string>
     <string name="app_link_invalid">Ce lien Chess est invalide ou non pris en charge.</string>
     <string name="app_link_too_large">Cette partie est trop longue pour un lien. Partagez plutôt la partie complète au format PGN.</string>
-    <string name="app_link_no_engine">Aucune analyse par moteur pour cette variante. Vous pouvez parcourir les positions et les coups.</string>
     <string name="share_failed">Impossible de partager la partie. Veuillez réessayer.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->

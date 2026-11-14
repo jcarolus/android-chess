@@ -579,7 +579,6 @@
     <string name="analysis_builtin_warning">Para un mejor análisis, instala un motor de ajedrez compatible con OEX.</string>
     <string name="analysis_dont_show_again">No volver a mostrar</string>
     <string name="analysis_continue">Continuar</string>
-    <string name="analysis_duck_unsupported">No se admite el análisis de ajedrez pato.</string>
     <string name="new_game_variant_standard">Estándar</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Rey de la colina</string>
@@ -596,7 +595,6 @@
     <string name="share_lichess_profile">Compartir mi perfil de Lichess</string>
     <string name="app_link_invalid">Este enlace de Chess no es válido o no es compatible.</string>
     <string name="app_link_too_large">Esta partida es demasiado grande para un enlace. Comparte la partida completa como PGN.</string>
-    <string name="app_link_no_engine">El análisis con motor no está disponible para esta variante. Puedes explorar el tablero y las jugadas.</string>
     <string name="share_failed">No se pudo compartir la partida. Inténtalo de nuevo.</string>
 
     <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
