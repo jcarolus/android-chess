@@ -25,6 +25,7 @@ public class PgnCommentTest {
                 PgnComment.text(
                         "  White   is\tbetter. <pgndiagram>\r\n\n \n  Black must defend.\n\n"));
         assertEquals("Diagram follows.", PgnComment.text("Diagram <PGNDIAGRAM> follows."));
+        assertEquals("Diagram follows.", PgnComment.text("Diagram [PGNDIAGRAM] follows."));
         assertEquals("Before\nafter", PgnComment.text("Before [%cal Ge2e4]\n\n[%csl Ge4] after"));
     }
 
@@ -32,7 +33,7 @@ public class PgnCommentTest {
     public void savesTheCleanedText() {
         assertEquals(
                 "[%eval 0.3] One line\nnext line",
-                PgnComment.withText("[%eval 0.3]", " One   line <pgndiagram>\n\n\nnext line "));
+                PgnComment.withText("[%eval 0.3]", " One   line [pgndiagram]\n\n\nnext line "));
     }
 
     @Test

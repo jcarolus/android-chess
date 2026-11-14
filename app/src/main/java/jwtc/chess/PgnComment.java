@@ -11,7 +11,8 @@ public final class PgnComment {
     private static final Pattern EVALUATION =
             Pattern.compile("\\[%eval\\s+(#?[+-]?\\d+(?:\\.\\d+)?)(?:,\\d+)?\\s*\\]");
     private static final Pattern COMMAND = Pattern.compile("\\[%[^\\]]*\\]");
-    private static final Pattern DIAGRAM = Pattern.compile("(?i)</?pgndiagram\\s*/?>");
+    private static final Pattern DIAGRAM =
+            Pattern.compile("(?i)</?pgndiagram\\s*/?>|\\[pgndiagram\\]");
     private static final Pattern SPACES = Pattern.compile("[\\h\\x0B\\f]+");
     private static final Pattern LINE_BREAKS = Pattern.compile("( ?\\n ?)+");
 
@@ -21,8 +22,8 @@ public final class PgnComment {
     }
 
     /**
-     * Removes {@code <pgndiagram>} markers and collapses runs of spaces into one space and runs of
-     * line breaks into one line break.
+     * Removes {@code <pgndiagram>} and {@code [pgndiagram]} markers and collapses runs of spaces
+     * into one space and runs of line breaks into one line break.
      */
     static String clean(String text) {
         String cleaned = DIAGRAM.matcher(text).replaceAll("");
