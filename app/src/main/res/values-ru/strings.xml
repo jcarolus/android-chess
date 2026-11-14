@@ -552,7 +552,6 @@
     <string name="analysis_move_mistake">Ошибка</string>
     <string name="analysis_move_blunder">Грубая ошибка</string>
     <string name="analysis_move_forced">Вынужденный</string>
-    <string name="analysis_move_pending">Анализ хода…</string>
     <string name="analysis_move_unavailable">Анализ недоступен</string>
     <string name="analysis_white_to_move">Ход белых</string>
     <string name="analysis_black_to_move">Ход черных</string>

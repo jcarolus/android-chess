@@ -552,7 +552,6 @@
     <string name="analysis_move_mistake">Errore</string>
     <string name="analysis_move_blunder">Errore grave</string>
     <string name="analysis_move_forced">Forzata</string>
-    <string name="analysis_move_pending">Analisi della mossa…</string>
     <string name="analysis_move_unavailable">Analisi non disponibile</string>
     <string name="analysis_white_to_move">Tocca al Bianco</string>
     <string name="analysis_black_to_move">Tocca al Nero</string>

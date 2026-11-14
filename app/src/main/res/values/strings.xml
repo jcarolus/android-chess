@@ -589,13 +589,13 @@
     <string name="analysis_move_mistake">Mistake</string>
     <string name="analysis_move_blunder">Blunder</string>
     <string name="analysis_move_forced">Forced</string>
-    <string name="analysis_move_pending">Analyzing move…</string>
     <string name="analysis_move_unavailable">Analysis unavailable</string>
     <string name="analysis_white_to_move">White to move</string>
     <string name="analysis_black_to_move">Black to move</string>
     <string name="analysis_variation">Variation</string>
     <string name="analysis_back_to_main">Back to main</string>
-    <string name="analysis_edit_comment">Comment</string>
+    <string name="analysis_edit_comment">Edit comment</string>
+    <string name="analysis_comment_hint">Tap to add a comment</string>
     <string name="analysis_comment_title">Comment after the move</string>
     <string name="analysis_start_comment_title">Comment before the first move</string>
     <string name="analysis_engine">Engine</string>

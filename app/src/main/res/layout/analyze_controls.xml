@@ -82,50 +82,6 @@
             </TableRow>
         </TableLayout>
 
-        <com.google.android.flexbox.FlexboxLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/control_gap"
-            android:layout_marginEnd="@dimen/control_gap"
-            app:flexDirection="row"
-            app:flexWrap="wrap"
-            app:alignItems="center">
-
-            <TextView
-                android:id="@+id/TextViewAnalysisMove"
-                style="@style/MyPaneTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/control_gap" />
-
-            <TextView
-                android:id="@+id/TextViewMoveFeedback"
-                style="@style/MyPaneTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/control_gap"
-                android:textStyle="bold"
-                android:accessibilityLiveRegion="none"
-                android:visibility="gone" />
-
-        </com.google.android.flexbox.FlexboxLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/control_gap"
-            android:layout_marginEnd="@dimen/control_gap"
-            android:orientation="horizontal"
-            android:gravity="end|center_vertical">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonBackToMain"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/analysis_back_to_main"
-                android:visibility="invisible" />
-        </LinearLayout>
-
         <TextView
             android:id="@+id/TextViewComment"
             style="@style/MyPaneTextStyle"
@@ -133,8 +89,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/control_gap"
             android:layout_marginEnd="@dimen/control_gap"
-            android:accessibilityLiveRegion="polite"
-            android:visibility="gone" />
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:lines="2"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:hint="@string/analysis_comment_hint"
+            android:accessibilityLiveRegion="polite" />
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
@@ -152,10 +114,11 @@
                 android:visibility="gone" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonEditComment"
+                android:id="@+id/ButtonBackToMain"
                 style="?attr/chessButtonStyle"
                 android:layout_width="wrap_content"
-                android:text="@string/analysis_edit_comment" />
+                android:text="@string/analysis_back_to_main"
+                android:visibility="gone" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEngineMove"

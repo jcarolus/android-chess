@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
@@ -41,7 +43,6 @@ import jwtc.chess.GameRecord;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.PgnComment;
-import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 public class AnalyzeActivity extends ChessBoardActivity {
@@ -71,8 +72,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private EngineEvaluationView evaluationView;
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
-    private TextView textViewAnalysisMove;
-    private TextView textViewMoveFeedback;
+    // The Move Classification of the current move, or why it is missing; null when not shown.
+    private String moveFeedback;
     private MaterialButton buttonEngineMove;
     private PositionMove displayedEngineMove;
     private View buttonNext;
@@ -150,7 +151,12 @@ public class AnalyzeActivity extends ChessBoardActivity {
         buttonVariations = findViewById(R.id.ButtonVariations);
         buttonVariations.setOnClickListener(v -> chooseVariation());
         textViewComment = findViewById(R.id.TextViewComment);
-        findViewById(R.id.ButtonEditComment).setOnClickListener(v -> editComment());
+        textViewComment.setOnClickListener(v -> editComment());
+        ViewCompat.replaceAccessibilityAction(
+                textViewComment,
+                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+                getString(R.string.analysis_edit_comment),
+                null);
         switchEngine = findViewById(R.id.SwitchEngine);
         engineEnabled = !isStudy() || getPrefs().getBoolean(PREF_STUDY_ENGINE, false);
         if (isStudy()) {
@@ -165,8 +171,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
         }
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
-        textViewAnalysisMove = findViewById(R.id.TextViewAnalysisMove);
-        textViewMoveFeedback = findViewById(R.id.TextViewMoveFeedback);
         buttonEngineMove = findViewById(R.id.ButtonEngineMove);
         buttonNext = findViewById(R.id.ButtonNext);
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
@@ -331,8 +335,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 restoredSession = null;
                 rebuildBoard();
                 updatePieceDescriptions();
-                textViewMoveFeedback.setText(R.string.app_link_no_engine);
-                textViewMoveFeedback.setVisibility(View.VISIBLE);
                 return;
             }
             if (analysisDialog == null) {
@@ -413,7 +415,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                                 ? R.string.analysis_white_to_move
                                 : R.string.analysis_black_to_move));
         boolean onMainLine = gameApi.isOnMainLine();
-        buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
+        buttonBackToMain.setVisibility(onMainLine ? View.GONE : View.VISIBLE);
         boolean changed = analysis.selectPosition();
         updateNavigation();
         updateMoveSummary();
@@ -624,7 +626,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
             String before = PgnComment.text(next.getLeadingComment());
             if (!before.isEmpty()) {
                 if (!text.isEmpty()) {
-                    text += "\n\n";
+                    text += "\n";
                 }
                 text += getString(R.string.study_before_move, before);
             }
@@ -632,7 +634,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
         if (!text.contentEquals(textViewComment.getText())) {
             textViewComment.setText(text);
         }
-        textViewComment.setVisibility(text.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void editComment() {
@@ -641,6 +642,15 @@ public class AnalyzeActivity extends ChessBoardActivity {
         View content = getLayoutInflater().inflate(R.layout.analysis_comment, null);
         EditText input = content.findViewById(R.id.AnalysisComment);
         input.setText(PgnComment.text(comment));
+        // The next move's leading comment is shown for context; this dialog edits only the comment
+        // on the current position.
+        Node next = nextMove();
+        String before = next == null ? "" : PgnComment.text(next.getLeadingComment());
+        if (!before.isEmpty()) {
+            TextView context = content.findViewById(R.id.AnalysisCommentBefore);
+            context.setText(getString(R.string.study_before_move, before));
+            context.setVisibility(View.VISIBLE);
+        }
         new ChessAlertDialogBuilder(this)
                 .setTitle(
                         node.getParent() == null
@@ -767,9 +777,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private void updateMoveSummary() {
         updateAnalysisSummary();
         if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
-            textViewLastMove.setText(getLastMoveAndTurnDescription(false));
-            textViewMoveFeedback.setText(R.string.app_link_no_engine);
-            textViewMoveFeedback.setVisibility(View.VISIBLE);
+            textViewLastMove.setText(
+                    getLastMoveAndTurnDescription(false)
+                            + ". "
+                            + getString(R.string.app_link_no_engine));
             return;
         }
         Node current = gameApi.getCurrentNode();
@@ -785,8 +796,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 && state != R.string.state_check) {
             moveMessage += ". " + getString(state);
         }
-        if (textViewMoveFeedback.getVisibility() == View.VISIBLE) {
-            moveMessage += ". " + textViewMoveFeedback.getText();
+        if (moveFeedback != null) {
+            moveMessage += ". " + moveFeedback;
         }
         if (displayedEngineMove != null) {
             moveMessage +=
@@ -802,12 +813,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private void updateAnalysisSummary() {
         Node current = gameApi.getCurrentNode();
         PGNEntry entry = current.getEntry();
-        String moveText = entry == null ? "" : gameApi.getMoveNumber(current) + " " + entry.sMove;
-        if (entry != null && entry.duckMove != -1) {
-            moveText += "@" + Pos.toString(entry.duckMove);
-        }
-        textViewAnalysisMove.setText(moveText);
-        textViewMoveFeedback.setVisibility(View.GONE);
+        moveFeedback = null;
         displayedEngineMove = null;
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
@@ -822,13 +828,11 @@ public class AnalyzeActivity extends ChessBoardActivity {
         if (entry == null) {
             return;
         }
-        textViewMoveFeedback.setVisibility(View.VISIBLE);
-        textViewMoveFeedback.setText(
-                summary.feedback != null
-                        ? feedbackText(summary.feedback)
-                        : summary.unavailable
-                                ? R.string.analysis_move_unavailable
-                                : R.string.analysis_move_pending);
+        if (summary.feedback != null) {
+            moveFeedback = getString(feedbackText(summary.feedback));
+        } else if (summary.unavailable) {
+            moveFeedback = getString(R.string.analysis_move_unavailable);
+        }
     }
 
     private void showEngineMove(Node branchPoint, PositionMove recommendation) {

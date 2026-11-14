@@ -573,7 +573,6 @@
     <string name="analysis_move_mistake">失誤</string>
     <string name="analysis_move_blunder">嚴重失誤</string>
     <string name="analysis_move_forced">唯一棋步</string>
-    <string name="analysis_move_pending">正在分析棋步…</string>
     <string name="analysis_move_unavailable">無法分析</string>
     <string name="analysis_white_to_move">輪到白方</string>
     <string name="analysis_black_to_move">輪到黑方</string>

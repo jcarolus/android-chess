@@ -552,7 +552,6 @@
     <string name="analysis_move_mistake">Greșeală</string>
     <string name="analysis_move_blunder">Greșeală gravă</string>
     <string name="analysis_move_forced">Forțată</string>
-    <string name="analysis_move_pending">Se analizează mutarea…</string>
     <string name="analysis_move_unavailable">Analiză indisponibilă</string>
     <string name="analysis_white_to_move">Albul la mutare</string>
     <string name="analysis_black_to_move">Negrul la mutare</string>

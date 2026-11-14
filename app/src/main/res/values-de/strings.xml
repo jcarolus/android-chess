@@ -562,7 +562,6 @@
     <string name="analysis_move_mistake">Fehler</string>
     <string name="analysis_move_blunder">Grober Fehler</string>
     <string name="analysis_move_forced">Erzwungen</string>
-    <string name="analysis_move_pending">Zug wird analysiert…</string>
     <string name="analysis_move_unavailable">Analyse nicht verfügbar</string>
     <string name="analysis_white_to_move">Weiß am Zug</string>
     <string name="analysis_black_to_move">Schwarz am Zug</string>

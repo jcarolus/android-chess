@@ -585,7 +585,6 @@
     <string name="analysis_move_mistake">Fout</string>
     <string name="analysis_move_blunder">Blunder</string>
     <string name="analysis_move_forced">Gedwongen</string>
-    <string name="analysis_move_pending">Zet analyseren…</string>
     <string name="analysis_move_unavailable">Analyse niet beschikbaar</string>
     <string name="analysis_white_to_move">Wit aan zet</string>
     <string name="analysis_black_to_move">Zwart aan zet</string>
