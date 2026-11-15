@@ -11,7 +11,7 @@ A free, open-source chess app — no ads, just chess.
 - ECO opening explorer
 - Local game database with search
 - Screen reader support via TalkBack
-- Type or dictate moves in Play, Lichess games, and Lichess puzzles
+- Type or dictate moves in Play, Hotspot Board, Lichess games, and Lichess puzzles
 - Manual board setup mode
 - Supports the **Open Exchange Protocol (OEX)**, letting you plug in third-party chess engines
 

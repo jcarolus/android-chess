@@ -32,6 +32,7 @@ import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.links.AppLink;
 import jwtc.android.chess.links.LinkActivity;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
@@ -65,6 +66,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean restoringState;
     private String configuredName = "";
     private String configuredHostIp = "";
+    private MoveEntry moveEntry;
+    private boolean moveEntryActive;
 
     private ServiceConnection connection =
             new ServiceConnection() {
@@ -89,6 +92,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     Log.d(TAG, "onServiceDisconnected");
                     messengerFromService = null;
                     isServiceBound = false;
+                    updateMoveEntry();
                 }
             };
 
@@ -124,7 +128,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public boolean requestMove(final int from, final int to) {
         Log.d(TAG, "requestMove");
-        if (!isConnected || overrideGameState != 0 || isObserving || isShareMode) {
+        if (!canPlayMoves()) {
             rebuildBoard();
             Log.d(TAG, "requestMove unavailable");
             return false;
@@ -139,6 +143,23 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         rebuildBoard();
         Log.d(TAG, "requestMove not my turn");
         return false;
+    }
+
+    private boolean canPlayMoves() {
+        return isConnected && overrideGameState == 0 && !isObserving && !isShareMode;
+    }
+
+    private void updateMoveEntry() {
+        if (isObserving || isShareMode) {
+            moveEntry.update(null, null, false);
+            return;
+        }
+        boolean canPlay =
+                moveEntryActive
+                        && messengerFromService != null
+                        && canPlayMoves()
+                        && ((HotspotBoardApi) gameApi).isMyTurn();
+        moveEntry.update(gameApi, gameApi.getCurrentNode(), canPlay);
     }
 
     public void startSession() {
@@ -414,6 +435,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
 
         afterCreate();
+        moveEntry =
+                new MoveEntry(
+                        this,
+                        this::promotionDialog,
+                        () -> false,
+                        move -> gameApi.move(move.move, -1));
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
@@ -422,8 +449,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 findViewById(R.id.root_layout),
                 boardAreaLayout,
                 findViewById(R.id.play_controls),
-                null,
-                null);
+                findViewById(R.id.board_top),
+                findViewById(R.id.play_board_bottom));
 
         colorToggleGroup = findViewById(R.id.colorToggleGroup);
 
@@ -531,6 +558,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public void onResume() {
         super.onResume();
+        moveEntryActive = true;
 
         Log.d(TAG, "messengerFromService " + (messengerFromService == null));
 
@@ -544,6 +572,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     @Override
     protected void onPause() {
+        moveEntryActive = false;
+        moveEntry.reset();
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         editor.putString("hotspotboardName", configuredName);
@@ -616,6 +646,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void updateConnectedState(boolean isConnected) {
+        updateMoveEntry();
         boolean effectiveListening = isListeningSessionRestored();
         boolean effectiveConnected =
                 isConnected
@@ -905,6 +936,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void updateObservingState(boolean observing) {
+        updateMoveEntry();
         boolean effectiveObserving = observing || isObservingSessionRestored();
         if (effectiveObserving) {
             statusHandler.removeCallbacksAndMessages(null);
@@ -1064,6 +1096,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void showGameResult(String title, String message) {
+        updateMoveEntry();
         if (isFinishing() || isDestroyed()) {
             return;
         }
@@ -1085,6 +1118,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public void rebuildBoard() {
         super.rebuildBoard();
+        updateMoveEntry();
 
         final int state = gameApi.getState();
         int turn = gameApi.getTurn();
