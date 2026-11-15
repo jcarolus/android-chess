@@ -11,16 +11,16 @@ A free, open-source chess app — no ads, just chess.
 - ECO opening explorer
 - Local game database with search
 - Screen reader support via TalkBack
-- Type or dictate moves in Play with text move entry enabled in Accessibility preferences
+- Type or dictate moves in Play, Lichess games, and Lichess puzzles
 - Manual board setup mode
 - Supports the **Open Exchange Protocol (OEX)**, letting you plug in third-party chess engines
 
 
 ## Dictating moves
 
-Enable text move entry in Accessibility preferences. In Play, tap the keyboard
-microphone and say the starting square followed by the destination square, such
-as “e two e four”.
+Enable text move entry in Accessibility preferences. Tap the move field below
+the board, then tap the keyboard microphone and say the starting square followed
+by the destination square, such as “e two e four”.
 
 If the keyboard mishears a file letter, say its NATO spelling-alphabet word.
 For example, say “Echo two Echo four” in English or “Echo twee Echo vier” in

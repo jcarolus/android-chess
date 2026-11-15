@@ -29,8 +29,10 @@ import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.lichess.models.PuzzleGlicko;
+import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
+import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
@@ -66,6 +68,8 @@ public class LichessGameActivity extends ChessBoardActivity
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private MaterialButton buttonDraw, buttonResign, buttonConfirmMove;
     private MaterialButton buttonPuzzleShow, buttonPuzzleNext, buttonPuzzleRetry;
+    private MoveEntry moveEntry;
+    private boolean moveEntryActive;
 
     // The launch request. currentGameId is durable and is updated when a new pairing (round N+1)
     // auto-opens, so it is persisted across rotation (not just re-read from the launch intent).
@@ -176,6 +180,16 @@ public class LichessGameActivity extends ChessBoardActivity
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
+        moveEntry =
+                new MoveEntry(
+                        this,
+                        findViewById(R.id.play_board_bottom),
+                        this::promotionDialog,
+                        () ->
+                                lichessApi.getViewMode() == LichessApi.VIEW_PLAY
+                                        && switchConfirmMoves.isChecked(),
+                        this::submitTextMove);
+
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
@@ -227,6 +241,7 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public void onLichessApiLost() {
+        moveEntry.update(null, null, false);
         if (lichessApi != null) {
             lichessApi.setApiListener(null);
         }
@@ -314,10 +329,14 @@ public class LichessGameActivity extends ChessBoardActivity
         layoutResignDraw.setVisibility(puzzleActive ? View.GONE : View.VISIBLE);
         layoutPuzzleControls.setVisibility(puzzleActive ? View.VISIBLE : View.GONE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
+        moveEntryActive = true;
+        updateMoveEntry();
     }
 
     @Override
     protected void onPause() {
+        moveEntryActive = false;
+        moveEntry.reset();
         super.onPause();
         if (lichessApi != null) {
             lichessApi.setApiListener(null);
@@ -402,6 +421,7 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     protected void openGame(String gameId) {
+        moveEntry.reset();
         if (hasPremoved() && (premoveGameId == null || !premoveGameId.equals(gameId))) {
             clearPremove();
         }
@@ -424,6 +444,8 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     protected void displayPuzzle() {
+        moveEntry.reset();
+        updateMoveEntry();
         clearPremove();
         textViewLastMove.setText("");
         textViewStatus.setText("");
@@ -542,6 +564,7 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public void onGameDisconnected() {
+        moveEntry.reset();
         clearPremove();
         Toast.makeText(this, R.string.lichess_game_disconnected, Toast.LENGTH_SHORT).show();
         finish();
@@ -661,6 +684,42 @@ public class LichessGameActivity extends ChessBoardActivity
         return false;
     }
 
+    private void updateMoveEntry() {
+        if (!moveEntryActive
+                || lichessApi == null
+                || !getPrefs().getBoolean(MoveEntry.PREF_MOVE_ENTRY, false)) {
+            moveEntry.update(null, null, false);
+            return;
+        }
+
+        int mode = lichessApi.getViewMode();
+        boolean liveGame =
+                mode == LichessApi.VIEW_PLAY
+                        && currentGameId != null
+                        && currentGameId.equals(lichessApi.getOngoingGameId());
+        boolean puzzle = mode == LichessApi.VIEW_PUZZLE;
+        if (!liveGame && !puzzle) {
+            moveEntry.update(null, null, false);
+            return;
+        }
+
+        boolean canPlay =
+                (liveGame
+                                ? lichessApi.isOngoingGameInProgress()
+                                : lichessApi.isPuzzleAwaitingMove())
+                        && lichessApi.getMyTurn() == lichessApi.getTurn();
+        // The Lichess stream can rebuild the game tree without changing the position.
+        moveEntry.update(gameApi, gameApi.getFEN(), canPlay);
+    }
+
+    private void submitTextMove(PositionMove move) {
+        if (layoutConfirm.getVisibility() == View.VISIBLE) {
+            layoutConfirm.setVisibility(View.GONE);
+            layoutResignDraw.setVisibility(View.VISIBLE);
+        }
+        lichessApi.sendMove(move.boardCoordinate);
+    }
+
     private void storePremove(int from, int to) {
         premoveGameId = lichessApi.getOngoingGameId();
         setPremove(from, to);
@@ -740,7 +799,7 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     private void updateTurnState() {
-
+        updateMoveEntry();
         int myTurn = lichessApi.getMyTurn();
         int turn = lichessApi.getTurn();
         boolean isMyTurn = myTurn == turn;

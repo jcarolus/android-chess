@@ -126,11 +126,14 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 () -> {
                     GameApi game = new GameApi();
                     check(
-                            game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
+                            game.initFEN("4k3/8/8/8/8/8/8/1R2KR2 w KQ - 0 1", true),
                             "Text Chess960 castling setup failed");
                     check(game.resolveTextMove(60, 63, -1) == null, "Empty rook square accepted");
-                    GameApi.PositionMove textCastle = game.resolveTextMove(60, 62, -1);
+                    GameApi.PositionMove textCastle = game.resolveTextMove(60, 61, -1);
                     check(textCastle != null, "Text Chess960 king-to-rook castle rejected");
+                    check(
+                            "e1f1".equals(textCastle.boardCoordinate),
+                            "Chess960 UCI must target the rook");
                     game.move(textCastle.move, -1);
                     check(game.getCurrentPly() == 1, "Text Chess960 castle was not recorded");
 
@@ -141,9 +144,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     check(
                             standard.resolveTextMove(60, 62, -1) == null,
                             "King destination accepted");
+                    GameApi.PositionMove standardCastle = standard.resolveTextMove(60, 63, -1);
+                    check(standardCastle != null, "Rook destination rejected");
                     check(
-                            standard.resolveTextMove(60, 63, -1) != null,
-                            "Rook destination rejected");
+                            "e1g1".equals(standardCastle.boardCoordinate),
+                            "Standard UCI must target the king destination");
                     GameApi promotion = new GameApi();
                     check(
                             promotion.initFEN("8/P6k/8/8/8/8/7K/8 w - - 0 1", true),
@@ -153,7 +158,10 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             "Missing promotion accepted");
                     GameApi.PositionMove knight =
                             promotion.resolveTextMove(8, 0, BoardConstants.KNIGHT);
-                    check(knight != null && knight.uci.equals("a7a8n"), "Explicit knight rejected");
+                    check(
+                            knight != null && knight.uci.equals("a7a8n"),
+                            "Explicit knight rejected");
+                    check("a7a8n".equals(knight.boardCoordinate), "Knight promotion UCI is invalid");
                     GameApi enPassant = new GameApi();
                     check(
                             enPassant.initFEN("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", true),

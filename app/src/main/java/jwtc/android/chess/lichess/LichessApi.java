@@ -806,6 +806,10 @@ public class LichessApi extends GameApi {
         if (isPromotionMove(from, to)) {
             uciMove += Piece.toPromoUCI(promotionPiece);
         }
+        sendMove(uciMove);
+    }
+
+    void sendMove(String uciMove) {
         if (ongoingGameFull != null) {
             this.auth.move(
                     ongoingGameFull.id,
@@ -954,6 +958,13 @@ public class LichessApi extends GameApi {
         return ongoingGameFull != null
                 && ongoingGameFull.state != null
                 && "started".equals(ongoingGameFull.state.status);
+    }
+
+    boolean isPuzzleAwaitingMove() {
+        return ongoingPuzzle != null
+                && !puzzleComputerMovePending
+                && !hasPendingWrongMove
+                && puzzleMoveIndex < ongoingPuzzle.puzzle.solution.size();
     }
 
     /** A gameStart retained until a foreground Lichess screen can act on it. */

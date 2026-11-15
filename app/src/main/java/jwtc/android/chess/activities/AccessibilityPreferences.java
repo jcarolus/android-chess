@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.play.PlayActivity;
+import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.FixedDropdownView;
 
@@ -163,10 +163,10 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         sliderAccessibilityDelay.setValue(accessibilityDragDwellMs);
         sliderAccessibilityLastMoveDelay.setValue(accessibilityDragLastMoveDelayMs);
 
-        checkBoxMoveEntry.setChecked(prefs.getBoolean(PlayActivity.PREF_MOVE_ENTRY, false));
+        checkBoxMoveEntry.setChecked(prefs.getBoolean(MoveEntry.PREF_MOVE_ENTRY, false));
         checkBoxConfirmMoveEntry.setEnabled(checkBoxMoveEntry.isChecked());
         checkBoxConfirmMoveEntry.setChecked(
-                prefs.getBoolean(PlayActivity.PREF_CONFIRM_MOVE_ENTRY, false));
+                prefs.getBoolean(MoveEntry.PREF_CONFIRM_MOVE_ENTRY, false));
         checkBoxShowAccessibilityDrag.setChecked(
                 prefs.getBoolean("show_accessibility_drag_toggle", false));
         checkBoxFieldColorDescriptions.setChecked(
@@ -193,9 +193,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        editor.putBoolean(PlayActivity.PREF_MOVE_ENTRY, checkBoxMoveEntry.isChecked());
-        editor.putBoolean(
-                PlayActivity.PREF_CONFIRM_MOVE_ENTRY, checkBoxConfirmMoveEntry.isChecked());
+        editor.putBoolean(MoveEntry.PREF_MOVE_ENTRY, checkBoxMoveEntry.isChecked());
+        editor.putBoolean(MoveEntry.PREF_CONFIRM_MOVE_ENTRY, checkBoxConfirmMoveEntry.isChecked());
         editor.putBoolean("show_pieces_descriptions", checkBoxShowPiecesDescriptions.isChecked());
         editor.putFloat("speechRate", sliderSpeechRate.getValue());
         editor.putFloat("speechPitch", sliderSpeechPitch.getValue());

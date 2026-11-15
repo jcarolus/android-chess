@@ -188,7 +188,8 @@ public class GameApi {
             }
             try {
                 int duck = Pos.fromString(uci.substring(placement + 1));
-                return new PositionMove(pieceMove.move, pieceMove.san, duck);
+                return new PositionMove(
+                        pieceMove.move, pieceMove.san, pieceMove.boardCoordinate, duck);
             } catch (Exception invalidSquare) {
                 return null;
             }
@@ -206,16 +207,21 @@ public class GameApi {
         public final int move;
         public final int duckMove;
         public final String uci;
+
+        /** Rust's coordinate, which uses the rook square for Chess960 castling. */
+        public final String boardCoordinate;
+
         public final String san;
 
-        private PositionMove(int move, String san) {
-            this(move, san, -1);
+        private PositionMove(RustBoard.LegalMove move) {
+            this(move.packed, move.san, move.coordinate, -1);
         }
 
-        private PositionMove(int move, String san, int duckMove) {
+        private PositionMove(int move, String san, String boardCoordinate, int duckMove) {
             this.move = move;
             this.duckMove = duckMove;
             String placement = duckMove == -1 ? "" : "@" + Pos.toString(duckMove);
+            this.boardCoordinate = boardCoordinate + placement;
             this.san = san + placement;
             this.uci =
                     Pos.toString(Move.getFrom(move))
@@ -234,7 +240,7 @@ public class GameApi {
     private static List<PositionMove> positionMoves(List<RustBoard.LegalMove> legalMoves) {
         List<PositionMove> moves = new ArrayList<>();
         for (RustBoard.LegalMove move : legalMoves) {
-            moves.add(new PositionMove(move.packed, move.san));
+            moves.add(new PositionMove(move));
         }
         return moves;
     }
@@ -242,7 +248,7 @@ public class GameApi {
     /** Resolves the selected promotion and castling gesture through Rust's legal moves. */
     private PositionMove resolveLegalMove(int from, int to) {
         RustBoard.LegalMove resolved = board.resolveMove(from, to, promotionPiece);
-        return resolved == null ? null : new PositionMove(resolved.packed, resolved.san);
+        return resolved == null ? null : new PositionMove(resolved);
     }
 
     /** Resolves and applies a legal move to the Java-owned snapshot history. */
@@ -410,14 +416,14 @@ public class GameApi {
             if (Move.isOO(move.packed) || Move.isOOO(move.packed)) {
                 if (isChess960Variant()) {
                     if (move.coordinate.equals(Pos.toString(from) + Pos.toString(to))) {
-                        return new PositionMove(move.packed, move.san);
+                        return new PositionMove(move);
                     }
                     continue;
                 }
                 destination = Pos.fromColAndRow(Move.isOO(move.packed) ? 7 : 0, Pos.row(from));
             }
             if (destination == to) {
-                return new PositionMove(move.packed, move.san);
+                return new PositionMove(move);
             }
         }
         return null;
@@ -431,7 +437,7 @@ public class GameApi {
                 if (result != null) {
                     return null;
                 }
-                result = new PositionMove(move.packed, move.san);
+                result = new PositionMove(move);
             }
         }
         return result;
@@ -445,7 +451,7 @@ public class GameApi {
                 if (result != null && !Move.equalPositions(result.move, move.packed)) {
                     return null;
                 }
-                result = new PositionMove(move.packed, move.san);
+                result = new PositionMove(move);
             }
         }
         return result;
