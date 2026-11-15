@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
@@ -57,6 +58,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private static final String EXTRA_STUDY_AUTHOR = "analysisStudyAuthor";
     private static final String EXTRA_STUDY_CHAPTER = "analysisStudyChapter";
     private static final String PREF_STUDY_ENGINE = "studyEngineEnabled";
+    private static final String PREF_STUDY_CHAPTER_PREFIX = "studyLastChapter/";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
     private static final int REQUEST_MENU = 1;
     private static final int REQUEST_SAVE_GAME_TO_FILE = 2;
@@ -102,13 +104,17 @@ public class AnalyzeActivity extends ChessBoardActivity {
             String studyId,
             String title,
             String author,
-            int chapterIndex) {
-        return new Intent(context, AnalyzeActivity.class)
-                .putExtra(EXTRA_STUDY_COLLECTION, collectionId)
-                .putExtra(EXTRA_STUDY_ID, studyId)
-                .putExtra(EXTRA_STUDY_TITLE, title)
-                .putExtra(EXTRA_STUDY_AUTHOR, author)
-                .putExtra(EXTRA_STUDY_CHAPTER, chapterIndex);
+            @Nullable Integer chapterIndex) {
+        Intent intent =
+                new Intent(context, AnalyzeActivity.class)
+                        .putExtra(EXTRA_STUDY_COLLECTION, collectionId)
+                        .putExtra(EXTRA_STUDY_ID, studyId)
+                        .putExtra(EXTRA_STUDY_TITLE, title)
+                        .putExtra(EXTRA_STUDY_AUTHOR, author);
+        if (chapterIndex != null) {
+            intent.putExtra(EXTRA_STUDY_CHAPTER, chapterIndex.intValue());
+        }
+        return intent;
     }
 
     @Override
@@ -161,10 +167,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
         switchEngine = findViewById(R.id.SwitchEngine);
         engineEnabled = !isStudy() || getPrefs().getBoolean(PREF_STUDY_ENGINE, false);
         if (isStudy()) {
-            chapterIndex =
-                    restoredSession != null && sessionId.equals(restoredSession.getString("id"))
-                            ? restoredSession.getInt("chapter")
-                            : getIntent().getIntExtra(EXTRA_STUDY_CHAPTER, 0);
             switchEngine.setVisibility(View.VISIBLE);
             switchEngine.setChecked(engineEnabled);
             switchEngine.setOnCheckedChangeListener((button, checked) -> setEngineEnabled(checked));
@@ -378,9 +380,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
         analysis.reset();
         navigationLine = new ArrayList<>();
         evaluationView.clearEvaluation();
-        if (isStudy()) {
-            chapterIndex = intent.getIntExtra(EXTRA_STUDY_CHAPTER, 0);
-        }
     }
 
     @Override
@@ -732,7 +731,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
         if (studyChapters.isEmpty()) {
             return false;
         }
-        chapterIndex = Math.max(0, Math.min(chapterIndex, studyChapters.size() - 1));
+        int index = initialChapterIndex(collectionId, studyId);
+        chapterIndex = Math.max(0, Math.min(index, studyChapters.size() - 1));
         if (chapterNavigation == null) {
             chapterNavigation =
                     new StudyChapterNavigation(findViewById(R.id.root_layout), this::selectChapter);
@@ -743,6 +743,26 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 studyChapters,
                 chapterIndex);
         return true;
+    }
+
+    private int initialChapterIndex(String collectionId, String studyId) {
+        if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))) {
+            return restoredSession.getInt("chapter");
+        }
+        if (getIntent().hasExtra(EXTRA_STUDY_CHAPTER)) {
+            return getIntent().getIntExtra(EXTRA_STUDY_CHAPTER, 0);
+        }
+        String chapterId = getPrefs().getString(studyChapterPref(collectionId, studyId), null);
+        for (int i = 0; i < studyChapters.size(); i++) {
+            if (studyChapters.get(i).chapterId.equals(chapterId)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private static String studyChapterPref(String collectionId, String studyId) {
+        return PREF_STUDY_CHAPTER_PREFIX + Uri.encode(collectionId) + "/" + Uri.encode(studyId);
     }
 
     /** Loads the selected chapter at its starting position, where the introduction is. */
@@ -880,12 +900,17 @@ public class AnalyzeActivity extends ChessBoardActivity {
         boardDescriptions.clear();
         analysis.pause();
         if (sessionLoaded) {
-            if (lGameID > 0) {
+            if (isStudy()) {
+                saveStudy();
+                String key =
+                        studyChapterPref(
+                                getIntent().getStringExtra(EXTRA_STUDY_COLLECTION),
+                                getIntent().getStringExtra(EXTRA_STUDY_ID));
+                getPrefs().edit().putString(key, studyChapters.get(chapterIndex).chapterId).apply();
+            } else if (lGameID > 0) {
                 saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
             } else if (fromGamePgnPref) {
                 getPrefs().edit().putString("game_pgn", gameApi.exportFullPGN()).apply();
-            } else {
-                saveStudy();
             }
         }
         super.onPause();

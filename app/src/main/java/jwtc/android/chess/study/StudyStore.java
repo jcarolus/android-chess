@@ -33,12 +33,13 @@ public final class StudyStore {
 
     public static final class Chapter {
         public final long id;
-        public final String title;
+        public final String title, chapterId;
         final String topic, author;
 
         Chapter(Cursor row) {
             id = row.getLong(6);
             title = row.getString(7);
+            chapterId = row.getString(8);
             topic = row.getString(5);
             author = row.getString(4);
         }
@@ -113,7 +114,8 @@ public final class StudyStore {
         SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
         List<Study> library = new ArrayList<>();
         try (Cursor rows = db.rawQuery(
-                "SELECT collection_id, study_id, collection_name, study_title, author, topic, id, title "
+                "SELECT collection_id, study_id, collection_name, study_title, author, topic, "
+                        + "id, title, chapter_id "
                         + "FROM study_chapters ORDER BY collection_id, study_id, id",
                 null)) {
             Study study = null;
@@ -135,7 +137,8 @@ public final class StudyStore {
         SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
         List<Chapter> chapters = new ArrayList<>();
         try (Cursor rows = db.rawQuery(
-                "SELECT collection_id, study_id, collection_name, study_title, author, topic, id, title "
+                "SELECT collection_id, study_id, collection_name, study_title, author, topic, "
+                        + "id, title, chapter_id "
                         + "FROM study_chapters WHERE collection_id = ? AND study_id = ? ORDER BY id",
                 new String[] {collectionId, studyId})) {
             while (rows.moveToNext()) {

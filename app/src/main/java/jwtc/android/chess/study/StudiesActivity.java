@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -77,7 +78,7 @@ public final class StudiesActivity extends BaseActivity {
                                 Toast.makeText(this, DOWNLOADS.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
-        findViewById(R.id.StudyOpen).setOnClickListener(v -> openChapter(0));
+        findViewById(R.id.StudyOpen).setOnClickListener(v -> openStudy(null));
         findViewById(R.id.StudySurprise)
                 .setOnClickListener(
                         v -> {
@@ -85,7 +86,7 @@ public final class StudiesActivity extends BaseActivity {
                             studies.setSelection(index);
                             selectStudy(filtered.get(index));
                             int chapter = random.nextInt(selected.chapters.size());
-                            openChapter(chapter);
+                            openStudy(chapter);
                         });
     }
 
@@ -248,7 +249,7 @@ public final class StudiesActivity extends BaseActivity {
         studyId = study.id;
     }
 
-    private void openChapter(int index) {
+    private void openStudy(@Nullable Integer chapterIndex) {
         startActivity(
                 AnalyzeActivity.studyIntent(
                         this,
@@ -256,6 +257,6 @@ public final class StudiesActivity extends BaseActivity {
                         selected.id,
                         selected.title,
                         selected.author,
-                        index));
+                        chapterIndex));
     }
 }
