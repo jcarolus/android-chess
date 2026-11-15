@@ -18,9 +18,9 @@ A free, open-source chess app — no ads, just chess.
 
 ## Dictating moves
 
-Enable text move entry in Accessibility preferences. Tap the move field below
-the board, then tap the keyboard microphone and say the starting square followed
-by the destination square, such as “e two e four”.
+Enable text move entry in Accessibility preferences. Tap the move field, then
+tap the keyboard microphone and say the starting square followed by the
+destination square, such as “e two e four”.
 
 If the keyboard mishears a file letter, say its NATO spelling-alphabet word.
 For example, say “Echo two Echo four” in English or “Echo twee Echo vier” in

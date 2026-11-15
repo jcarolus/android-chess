@@ -183,7 +183,6 @@ public class LichessGameActivity extends ChessBoardActivity
         moveEntry =
                 new MoveEntry(
                         this,
-                        findViewById(R.id.play_board_bottom),
                         this::promotionDialog,
                         () ->
                                 lichessApi.getViewMode() == LichessApi.VIEW_PLAY

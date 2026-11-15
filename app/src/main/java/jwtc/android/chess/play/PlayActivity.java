@@ -188,7 +188,6 @@ public class PlayActivity extends ChessBoardActivity
         moveEntry =
                 new MoveEntry(
                         this,
-                        findViewById(R.id.play_board_bottom),
                         this::promotionDialog,
                         () -> false,
                         move -> gameApi.move(move.move, -1));

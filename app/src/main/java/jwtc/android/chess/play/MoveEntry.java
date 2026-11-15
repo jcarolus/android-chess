@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
+import android.widget.LinearLayout;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
@@ -40,7 +41,6 @@ public final class MoveEntry {
 
     public MoveEntry(
             ChessBoardActivity activity,
-            ViewGroup container,
             Function<IntConsumer, ChessAlertDialogBuilder> promotionDialog,
             BooleanSupplier requireReview,
             Consumer<PositionMove> playMove) {
@@ -50,8 +50,20 @@ public final class MoveEntry {
         this.playMove = playMove;
         field = new MoveEntryField(activity, this::submitMoveEntry);
         field.setVisibility(View.GONE);
-        container.addView(
-                field, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (activity.getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE) {
+            LinearLayout controls = activity.findViewById(R.id.play_controls_content);
+            controls.addView(
+                    field,
+                    0,
+                    new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
+        } else {
+            ViewGroup boardBottom = activity.findViewById(R.id.play_board_bottom);
+            boardBottom.addView(
+                    field, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
 
     public void update(GameApi game, Object position, boolean playerTurn) {
