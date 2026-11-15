@@ -1153,6 +1153,14 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         if (languageStatus == TextToSpeech.LANG_MISSING_DATA
                 || languageStatus == TextToSpeech.LANG_NOT_SUPPORTED) {
             doToast(getString(R.string.tts_locale_not_supported));
+        } else {
+            warnIfSpeechLanguageDiffers();
+        }
+    }
+
+    protected void warnIfSpeechLanguageDiffers() {
+        if (textToSpeech != null && textToSpeech.isVoiceLanguageDifferentFromApp()) {
+            doToast(getString(R.string.tts_language_differs_from_app));
         }
     }
 

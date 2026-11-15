@@ -361,6 +361,7 @@
     <string name="pref_speech">Vorbire</string>
     <string name="pref_user_long_move_descriptions">Folosește descrierea completă a mutării</string>
     <string name="tts_locale_not_supported">Funcția text-în-vorbire nu acceptă localizarea dvs.</string>
+    <string name="tts_language_differs_from_app">Funcția de redare vocală folosește o altă limbă decât aplicația</string>
     <string name="tts_not_loaded">Nu s-a putut încărca funcția text-în-vorbire</string>
     <string name="tts_example_move">Nebunul capturează la G7, șah</string>
     <string name="tts_selected">Selectat</string>

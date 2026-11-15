@@ -371,6 +371,7 @@
     <string name="pref_speech">Sprachausgabe</string>
     <string name="pref_user_long_move_descriptions">Vollständige Zugbeschreibung verwenden</string>
     <string name="tts_locale_not_supported">Die Sprachausgabe unterstützt Ihr Gebietsschema nicht</string>
+    <string name="tts_language_differs_from_app">Die Sprachausgabe verwendet eine andere Sprache als die App</string>
     <string name="tts_not_loaded">Sprachausgabe konnte nicht geladen werden</string>
     <string name="tts_example_move">Läufer schlägt G7, Schach</string>
     <string name="tts_selected">Ausgewählt</string>

@@ -381,6 +381,7 @@
     <string name="pref_speech">語音</string>
     <string name="pref_user_long_move_descriptions">使用完整棋步描述</string>
     <string name="tts_locale_not_supported">文字轉語音不支援你的語言設定</string>
+    <string name="tts_language_differs_from_app">文字轉語音使用的語言與應用程式語言不同</string>
     <string name="tts_not_loaded">無法載入文字轉語音</string>
     <string name="tts_example_move">主教吃 G7，將軍</string>
     <string name="tts_selected">已選取</string>

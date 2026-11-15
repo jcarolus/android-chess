@@ -95,10 +95,12 @@ public class AccessibilityPreferences extends ChessBoardActivity {
                             && position < speechVoiceNames.size()
                             && textToSpeech != null) {
                         String voiceName = speechVoiceNames.get(position);
-                        if (voiceName == null) {
-                            textToSpeech.useSystemDefaultVoice();
-                        } else {
-                            textToSpeech.setVoiceByName(voiceName);
+                        boolean voiceApplied =
+                                voiceName == null
+                                        ? textToSpeech.useSystemDefaultVoice()
+                                        : textToSpeech.setVoiceByName(voiceName);
+                        if (voiceApplied) {
+                            warnIfSpeechLanguageDiffers();
                         }
                         textToSpeech.doSpeak(getPreviewMove());
                     }

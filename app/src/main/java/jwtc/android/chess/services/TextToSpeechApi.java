@@ -212,12 +212,23 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         return voice == null ? null : voice.getName();
     }
 
-    public void useSystemDefaultVoice() {
+    public boolean isVoiceLanguageDifferentFromApp() {
+        if (textToSpeech == null || appLocales.isEmpty()) {
+            return false;
+        }
+        Voice voice = textToSpeech.getVoice();
+        Locale voiceLocale = voice == null ? null : voice.getLocale();
+        return voiceLocale != null
+                && !voiceLocale.getLanguage().isEmpty()
+                && !voiceLocale.getLanguage().equals(appLocales.get(0).getLanguage());
+    }
+
+    public boolean useSystemDefaultVoice() {
         if (textToSpeech == null) {
-            return;
+            return false;
         }
         selectedLocale = findBestSupportedLocale();
-        textToSpeech.setLanguage(selectedLocale);
+        return textToSpeech.setLanguage(selectedLocale) >= TextToSpeech.LANG_AVAILABLE;
     }
 
     public List<TextToSpeech.EngineInfo> getInstalledEngines() {

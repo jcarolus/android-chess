@@ -361,6 +361,7 @@
     <string name="pref_speech">语音播报</string>
     <string name="pref_user_long_move_descriptions">使用完整走法描述</string>
     <string name="tts_locale_not_supported">文本转语音不支持您的地区设置</string>
+    <string name="tts_language_differs_from_app">文字转语音使用的语言与应用语言不同</string>
     <string name="tts_not_loaded">无法加载文本转语音</string>
     <string name="tts_example_move">象吃G7，将军</string>
     <string name="tts_selected">已选择</string>

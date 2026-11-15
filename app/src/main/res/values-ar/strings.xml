@@ -375,6 +375,7 @@
     <string name="pref_speech">كلام</string>
     <string name="pref_user_long_move_descriptions">استخدام وصف النقلة الكامل</string>
     <string name="tts_locale_not_supported">تحويل النص إلى كلام لا يدعم لغتك المحلية</string>
+    <string name="tts_language_differs_from_app">تستخدم ميزة تحويل النص إلى كلام لغة مختلفة عن لغة التطبيق</string>
     <string name="tts_not_loaded">تعذر تحميل محرك تحويل النص إلى كلام</string>
     <string name="tts_example_move">فيل يأخذ G7 كش</string>
     <string name="tts_selected">تم التحديد</string>

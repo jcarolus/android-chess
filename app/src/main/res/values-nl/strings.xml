@@ -412,6 +412,7 @@
     <string name="pref_user_long_move_descriptions">Volledige zetbeschrijving gebruiken</string>
     <string name="pref_add_turn_in_move_description">Vermelden wie aan zet is in zetbeschrijvingen</string>
     <string name="tts_locale_not_supported">Tekst-naar-spraak ondersteunt je taalinstelling niet</string>
+    <string name="tts_language_differs_from_app">Tekst-naar-spraak gebruikt een andere taal dan de app</string>
     <string name="tts_not_loaded">Tekst-naar-spraak kon niet worden geladen</string>
     <string name="tts_example_move">Loper slaat G7, schaak</string>
     <string name="tts_selected">Geselecteerd</string>

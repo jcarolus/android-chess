@@ -361,6 +361,7 @@
     <string name="pref_speech">Озвучка</string>
     <string name="pref_user_long_move_descriptions">Использовать полное описание хода</string>
     <string name="tts_locale_not_supported">Преобразование текста в речь не поддерживает вашу локаль</string>
+    <string name="tts_language_differs_from_app">Для озвучивания используется язык, отличный от языка приложения</string>
     <string name="tts_not_loaded">Не удалось загрузить преобразование текста в речь</string>
     <string name="tts_example_move">Слон бьёт на G7, шах</string>
     <string name="tts_selected">Выбрано</string>

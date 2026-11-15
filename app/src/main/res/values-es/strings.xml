@@ -371,6 +371,7 @@
     <string name="pref_speech">Voz</string>
     <string name="pref_user_long_move_descriptions">Usar descripción completa del movimiento</string>
     <string name="tts_locale_not_supported">La conversión de texto a voz no admite tu configuración regional</string>
+    <string name="tts_language_differs_from_app">La conversión de texto a voz usa un idioma distinto al de la aplicación</string>
     <string name="tts_not_loaded">No se pudo cargar el texto a voz</string>
     <string name="tts_example_move">Alfil captura en G7, jaque</string>
     <string name="tts_selected">Seleccionado</string>

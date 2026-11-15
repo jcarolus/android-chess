@@ -396,6 +396,7 @@
     <string name="pref_speech">گفتار</string>
     <string name="pref_user_long_move_descriptions">استفاده از توضیح کامل حرکت</string>
     <string name="tts_locale_not_supported">تبدیل متن به گفتار از زبان شما پشتیبانی نمی‌کند</string>
+    <string name="tts_language_differs_from_app">تبدیل متن به گفتار از زبانی متفاوت با زبان برنامه استفاده می‌کند</string>
     <string name="tts_not_loaded">بارگذاری تبدیل متن به گفتار ممکن نشد</string>
     <string name="tts_example_move">فیل، G7 را می‌زند کیش</string>
     <string name="tts_selected">انتخاب‌شده</string>
