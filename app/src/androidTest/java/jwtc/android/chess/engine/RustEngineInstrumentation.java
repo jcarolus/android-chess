@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.hotspotboard.HotspotBoardApi;
+import jwtc.android.chess.hotspotboard.HotspotVariantInstrumentation;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
@@ -27,6 +28,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
     private boolean importOnly;
     private boolean ownershipOnly;
     private boolean textMoveOnly;
+    private boolean hotspotOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -36,6 +38,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         importOnly = arguments != null && "import".equals(arguments.getString("suite"));
         ownershipOnly = arguments != null && "ownership".equals(arguments.getString("suite"));
         textMoveOnly = arguments != null && "text-move".equals(arguments.getString("suite"));
+        hotspotOnly = arguments != null && "hotspot".equals(arguments.getString("suite"));
         start();
     }
 
@@ -43,6 +46,12 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (hotspotOnly) {
+                HotspotVariantInstrumentation.verify();
+                report.putString("stream", "Hotspot variant compatibility passed\n");
+                finish(-1, report);
+                return;
+            }
             if (textMoveOnly) {
                 textMoveEntry();
                 report.putString("stream", "Text move resolution and execution passed\n");
@@ -85,6 +94,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
             boardSnapshots();
             boardOwnership();
+            HotspotVariantInstrumentation.verify();
             importedGamesValidateOnOpening();
             pgnReplayPreservesBranchesAndRollback();
             kingOfTheHillPersistence();

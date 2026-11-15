@@ -831,6 +831,10 @@ public class GameApi {
     }
 
     public boolean initFEN(String sFEN, boolean resetHead) {
+        return initFEN(sFEN, resetHead, null);
+    }
+
+    protected boolean initFEN(String sFEN, boolean resetHead, RustSearchRequest.Variant variant) {
         try {
             sFEN = new BoardPosition(sFEN).fen();
         } catch (IllegalArgumentException invalid) {
@@ -838,7 +842,7 @@ public class GameApi {
         }
         Node oldNode = currentNode;
         PGNEntry oldPending = pendingDuckMove;
-        if (board.initFEN(sFEN)) {
+        if (variant == null ? board.initFEN(sFEN) : board.initFEN(sFEN, variant)) {
 
             if (resetHead) {
                 pgnTags.clear();
