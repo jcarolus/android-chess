@@ -80,6 +80,7 @@ public class LichessGameActivity extends ChessBoardActivity
     // whether to honor the launch extras vs. restore in-progress api state on first connect.
     private boolean freshLaunch;
     private boolean firstConnect = true;
+    private boolean reconnectGameOnResume;
     private String premoveGameId;
     private File pendingExportFile;
 
@@ -324,7 +325,11 @@ public class LichessGameActivity extends ChessBoardActivity
             lichessApi.setApiListener(this);
             puzzleActive = lichessApi.getViewMode() == LichessApi.VIEW_PUZZLE;
             openPendingGameStart();
+            if (reconnectGameOnResume && session.isConnected()) {
+                lichessApi.openGameStream(currentGameId);
+            }
         }
+        reconnectGameOnResume = false;
         layoutResignDraw.setVisibility(puzzleActive ? View.GONE : View.VISIBLE);
         layoutPuzzleControls.setVisibility(puzzleActive ? View.VISIBLE : View.GONE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
@@ -336,8 +341,16 @@ public class LichessGameActivity extends ChessBoardActivity
     protected void onPause() {
         moveEntryActive = false;
         moveEntry.reset();
+        if (hasPremoved()) {
+            clearPremove();
+            updateSelectedSquares();
+        }
         super.onPause();
         if (lichessApi != null) {
+            reconnectGameOnResume =
+                    lichessApi.getUser() != null
+                            && currentGameId != null
+                            && !lichessApi.isGameFinished(currentGameId);
             lichessApi.setApiListener(null);
         }
         SharedPreferences.Editor editor = getPrefs().edit();
@@ -360,6 +373,7 @@ public class LichessGameActivity extends ChessBoardActivity
             }
         }
         session.unbind(this);
+        reconnectGameOnResume = false;
         gameApi = null;
         lichessApi = null;
         localClockApi = null;
@@ -420,6 +434,7 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     protected void openGame(String gameId) {
+        reconnectGameOnResume = false;
         moveEntry.reset();
         if (hasPremoved() && (premoveGameId == null || !premoveGameId.equals(gameId))) {
             clearPremove();
@@ -506,13 +521,16 @@ public class LichessGameActivity extends ChessBoardActivity
         textViewRatingMe.setText(
                 "" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
 
-        if (gameFull.clock != null && isStarted) {
+        if (gameFull.clock != null) {
             localClockApi.startClock(
                     gameFull.clock.increment,
                     gameFull.state.wtime,
                     gameFull.state.btime,
                     turn,
-                    System.currentTimeMillis());
+                    isStarted ? System.currentTimeMillis() : 0);
+            if (!isStarted) {
+                OnClockTime();
+            }
         }
         buttonDraw.setEnabled(isStarted);
         buttonResign.setEnabled(isStarted);

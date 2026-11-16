@@ -909,19 +909,28 @@ public class LichessApi extends GameApi {
     public void game(String gameId) {
         reset();
         dispatchState();
+        openGameStream(gameId);
+    }
+
+    void openGameStream(String gameId) {
         this.auth.game(
                 gameId,
                 new Auth.AuthResponseHandler() {
+                    private boolean receivedGameFull;
+
                     @Override
                     public void onResponse(JsonObject jsonObject) {
                         String type = jsonObject.get("type").getAsString();
-                        Log.d(TAG, "game " + jsonObject.get("type").getAsString());
-                        if (type.equals("gameState") && ongoingGameFull != null) {
-                            ongoingGameFull.state =
-                                    (new Gson()).fromJson(jsonObject, GameState.class);
-                        } else if (type.equals("gameFull")) {
+                        Log.d(TAG, "game " + type);
+                        if (type.equals("gameFull")) {
                             ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
                             ongoingPuzzle = null;
+                            receivedGameFull = true;
+                        } else if (type.equals("gameState") && receivedGameFull) {
+                            ongoingGameFull.state =
+                                    (new Gson()).fromJson(jsonObject, GameState.class);
+                        } else {
+                            return;
                         }
                         processGameState();
                     }
@@ -952,6 +961,12 @@ public class LichessApi extends GameApi {
 
     public String getOngoingGameId() {
         return ongoingGameFull != null ? ongoingGameFull.id : null;
+    }
+
+    boolean isGameFinished(String gameId) {
+        return lastGameStateSnapshot != null
+                && gameId.equals(lastGameStateSnapshot.gameId)
+                && !lastGameStateSnapshot.isStarted();
     }
 
     public boolean isOngoingGameInProgress() {
