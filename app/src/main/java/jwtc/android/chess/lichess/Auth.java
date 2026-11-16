@@ -461,9 +461,7 @@ public class Auth {
     }
 
     public void game(String gameId, AuthResponseHandler responseHandler) {
-        if (gameStream != null) {
-            gameStream.close();
-        }
+        closeGameStream();
         // Check stream identity on the main thread because callbacks can outlive a canceled call.
         final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
         self[0] =
@@ -499,6 +497,13 @@ public class Auth {
                             }
                         });
         gameStream = self[0];
+    }
+
+    void closeGameStream() {
+        if (gameStream != null) {
+            gameStream.close();
+            gameStream = null;
+        }
     }
 
     public void move(
@@ -595,10 +600,7 @@ public class Auth {
 
     public void closeStreams() {
         Log.d(TAG, "closeStreams");
-        if (gameStream != null) {
-            gameStream.close();
-            gameStream = null;
-        }
+        closeGameStream();
         if (eventStream != null) {
             eventStream.close();
             eventStream = null;

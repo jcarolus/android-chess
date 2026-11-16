@@ -34,6 +34,7 @@ import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.LocalClockApi;
+import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -281,6 +282,7 @@ public class LichessGameActivity extends ChessBoardActivity
         if (mode == LichessApi.VIEW_PUZZLE) {
             displayPuzzle();
             rebuildBoard();
+            restorePuzzleProgress();
             return;
         }
         if (mode == LichessApi.VIEW_PLAY && lichessApi.getOngoingGameId() != null) {
@@ -324,6 +326,9 @@ public class LichessGameActivity extends ChessBoardActivity
         if (lichessApi != null) {
             lichessApi.setApiListener(this);
             puzzleActive = lichessApi.getViewMode() == LichessApi.VIEW_PUZZLE;
+            if (puzzleActive) {
+                restorePuzzleProgress();
+            }
             openPendingGameStart();
             if (reconnectGameOnResume && session.isConnected()) {
                 lichessApi.openGameStream(currentGameId);
@@ -473,6 +478,7 @@ public class LichessGameActivity extends ChessBoardActivity
         layoutResignDraw.setVisibility(View.GONE);
         layoutSave.setVisibility(View.GONE);
         layoutPuzzleControls.setVisibility(View.VISIBLE);
+        buttonPuzzleShow.setEnabled(true);
         buttonPuzzleNext.setEnabled(false);
         buttonPuzzleRetry.setVisibility(View.GONE);
         correctPosition = -1;
@@ -623,6 +629,14 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     @Override
+    public void onPuzzleMoveFailed() {
+        buttonPuzzleShow.setEnabled(false);
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        buttonPuzzleNext.setEnabled(true);
+        updateGameStateMessage(getString(R.string.lichess_puzzle_move_failed));
+    }
+
+    @Override
     public void onPuzzleUnexpectedMove(String sMove, int toPos) {
         wrongPosition = toPos;
         rebuildBoard();
@@ -645,6 +659,14 @@ public class LichessGameActivity extends ChessBoardActivity
         buttonPuzzleNext.setEnabled(true);
     }
 
+    private void restorePuzzleProgress() {
+        if (lichessApi.hasPuzzleMoveFailed()) {
+            onPuzzleMoveFailed();
+        } else if (lichessApi.isPuzzleComplete()) {
+            onPuzzleCompleted(Move.getTo(lichessApi.getMyMove()));
+        }
+    }
+
     @Override
     public boolean requestMove(int from, int to) {
         if (lichessApi == null) {
@@ -652,8 +674,10 @@ public class LichessGameActivity extends ChessBoardActivity
             return false;
         }
 
-        boolean liveGame = lichessApi.getViewMode() == LichessApi.VIEW_PLAY;
-        if (liveGame && !lichessApi.isOngoingGameInProgress()) {
+        int mode = lichessApi.getViewMode();
+        boolean liveGame = mode == LichessApi.VIEW_PLAY;
+        if ((liveGame && !lichessApi.isOngoingGameInProgress())
+                || (mode == LichessApi.VIEW_PUZZLE && !lichessApi.isPuzzleAwaitingMove())) {
             rebuildBoard();
             return false;
         }

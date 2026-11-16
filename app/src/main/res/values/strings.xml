@@ -544,6 +544,7 @@
     <string name="lichess_puzzle_difficulty">Difficulty</string>
     <string name="lichess_puzzle_angle">Theme</string>
     <string name="lichess_puzzle_solved_rated">Puzzle solved! Rating %1$s</string>
+    <string name="lichess_puzzle_move_failed">Could not apply a puzzle move. You can go to the next puzzle.</string>
     <string name="lichess_puzzle_solved_hint_rated">Solved with mistakes. Rating %1$s</string>
     <string name="lichess_lobby_button_teams">Teams</string>
     <string name="lichess_swiss_title">Pick a team to see its Swiss tournaments</string>
