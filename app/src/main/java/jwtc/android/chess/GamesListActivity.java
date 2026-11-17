@@ -67,7 +67,10 @@ public class GamesListActivity extends ChessBoardActivity {
             textViewDate,
             textViewFilterInfo,
             textViewRating;
-    private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
+    private TextInputEditText editTextFilterWhite,
+            editTextFilterBlack,
+            editTextFilterEvent,
+            editTextFilterTopic;
     private MaterialButton buttonFilters, buttonOpen, buttonAnalyze, buttonEdit, buttonDelete;
     private PGNDateView pgnDateAfter, pgnDateBefore;
     private SwitchMaterial switchFilterWhite,
@@ -75,6 +78,7 @@ public class GamesListActivity extends ChessBoardActivity {
             switchFilterDateAfter,
             switchFilterDateBefore,
             switchFilterEvent,
+            switchFilterTopic,
             switchFilterResult;
     private FixedDropdownView dropDownResult, dropDownOrderBy, dropDownOrderDirection;
     private MaterialButtonToggleGroup buttonToggleGroup;
@@ -352,6 +356,9 @@ public class GamesListActivity extends ChessBoardActivity {
                 "gameslist_filter_event",
                 Utils.getTrimmedOrDefault(editTextFilterEvent.getText(), ""));
         editor.putString(
+                "gameslist_filter_topic",
+                Utils.getTrimmedOrDefault(editTextFilterTopic.getText(), ""));
+        editor.putString(
                 "gameslist_filter_white",
                 Utils.getTrimmedOrDefault(editTextFilterWhite.getText(), ""));
         editor.putString(
@@ -364,6 +371,7 @@ public class GamesListActivity extends ChessBoardActivity {
         editor.putLong("gameslist_filter_date_before", pgnDateBefore.getDate().getTime());
 
         editor.putBoolean("gameslist_filter_switch_event", switchFilterEvent.isChecked());
+        editor.putBoolean("gameslist_filter_switch_topic", switchFilterTopic.isChecked());
         editor.putBoolean("gameslist_filter_switch_white", switchFilterWhite.isChecked());
         editor.putBoolean("gameslist_filter_switch_black", switchFilterBlack.isChecked());
         editor.putBoolean(
@@ -592,6 +600,9 @@ public class GamesListActivity extends ChessBoardActivity {
         if (switchFilterEvent.isChecked()) {
             filter.event(Utils.getTrimmedOrNull(editTextFilterEvent.getText()));
         }
+        if (switchFilterTopic.isChecked()) {
+            filter.topic(Utils.getTrimmedOrNull(editTextFilterTopic.getText()));
+        }
         if (switchFilterDateAfter.isChecked()) {
             filter.after(pgnDateAfter.getDate());
         }
@@ -714,6 +725,10 @@ public class GamesListActivity extends ChessBoardActivity {
             editTextFilterEvent.setText(prefs.getString("gameslist_filter_event", ""));
             editTextFilterEvent.addTextChangedListener(textWatcher);
 
+            editTextFilterTopic = findViewById(R.id.EditTextFilterTopic);
+            editTextFilterTopic.setText(prefs.getString("gameslist_filter_topic", ""));
+            editTextFilterTopic.addTextChangedListener(textWatcher);
+
             pgnDateAfter = findViewById(R.id.PGNDateAfter);
             pgnDateAfter.setDate(
                     new Date(
@@ -741,6 +756,10 @@ public class GamesListActivity extends ChessBoardActivity {
             switchFilterEvent = findViewById(R.id.SwitchFilterEvent);
             switchFilterEvent.setChecked(prefs.getBoolean("gameslist_filter_switch_event", false));
             switchFilterEvent.setOnCheckedChangeListener((v, isChecked) -> updateParams());
+
+            switchFilterTopic = findViewById(R.id.SwitchFilterTopic);
+            switchFilterTopic.setChecked(prefs.getBoolean("gameslist_filter_switch_topic", false));
+            switchFilterTopic.setOnCheckedChangeListener((v, isChecked) -> updateParams());
 
             switchFilterDateAfter = findViewById(R.id.SwitchFilterDateAfter);
             switchFilterDateAfter.setChecked(

@@ -24,6 +24,8 @@ import jwtc.chess.Pgn;
 
 public class ImportActivity extends BaseActivity implements ImportListener {
 
+    private static final String PREF_LAST_STUDY_IMPORT_TOPIC = "lastStudyImportTopic";
+
     private ImportService importService = null;
     private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail, _tvWorkCntDuplicates;
     private LinearProgressIndicator _progress;
@@ -237,6 +239,10 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         topicField = new EditText(this);
         topicField.setSingleLine(true);
         topicField.setHint(R.string.study_topic);
+        boolean studyImport = _mode == ImportService.IMPORT_STUDIES;
+        if (topicDraft == null && studyImport) {
+            topicDraft = getPrefs().getString(PREF_LAST_STUDY_IMPORT_TOPIC, null);
+        }
         topicField.setText(topicDraft);
         fields.addView(topicField);
         topicDraft = null;
@@ -264,6 +270,12 @@ public class ImportActivity extends BaseActivity implements ImportListener {
                                 topicField.setError(
                                         getString(R.string.study_import_value_required));
                             } else if (importService != null) {
+                                if (studyImport) {
+                                    getPrefs()
+                                            .edit()
+                                            .putString(PREF_LAST_STUDY_IMPORT_TOPIC, topic)
+                                            .apply();
+                                }
                                 topicDialog.dismiss();
                                 topicDialog = null;
                                 importService.answerTopicPrompt(prompt, topic, true);

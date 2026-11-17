@@ -18,7 +18,7 @@ public final class GameFilter {
                     PGNColumns.EVENT,
                     PGNColumns.RESULT);
 
-    private String white, black, event, result;
+    private String white, black, event, topic, result;
     private Date after, before;
     private String sortColumn = PGNColumns.DATE;
     private boolean descending = true;
@@ -36,6 +36,11 @@ public final class GameFilter {
 
     public GameFilter event(String text) {
         event = blankToNull(text);
+        return this;
+    }
+
+    public GameFilter topic(String text) {
+        topic = blankToNull(text);
         return this;
     }
 
@@ -83,6 +88,9 @@ public final class GameFilter {
         if (event != null) {
             parts.add(PGNColumns.EVENT + " LIKE ?");
         }
+        if (topic != null) {
+            parts.add(PGNColumns.TOPIC + " LIKE ?");
+        }
         if (after != null) {
             parts.add(PGNColumns.DATE + " >= ?");
         }
@@ -116,6 +124,9 @@ public final class GameFilter {
         }
         if (event != null) {
             args.add("%" + event + "%");
+        }
+        if (topic != null) {
+            args.add("%" + topic + "%");
         }
         if (after != null) {
             args.add(String.valueOf(after.getTime()));

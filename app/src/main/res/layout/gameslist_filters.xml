@@ -83,6 +83,28 @@
             <TableRow>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchFilterTopic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/study_topic" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="220dp"
+                    android:hint="@string/study_topic">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/EditTextFilterTopic"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
+
+            <TableRow>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/SwitchFilterDateAfter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

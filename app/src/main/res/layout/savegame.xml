@@ -38,6 +38,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minWidth="120dp"
+            android:hint="@string/study_topic">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextSaveTopic"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
             android:hint="@string/savegame_white">
 
             <com.google.android.material.textfield.TextInputEditText
