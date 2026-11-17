@@ -91,15 +91,15 @@ public class ImportService extends Service {
             };
 
     private final Handler importDelivery = new Handler(Looper.getMainLooper());
-    private StudyPrompt studyPrompt;
+    private TopicPrompt topicPrompt;
     private volatile boolean destroyed;
 
-    public static final class StudyPrompt {
+    public static final class TopicPrompt {
         final String filename;
-        final StudyImport.Defaults defaults;
+        final TopicImport.DefaultTopic defaults;
         private final CompletableFuture<Boolean> answer = new CompletableFuture<>();
 
-        StudyPrompt(String filename, StudyImport.Defaults defaults) {
+        TopicPrompt(String filename, TopicImport.DefaultTopic defaults) {
             this.filename = filename;
             this.defaults = defaults;
         }
@@ -154,8 +154,8 @@ public class ImportService extends Service {
         this.listeners.add(listener);
         if (latestIsImport) {
             pipeline.replay(listener);
-            if (studyPrompt != null) {
-                listener.onStudyMetadataRequired(studyPrompt);
+            if (topicPrompt != null) {
+                listener.onTopicRequired(topicPrompt);
             }
         } else if (jobRunning) {
             listener.OnImportStarted(jobMode);
@@ -210,34 +210,44 @@ public class ImportService extends Service {
                             importApi = new ImportApi();
                             return new ImportJob(
                                     mode,
-                                    PgnSource.file(openInput(uri, "puzzles.pgn")),
+                                    uri == null
+                                            ? bundledPgn("puzzles.pgn")
+                                            : topicImport(uri, false),
                                     new PuzzleImportHandler(importApi, getContentResolver()));
                         });
                 break;
             case IMPORT_STUDIES:
                 if (uri != null) {
-                    pipeline.start(mode, () -> {
-                        StudyImport study = new StudyImport(this, getUriDisplayName(uri),
-                                () -> openPgnSource(uri), this::askStudyMetadata);
-                        return new ImportJob(mode, study, study);
-                    });
+                    pipeline.start(
+                            mode,
+                            () ->
+                                    new ImportJob(
+                                            mode,
+                                            topicImport(uri, true),
+                                            new GameImportHandler(getContentResolver())));
                 }
                 break;
             case IMPORT_GAMES:
                 if (uri != null) {
                     pipeline.start(
                             mode,
-                            () -> new ImportJob(mode, openPgnSource(uri),
-                                    new GameImportHandler(getContentResolver())));
+                            () ->
+                                    new ImportJob(
+                                            mode,
+                                            openPgnSource(uri),
+                                            new GameImportHandler(getContentResolver())));
                 }
                 break;
             case IMPORT_PRACTICE:
                 pipeline.start(
                         mode,
-                        () -> new ImportJob(
-                                mode,
-                                PgnSource.file(openInput(uri, "practice.pgn")),
-                                new PracticeImportHandler(getContentResolver())));
+                        () ->
+                                new ImportJob(
+                                        mode,
+                                        uri == null
+                                                ? bundledPgn("practice.pgn")
+                                                : topicImport(uri, false),
+                                        new PracticeImportHandler(getContentResolver())));
                 break;
             case IMPORT_OPENINGS:
                 if (uri != null) {
@@ -366,35 +376,38 @@ public class ImportService extends Service {
         }
     }
 
-    private boolean askStudyMetadata(String filename, StudyImport.Defaults defaults) throws Exception {
-        StudyPrompt prompt = new StudyPrompt(filename, defaults);
-        importDelivery.post(() -> {
-            if (destroyed) {
-                prompt.answer.complete(false);
-                return;
-            }
-            studyPrompt = prompt;
-            for (ImportListener listener : new ArrayList<>(listeners)) {
-                listener.onStudyMetadataRequired(prompt);
-            }
-        });
+    private boolean askImportTopic(String filename, TopicImport.DefaultTopic defaults)
+            throws Exception {
+        TopicPrompt prompt = new TopicPrompt(filename, defaults);
+        importDelivery.post(
+                () -> {
+                    if (destroyed) {
+                        prompt.answer.complete(false);
+                        return;
+                    }
+                    topicPrompt = prompt;
+                    for (ImportListener listener : new ArrayList<>(listeners)) {
+                        listener.onTopicRequired(prompt);
+                    }
+                });
         return prompt.answer.get();
     }
 
-    void answerStudyPrompt(StudyPrompt prompt, String title, String topic, boolean accepted) {
-        if (studyPrompt == prompt) {
-            studyPrompt = null;
-            prompt.defaults.title = title;
-            prompt.defaults.topic = topic;
+    void answerTopicPrompt(TopicPrompt prompt, String topic, boolean accepted) {
+        if (topicPrompt == prompt) {
+            topicPrompt = null;
+            prompt.defaults.value = topic;
             prompt.answer.complete(accepted);
         }
     }
 
-    /** The file the user picked, or the bundled asset when none was picked. */
-    private InputStream openInput(@Nullable Uri uri, String assetName) throws java.io.IOException {
-        return uri == null
-                ? getAssets().open(assetName)
-                : getContentResolver().openInputStream(uri);
+    private TopicImport topicImport(Uri uri, boolean studies) {
+        return new TopicImport(
+                getUriDisplayName(uri), () -> openPgnSource(uri), this::askImportTopic, studies);
+    }
+
+    private PgnSource bundledPgn(String assetName) throws IOException {
+        return PgnSource.file(getAssets().open(assetName));
     }
 
     @Override
@@ -402,8 +415,8 @@ public class ImportService extends Service {
         Log.i(TAG, "onDestroy");
         destroyed = true;
         pipeline.cancel();
-        if (studyPrompt != null) {
-            answerStudyPrompt(studyPrompt, null, null, false);
+        if (topicPrompt != null) {
+            answerTopicPrompt(topicPrompt, null, false);
         }
         super.onDestroy();
     }
@@ -415,8 +428,14 @@ public class ImportService extends Service {
     }
 
     private String getUriDisplayName(Uri uri) {
-        try (Cursor cursor = getContentResolver().query(
-                uri, new String[] {OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+        try (Cursor cursor =
+                getContentResolver()
+                        .query(
+                                uri,
+                                new String[] {OpenableColumns.DISPLAY_NAME},
+                                null,
+                                null,
+                                null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 String name = cursor.getString(0);
                 if (name != null && !name.trim().isEmpty()) {

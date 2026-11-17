@@ -2,19 +2,18 @@
 <resources>
     <string name="studies">مطالعه‌ها</string>
     <string name="study_topic">موضوع</string>
-    <string name="study_author">نویسنده</string>
-    <string name="study_name">مطالعه</string>
-    <string name="study_chapter">فصل</string>
-    <string name="study_any_author">همهٔ نویسندگان</string>
-    <string name="study_title_by_author">%1$s از %2$s</string>
-    <string name="study_chapter_choice">%1$d. %2$s</string>
-    <string name="study_loading_chapters">در حال بارگیری فصل‌ها…</string>
-    <string name="study_open_chapter">باز کردن فصل</string>
     <string name="study_surprise">غافلگیرم کن</string>
     <string name="study_variations">شاخه‌ها</string>
     <string name="study_before_move">پیش از حرکت: %1$s</string>
     <string name="study_after_move">پس از حرکت: %1$s</string>
     <string name="study_pgn_evaluation">ارزیابی مطالعه: %1$s</string>
-    <string name="study_next_chapter">فصل بعدی</string>
-    <string name="study_next_chapter_named">فصل: %1$s</string>
+    <string name="study_loading">در حال بارگیری مطالعه‌ها…</string>
+    <string name="study_position">%1$d از %2$d</string>
+    <string name="study_previous">مطالعهٔ قبلی</string>
+    <string name="study_next">مطالعهٔ بعدی</string>
+    <string name="study_import_topic">موضوع پیش‌فرض</string>
+    <string name="import_optional_topic">موضوع پیش‌فرض (اختیاری)</string>
+    <string name="study_delete_matching">حذف مطالعه‌های مطابق</string>
+    <string name="study_delete_failed">موارد انتخاب‌شده حذف نشدند.</string>
+    <string name="study_delete_confirmation">مطالعه‌های دارای موضوع «%1$s» و رویداد «%2$s» از بازی‌ها حذف شوند؟</string>
 </resources>

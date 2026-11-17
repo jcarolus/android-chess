@@ -2,19 +2,18 @@
 <resources>
     <string name="studies">研习</string>
     <string name="study_topic">主题</string>
-    <string name="study_author">作者</string>
-    <string name="study_name">研习</string>
-    <string name="study_chapter">章节</string>
-    <string name="study_any_author">不限作者</string>
-    <string name="study_title_by_author">%1$s（作者：%2$s）</string>
-    <string name="study_chapter_choice">%1$d. %2$s</string>
-    <string name="study_loading_chapters">正在加载章节列表…</string>
-    <string name="study_open_chapter">打开章节</string>
     <string name="study_surprise">随机选取</string>
     <string name="study_variations">变着</string>
     <string name="study_before_move">走棋前：%1$s</string>
     <string name="study_after_move">走棋后：%1$s</string>
     <string name="study_pgn_evaluation">研习评估：%1$s</string>
-    <string name="study_next_chapter">下一章</string>
-    <string name="study_next_chapter_named">章节：%1$s</string>
+    <string name="study_loading">正在加载研习…</string>
+    <string name="study_position">第 %1$d 项，共 %2$d 项</string>
+    <string name="study_previous">上一项研习</string>
+    <string name="study_next">下一项研习</string>
+    <string name="study_import_topic">默认主题</string>
+    <string name="import_optional_topic">默认主题（可选）</string>
+    <string name="study_delete_matching">删除匹配的研习</string>
+    <string name="study_delete_failed">无法删除所选研习。</string>
+    <string name="study_delete_confirmation">要从对局中删除主题为“%1$s”、赛事为“%2$s”的研习吗？</string>
 </resources>

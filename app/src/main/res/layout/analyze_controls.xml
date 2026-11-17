@@ -143,13 +143,13 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/StudyChapterTitle"
+                android:id="@+id/StudyPosition"
                 style="@style/MyHeaderTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <LinearLayout
-                android:id="@+id/StudyChapterNavigation"
+                android:id="@+id/StudyNavigation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -157,23 +157,23 @@
                 android:visibility="gone">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/StudyPreviousChapter"
+                    android:id="@+id/StudyPrevious"
                     style="?attr/chessImageButtonStyle"
-                    android:contentDescription="@string/study_previous_chapter"
+                    android:contentDescription="@string/study_previous"
                     app:icon="@drawable/ic_chevron_left" />
 
                 <SeekBar
-                    android:id="@+id/StudyChapterSeek"
+                    android:id="@+id/StudySeek"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:contentDescription="@string/study_chapter"
+                    android:contentDescription="@string/studies"
                     android:saveEnabled="false" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/StudyNextChapter"
+                    android:id="@+id/StudyNext"
                     style="?attr/chessImageButtonStyle"
-                    android:contentDescription="@string/study_next_chapter"
+                    android:contentDescription="@string/study_next"
                     app:icon="@drawable/ic_chevron_right" />
             </LinearLayout>
         </LinearLayout>

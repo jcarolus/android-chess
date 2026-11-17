@@ -12,7 +12,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
@@ -22,6 +21,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -37,7 +37,7 @@ import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
-import jwtc.android.chess.study.StudyChapterNavigation;
+import jwtc.android.chess.study.StudyNavigation;
 import jwtc.android.chess.study.StudyStore;
 import jwtc.android.chess.views.EngineEvaluationView;
 import jwtc.chess.GameRecord;
@@ -52,13 +52,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
     public static final String EXTRA_PGN = "analysisPgn";
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
-    private static final String EXTRA_STUDY_COLLECTION = "analysisStudyCollection";
-    private static final String EXTRA_STUDY_ID = "analysisStudyId";
-    private static final String EXTRA_STUDY_TITLE = "analysisStudyTitle";
-    private static final String EXTRA_STUDY_AUTHOR = "analysisStudyAuthor";
-    private static final String EXTRA_STUDY_CHAPTER = "analysisStudyChapter";
+    private static final String EXTRA_STUDY_TOPIC = "analysisStudyTopic";
+    private static final String EXTRA_STUDY_EVENT = "analysisStudyEvent";
+    private static final String EXTRA_STUDY_SURPRISE = "analysisStudySurprise";
     private static final String PREF_STUDY_ENGINE = "studyEngineEnabled";
-    private static final String PREF_STUDY_CHAPTER_PREFIX = "studyLastChapter/";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
     private static final int REQUEST_MENU = 1;
     private static final int REQUEST_SAVE_GAME_TO_FILE = 2;
@@ -92,29 +89,17 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private SwitchMaterial switchEngine;
     // Studies start without the engine so its evaluation does not give away the answers.
     private boolean engineEnabled;
-    private StudyChapterNavigation chapterNavigation;
-    private List<StudyStore.Chapter> studyChapters;
-    private int chapterIndex;
-    // The chapter PGN as last read from or written to the study, to skip unchanged saves.
+    private StudyNavigation studyNavigation;
+    private List<Long> studyIds;
+    private int studyIndex;
     private String studySavedPgn;
 
     public static Intent studyIntent(
-            Context context,
-            String collectionId,
-            String studyId,
-            String title,
-            String author,
-            @Nullable Integer chapterIndex) {
-        Intent intent =
-                new Intent(context, AnalyzeActivity.class)
-                        .putExtra(EXTRA_STUDY_COLLECTION, collectionId)
-                        .putExtra(EXTRA_STUDY_ID, studyId)
-                        .putExtra(EXTRA_STUDY_TITLE, title)
-                        .putExtra(EXTRA_STUDY_AUTHOR, author);
-        if (chapterIndex != null) {
-            intent.putExtra(EXTRA_STUDY_CHAPTER, chapterIndex.intValue());
-        }
-        return intent;
+            Context context, String topic, String event, boolean surprise) {
+        return new Intent(context, AnalyzeActivity.class)
+                .putExtra(EXTRA_STUDY_TOPIC, topic)
+                .putExtra(EXTRA_STUDY_EVENT, event)
+                .putExtra(EXTRA_STUDY_SURPRISE, surprise);
     }
 
     @Override
@@ -253,7 +238,11 @@ public class AnalyzeActivity extends ChessBoardActivity {
         } else if (getString(R.string.share_chess_link).equals(item)) {
             LinkSharing.show(this, gameApi);
         } else if (getString(R.string.menu_save_game).equals(item)) {
-            showSaveGameDialog(lGameID);
+            if (isStudy()) {
+                saveStudy();
+            } else {
+                showSaveGameDialog(lGameID);
+            }
         } else if (getString(R.string.menu_save_game_to_file).equals(item)) {
             startSaveGameToFile(REQUEST_SAVE_GAME_TO_FILE);
         } else if (getString(R.string.menu_clip_pgn).equals(item)) {
@@ -285,7 +274,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 fen = prefs.getString("FEN", null);
                 fromGamePgnPref = !getIntent().hasExtra(EXTRA_GAME_ID) && pgn != null;
             }
-            if (isStudy() && !loadStudyChapters()) {
+            if (isStudy() && !loadStudySelection()) {
                 doToast(getString(R.string.study_load_failed));
                 finish();
                 return;
@@ -303,7 +292,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                     applyStudyOrientation();
                 }
             } else if (isStudy()) {
-                if (!loadChapter()) {
+                if (!loadStudy()) {
                     doToast(getString(R.string.study_load_failed));
                     finish();
                     return;
@@ -396,7 +385,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
         if (!navigationLine.isEmpty()) {
             session.putIntArray("line", pathOf(navigationLine.get(navigationLine.size() - 1)));
         }
-        session.putInt("chapter", chapterIndex);
+        if (isStudy()) {
+            session.putLong("studyGameId", studyIds.get(studyIndex));
+        }
         analysis.save().writeTo(session);
         outState.putBundle("analysisSession", session);
     }
@@ -427,8 +418,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         boolean changed = analysis.selectPosition();
         updateNavigation();
         updateMoveSummary();
-        buttonVariations.setEnabled(
-                gameApi.getContinuations(gameApi.getCurrentNode()).size() > 1);
+        buttonVariations.setEnabled(gameApi.getContinuations(gameApi.getCurrentNode()).size() > 1);
         updateComment();
         if (changed && analysis.isActive()) {
             evaluationView.clearEvaluation();
@@ -574,7 +564,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
             lastScrolledNode = current;
         }
         boolean pendingDuckMove = gameApi.hasPendingDuckMove();
-        findViewById(R.id.ButtonPrevious).setEnabled(pendingDuckMove || current.getParent() != null);
+        findViewById(R.id.ButtonPrevious)
+                .setEnabled(pendingDuckMove || current.getParent() != null);
         buttonNext.setEnabled(!pendingDuckMove && nextMove() != null);
     }
 
@@ -718,57 +709,45 @@ public class AnalyzeActivity extends ChessBoardActivity {
     }
 
     private boolean isStudy() {
-        return getIntent().hasExtra(EXTRA_STUDY_ID);
+        return getIntent().hasExtra(EXTRA_STUDY_TOPIC);
     }
 
-    private boolean loadStudyChapters() {
-        String collectionId = getIntent().getStringExtra(EXTRA_STUDY_COLLECTION);
-        String studyId = getIntent().getStringExtra(EXTRA_STUDY_ID);
-        studyChapters =
-                collectionId == null || studyId == null
-                        ? new ArrayList<>()
-                        : StudyStore.chapters(this, collectionId, studyId);
-        if (studyChapters.isEmpty()) {
+    private boolean loadStudySelection() {
+        String topic = getIntent().getStringExtra(EXTRA_STUDY_TOPIC);
+        String event = getIntent().getStringExtra(EXTRA_STUDY_EVENT);
+        if (topic == null || event == null) {
             return false;
         }
-        int index = initialChapterIndex(collectionId, studyId);
-        chapterIndex = Math.max(0, Math.min(index, studyChapters.size() - 1));
-        if (chapterNavigation == null) {
-            chapterNavigation =
-                    new StudyChapterNavigation(findViewById(R.id.root_layout), this::selectChapter);
+        studyIds = new StudyStore(getContentResolver()).ids(topic, event);
+        if (studyIds.isEmpty()) {
+            return false;
         }
-        chapterNavigation.show(
-                getIntent().getStringExtra(EXTRA_STUDY_TITLE),
-                getIntent().getStringExtra(EXTRA_STUDY_AUTHOR),
-                studyChapters,
-                chapterIndex);
+        long savedId = getPrefs().getLong(StudyStore.resumeKey(topic, event), 0);
+        boolean restoring =
+                restoredSession != null && sessionId.equals(restoredSession.getString("id"));
+        if (restoring) {
+            long restoredId = restoredSession.getLong("studyGameId");
+            if (studyIds.contains(restoredId)) {
+                savedId = restoredId;
+            } else {
+                restoredSession = null;
+            }
+        }
+        studyIndex =
+                !restoring && getIntent().getBooleanExtra(EXTRA_STUDY_SURPRISE, false)
+                        ? new Random().nextInt(studyIds.size())
+                        : Math.max(0, studyIds.indexOf(savedId));
+        if (studyNavigation == null) {
+            studyNavigation =
+                    new StudyNavigation(findViewById(R.id.root_layout), this::selectStudy);
+        }
+        studyNavigation.show(event, studyIds.size(), studyIndex);
         return true;
     }
 
-    private int initialChapterIndex(String collectionId, String studyId) {
-        if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))) {
-            return restoredSession.getInt("chapter");
-        }
-        if (getIntent().hasExtra(EXTRA_STUDY_CHAPTER)) {
-            return getIntent().getIntExtra(EXTRA_STUDY_CHAPTER, 0);
-        }
-        String chapterId = getPrefs().getString(studyChapterPref(collectionId, studyId), null);
-        for (int i = 0; i < studyChapters.size(); i++) {
-            if (studyChapters.get(i).chapterId.equals(chapterId)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    private static String studyChapterPref(String collectionId, String studyId) {
-        return PREF_STUDY_CHAPTER_PREFIX + Uri.encode(collectionId) + "/" + Uri.encode(studyId);
-    }
-
-    /** Loads the selected chapter at its starting position, where the introduction is. */
-    private boolean loadChapter() {
-        String pgn = StudyStore.chapterPgn(this, studyChapters.get(chapterIndex).id);
-        if (pgn == null || !gameApi.loadPGN(pgn)) {
+    private boolean loadStudy() {
+        GameRecord record = new GameStore(getContentResolver()).load(studyIds.get(studyIndex));
+        if (record == null || !gameApi.loadGame(record)) {
             return false;
         }
         studySavedPgn = gameApi.exportFullPGN();
@@ -781,20 +760,21 @@ public class AnalyzeActivity extends ChessBoardActivity {
         chessBoardView.setRotated("black".equalsIgnoreCase(gameApi.pgnTags.get("Orientation")));
     }
 
-    private void selectChapter(int index) {
+    private void selectStudy(int index) {
         saveStudy();
-        int previous = chapterIndex;
+        int previous = studyIndex;
+        studyIndex = index;
+        if (!loadStudy()) {
+            doToast(getString(R.string.study_load_failed));
+            studyIndex = previous;
+            studyNavigation.setIndex(studyIndex);
+            return;
+        }
         analysis.reset();
         navigationLine = new ArrayList<>();
         lastScrolledNode = null;
         evaluationView.clearEvaluation();
-        chapterIndex = index;
-        if (!loadChapter()) {
-            doToast(getString(R.string.study_load_failed));
-            chapterIndex = previous;
-            loadChapter();
-        }
-        chapterNavigation.setIndex(chapterIndex);
+        studyNavigation.setIndex(studyIndex);
         if (engineEnabled) {
             startEngine(null);
         }
@@ -802,12 +782,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
     }
 
     private void saveStudy() {
-        if (!sessionLoaded || studyChapters == null) {
-            return;
-        }
         String pgn = gameApi.exportFullPGN();
-        if (!pgn.equals(studySavedPgn)) {
-            StudyStore.saveChapterPgn(this, studyChapters.get(chapterIndex).id, pgn);
+        if (!pgn.equals(studySavedPgn)
+                && new GameStore(getContentResolver())
+                        .update(studyIds.get(studyIndex), GameRecord.of(pgn, gameApi.pgnTags))) {
             studySavedPgn = pgn;
         }
     }
@@ -903,10 +881,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
             if (isStudy()) {
                 saveStudy();
                 String key =
-                        studyChapterPref(
-                                getIntent().getStringExtra(EXTRA_STUDY_COLLECTION),
-                                getIntent().getStringExtra(EXTRA_STUDY_ID));
-                getPrefs().edit().putString(key, studyChapters.get(chapterIndex).chapterId).apply();
+                        StudyStore.resumeKey(
+                                getIntent().getStringExtra(EXTRA_STUDY_TOPIC),
+                                getIntent().getStringExtra(EXTRA_STUDY_EVENT));
+                getPrefs().edit().putLong(key, studyIds.get(studyIndex)).apply();
             } else if (lGameID > 0) {
                 saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
             } else if (fromGamePgnPref) {

@@ -12,5 +12,5 @@ public interface ImportListener {
     /** A new request was rejected while the accepted job continues. */
     default void OnImportRejected(int mode) {}
 
-    default void onStudyMetadataRequired(ImportService.StudyPrompt prompt) {}
+    default void onTopicRequired(ImportService.TopicPrompt prompt) {}
 }

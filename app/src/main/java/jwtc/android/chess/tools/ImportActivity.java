@@ -20,6 +20,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
+import jwtc.chess.Pgn;
 
 public class ImportActivity extends BaseActivity implements ImportListener {
 
@@ -29,10 +30,9 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     private int _mode = 0;
     private Intent _intent;
     private boolean importStarted;
-    private int updatedCount;
-    private AlertDialog studyDialog;
-    private EditText studyTitle, studyTopic;
-    private String titleDraft, topicDraft;
+    private AlertDialog topicDialog;
+    private EditText topicField;
+    private String topicDraft;
 
     protected boolean _processing;
 
@@ -78,8 +78,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         importStarted =
                 savedInstanceState != null && savedInstanceState.getBoolean("importStarted");
         if (savedInstanceState != null) {
-            titleDraft = savedInstanceState.getString("studyTitle");
-            topicDraft = savedInstanceState.getString("studyTopic");
+            topicDraft = savedInstanceState.getString("importTopic");
         }
         _intent = getIntent();
         _mode = _intent.getIntExtra("mode", ImportService.IMPORT_GAMES);
@@ -96,9 +95,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("importStarted", importStarted);
-        if (studyDialog != null) {
-            outState.putString("studyTitle", studyTitle.getText().toString());
-            outState.putString("studyTopic", studyTopic.getText().toString());
+        if (topicDialog != null) {
+            outState.putString("importTopic", topicField.getText().toString());
         }
     }
 
@@ -135,8 +133,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
 
-        if (studyDialog != null) {
-            studyDialog.dismiss();
+        if (topicDialog != null) {
+            topicDialog.dismiss();
         }
 
         if (importService != null) {
@@ -198,14 +196,12 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
     @Override
     public void OnImportStarted(int mode) {
-        updatedCount = 0;
         _tvWorkCntDuplicates.setText(String.valueOf(0));
         _progress.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void OnImportProgress(int mode, int succeeded, int failed, int duplicates, int updated) {
-        updatedCount = updated;
         _tvWorkCnt.setText("" + succeeded);
         _tvWorkCntFail.setText("" + failed);
         _tvWorkCntDuplicates.setText(String.valueOf(duplicates));
@@ -214,12 +210,6 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     @Override
     public void OnImportFinished(int mode) {
         _progress.setVisibility(View.INVISIBLE);
-        if (updatedCount > 0) {
-            doToast(
-                    getResources()
-                            .getQuantityString(
-                                    R.plurals.import_chapters_updated, updatedCount, updatedCount));
-        }
         setResult(RESULT_OK);
         finish();
     }
@@ -236,61 +226,55 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     }
 
     @Override
-    public void onStudyMetadataRequired(ImportService.StudyPrompt prompt) {
-        if (isFinishing() || studyDialog != null) {
+    public void onTopicRequired(ImportService.TopicPrompt prompt) {
+        if (isFinishing() || topicDialog != null) {
             return;
         }
         LinearLayout fields = new LinearLayout(this);
         fields.setOrientation(LinearLayout.VERTICAL);
         int padding = getResources().getDimensionPixelSize(R.dimen.screen_padding);
         fields.setPadding(padding, 0, padding, 0);
-        studyTitle = addStudyField(fields, R.string.study_name, titleDraft, prompt.defaults.needsTitle);
-        studyTopic = addStudyField(fields, R.string.study_topic, topicDraft, prompt.defaults.needsTopic);
-        titleDraft = topicDraft = null;
-        studyDialog = new ChessAlertDialogBuilder(this)
-                .setTitle(R.string.study_import_metadata)
-                .setMessage(prompt.filename)
-                .setView(fields)
-                .setPositiveButton(R.string.button_ok, null)
-                .setNegativeButton(R.string.button_cancel, (dialog, which) -> cancelStudyImport(prompt))
-                .setOnCancelListener(dialog -> cancelStudyImport(prompt))
-                .create();
-        studyDialog.show();
-        studyDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
-            String title = studyTitle.getText().toString().trim();
-            String topic = studyTopic.getText().toString().trim();
-            boolean valid = validateStudyField(studyTitle, title) & validateStudyField(studyTopic, topic);
-            if (valid && importService != null) {
-                studyDialog.dismiss();
-                studyDialog = null;
-                importService.answerStudyPrompt(prompt, title, topic, true);
-            }
-        });
+        topicField = new EditText(this);
+        topicField.setSingleLine(true);
+        topicField.setHint(R.string.study_topic);
+        topicField.setText(topicDraft);
+        fields.addView(topicField);
+        topicDraft = null;
+        topicDialog =
+                new ChessAlertDialogBuilder(this)
+                        .setTitle(
+                                prompt.defaults.required
+                                        ? R.string.study_import_topic
+                                        : R.string.import_optional_topic)
+                        .setMessage(prompt.filename)
+                        .setView(fields)
+                        .setPositiveButton(R.string.button_ok, null)
+                        .setNegativeButton(
+                                R.string.button_cancel,
+                                (dialog, which) -> cancelTopicImport(prompt))
+                        .setOnCancelListener(dialog -> cancelTopicImport(prompt))
+                        .create();
+        topicDialog.show();
+        topicDialog
+                .getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(
+                        view -> {
+                            String topic = Pgn.optionalTagValue(topicField.getText().toString());
+                            if (topic == null && prompt.defaults.required) {
+                                topicField.setError(
+                                        getString(R.string.study_import_value_required));
+                            } else if (importService != null) {
+                                topicDialog.dismiss();
+                                topicDialog = null;
+                                importService.answerTopicPrompt(prompt, topic, true);
+                            }
+                        });
     }
 
-    private EditText addStudyField(LinearLayout fields, int hint, String draft, boolean visible) {
-        EditText field = new EditText(this);
-        field.setSingleLine(true);
-        field.setHint(hint);
-        field.setText(draft);
-        if (visible) {
-            fields.addView(field);
-        }
-        return field;
-    }
-
-    private boolean validateStudyField(EditText field, String text) {
-        if (field.getParent() != null && (text.isEmpty() || text.equals("?"))) {
-            field.setError(getString(R.string.study_import_value_required));
-            return false;
-        }
-        return true;
-    }
-
-    private void cancelStudyImport(ImportService.StudyPrompt prompt) {
+    private void cancelTopicImport(ImportService.TopicPrompt prompt) {
         finish();
         if (importService != null) {
-            importService.answerStudyPrompt(prompt, null, null, false);
+            importService.answerTopicPrompt(prompt, null, false);
         }
     }
 }

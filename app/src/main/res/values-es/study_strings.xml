@@ -2,19 +2,18 @@
 <resources>
     <string name="studies">Estudios</string>
     <string name="study_topic">Tema</string>
-    <string name="study_author">Autor</string>
-    <string name="study_name">Estudio</string>
-    <string name="study_chapter">Capítulo</string>
-    <string name="study_any_author">Cualquier autor</string>
-    <string name="study_title_by_author">%1$s de %2$s</string>
-    <string name="study_chapter_choice">%1$d. %2$s</string>
-    <string name="study_loading_chapters">Cargando capítulos…</string>
-    <string name="study_open_chapter">Abrir capítulo</string>
     <string name="study_surprise">Sorpréndeme</string>
     <string name="study_variations">Variantes</string>
     <string name="study_before_move">Antes de la jugada: %1$s</string>
     <string name="study_after_move">Después de la jugada: %1$s</string>
     <string name="study_pgn_evaluation">Evaluación del estudio: %1$s</string>
-    <string name="study_next_chapter">Siguiente capítulo</string>
-    <string name="study_next_chapter_named">Capítulo: %1$s</string>
+    <string name="study_loading">Cargando estudios…</string>
+    <string name="study_position">%1$d de %2$d</string>
+    <string name="study_previous">Estudio anterior</string>
+    <string name="study_next">Siguiente estudio</string>
+    <string name="study_import_topic">Tema predeterminado</string>
+    <string name="import_optional_topic">Tema predeterminado (opcional)</string>
+    <string name="study_delete_matching">Eliminar estudios coincidentes</string>
+    <string name="study_delete_failed">No se pudo eliminar la selección.</string>
+    <string name="study_delete_confirmation">¿Eliminar de Partidas los estudios con el tema «%1$s» y el evento «%2$s»?</string>
 </resources>

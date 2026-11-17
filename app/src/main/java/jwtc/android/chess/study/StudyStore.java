@@ -1,201 +1,75 @@
 package jwtc.android.chess.study;
 
-import android.content.ContentValues;
-import android.content.Context;
+import android.content.ContentResolver;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import jwtc.android.chess.tools.ImportHandler.Result;
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.chess.PGNColumns;
-import jwtc.chess.PGNProvider;
-import jwtc.chess.PgnFingerprint;
+import jwtc.chess.Pgn;
 
+/** Looks up studies in the Game Database using the same selection for navigation and deletion. */
 public final class StudyStore {
-    private static final String CHAPTERS = "study_chapters";
-    private static final String CHAPTER_KEY =
-            "collection_id = ? AND study_id = ? AND chapter_id = ?";
+    private static final String MATCH = PGNColumns.TOPIC + " = ? AND " + PGNColumns.EVENT + " = ?";
+    private final ContentResolver resolver;
 
-    static final class Study {
-        final String collectionId, collectionName, id, title, author;
-        final List<Chapter> chapters = new ArrayList<>();
-
-        Study(Cursor row) {
-            collectionId = row.getString(0);
-            id = row.getString(1);
-            collectionName = row.getString(2);
-            title = row.getString(3);
-            author = row.getString(4);
-        }
-
-        boolean matches(String collectionId, String studyId) {
-            return this.collectionId.equals(collectionId) && id.equals(studyId);
-        }
+    public StudyStore(ContentResolver resolver) {
+        this.resolver = resolver;
     }
 
-    public static final class Chapter {
-        public final long id;
-        public final String title, chapterId;
-        final String topic, author;
-
-        Chapter(Cursor row) {
-            id = row.getLong(6);
-            title = row.getString(7);
-            chapterId = row.getString(8);
-            topic = row.getString(5);
-            author = row.getString(4);
-        }
-    }
-
-    public static Result importChapter(
-            Context context,
-            String pgn,
-            String filename,
-            int position,
-            String title,
-            String topic) {
-        final StudyPgn.Chapter chapter;
-        try {
-            chapter = StudyPgn.parseChapter(pgn);
-        } catch (IllegalArgumentException error) {
-            return Result.FAILED;
-        }
-        Map<String, String> tags = chapter.tags;
-        String collectionName = valueOr(tags, "CollectionName", filename);
-        String studyTitle = valueOr(tags, "StudyTitle", title);
-        String chapterTopic = StudyPgn.topic(tags);
-        if (chapterTopic == null) {
-            chapterTopic = topic;
-        }
-        if (studyTitle == null || chapterTopic == null) {
-            return Result.FAILED;
-        }
-        String chapterTitle = StudyPgn.chapterTitle(tags);
-        String collectionId = valueOr(tags, "CollectionId", collectionName);
-        String studyId = valueOr(tags, "StudyId", studyTitle);
-        String chapterId = StudyPgn.value(tags, "ChapterId");
-
-        ContentValues row = new ContentValues();
-        row.put("collection_id", collectionId);
-        row.put("study_id", studyId);
-        row.put("collection_name", collectionName);
-        row.put("study_title", studyTitle);
-        row.put("author", StudyPgn.value(tags, "StudyAuthor"));
-        row.put("topic", chapterTopic);
-        row.put("title", chapterTitle == null ? filename + " " + position : chapterTitle);
-        row.put("pgn", chapter.pgn);
-        row.put(PGNColumns.FINGERPRINT, chapter.fingerprint);
-        SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getWritableDatabase();
-        db.beginTransaction();
-        try {
-            if (chapterId == null
-                    && DatabaseUtils.longForQuery(
-                                    db,
-                                    "SELECT EXISTS (SELECT 1 FROM study_chapters WHERE"
-                                        + " collection_id = ? AND study_id = ? AND fingerprint ="
-                                        + " ?)",
-                                    new String[] {collectionId, studyId, chapter.fingerprint})
-                            != 0) {
-                return Result.DUPLICATE;
-            }
-            if (chapterId != null
-                    && db.update(
-                                    CHAPTERS,
-                                    row,
-                                    CHAPTER_KEY,
-                                    new String[] {collectionId, studyId, chapterId})
-                            != 0) {
-                db.setTransactionSuccessful();
-                return Result.UPDATED;
-            }
-            row.put("chapter_id", chapterId == null ? UUID.randomUUID().toString() : chapterId);
-            db.insertOrThrow(CHAPTERS, null, row);
-            db.setTransactionSuccessful();
-            return Result.INSERTED;
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    private static String valueOr(Map<String, String> tags, String name, String fallback) {
-        String value = StudyPgn.value(tags, name);
-        return value == null ? fallback : value;
-    }
-
-    public static long countStudies(Context context) {
-        SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
-        try (Cursor rows = db.rawQuery(
-                "SELECT COUNT(*) FROM (SELECT DISTINCT collection_id, study_id FROM study_chapters)",
-                null)) {
-            rows.moveToFirst();
-            return rows.getLong(0);
-        }
-    }
-
-    public static void deleteAll(Context context) {
-        PGNProvider.getDatabaseHelper(context).getWritableDatabase().delete(CHAPTERS, null, null);
-    }
-
-    static List<Study> library(Context context) {
-        SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
-        List<Study> library = new ArrayList<>();
-        try (Cursor rows = db.rawQuery(
-                "SELECT collection_id, study_id, collection_name, study_title, author, topic, "
-                        + "id, title, chapter_id "
-                        + "FROM study_chapters ORDER BY collection_id, study_id, id",
-                null)) {
-            Study study = null;
-            while (rows.moveToNext()) {
-                if (study == null || !study.matches(rows.getString(0), rows.getString(1))) {
-                    study = new Study(rows);
-                    library.add(study);
-                }
-                study.chapters.add(new Chapter(rows));
-            }
-        }
-        library.sort(Comparator.comparing(
-                (Study study) -> study.collectionName, String.CASE_INSENSITIVE_ORDER)
-                .thenComparing(study -> study.title, String.CASE_INSENSITIVE_ORDER));
-        return library;
-    }
-
-    public static List<Chapter> chapters(Context context, String collectionId, String studyId) {
-        SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
-        List<Chapter> chapters = new ArrayList<>();
+    Map<String, Map<String, Integer>> selections() {
+        Map<String, Map<String, Integer>> selections = new LinkedHashMap<>();
         try (Cursor rows =
-                db.rawQuery(
-                        "SELECT collection_id, study_id, collection_name, study_title, author,"
-                            + " topic, id, title, chapter_id FROM study_chapters WHERE"
-                            + " collection_id = ? AND study_id = ? ORDER BY id",
-                        new String[] {collectionId, studyId})) {
-            while (rows.moveToNext()) {
-                chapters.add(new Chapter(rows));
+                resolver.query(
+                        MyPGNProvider.CONTENT_URI,
+                        new String[] {PGNColumns.TOPIC, PGNColumns.EVENT},
+                        PGNColumns.TOPIC + " IS NOT NULL AND " + PGNColumns.EVENT + " IS NOT NULL",
+                        null,
+                        PGNColumns.TOPIC
+                                + " COLLATE NOCASE, "
+                                + PGNColumns.EVENT
+                                + " COLLATE NOCASE")) {
+            while (rows != null && rows.moveToNext()) {
+                String event = rows.getString(1);
+                if (Pgn.optionalTagValue(event) != null) {
+                    selections
+                            .computeIfAbsent(rows.getString(0), topic -> new LinkedHashMap<>())
+                            .merge(event, 1, Integer::sum);
+                }
             }
         }
-        return chapters;
+        return selections;
     }
 
-    public static String chapterPgn(Context context, long id) {
-        SQLiteDatabase db = PGNProvider.getDatabaseHelper(context).getReadableDatabase();
-        try (Cursor row = db.query(
-                CHAPTERS, new String[] {"pgn"}, "id = ?", new String[] {Long.toString(id)},
-                null, null, null)) {
-            return row.moveToFirst() ? row.getString(0) : null;
+    public List<Long> ids(String topic, String event) {
+        List<Long> ids = new ArrayList<>();
+        try (Cursor rows =
+                resolver.query(
+                        MyPGNProvider.CONTENT_URI,
+                        new String[] {PGNColumns._ID},
+                        MATCH,
+                        new String[] {topic, event},
+                        PGNColumns._ID + " ASC")) {
+            while (rows != null && rows.moveToNext()) {
+                ids.add(rows.getLong(0));
+            }
         }
+        return ids;
     }
 
-    public static void saveChapterPgn(Context context, long id, String pgn) {
-        ContentValues row = new ContentValues();
-        row.put("pgn", pgn);
-        row.put(PGNColumns.FINGERPRINT, PgnFingerprint.of(pgn));
-        PGNProvider.getDatabaseHelper(context)
-                .getWritableDatabase()
-                .update(CHAPTERS, row, "id = ?", new String[] {Long.toString(id)});
+    public int deleteMatching(String topic, String event, int expectedCount) {
+        String unchangedCount =
+                " AND (SELECT COUNT(*) FROM games WHERE " + MATCH + ") = CAST(? AS INTEGER)";
+        return resolver.delete(
+                MyPGNProvider.CONTENT_URI,
+                MATCH + unchangedCount,
+                new String[] {topic, event, topic, event, Integer.toString(expectedCount)});
     }
 
-    private StudyStore() {}
+    public static String resumeKey(String topic, String event) {
+        return "studyLastGame/" + Uri.encode(topic) + "/" + Uri.encode(event);
+    }
 }

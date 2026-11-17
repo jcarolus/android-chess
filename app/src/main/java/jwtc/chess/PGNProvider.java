@@ -27,7 +27,7 @@ public class PGNProvider extends ContentProvider {
     private static final String TAG = "PGNProvider";
 
     private static final String DATABASE_NAME = "chess_pgn.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     public static final String IMPORT_PARAMETER = "import";
     private static final String GAMES_TABLE_NAME = "games";
 
@@ -69,7 +69,6 @@ public class PGNProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             Log.d(TAG, "DatabaseHelper.onCreate");
 
-            createStudyChaptersTable(db);
             db.execSQL(
                     "CREATE TABLE "
                             + GAMES_TABLE_NAME
@@ -91,9 +90,12 @@ public class PGNProvider extends ContentProvider {
                             + PGNColumns.RESULT
                             + " TEXT,"
                             + PGNColumns.FINGERPRINT
+                            + " TEXT,"
+                            + PGNColumns.TOPIC
                             + " TEXT"
                             + ");");
             createGameFingerprintIndex(db);
+            createStudySelectionIndex(db);
             db.execSQL(
                     "CREATE INDEX IF NOT EXISTS idx_games_table_result  ON "
                             + GAMES_TABLE_NAME
@@ -157,32 +159,17 @@ public class PGNProvider extends ContentProvider {
             if (oldVersion < 5) {
                 upgradeAddResultColumn(db);
             }
-            if (oldVersion < 8) {
-                if (oldVersion == 7) {
-                    db.execSQL("ALTER TABLE study_chapters RENAME TO legacy_study_chapters");
-                }
-                createStudyChaptersTable(db);
-                if (oldVersion == 7) {
-                    db.execSQL(
-                            "INSERT INTO study_chapters (collection_id, study_id, chapter_id,"
-                                + " collection_name, study_title, author, topic, title, pgn) SELECT"
-                                + " c.collection_id, c.study_id, c.chapter_id, s.collection_name,"
-                                + " s.title, s.author, s.topic, c.title, c.pgn FROM"
-                                + " legacy_study_chapters c JOIN studies s USING (collection_id,"
-                                + " study_id) ORDER BY c.collection_id, c.study_id,"
-                                + " c.chapter_order");
-                    db.execSQL("DROP TABLE legacy_study_chapters");
-                    db.execSQL("DROP TABLE studies");
-                }
-            } else if (oldVersion < 9) {
-                db.execSQL("ALTER TABLE study_chapters ADD COLUMN fingerprint TEXT");
-                createStudyFingerprintIndex(db);
-            }
             if (oldVersion < 9) {
                 db.execSQL("ALTER TABLE games ADD COLUMN fingerprint TEXT");
                 PgnFingerprintColumn.backfill(db, GAMES_TABLE_NAME, PGNColumns._ID, PGNColumns.PGN);
-                PgnFingerprintColumn.backfill(db, "study_chapters", "id", PGNColumns.PGN);
                 createGameFingerprintIndex(db);
+            }
+            if (oldVersion < 10) {
+                db.execSQL("ALTER TABLE games ADD COLUMN topic TEXT");
+                PgnTopicColumn.backfill(db, GAMES_TABLE_NAME, PGNColumns._ID, PGNColumns.PGN);
+                createStudySelectionIndex(db);
+                db.execSQL("DROP TABLE IF EXISTS study_chapters");
+                db.execSQL("DROP TABLE IF EXISTS studies");
             }
         }
 
@@ -190,31 +177,9 @@ public class PGNProvider extends ContentProvider {
             db.execSQL("CREATE INDEX games_fingerprint ON games (fingerprint)");
         }
 
-        private static void createStudyFingerprintIndex(SQLiteDatabase db) {
+        private static void createStudySelectionIndex(SQLiteDatabase db) {
             db.execSQL(
-                    "CREATE INDEX study_chapters_fingerprint ON study_chapters"
-                            + " (collection_id, study_id, fingerprint)");
-        }
-
-        private static void createStudyChaptersTable(SQLiteDatabase db) {
-            db.execSQL(
-                    "CREATE TABLE study_chapters ("
-                            + "id INTEGER PRIMARY KEY,"
-                            + "collection_id TEXT NOT NULL,"
-                            + "study_id TEXT NOT NULL,"
-                            + "chapter_id TEXT NOT NULL,"
-                            + "collection_name TEXT NOT NULL,"
-                            + "study_title TEXT NOT NULL,"
-                            + "author TEXT,"
-                            + "topic TEXT NOT NULL,"
-                            + "title TEXT NOT NULL,"
-                            + "pgn TEXT NOT NULL,"
-                            + "fingerprint TEXT,"
-                            + "UNIQUE (collection_id, study_id, chapter_id))");
-            db.execSQL(
-                    "CREATE INDEX study_chapters_names ON study_chapters (collection_name COLLATE"
-                        + " NOCASE, study_title COLLATE NOCASE, topic, author)");
-            createStudyFingerprintIndex(db);
+                    "CREATE INDEX games_topic_event ON games (topic, event) WHERE topic IS NOT NULL");
         }
 
         @Override
@@ -445,6 +410,7 @@ public class PGNProvider extends ContentProvider {
         }
 
         PgnFingerprintColumn.set(values, PGNColumns.PGN);
+        PgnTopicColumn.set(values, PGNColumns.PGN);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         long rowId;
         if (importing) {
@@ -484,7 +450,8 @@ public class PGNProvider extends ContentProvider {
                             PGNColumns.EVENT,
                             PGNColumns.RESULT,
                             PGNColumns.DATE,
-                            PGNColumns.PGN
+                            PGNColumns.PGN,
+                            PGNColumns.TOPIC
                         },
                         PGNColumns.FINGERPRINT + " = ?",
                         new String[] {fingerprint},
@@ -496,7 +463,9 @@ public class PGNProvider extends ContentProvider {
                         && Objects.equals(rows.getString(1), values.getAsString(PGNColumns.BLACK))
                         && Objects.equals(rows.getString(2), values.getAsString(PGNColumns.EVENT))
                         && Objects.equals(rows.getString(3), values.getAsString(PGNColumns.RESULT))
-                        && datesMatch(rows, values.getAsLong(PGNColumns.DATE))) {
+                        && datesMatch(rows, values.getAsLong(PGNColumns.DATE))
+                        && Objects.equals(
+                                rows.getString(6), values.getAsString(PGNColumns.TOPIC))) {
                     return true;
                 }
             }
@@ -554,6 +523,7 @@ public class PGNProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
         values = new ContentValues(values);
         PgnFingerprintColumn.set(values, PGNColumns.PGN);
+        PgnTopicColumn.set(values, PGNColumns.PGN);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
         switch (sUriMatcher.match(uri)) {
@@ -593,5 +563,6 @@ public class PGNProvider extends ContentProvider {
         sGamesProjectionMap.put(PGNColumns.EVENT, PGNColumns.EVENT);
         sGamesProjectionMap.put(PGNColumns.RESULT, PGNColumns.RESULT);
         sGamesProjectionMap.put(PGNColumns.FINGERPRINT, PGNColumns.FINGERPRINT);
+        sGamesProjectionMap.put(PGNColumns.TOPIC, PGNColumns.TOPIC);
     }
 }

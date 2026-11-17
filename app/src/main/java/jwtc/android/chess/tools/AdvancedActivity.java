@@ -16,7 +16,6 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
-import jwtc.android.chess.study.StudyStore;
 
 public class AdvancedActivity extends BaseActivity {
 
@@ -83,13 +82,6 @@ public class AdvancedActivity extends BaseActivity {
                                         MateCollection.clearCollection(
                                                 this, MateKind.MATE_IN_TWO_PUZZLES),
                                 R.string.pgntool_puzzles_deleted);
-
-                    } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_studies))) {
-                        confirmDeletion(
-                                R.string.pgntool_confirm_delete_studies,
-                                StudyStore.countStudies(this),
-                                () -> StudyStore.deleteAll(this),
-                                R.string.pgntool_studies_deleted);
 
                     } else if (arrString[arg2].equals(getString(R.string.pgntool_help))) {
                         showHelp(R.string.advanced_help);

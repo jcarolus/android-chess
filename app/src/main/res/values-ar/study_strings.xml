@@ -2,19 +2,18 @@
 <resources>
     <string name="studies">الدراسات</string>
     <string name="study_topic">الموضوع</string>
-    <string name="study_author">المؤلف</string>
-    <string name="study_name">الدراسة</string>
-    <string name="study_chapter">الفصل</string>
-    <string name="study_any_author">أي مؤلف</string>
-    <string name="study_title_by_author">%1$s من تأليف %2$s</string>
-    <string name="study_chapter_choice">%1$d. %2$s</string>
-    <string name="study_loading_chapters">جارٍ تحميل الفصول…</string>
-    <string name="study_open_chapter">افتح الفصل</string>
     <string name="study_surprise">فاجئني</string>
     <string name="study_variations">التفرعات</string>
     <string name="study_before_move">قبل النقلة: %1$s</string>
     <string name="study_after_move">بعد النقلة: %1$s</string>
     <string name="study_pgn_evaluation">تقييم الدراسة: %1$s</string>
-    <string name="study_next_chapter">الفصل التالي</string>
-    <string name="study_next_chapter_named">الفصل: %1$s</string>
+    <string name="study_loading">جارٍ تحميل الدراسات…</string>
+    <string name="study_position">%1$d من %2$d</string>
+    <string name="study_previous">الدراسة السابقة</string>
+    <string name="study_next">الدراسة التالية</string>
+    <string name="study_import_topic">الموضوع الافتراضي</string>
+    <string name="import_optional_topic">الموضوع الافتراضي (اختياري)</string>
+    <string name="study_delete_matching">حذف الدراسات المطابقة</string>
+    <string name="study_delete_failed">تعذّر حذف التحديد.</string>
+    <string name="study_delete_confirmation">هل تريد حذف الدراسات ذات الموضوع «%1$s» والحدث «%2$s» من قائمة المباريات؟</string>
 </resources>

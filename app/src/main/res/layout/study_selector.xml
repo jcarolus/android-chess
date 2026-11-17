@@ -25,28 +25,16 @@
             android:visibility="gone">
 
             <jwtc.android.chess.views.FixedDropdownView
-                android:id="@+id/StudyCollection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/study_collection" />
-
-            <jwtc.android.chess.views.FixedDropdownView
                 android:id="@+id/StudyTopic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/study_topic" />
 
             <jwtc.android.chess.views.FixedDropdownView
-                android:id="@+id/StudyAuthor"
+                android:id="@+id/StudyEvent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/study_author" />
-
-            <jwtc.android.chess.views.FixedDropdownView
-                android:id="@+id/StudyName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/study_name" />
+                android:hint="@string/savegame_event" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,6 +56,12 @@
                     android:layout_weight="1"
                     android:text="@string/gameslist_open" />
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/StudyDelete"
+                style="?attr/chessButtonStyle"
+                android:layout_width="match_parent"
+                android:text="@string/study_delete_matching" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

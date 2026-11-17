@@ -315,11 +315,8 @@
     <string name="options_play_white">White</string>
     <string name="options_quiescent_off">Quiescence search off</string>
     <string name="options_quiescent_on">Quiescence search on</string>
-    <string name="pgntool_delete_studies">Delete all studies</string>
-    <string name="pgntool_confirm_delete_studies">Delete all studies?</string>
-    <string name="pgntool_studies_deleted">All studies deleted</string>
     <string name="pgntool_delete_item_count">Items to delete: %1$d</string>
-    <string name="pgntool_confirm_delete_games">Delete all games from the game database?</string>
+    <string name="pgntool_confirm_delete_games">Delete all games, including studies, from the game database?</string>
     <string name="pgntool_confirm_delete_practice">Delete all practice positions?</string>
     <string name="pgntool_confirm_delete_puzzles">Delete all puzzle positions?</string>
     <string name="pgntool_confirm_practice_reset">Are you sure you want to reset?</string>
@@ -675,10 +672,6 @@
     <string name="import_start_failed">Could not start import</string>
     <string name="import_failed">Import failed</string>
     <string name="import_duplicates_skipped">Duplicates skipped</string>
-    <plurals name="import_chapters_updated">
-        <item quantity="one">%d chapter updated</item>
-        <item quantity="other">%d chapters updated</item>
-    </plurals>
     <string name="engine_uninstalled">Engine %1$s uninstalled</string>
     <string name="engine_not_installed">No engine installed</string>
     <string name="opening_database_uninstalled">Database %1$s uninstalled</string>

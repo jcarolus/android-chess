@@ -4,8 +4,8 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
-import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.engine.PgnReplay;
+import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.Pgn;
 import jwtc.chess.PgnDocument;
@@ -40,13 +40,21 @@ public class PracticeImportHandler implements ImportHandler {
             return Result.FAILED;
         }
 
+        String fingerprint = PgnFingerprint.of(document);
+        String topic = Pgn.optionalTagValue(document.tags.get("Topic"));
+        String topicCondition = topic == null ? " IS NULL" : " = ?";
+        String[] duplicateArgs =
+                topic == null ? new String[] {fingerprint} : new String[] {fingerprint, topic};
         try {
             try (Cursor matches =
                     contentResolver.query(
                             MyPuzzleProvider.CONTENT_URI_PRACTICES,
                             new String[] {MyPuzzleProvider.COL_ID},
-                            PGNColumns.FINGERPRINT + " = ?",
-                            new String[] {PgnFingerprint.of(document)},
+                            PGNColumns.FINGERPRINT
+                                    + " = ? AND "
+                                    + PGNColumns.TOPIC
+                                    + topicCondition,
+                            duplicateArgs,
                             null)) {
                 if (matches != null && matches.moveToFirst()) {
                     return Result.DUPLICATE;
