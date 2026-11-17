@@ -1,38 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-    <![CDATA[
-        <h3>Geavanceerd</h3>
-        <p>Maak of importeer hier je eigen materiaal.</p>
-
-        <h4>Partijdatabase exporteren naar de SD-kaart</h4>
-        <p>Je kunt alle partijen in de database exporteren naar één PGN-bestand op de SD-kaart.
-            Het bestand heet chess.pgn. Een bestaand bestand met die naam wordt overschreven.</p>
-
-        <h4>Partijen importeren in de database</h4>
-        <p>Gebruik deze optie om partijen aan de database toe te voegen. Blader naar een
-            PGN-bestand en selecteer het om te importeren.</p>
-
-        <h4>Alle partijen uit de database verwijderen</h4>
-        <p>Gebruik deze optie om de partijdatabase leeg te maken. Maak eerst een reservekopie
-            op de SD-kaart. Je kunt deze actie niet ongedaan maken.</p>
-
-        <h4>Oefenset maken</h4>
-        <p>Maakt oefenstellingen uit partijen die eindigen in schaakmat. Blader naar het bestand
-            dat je wilt verwerken. Overgeslagen partijen eindigden meestal zonder schaakmat of
-            stonden al in de oefenset.</p>
-
-        <h4>Oefenset herstellen</h4>
-        <p>Wil je opnieuw beginnen met oefenen? Hiermee stel je ook je gemiddelde oplostijd terug.</p>
-    ]]>
-    </string>
     <string name="alert_no">Nee</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Ja</string>
     <string name="app_name">Schaken</string>
     <string name="app_name_help">Help</string>
     <string name="app_name_import">Importeren</string>
-    <string name="app_name_pgntools">Geavanceerd</string>
     <string name="app_name_play">Spelen</string>
     <string name="app_name_playonline">Online spelen</string>
     <string name="app_name_save_games">Opgeslagen partijen</string>
@@ -328,7 +301,6 @@
     <string name="pgntool_practice_deleted">Alle oefenstellingen zijn verwijderd</string>
     <string name="pgntool_puzzles_deleted">Alle puzzelstellingen zijn verwijderd</string>
     <string name="pgntool_export_explanation">Partijdatabase exporteren</string>
-    <string name="pgntool_help">Help</string>
     <string name="pgntool_import_busy">Er loopt al een import</string>
     <string name="importing_games">Partijen importeren…</string>
     <string name="importing_puzzles">Puzzels importeren…</string>
@@ -482,7 +454,6 @@
     <string name="start_wifiboard">Wifibord</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Geavanceerd</string>
     <string name="start_play">Spelen</string>
     <string name="start_practice">Oefenen</string>
     <string name="start_puzzles">Puzzels</string>

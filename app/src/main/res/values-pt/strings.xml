@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Avançado</h3>
-        <p>Crie ou importe seu próprio conteúdo aqui.</p>
-
-        <h4>Exportar banco de dados de partidas para o cartão SD</h4>
-        <p>Todas as partidas do banco de dados podem ser exportadas para um único arquivo PGN no cartão SD. Esse arquivo se chamará chess.pgn e, se já existir, será sobrescrito.</p>
-
-        <h4>Importar partidas para o banco de dados</h4>
-        <p>Use esta opção para adicionar partidas ao banco de dados. Ela permite navegar até um arquivo PGN. Selecione-o e escolha importar.</p>
-
-        <h4>Excluir todas as partidas do banco de dados</h4>
-        <p>Use esta opção se quiser limpar o banco de dados. Certifique-se de fazer primeiro um backup no cartão SD; esta ação não pode ser desfeita.</p>
-
-        <h4>Criar conjunto de prática</h4>
-        <p>Cria posições de prática a partir de partidas que terminam em xeque-mate. Navegue até o arquivo a ser processado. As entradas com falha geralmente são partidas que não terminaram em xeque-mate ou são duplicadas.</p>
-
-        <h4>Redefinir conjunto de prática</h4>
-        <p>Quer recomeçar os treinos? Isso também redefinirá seu contador de tempo médio.</p>
-
-        ]]></string>
     <string name="alert_no">Não</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Sim</string>
     <string name="app_name">Xadrez</string>
     <string name="app_name_help">Ajuda</string>
     <string name="app_name_import">Importar</string>
-    <string name="app_name_pgntools">Avançado</string>
     <string name="app_name_play">Jogar</string>
     <string name="app_name_playonline">Jogar online</string>
     <string name="app_name_save_games">Partidas salvas</string>
@@ -286,7 +265,6 @@
     <string name="pgntool_delete_games">Excluir todas as partidas do banco</string>
     <string name="pgntool_games_deleted">Todas as partidas foram excluídas</string>
     <string name="pgntool_export_explanation">Exportar banco de dados de partidas</string>
-    <string name="pgntool_help">Ajuda</string>
     <string name="pgntool_import_explanation">Importar partidas para o banco</string>
     <string name="importing_games">A importar partidas…</string>
     <string name="importing_puzzles">A importar problemas…</string>
@@ -415,7 +393,6 @@
     <string name="start_wifiboard">Tabuleiro Wi‑Fi</string>
     <string name="start_ics">Jogar online</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Avançado</string>
     <string name="start_play">Jogar</string>
     <string name="start_practice">Treinar</string>
     <string name="start_puzzles">Problemas</string>

@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Дополнительно</h3>
-        <p>Создавайте или импортируйте здесь собственные материалы.</p>
-
-        <h4>Экспорт базы игр на карту SD</h4>
-        <p>Все партии из базы можно экспортировать в один файл PGN на карту SD. Этот файл будет называться chess.pgn; существующий файл будет перезаписан.</p>
-
-        <h4>Импорт партий в базу</h4>
-        <p>Используйте эту опцию, чтобы добавить партии в базу. Можно выбрать файл PGN и импортировать его.</p>
-
-        <h4>Удалить все партии из базы</h4>
-        <p>Используйте эту опцию, если хотите очистить базу. Сначала обязательно сделайте резервную копию на карту SD; это действие нельзя отменить.</p>
-
-        <h4>Создать набор для тренировки</h4>
-        <p>Создаёт учебные позиции из партий, которые закончились матом. Укажите файл для обработки. Неудачные записи — это обычно партии, которые не закончились матом, либо дубликаты.</p>
-
-        <h4>Сбросить набор для тренировки</h4>
-        <p>Хотите начать тренировки заново? Это также сбросит счётчик среднего времени.</p>
-
-        ]]></string>
     <string name="alert_no">Нет</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Да</string>
     <string name="app_name">Шахматы</string>
     <string name="app_name_help">Справка</string>
     <string name="app_name_import">Импорт</string>
-    <string name="app_name_pgntools">Дополнительно</string>
     <string name="app_name_play">Играть</string>
     <string name="app_name_playonline">Играть онлайн</string>
     <string name="app_name_save_games">Сохранённые партии</string>
@@ -286,7 +265,6 @@
     <string name="pgntool_delete_games">Удалить все партии из базы</string>
     <string name="pgntool_games_deleted">Все партии удалены</string>
     <string name="pgntool_export_explanation">Экспорт базы партий</string>
-    <string name="pgntool_help">Справка</string>
     <string name="pgntool_import_explanation">Импорт партий в базу</string>
     <string name="importing_games">Импорт партий…</string>
     <string name="importing_puzzles">Импорт задач…</string>
@@ -415,7 +393,6 @@
     <string name="start_wifiboard">Wi‑Fi-доска</string>
     <string name="start_ics">Играть онлайн</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Дополнительно</string>
     <string name="start_play">Играть</string>
     <string name="start_practice">Тренировка</string>
     <string name="start_puzzles">Задачи</string>

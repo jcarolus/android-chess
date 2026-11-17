@@ -33,7 +33,6 @@ import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.study.StudiesActivity;
-import jwtc.android.chess.tools.AdvancedActivity;
 
 public class StartBaseActivity extends AppCompatActivity {
     public static final String TAG = "StartBaseActivity";
@@ -142,7 +141,6 @@ public class StartBaseActivity extends AppCompatActivity {
                                 R.drawable.eye,
                                 R.string.start_accessibility_preferences,
                                 AccessibilityPreferences.class),
-                        new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class),
                         new StartItem(R.drawable.link, R.string.start_website, null));
         startItemAdapter =
                 new StartItemAdapter(

@@ -21,6 +21,7 @@ import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
+import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.android.chess.views.FixedDropdownView;
@@ -62,21 +63,37 @@ public final class StudiesActivity extends BaseActivity {
                                 startActivity(intent);
                             }
                         });
-        findViewById(R.id.StudyImport)
-                .setOnClickListener(v -> pickFile.launch(new String[] {"*/*"}));
-        findViewById(R.id.StudyDownloads)
+        findViewById(R.id.ButtonMenu)
                 .setOnClickListener(
-                        v -> {
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW, DOWNLOADS));
-                            } catch (ActivityNotFoundException error) {
-                                Toast.makeText(this, DOWNLOADS.toString(), Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        });
+                        v ->
+                                new MenuDialog(
+                                                this,
+                                                (request, data) ->
+                                                        onMenuItem(
+                                                                data.getString("item"), pickFile),
+                                                0,
+                                                R.array.studies_menu)
+                                        .show());
         findViewById(R.id.StudyOpen).setOnClickListener(v -> openStudy(false));
         findViewById(R.id.StudySurprise).setOnClickListener(v -> openStudy(true));
-        findViewById(R.id.StudyDelete).setOnClickListener(v -> confirmDelete());
+    }
+
+    private void onMenuItem(String item, ActivityResultLauncher<String[]> pickFile) {
+        if (getString(R.string.study_import).equals(item)) {
+            pickFile.launch(new String[] {"*/*"});
+        } else if (getString(R.string.study_download_collections).equals(item)) {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, DOWNLOADS));
+            } catch (ActivityNotFoundException error) {
+                Toast.makeText(this, DOWNLOADS.toString(), Toast.LENGTH_LONG).show();
+            }
+        } else if (getString(R.string.study_delete_matching).equals(item)) {
+            if (filters.getVisibility() == View.VISIBLE) {
+                confirmDelete();
+            } else {
+                doToast(status.getText().toString());
+            }
+        }
     }
 
     @Override

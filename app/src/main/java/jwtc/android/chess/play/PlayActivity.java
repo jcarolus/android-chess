@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
@@ -44,6 +46,8 @@ import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.LocalClockApi;
+import jwtc.android.chess.tools.ImportActivity;
+import jwtc.android.chess.tools.ImportService;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
@@ -73,6 +77,8 @@ public class PlayActivity extends ChessBoardActivity
     public static final int REQUEST_OPEN_GAME_FILE = 12;
     public static final int REQUEST_NEW_GAME = 13;
 
+    private ActivityResultLauncher<String[]> importGames;
+    private ActivityResultLauncher<String> exportGames;
     private LocalClockApi localClock;
     private EngineSession engineSession;
     private boolean enginePausedForHistory;
@@ -141,6 +147,32 @@ public class PlayActivity extends ChessBoardActivity
         return false;
     }
 
+    private void startDatabaseTransfer(Uri uri, int mode) {
+        Intent intent = new Intent(this, ImportActivity.class);
+        intent.setData(uri);
+        intent.addFlags(
+                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.putExtra("mode", mode);
+        startActivity(intent);
+    }
+
+    private void confirmDeleteDatabase() {
+        GameStore games = new GameStore(getContentResolver());
+        openConfirmDialog(
+                getString(R.string.pgntool_confirm_delete_games)
+                        + "\n\n"
+                        + getString(R.string.pgntool_delete_item_count, games.count()),
+                getString(R.string.choice_delete),
+                getString(R.string.button_cancel),
+                () -> {
+                    games.deleteAll();
+                    lGameID = 0;
+                    getPrefs().edit().putLong("game_id", 0).apply();
+                    doToast(getString(R.string.pgntool_games_deleted));
+                },
+                null);
+    }
+
     private void confirmOverwrite(Runnable action) {
         if (gameApi.hasContinuationToOverwrite()) {
             openConfirmDialog(
@@ -162,6 +194,23 @@ public class PlayActivity extends ChessBoardActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        importGames =
+                registerForActivityResult(
+                        new ActivityResultContracts.OpenDocument(),
+                        uri -> {
+                            if (uri != null) {
+                                startDatabaseTransfer(uri, ImportService.IMPORT_GAMES);
+                            }
+                        });
+        exportGames =
+                registerForActivityResult(
+                        new ActivityResultContracts.CreateDocument("application/x-chess-pgn"),
+                        uri -> {
+                            if (uri != null) {
+                                startDatabaseTransfer(uri, ImportService.EXPORT_GAME_DATABASE);
+                            }
+                        });
 
         externalImportHandled =
                 savedInstanceState != null
@@ -897,6 +946,12 @@ public class PlayActivity extends ChessBoardActivity
                     intent.setClass(PlayActivity.this, GamesListActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
+                } else if (item.equals(getString(R.string.pgntool_import_explanation))) {
+                    importGames.launch(new String[] {"*/*"});
+                } else if (item.equals(getString(R.string.pgntool_export_explanation))) {
+                    exportGames.launch("chess.pgn");
+                } else if (item.equals(getString(R.string.menu_delete_game_database))) {
+                    confirmDeleteDatabase();
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog =
                             new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());

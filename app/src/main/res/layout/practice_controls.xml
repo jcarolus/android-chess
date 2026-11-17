@@ -9,6 +9,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/ButtonMenu"
+            app:icon="@drawable/ic_three_dots_vertical"
+            android:contentDescription="@string/button_menu_description"
+            android:layout_gravity="end"
+            style="?attr/chessImageButtonStyle" />
+
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

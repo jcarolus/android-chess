@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>高级</h3>
-        <p>在这里创建或导入你自己的内容。</p>
-
-        <h4>将棋局数据库导出到 SD 卡</h4>
-        <p>棋局数据库中的所有对局都可以导出到 SD 卡上的一个 PGN 文件。该文件名为 chess.pgn，若已存在将被覆盖。</p>
-
-        <h4>将对局导入棋局数据库</h4>
-        <p>使用此选项向棋局数据库添加对局。它允许你浏览选择一个 PGN 文件，选中后进行导入。</p>
-
-        <h4>删除棋局数据库中的所有对局</h4>
-        <p>如果你想清理棋局数据库，请使用此选项。请先在 SD 卡上做好备份；此操作无法撤销。</p>
-
-        <h4>创建练习集</h4>
-        <p>从以将死结束的对局中生成练习局面。选择要处理的文件。失败的条目通常是未以将死结束或重复的对局。</p>
-
-        <h4>重置练习集</h4>
-        <p>想重新开始练习吗？这也会重置你的平均用时计数器。</p>
-
-        ]]></string>
     <string name="alert_no">否</string>
     <string name="alert_ok">确定</string>
     <string name="alert_yes">是</string>
     <string name="app_name">国际象棋</string>
     <string name="app_name_help">帮助</string>
     <string name="app_name_import">导入</string>
-    <string name="app_name_pgntools">高级</string>
     <string name="app_name_play">对弈</string>
     <string name="app_name_playonline">在线对弈</string>
     <string name="app_name_save_games">已保存对局</string>
@@ -286,7 +265,6 @@
     <string name="pgntool_delete_games">删除数据库中所有对局</string>
     <string name="pgntool_games_deleted">所有对局已删除</string>
     <string name="pgntool_export_explanation">导出对局数据库</string>
-    <string name="pgntool_help">帮助</string>
     <string name="pgntool_import_explanation">导入对局到数据库</string>
     <string name="importing_games">正在导入对局…</string>
     <string name="importing_puzzles">正在导入习题…</string>
@@ -415,7 +393,6 @@
     <string name="start_wifiboard">WiFi 棋盘</string>
     <string name="start_ics">在线对弈</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">高级</string>
     <string name="start_play">开始</string>
     <string name="start_practice">练习</string>
     <string name="start_puzzles">习题</string>

@@ -1,39 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>Advanced</h3>
-            <p>Create or import your own stuff here.</p>
-
-            <h4>Export game database to sd-card</h4>
-            <p>All games in the game database can be exported to a single PGN file on sd-card. This file
-                will be named chess.pgn and an existing file will be overwritten.</p>
-
-            <h4>Import games into the game database</h4>
-            <p>Use this option to add games to the game database. It lets you browse to a PGN file. Select
-                and choose to import.</p>
-
-            <h4>Delete all games in the game database</h4>
-            <p>Use this option if you want to clean up the game database. Make sure you first make a backup
-                to sd-card, this action can not be undone.</p>
-
-            <h4>Create practice set</h4>
-            <p>Creates practice positions from games that end in a check-mate. Browse to the file to
-                process. Failed entries are usually games that did not end in a check-mate or are a
-                duplicate</p>
-
-            <h4>Reset practice set</h4>
-            <p>Want to start over practicing? This will also reset your average time counter.</p>
-
-                ]]>
-            </string>
     <string name="alert_no">No</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Yes</string>
     <string name="app_name">Chess</string>
     <string name="app_name_help">Help</string>
     <string name="app_name_import">Import</string>
-    <string name="app_name_pgntools">Advanced</string>
     <string name="app_name_play">Play</string>
     <string name="app_name_playonline">Play online</string>
     <string name="app_name_save_games">Saved games</string>
@@ -328,7 +300,6 @@
     <string name="pgntool_practice_deleted">All practice positions deleted</string>
     <string name="pgntool_puzzles_deleted">All puzzle positions deleted</string>
     <string name="pgntool_export_explanation">Export game database</string>
-    <string name="pgntool_help">Help</string>
     <string name="pgntool_import_busy">An import is already running</string>
     <string name="importing_games">Importing games…</string>
     <string name="importing_puzzles">Importing puzzles…</string>
@@ -486,7 +457,6 @@
     <string name="start_wifiboard">WiFi board</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Advanced</string>
     <string name="start_play">Play</string>
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
@@ -697,4 +667,7 @@
     <string name="hotspot_result_insufficient_material">The game is a draw by insufficient material.</string>
     <string name="move_input_castle">castle</string>
     <string name="move_input_captures">takes|captures</string>
+    <string name="menu_delete_game_database">Delete all games, including studies</string>
+    <string name="practice_restore_confirmation">Delete all practice positions and progress? Bundled practice positions will be restored.</string>
+    <string name="puzzle_restore_confirmation">Delete all puzzle positions and progress? Bundled puzzle positions will be restored.</string>
 </resources>

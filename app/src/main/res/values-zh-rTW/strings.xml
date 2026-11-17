@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>進階</h3>
-        <p>在這裡建立或匯入你自己的內容。</p>
-
-        <h4>將棋譜資料庫匯出到 SD 卡</h4>
-        <p>棋譜資料庫裡的所有棋譜都能匯出成 SD 卡上的單一 PGN 檔案。檔名為 chess.pgn，已有同名檔案時會被覆寫。</p>
-
-        <h4>將棋譜匯入棋譜資料庫</h4>
-        <p>用這個選項把棋譜加入棋譜資料庫。瀏覽到 PGN 檔案後，選取並選擇匯入即可。</p>
-
-        <h4>刪除棋譜資料庫中的所有棋譜</h4>
-        <p>想清理棋譜資料庫時使用這個選項。請務必先備份到 SD 卡，此動作無法復原。</p>
-
-        <h4>建立練習集</h4>
-        <p>從以將死結束的棋局建立練習局面。瀏覽到要處理的檔案即可。失敗的項目通常是沒有以將死結束的棋局，或是重複的棋局。</p>
-
-        <h4>重設練習集</h4>
-        <p>想從頭開始練習嗎？這也會重設你的平均用時計數器。</p>
-
-        ]]></string>
     <string name="alert_no">否</string>
     <string name="alert_ok">確定</string>
     <string name="alert_yes">是</string>
     <string name="app_name">西洋棋</string>
     <string name="app_name_help">說明</string>
     <string name="app_name_import">匯入</string>
-    <string name="app_name_pgntools">進階</string>
     <string name="app_name_play">下棋</string>
     <string name="app_name_playonline">線上下棋</string>
     <string name="app_name_save_games">已儲存的棋譜</string>
@@ -298,7 +277,6 @@
     <string name="pgntool_practice_deleted">已刪除所有練習局面</string>
     <string name="pgntool_puzzles_deleted">已刪除所有棋題局面</string>
     <string name="pgntool_export_explanation">匯出棋譜資料庫</string>
-    <string name="pgntool_help">說明</string>
     <string name="pgntool_import_busy">已有匯入作業正在進行</string>
     <string name="pgntool_import_explanation">將棋譜匯入棋譜資料庫</string>
     <string name="importing_games">正在匯入棋譜…</string>
@@ -436,7 +414,6 @@
     <string name="start_wifiboard">Wi-Fi 棋盤</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">進階</string>
     <string name="start_play">下棋</string>
     <string name="start_practice">練習</string>
     <string name="start_puzzles">棋題</string>

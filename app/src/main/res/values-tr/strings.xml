@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Gelişmiş</h3>
-        <p>Burada kendi içeriklerinizi oluşturun veya içe aktarın.</p>
-
-        <h4>Oyun veritabanını SD karta aktar</h4>
-        <p>Oyun veritabanındaki tüm oyunlar SD kartta tek bir PGN dosyasına aktarılabilir. Bu dosyanın adı chess.pgn olacaktır ve mevcut bir dosyanın üzerine yazılır.</p>
-
-        <h4>Oyunları oyun veritabanına içe aktar</h4>
-        <p>Bu seçeneği, oyun veritabanına oyun eklemek için kullanın. Bir PGN dosyasına göz atmanıza olanak tanır. Seçin ve içe aktarmayı başlatın.</p>
-
-        <h4>Oyun veritabanındaki tüm oyunları sil</h4>
-        <p>Veritabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce SD karta bir yedek aldığınızdan emin olun; bu işlem geri alınamaz.</p>
-
-        <h4>Alıştırma seti oluştur</h4>
-        <p>Şah matla biten oyunlardan alıştırma konumları oluşturur. İşlenecek dosyayı seçin. Başarısız girişler genellikle şah matla bitmeyen ya da yinelenen oyunlardır.</p>
-
-        <h4>Alıştırma setini sıfırla</h4>
-        <p>Alıştırmalara baştan başlamak ister misiniz? Bu, ortalama süre sayacınızı da sıfırlar.</p>
-
-        ]]></string>
     <string name="alert_no">Hayır</string>
     <string name="alert_ok">Tamam</string>
     <string name="alert_yes">Evet</string>
     <string name="app_name">Satranç</string>
     <string name="app_name_help">Yardım</string>
     <string name="app_name_import">İçe aktar</string>
-    <string name="app_name_pgntools">Gelişmiş</string>
     <string name="app_name_play">Oyna</string>
     <string name="app_name_playonline">Çevrimiçi oyna</string>
     <string name="app_name_save_games">Kayıtlı oyunlar</string>
@@ -286,7 +265,6 @@
     <string name="pgntool_delete_games">Veritabanındaki tüm oyunları sil</string>
     <string name="pgntool_games_deleted">Tüm oyunlar silindi</string>
     <string name="pgntool_export_explanation">Oyun veritabanını dışa aktar</string>
-    <string name="pgntool_help">Yardım</string>
     <string name="pgntool_import_explanation">Oyunları veritabanına aktar</string>
     <string name="importing_games">Oyunlar içe aktarılıyor…</string>
     <string name="importing_puzzles">Problemler içe aktarılıyor…</string>
@@ -415,7 +393,6 @@
     <string name="start_wifiboard">Wi‑Fi tahtası</string>
     <string name="start_ics">Çevrimiçi oyna</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Gelişmiş</string>
     <string name="start_play">Oyna</string>
     <string name="start_practice">Alıştırma</string>
     <string name="start_puzzles">Problemler</string>

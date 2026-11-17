@@ -1,34 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>خيارات متقدمة</h3>
-            <p>أنشئ أو استورد محتوياتك الخاصة هنا.</p>
-
-            <h4>تصدير قاعدة بيانات الألعاب إلى بطاقة SD</h4>
-            <p>يمكن تصدير جميع الألعاب في قاعدة بيانات الألعاب إلى ملف PGN واحد على بطاقة SD. سيتم تسمية هذا الملف chess.pgn وسيتم استبدال أي ملف موجود.</p>
-
-            <h4>استيراد الألعاب إلى قاعدة بيانات الألعاب</h4>
-            <p>استخدم هذا الخيار لإضافة ألعاب إلى قاعدة بيانات الألعاب. يتيح لك التصفح إلى ملف PGN. حدده واختر استيراده.</p>
-
-            <h4>حذف جميع الألعاب في قاعدة بيانات الألعاب</h4>
-            <p>استخدم هذا الخيار إذا كنت تريد تنظيف قاعدة بيانات الألعاب. تأكد من عمل نسخة احتياطية على بطاقة SD أولاً، لأن هذا الإجراء لا يمكن التراجع عنه.</p>
-
-            <h4>إنشاء مجموعة تمارين</h4>
-            <p>ينشئ أوضاع تمرين من الألعاب التي تنتهي بكش مات. تصفح إلى الملف المراد معالجته. الإدخالات الفاشلة عادة ما تكون ألعابًا لم تنتهِ بكش مات أو مكررة.</p>
-
-            <h4>إعادة تعيين مجموعة التمارين</h4>
-            <p>هل تريد بدء التمرين من جديد؟ سيؤدي هذا أيضًا إلى إعادة تعيين عداد متوسط الوقت الخاص بك.</p>
-
-                ]]>
-            </string>
     <string name="alert_no">لا</string>
     <string name="alert_ok">موافق</string>
     <string name="alert_yes">نعم</string>
     <string name="app_name">شطرنج</string>
     <string name="app_name_help">مساعدة</string>
     <string name="app_name_import">استيراد</string>
-    <string name="app_name_pgntools">خيارات متقدمة</string>
     <string name="app_name_play">لعب</string>
     <string name="app_name_playonline">لعب عبر الإنترنت</string>
     <string name="app_name_save_games">الألعاب المحفوظة</string>
@@ -300,7 +277,6 @@
     <string name="pgntool_delete_games">حذف جميع الألعاب في قاعدة بيانات الألعاب</string>
     <string name="pgntool_games_deleted">تم حذف جميع الألعاب</string>
     <string name="pgntool_export_explanation">تصدير قاعدة بيانات الألعاب</string>
-    <string name="pgntool_help">مساعدة</string>
     <string name="pgntool_import_explanation">استيراد الألعاب إلى قاعدة بيانات الألعاب</string>
     <string name="importing_games">جارٍ استيراد الألعاب…</string>
     <string name="importing_puzzles">جارٍ استيراد الألغاز…</string>
@@ -432,7 +408,6 @@
     <string name="start_wifiboard">رقعة WiFi</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">خيارات متقدمة</string>
     <string name="start_play">لعب</string>
     <string name="start_practice">تمرين</string>
     <string name="start_puzzles">ألغاز</string>

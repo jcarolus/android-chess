@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Avancé</h3>
-        <p>Créez ou importez ici votre propre contenu.</p>
-
-        <h4>Exporter la base de données de parties vers la carte SD</h4>
-        <p>Toutes les parties de la base de données peuvent être exportées dans un seul fichier PGN sur la carte SD. Ce fichier sera nommé chess.pgn et tout fichier existant sera écrasé.</p>
-
-        <h4>Importer des parties dans la base de données</h4>
-        <p>Utilisez cette option pour ajouter des parties à la base de données. Elle vous permet de parcourir jusqu’à un fichier PGN. Sélectionnez-le et choisissez d’importer.</p>
-
-        <h4>Supprimer toutes les parties de la base de données</h4>
-        <p>Utilisez cette option si vous souhaitez nettoyer la base de données. Assurez-vous d’abord de faire une sauvegarde sur la carte SD ; cette action est irréversible.</p>
-
-        <h4>Créer un ensemble d’entraînement</h4>
-        <p>Crée des positions d’entraînement à partir des parties se terminant par un échec et mat. Parcourez jusqu’au fichier à traiter. Les entrées échouées proviennent généralement de parties qui ne se terminent pas par un échec et mat ou de doublons.</p>
-
-        <h4>Réinitialiser l’ensemble d’entraînement</h4>
-        <p>Vous voulez recommencer l’entraînement ? Cela réinitialisera également votre compteur de temps moyen.</p>
-
-        ]]></string>
     <string name="alert_no">Non</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Oui</string>
     <string name="app_name">Échecs</string>
     <string name="app_name_help">Aide</string>
     <string name="app_name_import">Importer</string>
-    <string name="app_name_pgntools">Avancé</string>
     <string name="app_name_play">Jouer</string>
     <string name="app_name_playonline">Jouer en ligne</string>
     <string name="app_name_save_games">Parties sauvegardées</string>
@@ -286,7 +265,6 @@
     <string name="pgntool_delete_games">Supprimer toutes les parties de la base</string>
     <string name="pgntool_games_deleted">Toutes les parties supprimées</string>
     <string name="pgntool_export_explanation">Exporter la base de données</string>
-    <string name="pgntool_help">Aide</string>
     <string name="pgntool_import_explanation">Importer des parties dans la base</string>
     <string name="importing_games">Importation des parties…</string>
     <string name="importing_puzzles">Importation des problèmes…</string>
@@ -415,7 +393,6 @@
     <string name="start_wifiboard">Plateau Wi‑Fi</string>
     <string name="start_ics">Jouer en ligne</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Avancé</string>
     <string name="start_play">Jouer</string>
     <string name="start_practice">Entraînement</string>
     <string name="start_puzzles">Problèmes</string>

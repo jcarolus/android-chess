@@ -1,39 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>پیشرفته</h3>
-            <p>در اینجا می‌توانید موارد خودتان را بسازید یا وارد کنید.</p>
-
-            <h4>خروجی گرفتن از پایگاه‌داده‌ی بازی‌ها روی کارت حافظه</h4>
-            <p>همه‌ی بازی‌های موجود در پایگاه‌داده را می‌توان در یک فایل PGN روی کارت حافظه ذخیره کرد. نام این فایل
-                chess.pgn خواهد بود و اگر فایلی با همین نام وجود داشته باشد بازنویسی می‌شود.</p>
-
-            <h4>وارد کردن بازی‌ها به پایگاه‌داده</h4>
-            <p>از این گزینه برای افزودن بازی‌ها به پایگاه‌داده استفاده کنید. می‌توانید یک فایل PGN را انتخاب
-                کرده و برای وارد کردن آن اقدام کنید.</p>
-
-            <h4>حذف همه‌ی بازی‌های پایگاه‌داده</h4>
-            <p>اگر می‌خواهید پایگاه‌داده را پاک‌سازی کنید از این گزینه استفاده کنید. ابتدا حتماً یک نسخه‌ی پشتیبان
-                روی کارت حافظه بگیرید؛ این کار قابل بازگشت نیست.</p>
-
-            <h4>ساخت مجموعه‌ی تمرین</h4>
-            <p>از بازی‌هایی که به کیش و مات ختم می‌شوند موقعیت‌های تمرینی می‌سازد. فایل موردنظر را برای پردازش
-                انتخاب کنید. موارد ناموفق معمولاً بازی‌هایی هستند که به کیش و مات ختم نشده‌اند یا تکراری
-                هستند.</p>
-
-            <h4>بازنشانی مجموعه‌ی تمرین</h4>
-            <p>می‌خواهید تمرین را از نو شروع کنید؟ این کار شمارنده‌ی میانگین زمان شما را نیز بازنشانی می‌کند.</p>
-
-                ]]>
-            </string>
     <string name="alert_no">خیر</string>
     <string name="alert_ok">تأیید</string>
     <string name="alert_yes">بله</string>
     <string name="app_name">شطرنج</string>
     <string name="app_name_help">راهنما</string>
     <string name="app_name_import">وارد کردن</string>
-    <string name="app_name_pgntools">پیشرفته</string>
     <string name="app_name_play">بازی</string>
     <string name="app_name_playonline">بازی آنلاین</string>
     <string name="app_name_save_games">بازی‌های ذخیره‌شده</string>
@@ -321,7 +293,6 @@
     <string name="pgntool_delete_games">حذف همه‌ی بازی‌های پایگاه‌داده</string>
     <string name="pgntool_games_deleted">همه‌ی بازی‌ها حذف شدند</string>
     <string name="pgntool_export_explanation">خروجی گرفتن از پایگاه‌داده‌ی بازی‌ها</string>
-    <string name="pgntool_help">راهنما</string>
     <string name="pgntool_import_explanation">وارد کردن بازی‌ها به پایگاه‌داده</string>
     <string name="importing_games">در حال وارد کردن بازی‌ها…</string>
     <string name="importing_puzzles">در حال وارد کردن پازل‌ها…</string>
@@ -453,7 +424,6 @@
     <string name="start_wifiboard">صفحه‌ی وای‌فای</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">پیشرفته</string>
     <string name="start_play">بازی</string>
     <string name="start_practice">تمرین</string>
     <string name="start_puzzles">پازل‌ها</string>

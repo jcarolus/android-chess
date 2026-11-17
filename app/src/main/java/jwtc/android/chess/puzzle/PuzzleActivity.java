@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import com.google.android.material.button.MaterialButton;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -15,6 +17,7 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.matecollection.MateScore;
+import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.tools.ImportActivity;
@@ -83,6 +86,30 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
 
+        ActivityResultLauncher<String[]> pickFile =
+                registerForActivityResult(
+                        new ActivityResultContracts.OpenDocument(),
+                        uri -> {
+                            if (uri != null) {
+                                Intent intent = new Intent(this, ImportActivity.class);
+                                intent.setData(uri);
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                intent.putExtra("mode", ImportService.IMPORT_PUZZLES);
+                                startActivity(intent);
+                            }
+                        });
+        findViewById(R.id.ButtonMenu)
+                .setOnClickListener(
+                        v ->
+                                new MenuDialog(
+                                                this,
+                                                (request, data) ->
+                                                        onMenuItem(
+                                                                data.getString("item"), pickFile),
+                                                0,
+                                                R.array.puzzle_menu)
+                                        .show());
+
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -97,6 +124,31 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
                 findViewById(R.id.play_board_bottom));
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
+    }
+
+    private void onMenuItem(String item, ActivityResultLauncher<String[]> pickFile) {
+        if (getString(R.string.pgntool_import_puzzle).equals(item)) {
+            pickFile.launch(new String[] {"*/*"});
+        } else if (getString(R.string.pgntool_delete_puzzles).equals(item)) {
+            confirmDeleteCollection();
+        }
+    }
+
+    private void confirmDeleteCollection() {
+        openConfirmDialog(
+                getString(R.string.puzzle_restore_confirmation)
+                        + "\n\n"
+                        + getString(
+                                R.string.pgntool_delete_item_count,
+                                MateCollection.countPositions(this, MateKind.MATE_IN_TWO_PUZZLES)),
+                getString(R.string.choice_delete),
+                getString(R.string.button_cancel),
+                () -> {
+                    mateCollection.pause();
+                    MateCollection.clearCollection(this, MateKind.MATE_IN_TWO_PUZZLES);
+                    mateCollection.resume();
+                },
+                null);
     }
 
     @Override

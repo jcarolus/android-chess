@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import jwtc.android.chess.R;
@@ -16,6 +18,7 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.matecollection.MateScore;
+import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
@@ -85,6 +88,30 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
         percentBar = findViewById(R.id.percentBar);
 
+        ActivityResultLauncher<String[]> pickFile =
+                registerForActivityResult(
+                        new ActivityResultContracts.OpenDocument(),
+                        uri -> {
+                            if (uri != null) {
+                                Intent intent = new Intent(this, ImportActivity.class);
+                                intent.setData(uri);
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                intent.putExtra("mode", ImportService.IMPORT_PRACTICE);
+                                startActivity(intent);
+                            }
+                        });
+        findViewById(R.id.ButtonMenu)
+                .setOnClickListener(
+                        v ->
+                                new MenuDialog(
+                                                this,
+                                                (request, data) ->
+                                                        onMenuItem(
+                                                                data.getString("item"), pickFile),
+                                                0,
+                                                R.array.practice_menu)
+                                        .show());
+
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -98,6 +125,43 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
                 findViewById(R.id.play_board_bottom));
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
+    }
+
+    private void onMenuItem(String item, ActivityResultLauncher<String[]> pickFile) {
+        if (getString(R.string.pgntool_import_practice).equals(item)) {
+            pickFile.launch(new String[] {"*/*"});
+        } else if (getString(R.string.pgntool_delete_practice).equals(item)) {
+            confirmDeleteCollection();
+        } else if (getString(R.string.pgntool_reset_practice).equals(item)) {
+            openConfirmDialog(
+                    getString(R.string.pgntool_confirm_practice_reset),
+                    getString(R.string.button_ok),
+                    getString(R.string.button_cancel),
+                    () -> {
+                        mateCollection.pause();
+                        MateCollection.resetProgress(this, MateKind.PRACTICE_POSITIONS);
+                        mateCollection.resume();
+                        doToast(getString(R.string.practice_set_reset));
+                    },
+                    null);
+        }
+    }
+
+    private void confirmDeleteCollection() {
+        openConfirmDialog(
+                getString(R.string.practice_restore_confirmation)
+                        + "\n\n"
+                        + getString(
+                                R.string.pgntool_delete_item_count,
+                                MateCollection.countPositions(this, MateKind.PRACTICE_POSITIONS)),
+                getString(R.string.choice_delete),
+                getString(R.string.button_cancel),
+                () -> {
+                    mateCollection.pause();
+                    MateCollection.clearCollection(this, MateKind.PRACTICE_POSITIONS);
+                    mateCollection.resume();
+                },
+                null);
     }
 
     @Override
