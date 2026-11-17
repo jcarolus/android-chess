@@ -426,6 +426,7 @@
     <string name="title_challenge">Défi</string>
     <string name="title_overwrite_main_line">Remplacer la ligne principale à partir de cette position ?</string>
     <string name="title_delete_game">Supprimer la partie</string>
+    <string name="game_delete_failed">Impossible de supprimer la partie. Veuillez réessayer.</string>
     <string name="title_edit_command">Modifier la commande</string>
     <string name="title_edit_or_delete">Modifier ou supprimer ?</string>
     <string name="title_error">Erreur</string>

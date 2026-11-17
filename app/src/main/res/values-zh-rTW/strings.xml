@@ -447,6 +447,7 @@
     <string name="title_challenge">挑戰</string>
     <string name="title_overwrite_main_line">要從這個局面起覆寫主線嗎？</string>
     <string name="title_delete_game">刪除棋譜</string>
+    <string name="game_delete_failed">無法刪除棋譜。請重試。</string>
     <string name="title_edit_command">編輯指令</string>
     <string name="title_edit_or_delete">要編輯還是刪除？</string>
     <string name="title_error">錯誤</string>

@@ -426,6 +426,7 @@
     <string name="title_challenge">挑战</string>
     <string name="title_overwrite_main_line">从此局面开始覆盖主线？</string>
     <string name="title_delete_game">删除对局</string>
+    <string name="game_delete_failed">无法删除对局。请重试。</string>
     <string name="title_edit_command">编辑命令</string>
     <string name="title_edit_or_delete">编辑还是删除？</string>
     <string name="title_error">错误</string>

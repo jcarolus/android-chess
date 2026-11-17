@@ -488,6 +488,7 @@
     <string name="title_challenge">Uitdaging</string>
     <string name="title_overwrite_main_line">Hoofdvariant vanaf deze stelling overschrijven?</string>
     <string name="title_delete_game">Partij verwijderen</string>
+    <string name="game_delete_failed">De partij kon niet worden verwijderd. Probeer het opnieuw.</string>
     <string name="title_edit_command">Commando bewerken</string>
     <string name="title_edit_or_delete">Bewerken of verwijderen?</string>
     <string name="title_error">Fout</string>

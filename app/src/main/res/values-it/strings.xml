@@ -426,6 +426,7 @@
     <string name="title_challenge">Sfida</string>
     <string name="title_overwrite_main_line">Sovrascrivere la linea principale da questa posizione?</string>
     <string name="title_delete_game">Elimina partita</string>
+    <string name="game_delete_failed">Impossibile eliminare la partita. Riprova.</string>
     <string name="title_edit_command">Modifica comando</string>
     <string name="title_edit_or_delete">Modificare o eliminare?</string>
     <string name="title_error">Errore</string>

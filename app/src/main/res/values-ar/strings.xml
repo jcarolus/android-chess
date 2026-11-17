@@ -442,6 +442,7 @@
     <string name="title_challenge">تحدي</string>
     <string name="title_overwrite_main_line">هل تريد استبدال الخط الرئيسي من هذا الوضع؟</string>
     <string name="title_delete_game">حذف اللعبة</string>
+    <string name="game_delete_failed">تعذر حذف اللعبة. يرجى المحاولة مرة أخرى.</string>
     <string name="title_edit_command">تعديل الأمر</string>
     <string name="title_edit_or_delete">تعديل أو حذف؟</string>
     <string name="title_error">خطأ</string>

@@ -16,6 +16,14 @@ public class MenuDialog extends ResultDialog<Bundle> {
             ResultDialogListener<Bundle> listener,
             int requestCode,
             @ArrayRes int menuItems) {
+        this(context, listener, requestCode, context.getResources().getStringArray(menuItems));
+    }
+
+    public MenuDialog(
+            @NonNull Context context,
+            ResultDialogListener<Bundle> listener,
+            int requestCode,
+            String[] menuItems) {
         super(context, listener, requestCode);
 
         setTitle(R.string.title_menu);
@@ -23,10 +31,7 @@ public class MenuDialog extends ResultDialog<Bundle> {
 
         ListView list = findViewById(R.id.ListMenu);
         list.setAdapter(
-                new ArrayAdapter<>(
-                        context,
-                        android.R.layout.simple_list_item_1,
-                        context.getResources().getStringArray(menuItems)));
+                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, menuItems));
         list.setOnItemClickListener(
                 (parent, view, position, id) -> {
                     String item = parent.getItemAtPosition(position).toString();

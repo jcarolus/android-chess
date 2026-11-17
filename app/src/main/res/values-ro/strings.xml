@@ -426,6 +426,7 @@
     <string name="title_challenge">Provocare</string>
     <string name="title_overwrite_main_line">Suprascrii linia principală din această poziție?</string>
     <string name="title_delete_game">Șterge partida</string>
+    <string name="game_delete_failed">Partida nu a putut fi ștearsă. Încearcă din nou.</string>
     <string name="title_edit_command">Editează comanda</string>
     <string name="title_edit_or_delete">Editează sau șterge?</string>
     <string name="title_error">Eroare</string>

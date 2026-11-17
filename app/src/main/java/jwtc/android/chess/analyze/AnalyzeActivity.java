@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -34,6 +35,7 @@ import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.links.LinkActivity;
 import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.play.MenuDialog;
+import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
@@ -225,9 +227,24 @@ public class AnalyzeActivity extends ChessBoardActivity {
                     gameApi.goTo(end);
                     return true;
                 });
-        MenuDialog menuDialog =
-                new MenuDialog(this, this::onMenuSelected, REQUEST_MENU, R.array.analyze_menu);
-        findViewById(R.id.ButtonMenu).setOnClickListener(v -> menuDialog.show());
+        findViewById(R.id.ButtonMenu)
+                .setOnClickListener(
+                        v -> {
+                            List<String> items =
+                                    new ArrayList<>(
+                                            Arrays.asList(
+                                                    getResources()
+                                                            .getStringArray(R.array.analyze_menu)));
+                            if (!isStudy() && lGameID <= 0) {
+                                items.remove(getString(R.string.title_delete_game));
+                            }
+                            new MenuDialog(
+                                            this,
+                                            this::onMenuSelected,
+                                            REQUEST_MENU,
+                                            items.toArray(new String[0]))
+                                    .show();
+                        });
     }
 
     private void onMenuSelected(int requestCode, Bundle data) {
@@ -243,11 +260,48 @@ public class AnalyzeActivity extends ChessBoardActivity {
             } else {
                 showSaveGameDialog(lGameID);
             }
+        } else if (getString(R.string.title_delete_game).equals(item)) {
+            deleteGame();
         } else if (getString(R.string.menu_save_game_to_file).equals(item)) {
             startSaveGameToFile(REQUEST_SAVE_GAME_TO_FILE);
         } else if (getString(R.string.menu_clip_pgn).equals(item)) {
             copyGameToClipboard();
         }
+    }
+
+    @Override
+    protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
+        lGameID = saveGame(result.getRecord(), result.createCopy, result.lGameID);
+        getIntent().putExtra(EXTRA_GAME_ID, lGameID);
+    }
+
+    private void deleteGame() {
+        long id = isStudy() ? studyIds.get(studyIndex) : lGameID;
+        if (id <= 0) {
+            return;
+        }
+        openConfirmDialog(
+                getString(R.string.title_delete_game),
+                getString(R.string.button_ok),
+                getString(R.string.button_cancel),
+                () -> {
+                    if (!new GameStore(getContentResolver()).delete(id)) {
+                        doToast(getString(R.string.game_delete_failed));
+                        return;
+                    }
+                    sessionLoaded = false;
+                    if (isStudy()) {
+                        getPrefs()
+                                .edit()
+                                .remove(
+                                        StudyStore.resumeKey(
+                                                getIntent().getStringExtra(EXTRA_STUDY_TOPIC),
+                                                getIntent().getStringExtra(EXTRA_STUDY_EVENT)))
+                                .apply();
+                    }
+                    finish();
+                },
+                null);
     }
 
     @Override

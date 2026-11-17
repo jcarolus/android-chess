@@ -426,6 +426,7 @@
     <string name="title_challenge">Meydan okuma</string>
     <string name="title_overwrite_main_line">Bu konumdan itibaren ana hattın üzerine yazılsın mı?</string>
     <string name="title_delete_game">Oyunu sil</string>
+    <string name="game_delete_failed">Oyun silinemedi. Lütfen tekrar deneyin.</string>
     <string name="title_edit_command">Komutu düzenle</string>
     <string name="title_edit_or_delete">Düzenle veya sil?</string>
     <string name="title_error">Hata</string>
