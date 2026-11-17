@@ -1,6 +1,9 @@
 package jwtc.android.chess.tools;
 
 import android.util.Log;
+import jwtc.android.chess.engine.PgnReplay;
+import jwtc.chess.Pgn;
+import jwtc.chess.PgnDocument;
 
 /** Collects the final position of each opening under its name, skipping positions seen before. */
 public class OpeningImportHandler implements ImportHandler {
@@ -15,11 +18,20 @@ public class OpeningImportHandler implements ImportHandler {
 
     @Override
     public Result handle(ImportItem item) {
-        if (importApi.loadPGN(item.pgn) && importApi.getNumBoard() > 0) {
-            if (importApi.addToHashMap(importApi.getHashKey(), item.name)) {
+        if (item.pgn == null || item.pgn.length() > Pgn.MAX_GAME_SIZE) {
+            return Result.FAILED;
+        }
+        try {
+            PgnDocument document = Pgn.parse(item.pgn);
+            if (document.mainLine.isEmpty()) {
+                return Result.FAILED;
+            }
+            if (importApi.addToHashMap(PgnReplay.validate(document).hashKey, item.name)) {
                 return Result.INSERTED;
             }
             Log.d(TAG, "Duplicate hash");
+        } catch (IllegalArgumentException error) {
+            return Result.FAILED;
         }
         return Result.FAILED;
     }

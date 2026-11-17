@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
-import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.engine.PgnReplay;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.Pgn;
 import jwtc.chess.PgnDocument;
@@ -17,11 +17,9 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeImportHandler implements ImportHandler {
     private static final String TAG = "PracticeImportHandler";
 
-    private final GameApi gameApi;
     private final ContentResolver contentResolver;
 
-    public PracticeImportHandler(GameApi gameApi, ContentResolver contentResolver) {
-        this.gameApi = gameApi;
+    public PracticeImportHandler(ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
     }
 
@@ -54,7 +52,7 @@ public class PracticeImportHandler implements ImportHandler {
                     return Result.DUPLICATE;
                 }
             }
-            if (!gameApi.loadPGN(item.pgn) || gameApi.getEngineState() != BoardConstants.MATE) {
+            if (PgnReplay.validate(document).boardState() != BoardConstants.MATE) {
                 return Result.FAILED;
             }
 
@@ -64,6 +62,8 @@ public class PracticeImportHandler implements ImportHandler {
             return contentResolver.insert(MyPuzzleProvider.CONTENT_URI_PRACTICES, values) == null
                     ? Result.DUPLICATE
                     : Result.INSERTED;
+        } catch (IllegalArgumentException error) {
+            return Result.FAILED;
         } catch (Exception error) {
             Log.e(TAG, "Could not import Practice Position", error);
             return Result.FAILED;

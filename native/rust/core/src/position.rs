@@ -1,4 +1,5 @@
 use std::fmt;
+mod san;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Variant {
@@ -810,15 +811,8 @@ impl Position {
         coordinate: &str,
         omit_pending: bool,
     ) -> Result<bool, Error> {
-        if self.variant == Variant::KingOfTheHill
-            && !matches!(self.game_state(), GameState::Play | GameState::Check)
-        {
-            return Err(invalid("Game has ended"));
-        }
+        self.check_turn_available()?;
         let coordinate = CoordinateMove::parse(coordinate)?;
-        if self.variant == Variant::Duck && self.game_state() != GameState::Play {
-            return Err(invalid("Game has ended"));
-        }
         let (piece, duck) = coordinate
             .as_str()
             .split_once('@')
@@ -832,15 +826,38 @@ impl Position {
             .into_iter()
             .find(|m| self.external(self.turn, *m).as_str() == piece)
             .ok_or_else(|| invalid("Illegal move"))?;
-        let mut next = self.make(m);
+        self.apply_resolved(m, duck.map(square).transpose()?, omit_pending)
+    }
+
+    fn check_turn_available(&self) -> Result<(), Error> {
+        if self.variant == Variant::KingOfTheHill
+            && !matches!(self.game_state(), GameState::Play | GameState::Check)
+            || self.variant == Variant::Duck && self.game_state() != GameState::Play
+        {
+            return Err(invalid("Game has ended"));
+        }
+        Ok(())
+    }
+
+    fn apply_resolved(
+        &mut self,
+        m: Move,
+        duck: Option<usize>,
+        omit_pending: bool,
+    ) -> Result<bool, Error> {
+        let mut coordinate = self.external(self.turn, m).0;
+        let mut next;
         if self.variant == Variant::Duck {
+            // Duck's pending preview can fail, so keep the current position intact.
+            next = self.make(m);
             match duck {
                 Some(d) => {
-                    let d = square(d)?;
                     if next.ends_before_duck() || next.occupied() & bit(d) != 0 {
                         return Err(invalid("Illegal duck placement"));
                     }
                     next.duck = Some(d);
+                    coordinate.push('@');
+                    coordinate.push_str(&name(d));
                 }
                 None if !next.ends_before_duck() => {
                     if omit_pending {
@@ -850,8 +867,15 @@ impl Position {
                 }
                 None => {}
             }
+        } else {
+            next = self.make_unrecorded(m);
+            next.history = std::mem::take(&mut self.history);
+            if !self.is_irreversible(m) {
+                next.previous = std::mem::take(&mut self.previous);
+                next.previous.push(self.repetition());
+            }
         }
-        next.history.push(coordinate.0);
+        next.history.push(coordinate);
         *self = next;
         Ok(true)
     }

@@ -26,6 +26,25 @@ public final class ImportPipelineInstrumentation {
                 instrumentation,
                 PgnSource.file(input("[Event \"First\"]\n1. e4 *\n\n[Event \"Second\"]\n1. d4 *")),
                 false);
+        verifyOpeningBatch();
+    }
+
+    private static void verifyOpeningBatch() {
+        ImportApi api = new ImportApi();
+        OpeningImportHandler handler = new OpeningImportHandler(api);
+        check(
+                handler.handle(new ImportItem("1. e4 e5 (1... c5) 2. Nf3 *", "Opening"))
+                        == ImportHandler.Result.INSERTED,
+                "Legal opening was skipped");
+        check(
+                handler.handle(new ImportItem("1. e4 e5 2. Ng1f3 *", "Duplicate"))
+                        == ImportHandler.Result.FAILED,
+                "An opening at the same position was inserted twice");
+        check(
+                handler.handle(new ImportItem("1. d4 d5 (1... Ke4) *", "Illegal"))
+                        == ImportHandler.Result.FAILED,
+                "An illegal variation was accepted");
+        check(api.getHashMap().size() == 1, "Opening import stored the wrong number of positions");
     }
 
     private static void verifySource(

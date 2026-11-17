@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
+import jwtc.android.chess.engine.PgnReplay;
 import jwtc.android.chess.engine.RustBoard;
 import jwtc.android.chess.engine.RustSearchRequest;
 import jwtc.chess.GameRecord;
@@ -1045,34 +1046,12 @@ public class GameApi {
         try {
             pgnTags.clear();
             pgnTags.putAll(document.tags);
-            String fen = pgnTags.get("FEN");
-            if (fen != null) {
-                fen = new BoardPosition(fen).fen();
-                pgnTags.put("FEN", fen);
+            PgnReplay.StartingPosition start = PgnReplay.startingPosition(document);
+            if (!board.initFEN(start.fen, start.variant)) {
+                throw new IllegalArgumentException("Invalid FEN");
             }
-            String variantTag = pgnTags.get("Variant");
-            if (fen == null) {
-                board.newGame(
-                        "Duck".equalsIgnoreCase(variantTag)
-                                ? BoardConstants.VARIANT_DUCK
-                                : "King of the Hill".equalsIgnoreCase(variantTag)
-                                        ? BoardConstants.VARIANT_KING_OF_THE_HILL
-                                        : BoardConstants.VARIANT_DEFAULT);
-            } else {
-                boolean loaded;
-                if ("Duck".equalsIgnoreCase(variantTag)) {
-                    loaded = board.initFEN(fen, RustSearchRequest.Variant.DUCK);
-                } else if ("King of the Hill".equalsIgnoreCase(variantTag)) {
-                    loaded = board.initFEN(fen, RustSearchRequest.Variant.KING_OF_THE_HILL);
-                } else if ("Fischerandom".equalsIgnoreCase(variantTag)
-                        || "Chess960".equalsIgnoreCase(variantTag)) {
-                    loaded = board.initFEN(fen, RustSearchRequest.Variant.CHESS_960);
-                } else {
-                    loaded = board.initFEN(fen);
-                }
-                if (!loaded) {
-                    throw new IllegalArgumentException("Invalid FEN");
-                }
+            if (pgnTags.containsKey("FEN")) {
+                pgnTags.put("FEN", start.fen);
             }
             resetPGNHistory(pgnTags.getOrDefault("FEN", board.toFEN()));
             gameTree.setRootComment(document.rootComment);

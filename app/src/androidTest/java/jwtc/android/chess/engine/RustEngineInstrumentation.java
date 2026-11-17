@@ -16,6 +16,7 @@ import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportApi;
 import jwtc.chess.GameRecord;
+import jwtc.chess.Pgn;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
@@ -447,10 +448,17 @@ public final class RustEngineInstrumentation extends Instrumentation {
 
     private void pgnReplayPreservesBranchesAndRollback() {
         GameApi game = new ImportApi();
+        String illegalBranch = "1. e4 e5 (1... c5 2. Ke4) *";
+        try {
+            PgnReplay.validate(Pgn.parse(illegalBranch));
+            throw new AssertionError("SAN batch accepted an illegal branch");
+        } catch (IllegalArgumentException expected) {
+            check(expected.getMessage().contains("SAN token"), "SAN batch omitted the failing move");
+        }
         for (String pgn :
                 new String[] {
                     "[Event \"Branches\"]\n\n{root} 1. e4 $1 {main} e5 (1... c5 {Sicilian} 2. Nf3 (2. Nc3) d6) (1... e6 2. d4) 2. Nf3 Nc6 *",
-                    "1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
+                    "1. Ng1f3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
                     "[Variant \"Fischerandom\"]\n[FEN \"4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1\"]\n\n1. O-O (1. O-O-O) *",
                     "[Variant \"Duck\"]\n\n1. e4@d5 (1. d4@e5 d5@e4) e5@d4 2. Nf3@c6 *",
                     "[Variant \"Duck\"]\n[FEN \"4k3/8/8/8/8/8/4R3/4K3 w - - 0 1\"]\n\n1. Rxe8 *",
@@ -459,10 +467,16 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     "[FEN \"4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1\"]\n\n1. exd6 *"
                 }) {
             check(game.loadPGN(pgn), "Replay rejected " + pgn);
+            RustBoardResult batch = PgnReplay.validate(Pgn.parse(pgn));
+            check(
+                    batch.fen.equals(game.getFEN())
+                            && batch.hashKey == game.getHashKey()
+                            && batch.boardState() == game.getEngineState(),
+                    "SAN batch differed from Java replay: " + pgn);
             String saved = game.exportFullPGN();
             String fen = game.getFEN();
             int state = game.getEngineState();
-            check(!game.loadPGN("1. e4 e5 (1... c5 2. Ke4) *"), "Illegal branch accepted");
+            check(!game.loadPGN(illegalBranch), "Illegal branch accepted");
             check(
                     saved.equals(game.exportFullPGN()) && fen.equals(game.getFEN()),
                     "Failed replay changed game");

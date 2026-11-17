@@ -234,13 +234,10 @@ public class ImportService extends Service {
             case IMPORT_PRACTICE:
                 pipeline.start(
                         mode,
-                        () -> {
-                            importApi = new ImportApi();
-                            return new ImportJob(
-                                    mode,
-                                    PgnSource.file(openInput(uri, "practice.pgn")),
-                                    new PracticeImportHandler(importApi, getContentResolver()));
-                        });
+                        () -> new ImportJob(
+                                mode,
+                                PgnSource.file(openInput(uri, "practice.pgn")),
+                                new PracticeImportHandler(getContentResolver())));
                 break;
             case IMPORT_OPENINGS:
                 if (uri != null) {

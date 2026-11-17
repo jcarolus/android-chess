@@ -460,6 +460,29 @@ pub unsafe extern "C" fn rust_board_query(
     }));
     report(output, result);
 }
+/// Validates the SAN main line and its alternatives, returning the main line's final snapshot.
+///
+/// # Safety
+/// Both strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_replay_san(
+    variant: i32,
+    fen: *const c_char,
+    tokens: *const c_char,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let start = Position::from_fen(parse_variant(variant)?, text(fen)?)?;
+        let position = start.replay_san(text(tokens)?.split_ascii_whitespace())?;
+        fill_query(&position, output)
+    }));
+    report(output, result);
+}
 /// The legal moves from a snapshot, space-separated in `moves`.
 ///
 /// # Safety

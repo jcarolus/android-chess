@@ -301,14 +301,16 @@ public final class RustBoard {
         } catch (IllegalArgumentException ex) {
             return false;
         }
-        RustSearchRequest.Variant selected =
-                position.duck() >= 0
-                        ? RustSearchRequest.Variant.DUCK
-                        : position.chess960()
-                                ? RustSearchRequest.Variant.CHESS_960
-                                : RustSearchRequest.Variant.STANDARD;
-        load(position.fen(), selected);
+        load(position.fen(), inferVariant(position));
         return true;
+    }
+
+    static RustSearchRequest.Variant inferVariant(BoardPosition position) {
+        return position.duck() >= 0
+                ? RustSearchRequest.Variant.DUCK
+                : position.chess960()
+                        ? RustSearchRequest.Variant.CHESS_960
+                        : RustSearchRequest.Variant.STANDARD;
     }
 
     public synchronized boolean initFEN(String fen, RustSearchRequest.Variant selected) {

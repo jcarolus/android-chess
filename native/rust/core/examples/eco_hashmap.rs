@@ -59,19 +59,9 @@ fn final_key(movetext: &str) -> Result<u64, String> {
         if token.ends_with('.') {
             continue;
         }
-        let san = token.trim_end_matches(['+', '#', '!', '?']);
-        let coordinate = position
-            .legal_moves()
-            .into_iter()
-            .find(|m| {
-                position
-                    .to_san(m.as_str())
-                    .is_ok_and(|s| s.trim_end_matches(['+', '#']) == san)
-            })
-            .ok_or_else(|| format!("no legal move {token}"))?;
         position
-            .apply(coordinate.as_str())
-            .map_err(|e| e.to_string())?;
+            .apply_san(token.trim_end_matches(['!', '?']))
+            .map_err(|error| format!("{token}: {error}"))?;
         played += 1;
     }
     if played == 0 {

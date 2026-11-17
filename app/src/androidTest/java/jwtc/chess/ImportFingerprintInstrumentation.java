@@ -225,7 +225,7 @@ public final class ImportFingerprintInstrumentation {
         boolean addedPractice = false;
         try {
             ImportHandler puzzle = new PuzzleImportHandler(new ImportApi(), resolver);
-            ImportHandler practice = new PracticeImportHandler(new ImportApi(), resolver);
+            ImportHandler practice = new PracticeImportHandler(resolver);
             addedPuzzle = puzzle.handle(new ImportItem(pgn, null)) == Result.INSERTED;
             addedPractice = practice.handle(new ImportItem(pgn, null)) == Result.INSERTED;
             check(
@@ -237,7 +237,7 @@ public final class ImportFingerprintInstrumentation {
                             == Result.DUPLICATE,
                     "Repeated Puzzle was imported");
             check(
-                    new PracticeImportHandler(new ImportApi(), resolver)
+                    new PracticeImportHandler(resolver)
                                     .handle(new ImportItem(pgn, null))
                             == Result.DUPLICATE,
                     "Repeated Practice Position was imported");
@@ -253,7 +253,7 @@ public final class ImportFingerprintInstrumentation {
 
     private static void verifyFullPracticeImport(Context context) {
         ContentResolver resolver = context.getContentResolver();
-        ImportHandler practice = new PracticeImportHandler(new ImportApi(), resolver);
+        ImportHandler practice = new PracticeImportHandler(resolver);
         String pgn = "[FEN \"" + jwtc.chess.board.BoardPosition.START_FEN.replace("0 1", "0 4123")
                 + "\"]\n4123. f3 {comment} e5 4124. g4 Qh4#! 0-1";
         String selection = "fingerprint = ?";
