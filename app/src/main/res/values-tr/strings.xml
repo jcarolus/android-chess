@@ -581,4 +581,11 @@
     </string-array>
     <string name="move_input_castle">rok</string>
     <string name="move_input_captures">alır</string>
+    <string name="menu_delete_game_database">Çalışmalar dahil tüm oyunları sil</string>
+    <string name="practice_delete_confirmation">Tüm alıştırma konumları ve ilerleme silinsin mi?</string>
+    <string name="puzzle_delete_confirmation">Tüm problem konumları ve ilerleme silinsin mi?</string>
+    <string name="collection_restore_prompt">Tüm konumları sildiniz. Varsayılan konumları geri yüklemek ister misiniz?</string>
+    <string name="collection_restore_defaults">Varsayılan konumları geri yükle</string>
+    <string name="collection_empty">Konum yok. Konumları içe aktarmak veya geri yüklemek için menüyü kullanın.</string>
+    <string name="collection_delete_failed">Konumlar silinemedi. Lütfen tekrar deneyin.</string>
 </resources>

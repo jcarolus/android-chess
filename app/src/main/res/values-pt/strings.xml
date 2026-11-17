@@ -581,4 +581,11 @@
     </string-array>
     <string name="move_input_castle">roque</string>
     <string name="move_input_captures">toma|captura</string>
+    <string name="menu_delete_game_database">Excluir todas as partidas, incluindo os estudos</string>
+    <string name="practice_delete_confirmation">Excluir todas as posições de treino e o progresso?</string>
+    <string name="puzzle_delete_confirmation">Excluir todas as posições dos problemas e o progresso?</string>
+    <string name="collection_restore_prompt">Você excluiu todas as posições. Deseja restaurar as posições padrão?</string>
+    <string name="collection_restore_defaults">Restaurar as posições padrão</string>
+    <string name="collection_empty">Nenhuma posição. Use o menu para importar ou restaurar posições.</string>
+    <string name="collection_delete_failed">Não foi possível excluir as posições. Tente novamente.</string>
 </resources>

@@ -588,4 +588,11 @@
     </string-array>
     <string name="move_input_castle">Rochade|rochieren</string>
     <string name="move_input_captures">schlägt|nimmt</string>
+    <string name="menu_delete_game_database">Alle Partien einschließlich Studien löschen</string>
+    <string name="practice_delete_confirmation">Alle Übungsstellungen und den Fortschritt löschen?</string>
+    <string name="puzzle_delete_confirmation">Alle Rätselstellungen und den Fortschritt löschen?</string>
+    <string name="collection_restore_prompt">Du hast alle Stellungen gelöscht. Möchtest du die Standardstellungen wiederherstellen?</string>
+    <string name="collection_restore_defaults">Standardstellungen wiederherstellen</string>
+    <string name="collection_empty">Keine Stellungen vorhanden. Über das Menü kannst du Stellungen importieren oder wiederherstellen.</string>
+    <string name="collection_delete_failed">Stellungen konnten nicht gelöscht werden. Bitte versuche es erneut.</string>
 </resources>

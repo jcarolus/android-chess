@@ -677,4 +677,11 @@
     <string name="move_entry_review">%1$s (%2$s) spelen?</string>
     <string name="move_input_castle">rokade|rokeren</string>
     <string name="move_input_captures">slaat|neemt</string>
+    <string name="menu_delete_game_database">Alle partijen, inclusief studies, verwijderen</string>
+    <string name="practice_delete_confirmation">Alle oefenstellingen en voortgang verwijderen?</string>
+    <string name="puzzle_delete_confirmation">Alle puzzelstellingen en voortgang verwijderen?</string>
+    <string name="collection_restore_prompt">Je hebt alle stellingen verwijderd. Wil je de standaardstellingen herstellen?</string>
+    <string name="collection_restore_defaults">Standaardstellingen herstellen</string>
+    <string name="collection_empty">Geen stellingen. Gebruik het menu om stellingen te importeren of te herstellen.</string>
+    <string name="collection_delete_failed">De stellingen konden niet worden verwijderd. Probeer het opnieuw.</string>
 </resources>

@@ -581,4 +581,11 @@
     </string-array>
     <string name="move_input_castle">roque|roquer</string>
     <string name="move_input_captures">prend|capture</string>
+    <string name="menu_delete_game_database">Supprimer toutes les parties, y compris les études</string>
+    <string name="practice_delete_confirmation">Supprimer toutes les positions d’entraînement et la progression ?</string>
+    <string name="puzzle_delete_confirmation">Supprimer toutes les positions des problèmes et la progression ?</string>
+    <string name="collection_restore_prompt">Vous avez supprimé toutes les positions. Voulez-vous restaurer les positions par défaut ?</string>
+    <string name="collection_restore_defaults">Restaurer les positions par défaut</string>
+    <string name="collection_empty">Aucune position. Utilisez le menu pour importer ou restaurer des positions.</string>
+    <string name="collection_delete_failed">Impossible de supprimer les positions. Veuillez réessayer.</string>
 </resources>

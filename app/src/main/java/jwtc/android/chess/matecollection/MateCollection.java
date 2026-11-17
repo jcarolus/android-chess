@@ -141,6 +141,7 @@ public final class MateCollection {
             listener.onEmptyCollection();
             return;
         }
+        MateCollectionDefaults.positionsAvailable(context, kind);
         position = MateRules.restore(position, total);
         startPosition();
     }

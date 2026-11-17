@@ -16,6 +16,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.matecollection.MateCollection;
+import jwtc.android.chess.matecollection.MateCollectionDefaults;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.matecollection.MateScore;
 import jwtc.android.chess.play.MenuDialog;
@@ -27,6 +28,8 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeActivity extends ChessBoardActivity implements MateCollection.Listener {
     private static final String TAG = "PracticeActivity";
     private MateCollection mateCollection;
+    private MateCollectionDefaults collectionDefaults;
+    private boolean emptyCollection;
     private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
     private ImageView imageTurn, imgStatus;
@@ -67,6 +70,12 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
         gameApi = new GameApi();
         mateCollection = new MateCollection(this, MateKind.PRACTICE_POSITIONS, gameApi, this);
+        collectionDefaults =
+                new MateCollectionDefaults(
+                        this,
+                        MateKind.PRACTICE_POSITIONS,
+                        savedInstanceState,
+                        this::importDefaultPositions);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
@@ -100,17 +109,19 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
                                 startActivity(intent);
                             }
                         });
-        findViewById(R.id.ButtonMenu)
-                .setOnClickListener(
-                        v ->
-                                new MenuDialog(
-                                                this,
-                                                (request, data) ->
-                                                        onMenuItem(
-                                                                data.getString("item"), pickFile),
-                                                0,
-                                                R.array.practice_menu)
-                                        .show());
+        View.OnClickListener openMenu =
+                v ->
+                        new MenuDialog(
+                                        this,
+                                        (request, data) ->
+                                                onMenuItem(data.getString("item"), pickFile),
+                                        0,
+                                        emptyCollection
+                                                ? R.array.practice_empty_menu
+                                                : R.array.practice_menu)
+                                .show();
+        findViewById(R.id.ButtonMenu).setOnClickListener(openMenu);
+        findViewById(R.id.EmptyCollectionMenu).setOnClickListener(openMenu);
 
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
@@ -130,6 +141,8 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     private void onMenuItem(String item, ActivityResultLauncher<String[]> pickFile) {
         if (getString(R.string.pgntool_import_practice).equals(item)) {
             pickFile.launch(new String[] {"*/*"});
+        } else if (getString(R.string.collection_restore_defaults).equals(item)) {
+            collectionDefaults.restoreDefaults();
         } else if (getString(R.string.pgntool_delete_practice).equals(item)) {
             confirmDeleteCollection();
         } else if (getString(R.string.pgntool_reset_practice).equals(item)) {
@@ -149,7 +162,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     private void confirmDeleteCollection() {
         openConfirmDialog(
-                getString(R.string.practice_restore_confirmation)
+                getString(R.string.practice_delete_confirmation)
                         + "\n\n"
                         + getString(
                                 R.string.pgntool_delete_item_count,
@@ -158,7 +171,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
                 getString(R.string.button_cancel),
                 () -> {
                     mateCollection.pause();
-                    MateCollection.clearCollection(this, MateKind.PRACTICE_POSITIONS);
+                    collectionDefaults.deleteAllPositions();
                     mateCollection.resume();
                 },
                 null);
@@ -187,12 +200,14 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     @Override
     public void onPositionPreparing() {
+        showCollection(true);
         buttonRetry.setEnabled(false);
         textViewSolution.setText(R.string.practice_preparing_position);
     }
 
     @Override
     public void onPositionStarted(int position, int total, int usersColor) {
+        showCollection(true);
         buttonRetry.setEnabled(false);
         chessBoardView.setRotated(usersColor == BoardConstants.BLACK);
 
@@ -207,10 +222,36 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     @Override
     public void onEmptyCollection() {
-        Intent intent = new Intent();
-        intent.setClass(PracticeActivity.this, ImportActivity.class);
+        showCollection(false);
+        collectionDefaults.onEmptyCollection();
+    }
+
+    private void importDefaultPositions() {
+        Intent intent = new Intent(this, ImportActivity.class);
         intent.putExtra("mode", ImportService.IMPORT_PRACTICE);
-        startActivityForResult(intent, ImportService.IMPORT_PRACTICE);
+        startActivity(intent);
+    }
+
+    private void showCollection(boolean hasPositions) {
+        emptyCollection = !hasPositions;
+        findViewById(R.id.board_area).setVisibility(hasPositions ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.play_controls)
+                .setVisibility(hasPositions ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.EmptyCollection).setVisibility(hasPositions ? View.GONE : View.VISIBLE);
+        buttonNext.setEnabled(hasPositions);
+        buttonRetry.setEnabled(false);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        collectionDefaults.saveState(state);
+    }
+
+    @Override
+    protected void onDestroy() {
+        collectionDefaults.close();
+        super.onDestroy();
     }
 
     @Override

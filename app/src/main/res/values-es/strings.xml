@@ -588,4 +588,11 @@
     </string-array>
     <string name="move_input_castle">enroque|enrocar</string>
     <string name="move_input_captures">toma|captura</string>
+    <string name="menu_delete_game_database">Eliminar todas las partidas, incluidos los estudios</string>
+    <string name="practice_delete_confirmation">¿Eliminar todas las posiciones de práctica y el progreso?</string>
+    <string name="puzzle_delete_confirmation">¿Eliminar todas las posiciones de problemas y el progreso?</string>
+    <string name="collection_restore_prompt">Has eliminado todas las posiciones. ¿Quieres restaurar las posiciones predeterminadas?</string>
+    <string name="collection_restore_defaults">Restaurar las posiciones predeterminadas</string>
+    <string name="collection_empty">No hay posiciones. Usa el menú para importar o restaurar posiciones.</string>
+    <string name="collection_delete_failed">No se pudieron eliminar las posiciones. Inténtalo de nuevo.</string>
 </resources>

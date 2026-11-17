@@ -15,6 +15,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.matecollection.MateCollection;
+import jwtc.android.chess.matecollection.MateCollectionDefaults;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.matecollection.MateScore;
 import jwtc.android.chess.play.MenuDialog;
@@ -27,6 +28,8 @@ import jwtc.chess.board.BoardConstants;
 public class PuzzleActivity extends ChessBoardActivity implements MateCollection.Listener {
     private static final String TAG = "PuzzleActivity";
     private MateCollection mateCollection;
+    private MateCollectionDefaults collectionDefaults;
+    private boolean emptyCollection;
     private TextView textViewPuzzleText, textViewSolution;
     private ImageView imageTurn;
     private MaterialButton butPrev, butNext, butRetry, butShow;
@@ -34,6 +37,11 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
 
     @Override
     public boolean requestMove(int from, int to) {
+        if (!mateCollection.isPositionReady()) {
+            rebuildBoard();
+            return false;
+        }
+
         if (gameApi.isEnded()) {
             setMessage(getString(R.string.puzzle_already_solved));
             rebuildBoard();
@@ -62,6 +70,12 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
 
         gameApi = new GameApi();
         mateCollection = new MateCollection(this, MateKind.MATE_IN_TWO_PUZZLES, gameApi, this);
+        collectionDefaults =
+                new MateCollectionDefaults(
+                        this,
+                        MateKind.MATE_IN_TWO_PUZZLES,
+                        savedInstanceState,
+                        this::importDefaultPositions);
 
         textViewPuzzleText = findViewById(R.id.TextViewPuzzleText);
         textViewSolution = findViewById(R.id.TextViewSolution);
@@ -98,17 +112,19 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
                                 startActivity(intent);
                             }
                         });
-        findViewById(R.id.ButtonMenu)
-                .setOnClickListener(
-                        v ->
-                                new MenuDialog(
-                                                this,
-                                                (request, data) ->
-                                                        onMenuItem(
-                                                                data.getString("item"), pickFile),
-                                                0,
-                                                R.array.puzzle_menu)
-                                        .show());
+        View.OnClickListener openMenu =
+                v ->
+                        new MenuDialog(
+                                        this,
+                                        (request, data) ->
+                                                onMenuItem(data.getString("item"), pickFile),
+                                        0,
+                                        emptyCollection
+                                                ? R.array.puzzle_empty_menu
+                                                : R.array.puzzle_menu)
+                                .show();
+        findViewById(R.id.ButtonMenu).setOnClickListener(openMenu);
+        findViewById(R.id.EmptyCollectionMenu).setOnClickListener(openMenu);
 
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
@@ -129,6 +145,8 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
     private void onMenuItem(String item, ActivityResultLauncher<String[]> pickFile) {
         if (getString(R.string.pgntool_import_puzzle).equals(item)) {
             pickFile.launch(new String[] {"*/*"});
+        } else if (getString(R.string.collection_restore_defaults).equals(item)) {
+            collectionDefaults.restoreDefaults();
         } else if (getString(R.string.pgntool_delete_puzzles).equals(item)) {
             confirmDeleteCollection();
         }
@@ -136,7 +154,7 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
 
     private void confirmDeleteCollection() {
         openConfirmDialog(
-                getString(R.string.puzzle_restore_confirmation)
+                getString(R.string.puzzle_delete_confirmation)
                         + "\n\n"
                         + getString(
                                 R.string.pgntool_delete_item_count,
@@ -145,7 +163,7 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
                 getString(R.string.button_cancel),
                 () -> {
                     mateCollection.pause();
-                    MateCollection.clearCollection(this, MateKind.MATE_IN_TWO_PUZZLES);
+                    collectionDefaults.deleteAllPositions();
                     mateCollection.resume();
                 },
                 null);
@@ -173,6 +191,7 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
 
     @Override
     public void onPositionStarted(int position, int total, int usersColor) {
+        showCollection(true);
         chessBoardView.setRotated(usersColor == BoardConstants.BLACK);
         imgStatus.setImageResource(R.drawable.ic_check_none);
         butShow.setEnabled(true);
@@ -193,10 +212,38 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
 
     @Override
     public void onEmptyCollection() {
-        Intent intent = new Intent();
-        intent.setClass(PuzzleActivity.this, ImportActivity.class);
+        showCollection(false);
+        collectionDefaults.onEmptyCollection();
+    }
+
+    private void importDefaultPositions() {
+        Intent intent = new Intent(this, ImportActivity.class);
         intent.putExtra("mode", ImportService.IMPORT_PUZZLES);
-        startActivityForResult(intent, ImportService.IMPORT_PUZZLES);
+        startActivity(intent);
+    }
+
+    private void showCollection(boolean hasPositions) {
+        emptyCollection = !hasPositions;
+        findViewById(R.id.board_area).setVisibility(hasPositions ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.play_controls)
+                .setVisibility(hasPositions ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.EmptyCollection).setVisibility(hasPositions ? View.GONE : View.VISIBLE);
+        butPrev.setEnabled(hasPositions);
+        butNext.setEnabled(hasPositions);
+        butRetry.setEnabled(hasPositions);
+        butShow.setEnabled(hasPositions);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        collectionDefaults.saveState(state);
+    }
+
+    @Override
+    protected void onDestroy() {
+        collectionDefaults.close();
+        super.onDestroy();
     }
 
     @Override

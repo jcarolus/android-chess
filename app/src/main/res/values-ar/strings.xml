@@ -588,4 +588,11 @@
     </string-array>
     <string name="move_input_castle">تبييت</string>
     <string name="move_input_captures">يأخذ</string>
+    <string name="menu_delete_game_database">حذف جميع المباريات، بما فيها الدراسات</string>
+    <string name="practice_delete_confirmation">هل تريد حذف جميع وضعيات التدريب والتقدم؟</string>
+    <string name="puzzle_delete_confirmation">هل تريد حذف جميع وضعيات الألغاز والتقدم؟</string>
+    <string name="collection_restore_prompt">لقد حذفت جميع الوضعيات، هل تريد استعادة الوضعيات الافتراضية؟</string>
+    <string name="collection_restore_defaults">استعادة الوضعيات الافتراضية</string>
+    <string name="collection_empty">لا توجد وضعيات. استخدم القائمة لاستيراد الوضعيات أو استعادتها.</string>
+    <string name="collection_delete_failed">تعذر حذف الوضعيات. يرجى المحاولة مرة أخرى.</string>
 </resources>

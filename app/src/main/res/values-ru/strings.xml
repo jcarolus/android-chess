@@ -581,4 +581,11 @@
     </string-array>
     <string name="move_input_castle">рокировка</string>
     <string name="move_input_captures">бьет|бьёт|берет|берёт</string>
+    <string name="menu_delete_game_database">Удалить все партии, включая этюды</string>
+    <string name="practice_delete_confirmation">Удалить все тренировочные позиции и прогресс?</string>
+    <string name="puzzle_delete_confirmation">Удалить все позиции задач и прогресс?</string>
+    <string name="collection_restore_prompt">Вы удалили все позиции. Хотите восстановить исходный набор?</string>
+    <string name="collection_restore_defaults">Восстановить исходный набор позиций</string>
+    <string name="collection_empty">Нет позиций. Используйте меню, чтобы импортировать или восстановить позиции.</string>
+    <string name="collection_delete_failed">Не удалось удалить позиции. Попробуйте ещё раз.</string>
 </resources>

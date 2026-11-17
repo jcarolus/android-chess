@@ -668,6 +668,10 @@
     <string name="move_input_castle">castle</string>
     <string name="move_input_captures">takes|captures</string>
     <string name="menu_delete_game_database">Delete all games, including studies</string>
-    <string name="practice_restore_confirmation">Delete all practice positions and progress? Bundled practice positions will be restored.</string>
-    <string name="puzzle_restore_confirmation">Delete all puzzle positions and progress? Bundled puzzle positions will be restored.</string>
+    <string name="practice_delete_confirmation">Delete all practice positions and progress?</string>
+    <string name="puzzle_delete_confirmation">Delete all puzzle positions and progress?</string>
+    <string name="collection_restore_prompt">You have deleted all positions, do you want to restore to defaults?</string>
+    <string name="collection_restore_defaults">Restore default positions</string>
+    <string name="collection_empty">No positions. Use the menu to import or restore positions.</string>
+    <string name="collection_delete_failed">Could not delete positions. Please try again.</string>
 </resources>

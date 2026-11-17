@@ -581,4 +581,11 @@
     </string-array>
     <string name="move_input_castle">王车易位|易位</string>
     <string name="move_input_captures">吃</string>
+    <string name="menu_delete_game_database">删除所有对局（包括研习）</string>
+    <string name="practice_delete_confirmation">删除所有练习局面和进度吗？</string>
+    <string name="puzzle_delete_confirmation">删除所有习题局面和进度吗？</string>
+    <string name="collection_restore_prompt">你已删除所有局面，是否恢复默认局面？</string>
+    <string name="collection_restore_defaults">恢复默认局面</string>
+    <string name="collection_empty">没有局面。请使用菜单导入或恢复局面。</string>
+    <string name="collection_delete_failed">无法删除局面，请重试。</string>
 </resources>

@@ -581,4 +581,11 @@
     </string-array>
     <string name="move_input_castle">rocadă</string>
     <string name="move_input_captures">ia|capturează</string>
+    <string name="menu_delete_game_database">Șterge toate partidele, inclusiv studiile</string>
+    <string name="practice_delete_confirmation">Ștergi toate pozițiile de antrenament și progresul?</string>
+    <string name="puzzle_delete_confirmation">Ștergi toate pozițiile problemelor și progresul?</string>
+    <string name="collection_restore_prompt">Ai șters toate pozițiile. Vrei să restabilești pozițiile implicite?</string>
+    <string name="collection_restore_defaults">Restabilește pozițiile implicite</string>
+    <string name="collection_empty">Nu există poziții. Folosește meniul pentru a importa sau a restabili poziții.</string>
+    <string name="collection_delete_failed">Pozițiile nu au putut fi șterse. Încearcă din nou.</string>
 </resources>

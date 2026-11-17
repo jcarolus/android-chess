@@ -190,6 +190,14 @@
         <item>@string/pgntool_import_puzzle</item>
         <item>@string/pgntool_delete_puzzles</item>
     </string-array>
+    <string-array name="practice_empty_menu">
+        <item>@string/pgntool_import_practice</item>
+        <item>@string/collection_restore_defaults</item>
+    </string-array>
+    <string-array name="puzzle_empty_menu">
+        <item>@string/pgntool_import_puzzle</item>
+        <item>@string/collection_restore_defaults</item>
+    </string-array>
     <string-array name="studies_menu">
         <item>@string/study_import</item>
         <item>@string/study_download_collections</item>

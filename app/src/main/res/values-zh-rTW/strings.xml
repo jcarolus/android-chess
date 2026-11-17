@@ -644,4 +644,11 @@
     <string name="hotspot_result_insufficient_material">棋子不足以將死對手，這局棋以和局結束。</string>
     <string name="move_input_castle">王車易位|易位</string>
     <string name="move_input_captures">吃</string>
+    <string name="menu_delete_game_database">刪除所有棋譜（包括研習）</string>
+    <string name="practice_delete_confirmation">要刪除所有練習局面和進度嗎？</string>
+    <string name="puzzle_delete_confirmation">要刪除所有棋題局面和進度嗎？</string>
+    <string name="collection_restore_prompt">你已刪除所有局面，是否還原預設局面？</string>
+    <string name="collection_restore_defaults">還原預設局面</string>
+    <string name="collection_empty">沒有局面。請使用選單匯入或還原局面。</string>
+    <string name="collection_delete_failed">無法刪除局面，請再試一次。</string>
 </resources>

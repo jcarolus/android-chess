@@ -581,4 +581,11 @@
     </string-array>
     <string name="move_input_castle">arrocco|arroccare</string>
     <string name="move_input_captures">prende|cattura</string>
+    <string name="menu_delete_game_database">Elimina tutte le partite, inclusi gli studi</string>
+    <string name="practice_delete_confirmation">Eliminare tutte le posizioni di allenamento e i progressi?</string>
+    <string name="puzzle_delete_confirmation">Eliminare tutte le posizioni dei problemi e i progressi?</string>
+    <string name="collection_restore_prompt">Hai eliminato tutte le posizioni. Vuoi ripristinare le posizioni predefinite?</string>
+    <string name="collection_restore_defaults">Ripristina le posizioni predefinite</string>
+    <string name="collection_empty">Nessuna posizione. Usa il menu per importare o ripristinare le posizioni.</string>
+    <string name="collection_delete_failed">Impossibile eliminare le posizioni. Riprova.</string>
 </resources>

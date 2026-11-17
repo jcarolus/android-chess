@@ -591,4 +591,11 @@
     </string-array>
     <string name="move_input_castle">قلعه|قلعه رفتن</string>
     <string name="move_input_captures">می‌زند</string>
+    <string name="menu_delete_game_database">حذف همهٔ بازی‌ها، از جمله مطالعه‌ها</string>
+    <string name="practice_delete_confirmation">همهٔ وضعیت‌های تمرینی و پیشرفت حذف شوند؟</string>
+    <string name="puzzle_delete_confirmation">همهٔ وضعیت‌های پازل و پیشرفت حذف شوند؟</string>
+    <string name="collection_restore_prompt">همهٔ وضعیت‌ها را حذف کرده‌اید. آیا می‌خواهید وضعیت‌های پیش‌فرض را بازیابی کنید؟</string>
+    <string name="collection_restore_defaults">بازیابی وضعیت‌های پیش‌فرض</string>
+    <string name="collection_empty">هیچ وضعیتی وجود ندارد. برای وارد کردن یا بازیابی وضعیت‌ها از منو استفاده کنید.</string>
+    <string name="collection_delete_failed">وضعیت‌ها حذف نشدند. لطفاً دوباره تلاش کنید.</string>
 </resources>
