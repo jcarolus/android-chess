@@ -24,11 +24,12 @@ import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 public class ImportActivity extends BaseActivity implements ImportListener {
 
     private ImportService importService = null;
-    private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail;
+    private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail, _tvWorkCntDuplicates;
     private LinearProgressIndicator _progress;
     private int _mode = 0;
     private Intent _intent;
     private boolean importStarted;
+    private int updatedCount;
     private AlertDialog studyDialog;
     private EditText studyTitle, studyTopic;
     private String titleDraft, topicDraft;
@@ -69,6 +70,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         _tvWork = findViewById(R.id.TextViewDoImport);
         _tvWorkCnt = findViewById(R.id.TextViewDoImportCnt);
         _tvWorkCntFail = findViewById(R.id.TextViewDoImportCntFail);
+        _tvWorkCntDuplicates = findViewById(R.id.TextViewDoImportCntDuplicates);
         _progress = findViewById(R.id.ProgressDoImport);
 
         _progress.setVisibility(View.INVISIBLE);
@@ -81,6 +83,13 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         }
         _intent = getIntent();
         _mode = _intent.getIntExtra("mode", ImportService.IMPORT_GAMES);
+        boolean tracksDuplicates =
+                _mode == ImportService.IMPORT_GAMES
+                        || _mode == ImportService.IMPORT_PRACTICE
+                        || _mode == ImportService.IMPORT_PUZZLES
+                        || _mode == ImportService.IMPORT_STUDIES;
+        findViewById(R.id.ImportDuplicatesRow)
+                .setVisibility(tracksDuplicates ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -189,18 +198,28 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
     @Override
     public void OnImportStarted(int mode) {
+        updatedCount = 0;
+        _tvWorkCntDuplicates.setText(String.valueOf(0));
         _progress.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void OnImportProgress(int mode, int succeeded, int failed) {
+    public void OnImportProgress(int mode, int succeeded, int failed, int duplicates, int updated) {
+        updatedCount = updated;
         _tvWorkCnt.setText("" + succeeded);
         _tvWorkCntFail.setText("" + failed);
+        _tvWorkCntDuplicates.setText(String.valueOf(duplicates));
     }
 
     @Override
     public void OnImportFinished(int mode) {
         _progress.setVisibility(View.INVISIBLE);
+        if (updatedCount > 0) {
+            doToast(
+                    getResources()
+                            .getQuantityString(
+                                    R.plurals.import_chapters_updated, updatedCount, updatedCount));
+        }
         setResult(RESULT_OK);
         finish();
     }

@@ -3,7 +3,7 @@ package jwtc.android.chess.tools;
 public interface ImportListener {
     void OnImportStarted(int mode);
 
-    void OnImportProgress(int mode, int succeeded, int failed);
+    void OnImportProgress(int mode, int succeeded, int failed, int duplicates, int updated);
 
     void OnImportFinished(int mode);
 

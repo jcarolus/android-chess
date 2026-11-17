@@ -10,7 +10,7 @@ import jwtc.chess.board.BoardPosition;
 
 /** Java-owned board snapshots, with a scoped native position for PGN replay. */
 public final class RustBoard {
-    public static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String START = BoardPosition.START_FEN;
     private final List<Frame> frames = new ArrayList<>();
     private RustSearchRequest.Variant variant;
     private String initialFen;
@@ -357,10 +357,7 @@ public final class RustBoard {
         if (variant == BoardConstants.VARIANT_KING_OF_THE_HILL) {
             load(START, RustSearchRequest.Variant.KING_OF_THE_HILL);
         } else {
-            initFEN(
-                    variant == BoardConstants.VARIANT_DUCK
-                            ? START.replace("8/8/8/8", "8/7$/8/8")
-                            : START);
+            initFEN(variant == BoardConstants.VARIANT_DUCK ? BoardPosition.DUCK_START_FEN : START);
         }
     }
 

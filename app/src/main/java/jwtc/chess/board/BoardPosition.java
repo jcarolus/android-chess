@@ -7,6 +7,10 @@ import jwtc.chess.Pos;
  * Editable FEN data, including incomplete positions in the setup screen. No move rules live here.
  */
 public final class BoardPosition {
+    public static final String START_FEN =
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String DUCK_START_FEN = START_FEN.replace("8/8/8/8", "8/7$/8/8");
+
     public final char[] squares = new char[64];
     public boolean white;
     public String castling;

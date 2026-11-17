@@ -2,15 +2,20 @@ package jwtc.android.chess.study;
 
 import java.util.Map;
 import jwtc.chess.Pgn;
+import jwtc.chess.PgnDocument;
+import jwtc.chess.PgnFingerprint;
 
 public final class StudyPgn {
     static final class Chapter {
         final Map<String, String> tags;
         final String pgn;
 
-        Chapter(Map<String, String> tags, String pgn) {
-            this.tags = tags;
+        final String fingerprint;
+
+        Chapter(PgnDocument document, String pgn) {
+            this.tags = document.tags;
             this.pgn = pgn;
+            this.fingerprint = PgnFingerprint.of(document);
         }
     }
 
@@ -32,15 +37,15 @@ public final class StudyPgn {
         if (pgn.length() > Pgn.MAX_GAME_SIZE) {
             throw new IllegalArgumentException("Study chapter exceeds PGN size limit");
         }
-        Map<String, String> tags = Pgn.parse(pgn).tags;
-        String variant = tags.getOrDefault("Variant", "Standard");
+        PgnDocument document = Pgn.parse(pgn);
+        String variant = document.tags.getOrDefault("Variant", "Standard");
         if (!"Standard".equalsIgnoreCase(variant)
                 && !"From Position".equalsIgnoreCase(variant)
                 && !"Chess960".equalsIgnoreCase(variant)
                 && !"Fischerandom".equalsIgnoreCase(variant)) {
             throw new IllegalArgumentException("Unsupported study variant " + variant);
         }
-        return new Chapter(tags, pgn);
+        return new Chapter(document, pgn);
     }
 
     static String chapterTitle(Map<String, String> tags) {

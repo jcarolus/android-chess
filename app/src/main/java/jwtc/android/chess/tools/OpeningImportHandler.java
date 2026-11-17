@@ -14,13 +14,13 @@ public class OpeningImportHandler implements ImportHandler {
     }
 
     @Override
-    public boolean handle(ImportItem item) {
+    public Result handle(ImportItem item) {
         if (importApi.loadPGN(item.pgn) && importApi.getNumBoard() > 0) {
             if (importApi.addToHashMap(importApi.getHashKey(), item.name)) {
-                return true;
+                return Result.INSERTED;
             }
             Log.d(TAG, "Duplicate hash");
         }
-        return false;
+        return Result.FAILED;
     }
 }

@@ -19,7 +19,8 @@ public final class ImportPipelineInstrumentation {
                 instrumentation,
                 new OpeningJsonSource(
                         input(
-                                "[{\"name\":\"First\",\"moves\":\"1. e4\"},{\"name\":\"Second\",\"moves\":\"1. d4\"}]")),
+                                "[{\"name\":\"First\",\"moves\":\"1."
+                                    + " e4\"},{\"name\":\"Second\",\"moves\":\"1. d4\"}]")),
                 true);
         verifySource(
                 instrumentation,
@@ -51,7 +52,11 @@ public final class ImportPipelineInstrumentation {
                                     }
 
                                     public void OnImportProgress(
-                                            int mode, int succeeded, int failed) {
+                                            int mode,
+                                            int succeeded,
+                                            int failed,
+                                            int duplicates,
+                                            int updated) {
                                         checkThread();
                                     }
 
@@ -82,10 +87,11 @@ public final class ImportPipelineInstrumentation {
                                                     if (Looper.myLooper()
                                                             == Looper.getMainLooper()) {
                                                         throw new AssertionError(
-                                                                "Import handler ran on the main thread");
+                                                                "Import handler ran on the main"
+                                                                    + " thread");
                                                     }
                                                     items.add(item);
-                                                    return true;
+                                                    return ImportHandler.Result.INSERTED;
                                                 }));
                     });
             check(done.await(10, TimeUnit.SECONDS), "Import did not complete");

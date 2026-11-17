@@ -6,13 +6,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 import java.util.HashMap;
 
 public class ChessPuzzleProvider extends ContentProvider {
@@ -21,10 +21,8 @@ public class ChessPuzzleProvider extends ContentProvider {
     public static Uri CONTENT_URI_PUZZLES = Uri.parse("content://" + AUTHORITY + "/puzzles");
     public static Uri CONTENT_URI_PRACTICES = Uri.parse("content://" + AUTHORITY + "/practices");
 
-    private static final String TAG = "ChessPuzzleProvider";
-
     private static final String DATABASE_NAME = "chess_puzzles.db";
-    private static final int DATABASE_VERSION = 8; // 7.6 lessons
+    private static final int DATABASE_VERSION = 10;
     private static final String GAMES_TABLE_NAME = "games";
 
     private static HashMap<String, String> sGamesProjectionMap;
@@ -43,17 +41,19 @@ public class ChessPuzzleProvider extends ContentProvider {
     public static final String COL_PGN = "PGN";
     public static final String COL_TYPE = "PUZZLE_TYPE";
 
-    public static final String[] COLUMNS = {COL_ID, COL_TYPE, COL_PGN};
+    public static final String COL_FULL_GAME = "full_game";
+
+    public static final String[] COLUMNS = {COL_ID, COL_TYPE, COL_PGN, COL_FULL_GAME};
 
     public static final String DEFAULT_SORT_ORDER = "_ID ASC";
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.jwtc.chesspuzzle";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.jwtc.chesspuzzle";
 
     /** This class helps open, create, and upgrade the database file. */
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+    static final class DatabaseHelper extends SQLiteOpenHelper {
 
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        DatabaseHelper(Context context, String name) {
+            super(context, name, null, DATABASE_VERSION);
         }
 
         public void onCreate(SQLiteDatabase db) {
@@ -66,20 +66,29 @@ public class ChessPuzzleProvider extends ContentProvider {
                             + COL_TYPE
                             + " INTEGER,"
                             + COL_PGN
-                            + " TEXT"
+                            + " TEXT,"
+                            + PGNColumns.FINGERPRINT
+                            + " TEXT,"
+                            + COL_FULL_GAME
+                            + " INTEGER NOT NULL DEFAULT 0"
                             + ");");
+            createFingerprintIndex(db);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(
-                    TAG,
-                    "Upgrading database from version "
-                            + oldVersion
-                            + " to "
-                            + newVersion
-                            + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + GAMES_TABLE_NAME);
-            onCreate(db);
+            if (oldVersion < 9) {
+                db.execSQL("ALTER TABLE games ADD COLUMN fingerprint TEXT");
+                PgnFingerprintColumn.backfill(db, GAMES_TABLE_NAME, COL_ID, COL_PGN);
+                createFingerprintIndex(db);
+            }
+            if (oldVersion < 10) {
+                db.execSQL("ALTER TABLE games ADD COLUMN full_game INTEGER NOT NULL DEFAULT 0");
+            }
+        }
+
+        private static void createFingerprintIndex(SQLiteDatabase db) {
+            db.execSQL(
+                    "CREATE INDEX mate_collection_fingerprint ON games (PUZZLE_TYPE, fingerprint)");
         }
     }
 
@@ -87,7 +96,7 @@ public class ChessPuzzleProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mOpenHelper = new DatabaseHelper(getContext());
+        mOpenHelper = new DatabaseHelper(getContext(), DATABASE_NAME);
 
         return true;
     }
@@ -177,16 +186,29 @@ public class ChessPuzzleProvider extends ContentProvider {
             values = new ContentValues();
         }
 
-        Long now = Long.valueOf(System.currentTimeMillis());
-
-        if (iType == PUZZLES) {
-            values.put(COL_TYPE, TYPE_PUZZLE);
-        } else if (iType == PRACTICES) {
-            values.put(COL_TYPE, TYPE_PRACTICE);
-        }
+        int collectionType = iType == PUZZLES ? TYPE_PUZZLE : TYPE_PRACTICE;
+        values.put(COL_TYPE, collectionType);
+        PgnFingerprintColumn.set(values, COL_PGN);
+        String fingerprint = values.getAsString(PGNColumns.FINGERPRINT);
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        long rowId = db.insert(GAMES_TABLE_NAME, null, values);
+        long rowId;
+        db.beginTransaction();
+        try {
+            if (fingerprint != null
+                    && DatabaseUtils.longForQuery(
+                                    db,
+                                    "SELECT EXISTS (SELECT 1 FROM games WHERE PUZZLE_TYPE = ? AND"
+                                        + " fingerprint = ?)",
+                                    new String[] {Integer.toString(collectionType), fingerprint})
+                            != 0) {
+                return null;
+            }
+            rowId = db.insertOrThrow(GAMES_TABLE_NAME, null, values);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
         if (rowId > 0) {
             Uri myUri;
             if (iType == PUZZLES) {
@@ -263,6 +285,8 @@ public class ChessPuzzleProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        values = new ContentValues(values);
+        PgnFingerprintColumn.set(values, COL_PGN);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
         switch (sUriMatcher.match(uri)) {
@@ -293,6 +317,8 @@ public class ChessPuzzleProvider extends ContentProvider {
         sGamesProjectionMap.put(COL_ID, COL_ID);
         sGamesProjectionMap.put(COL_TYPE, COL_TYPE);
         sGamesProjectionMap.put(COL_PGN, COL_PGN);
+        sGamesProjectionMap.put(COL_FULL_GAME, COL_FULL_GAME);
+        sGamesProjectionMap.put(PGNColumns.FINGERPRINT, PGNColumns.FINGERPRINT);
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AUTHORITY, "puzzles", PUZZLES);

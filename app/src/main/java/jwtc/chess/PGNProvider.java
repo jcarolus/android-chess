@@ -15,7 +15,9 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class PGNProvider extends ContentProvider {
 
@@ -25,7 +27,8 @@ public class PGNProvider extends ContentProvider {
     private static final String TAG = "PGNProvider";
 
     private static final String DATABASE_NAME = "chess_pgn.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
+    public static final String IMPORT_PARAMETER = "import";
     private static final String GAMES_TABLE_NAME = "games";
 
     private static final HashMap<String, String> sGamesProjectionMap;
@@ -39,16 +42,16 @@ public class PGNProvider extends ContentProvider {
 
     public static synchronized SQLiteOpenHelper getDatabaseHelper(Context context) {
         if (databaseHelper == null) {
-            databaseHelper = new DatabaseHelper(context.getApplicationContext());
+            databaseHelper = new DatabaseHelper(context.getApplicationContext(), DATABASE_NAME);
         }
         return databaseHelper;
     }
 
     /** This class helps open, create, and upgrade the database file. */
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+    static final class DatabaseHelper extends SQLiteOpenHelper {
 
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        DatabaseHelper(Context context, String name) {
+            super(context, name, null, DATABASE_VERSION);
             Log.d(TAG, "DatabaseHelper constructor");
 
             SQLiteDatabase db = getReadableDatabase();
@@ -86,8 +89,11 @@ public class PGNProvider extends ContentProvider {
                             + PGNColumns.EVENT
                             + " TEXT,"
                             + PGNColumns.RESULT
+                            + " TEXT,"
+                            + PGNColumns.FINGERPRINT
                             + " TEXT"
                             + ");");
+            createGameFingerprintIndex(db);
             db.execSQL(
                     "CREATE INDEX IF NOT EXISTS idx_games_table_result  ON "
                             + GAMES_TABLE_NAME
@@ -141,6 +147,7 @@ public class PGNProvider extends ContentProvider {
                             + "', "
                             + sDate
                             + ", 5.0, 'Great game', '0-1');");
+            PgnFingerprintColumn.backfill(db, GAMES_TABLE_NAME, PGNColumns._ID, PGNColumns.PGN);
         }
 
         @Override
@@ -151,10 +158,42 @@ public class PGNProvider extends ContentProvider {
                 upgradeAddResultColumn(db);
             }
             if (oldVersion < 8) {
-                db.execSQL("DROP TABLE IF EXISTS study_chapters");
-                db.execSQL("DROP TABLE IF EXISTS studies");
+                if (oldVersion == 7) {
+                    db.execSQL("ALTER TABLE study_chapters RENAME TO legacy_study_chapters");
+                }
                 createStudyChaptersTable(db);
+                if (oldVersion == 7) {
+                    db.execSQL(
+                            "INSERT INTO study_chapters (collection_id, study_id, chapter_id,"
+                                + " collection_name, study_title, author, topic, title, pgn) SELECT"
+                                + " c.collection_id, c.study_id, c.chapter_id, s.collection_name,"
+                                + " s.title, s.author, s.topic, c.title, c.pgn FROM"
+                                + " legacy_study_chapters c JOIN studies s USING (collection_id,"
+                                + " study_id) ORDER BY c.collection_id, c.study_id,"
+                                + " c.chapter_order");
+                    db.execSQL("DROP TABLE legacy_study_chapters");
+                    db.execSQL("DROP TABLE studies");
+                }
+            } else if (oldVersion < 9) {
+                db.execSQL("ALTER TABLE study_chapters ADD COLUMN fingerprint TEXT");
+                createStudyFingerprintIndex(db);
             }
+            if (oldVersion < 9) {
+                db.execSQL("ALTER TABLE games ADD COLUMN fingerprint TEXT");
+                PgnFingerprintColumn.backfill(db, GAMES_TABLE_NAME, PGNColumns._ID, PGNColumns.PGN);
+                PgnFingerprintColumn.backfill(db, "study_chapters", "id", PGNColumns.PGN);
+                createGameFingerprintIndex(db);
+            }
+        }
+
+        private static void createGameFingerprintIndex(SQLiteDatabase db) {
+            db.execSQL("CREATE INDEX games_fingerprint ON games (fingerprint)");
+        }
+
+        private static void createStudyFingerprintIndex(SQLiteDatabase db) {
+            db.execSQL(
+                    "CREATE INDEX study_chapters_fingerprint ON study_chapters"
+                            + " (collection_id, study_id, fingerprint)");
         }
 
         private static void createStudyChaptersTable(SQLiteDatabase db) {
@@ -170,9 +209,12 @@ public class PGNProvider extends ContentProvider {
                             + "topic TEXT NOT NULL,"
                             + "title TEXT NOT NULL,"
                             + "pgn TEXT NOT NULL,"
+                            + "fingerprint TEXT,"
                             + "UNIQUE (collection_id, study_id, chapter_id))");
-            db.execSQL("CREATE INDEX study_chapters_names ON study_chapters "
-                    + "(collection_name COLLATE NOCASE, study_title COLLATE NOCASE, topic, author)");
+            db.execSQL(
+                    "CREATE INDEX study_chapters_names ON study_chapters (collection_name COLLATE"
+                        + " NOCASE, study_title COLLATE NOCASE, topic, author)");
+            createStudyFingerprintIndex(db);
         }
 
         @Override
@@ -374,11 +416,14 @@ public class PGNProvider extends ContentProvider {
             values = new ContentValues();
         }
 
-        Long now = Long.valueOf(System.currentTimeMillis());
-
+        boolean importing = uri.getBooleanQueryParameter(IMPORT_PARAMETER, false);
         // Make sure that the fields are all set
         if (values.containsKey(PGNColumns.DATE) == false) {
-            values.put(PGNColumns.DATE, now);
+            if (importing) {
+                values.putNull(PGNColumns.DATE);
+            } else {
+                values.put(PGNColumns.DATE, System.currentTimeMillis());
+            }
         }
 
         if (values.containsKey(PGNColumns.WHITE) == false) {
@@ -399,8 +444,23 @@ public class PGNProvider extends ContentProvider {
             values.put(PGNColumns.RATING, "event ?");
         }
 
+        PgnFingerprintColumn.set(values, PGNColumns.PGN);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        long rowId = db.insert(GAMES_TABLE_NAME, null /*PGNColumns.PGN*/, values);
+        long rowId;
+        if (importing) {
+            db.beginTransaction();
+            try {
+                if (hasMatchingGame(db, values)) {
+                    return null;
+                }
+                rowId = db.insertOrThrow(GAMES_TABLE_NAME, null, values);
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        } else {
+            rowId = db.insertOrThrow(GAMES_TABLE_NAME, null, values);
+        }
         if (rowId > 0) {
             Uri gameUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(gameUri, null);
@@ -408,6 +468,56 @@ public class PGNProvider extends ContentProvider {
         }
 
         throw new SQLException("Failed to insert row into " + uri);
+    }
+
+    private static boolean hasMatchingGame(SQLiteDatabase db, ContentValues values) {
+        String fingerprint = values.getAsString(PGNColumns.FINGERPRINT);
+        if (fingerprint == null) {
+            return false;
+        }
+        try (Cursor rows =
+                db.query(
+                        GAMES_TABLE_NAME,
+                        new String[] {
+                            PGNColumns.WHITE,
+                            PGNColumns.BLACK,
+                            PGNColumns.EVENT,
+                            PGNColumns.RESULT,
+                            PGNColumns.DATE,
+                            PGNColumns.PGN
+                        },
+                        PGNColumns.FINGERPRINT + " = ?",
+                        new String[] {fingerprint},
+                        null,
+                        null,
+                        null)) {
+            while (rows.moveToNext()) {
+                if (Objects.equals(rows.getString(0), values.getAsString(PGNColumns.WHITE))
+                        && Objects.equals(rows.getString(1), values.getAsString(PGNColumns.BLACK))
+                        && Objects.equals(rows.getString(2), values.getAsString(PGNColumns.EVENT))
+                        && Objects.equals(rows.getString(3), values.getAsString(PGNColumns.RESULT))
+                        && datesMatch(rows, values.getAsLong(PGNColumns.DATE))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean datesMatch(Cursor row, Long date) {
+        if (row.isNull(4)) {
+            return date == null;
+        }
+        long stored = row.getLong(4);
+        String storedDay = PgnDate.format(new Date(stored));
+        // Legacy undated imports received a wall-clock timestamp instead of a PGN date.
+        Date midnight = PgnDate.parse(storedDay);
+        if (midnight != null
+                && midnight.getTime() != stored
+                && PgnDate.parse(Pgn.readTags(row.getString(5)).get("Date")) == null) {
+            return date == null;
+        }
+        return date != null && storedDay.equals(PgnDate.format(new Date(date)));
     }
 
     @Override
@@ -442,6 +552,8 @@ public class PGNProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        values = new ContentValues(values);
+        PgnFingerprintColumn.set(values, PGNColumns.PGN);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
         switch (sUriMatcher.match(uri)) {
@@ -480,5 +592,6 @@ public class PGNProvider extends ContentProvider {
         sGamesProjectionMap.put(PGNColumns.RATING, PGNColumns.RATING);
         sGamesProjectionMap.put(PGNColumns.EVENT, PGNColumns.EVENT);
         sGamesProjectionMap.put(PGNColumns.RESULT, PGNColumns.RESULT);
+        sGamesProjectionMap.put(PGNColumns.FINGERPRINT, PGNColumns.FINGERPRINT);
     }
 }

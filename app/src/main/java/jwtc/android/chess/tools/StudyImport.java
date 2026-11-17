@@ -63,10 +63,10 @@ final class StudyImport implements ImportSource, ImportHandler {
     }
 
     @Override
-    public boolean handle(ImportItem item) {
+    public Result handle(ImportItem item) {
         Defaults defaults = files.get(item.sourceName);
         if (defaults == null) {
-            return false;
+            return Result.FAILED;
         }
         return StudyStore.importChapter(
                 context, item.pgn, filename(item.sourceName), item.sourcePosition,

@@ -670,9 +670,15 @@
         <item>queen</item>
     </string-array>
     <string name="practice_finished_position">Finished position</string>
+    <string name="practice_preparing_position">Preparing practice position…</string>
     <string name="practice_completed_collection">You completed all puzzles!</string>
     <string name="import_start_failed">Could not start import</string>
     <string name="import_failed">Import failed</string>
+    <string name="import_duplicates_skipped">Duplicates skipped</string>
+    <plurals name="import_chapters_updated">
+        <item quantity="one">%d chapter updated</item>
+        <item quantity="other">%d chapters updated</item>
+    </plurals>
     <string name="engine_uninstalled">Engine %1$s uninstalled</string>
     <string name="engine_not_installed">No engine installed</string>
     <string name="opening_database_uninstalled">Database %1$s uninstalled</string>

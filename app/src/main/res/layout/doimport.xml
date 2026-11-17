@@ -59,6 +59,24 @@
                         android:minWidth="40dip"
                         android:layout_margin="@dimen/control_gap" />
                 </TableRow>
+
+                <TableRow
+                    android:id="@+id/ImportDuplicatesRow"
+                    android:layout_margin="@dimen/control_gap">
+
+                    <TextView
+                        android:text="@string/import_duplicates_skipped"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/control_gap" />
+
+                    <TextView
+                        android:id="@+id/TextViewDoImportCntDuplicates"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="40dip"
+                        android:layout_margin="@dimen/control_gap" />
+                </TableRow>
             </TableLayout>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator

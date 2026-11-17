@@ -28,6 +28,8 @@ public final class ImportPipeline {
         boolean workerFinished;
         int succeeded;
         int failed;
+        int duplicates;
+        int updated;
         Boolean outcome;
 
         Job(int mode) {
@@ -73,10 +75,14 @@ public final class ImportPipeline {
         }
         if (job.outcome == null) {
             target.OnImportStarted(job.mode);
-            target.OnImportProgress(job.mode, job.succeeded, job.failed);
-        } else if (job.outcome) {
+        }
+        if (job.outcome == null || job.outcome) {
+            target.OnImportProgress(
+                    job.mode, job.succeeded, job.failed, job.duplicates, job.updated);
+        }
+        if (Boolean.TRUE.equals(job.outcome)) {
             target.OnImportFinished(job.mode);
-        } else {
+        } else if (Boolean.FALSE.equals(job.outcome)) {
             target.OnImportFatalError(job.mode);
         }
     }
@@ -91,7 +97,7 @@ public final class ImportPipeline {
     }
 
     private void run(Job job, ImportJob input) {
-        int[] counts = new int[2];
+        int[] counts = new int[ImportHandler.Result.values().length];
         boolean succeeded = false;
         try {
             input.source.forEach(
@@ -99,10 +105,13 @@ public final class ImportPipeline {
                         if (job.cancelled) {
                             return false;
                         }
-                        counts[input.handler.handle(item) ? 0 : 1]++;
-                        int imported = counts[0];
-                        int failed = counts[1];
-                        delivery.execute(() -> progress(job, imported, failed));
+                        counts[input.handler.handle(item).ordinal()]++;
+                        int imported = counts[ImportHandler.Result.INSERTED.ordinal()];
+                        int failed = counts[ImportHandler.Result.FAILED.ordinal()];
+                        int duplicates = counts[ImportHandler.Result.DUPLICATE.ordinal()];
+                        int updated = counts[ImportHandler.Result.UPDATED.ordinal()];
+                        delivery.execute(
+                                () -> progress(job, imported, failed, duplicates, updated));
                         return !job.cancelled;
                     });
             succeeded = true;
@@ -122,13 +131,16 @@ public final class ImportPipeline {
         delivery.execute(() -> finish(job, outcome));
     }
 
-    private synchronized void progress(Job job, int succeeded, int failed) {
+    private synchronized void progress(
+            Job job, int succeeded, int failed, int duplicates, int updated) {
         if (latest != job || job.cancelled || job.outcome != null) {
             return;
         }
         job.succeeded = succeeded;
         job.failed = failed;
-        listener.OnImportProgress(job.mode, succeeded, failed);
+        job.duplicates = duplicates;
+        job.updated = updated;
+        listener.OnImportProgress(job.mode, succeeded, failed, duplicates, updated);
     }
 
     private synchronized void finish(Job job, boolean succeeded) {

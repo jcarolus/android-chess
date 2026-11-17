@@ -10,6 +10,7 @@ import java.util.Date;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.PGNProvider;
 
 /** The Game Database: saved Games in the PGN content provider. */
 public final class GameStore {
@@ -42,6 +43,16 @@ public final class GameStore {
     public long insert(GameRecord record) {
         Uri uri = resolver.insert(MyPGNProvider.CONTENT_URI, toValues(record));
         return uri == null ? -1 : ContentUris.parseId(uri);
+    }
+
+    /** Inserts an imported Game, returning false when the database already has a match. */
+    public boolean importGame(GameRecord record) {
+        Uri uri =
+                MyPGNProvider.CONTENT_URI
+                        .buildUpon()
+                        .appendQueryParameter(PGNProvider.IMPORT_PARAMETER, "true")
+                        .build();
+        return resolver.insert(uri, toValues(record)) != null;
     }
 
     /** Writes the columns the record has; a record without a rating keeps the stored rating. */

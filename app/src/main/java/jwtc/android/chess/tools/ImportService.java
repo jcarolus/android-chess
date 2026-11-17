@@ -17,11 +17,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.services.HMap;
-import jwtc.android.chess.R;
 
 public class ImportService extends Service {
     private static final String TAG = "ImportService";
@@ -62,11 +62,12 @@ public class ImportService extends Service {
                 }
 
                 @Override
-                public void OnImportProgress(int mode, int succeeded, int failed) {
+                public void OnImportProgress(
+                        int mode, int succeeded, int failed, int duplicates, int updated) {
                     jobSucceeded = succeeded;
                     jobFailed = failed;
                     for (ImportListener listener : listeners) {
-                        listener.OnImportProgress(mode, succeeded, failed);
+                        listener.OnImportProgress(mode, succeeded, failed, duplicates, updated);
                     }
                 }
 
@@ -103,6 +104,7 @@ public class ImportService extends Service {
             this.defaults = defaults;
         }
     }
+
     private final ImportPipeline pipeline =
             new ImportPipeline(
                     command -> new Thread(command, "ImportPipeline").start(),
@@ -117,9 +119,11 @@ public class ImportService extends Service {
                         }
 
                         @Override
-                        public void OnImportProgress(int mode, int succeeded, int failed) {
+                        public void OnImportProgress(
+                                int mode, int succeeded, int failed, int duplicates, int updated) {
                             for (ImportListener listener : new ArrayList<>(listeners)) {
-                                listener.OnImportProgress(mode, succeeded, failed);
+                                listener.OnImportProgress(
+                                        mode, succeeded, failed, duplicates, updated);
                             }
                         }
 
@@ -155,7 +159,7 @@ public class ImportService extends Service {
             }
         } else if (jobRunning) {
             listener.OnImportStarted(jobMode);
-            listener.OnImportProgress(jobMode, jobSucceeded, jobFailed);
+            listener.OnImportProgress(jobMode, jobSucceeded, jobFailed, 0, 0);
         } else if (jobOutcome != null) {
             if (jobOutcome) {
                 listener.OnImportFinished(jobMode);

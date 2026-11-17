@@ -32,6 +32,11 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     @Override
     public boolean requestMove(final int from, final int to) {
+        if (!mateCollection.isPositionReady()) {
+            rebuildBoard();
+            return false;
+        }
+
         if (gameApi.isEnded()) {
             setMessage(getString(R.string.practice_finished_position));
             rebuildBoard();
@@ -114,6 +119,12 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
         super.onPause();
 
         mateCollection.pause();
+    }
+
+    @Override
+    public void onPositionPreparing() {
+        buttonRetry.setEnabled(false);
+        textViewSolution.setText(R.string.practice_preparing_position);
     }
 
     @Override

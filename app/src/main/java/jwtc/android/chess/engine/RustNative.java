@@ -56,7 +56,7 @@ public final class RustNative {
                 listener);
     }
 
-    /** Blocking search for import jobs; the caller owns the worker thread. */
+    /** Blocking standalone search; the caller owns the worker thread. */
     public static RustSearchResult search(RustSearchRequest request) {
         long handle = create();
         try {
