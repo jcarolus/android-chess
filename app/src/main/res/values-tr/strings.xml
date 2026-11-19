@@ -645,4 +645,5 @@
     <string name="hotspot_result_repetition">Oyun üç kez konum tekrarı nedeniyle berabere bitti.</string>
     <string name="hotspot_result_fifty_moves">Oyun 50 hamle kuralı nedeniyle berabere bitti.</string>
     <string name="hotspot_result_insufficient_material">Oyun yetersiz materyal nedeniyle berabere bitti.</string>
+    <string name="website_open_failed">Web sitesini açabilecek bir uygulama yok.</string>
 </resources>

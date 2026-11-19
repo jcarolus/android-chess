@@ -660,4 +660,5 @@
     <string name="analysis_engine">引擎</string>
     <string name="practice_preparing_position">正在準備練習局面…</string>
     <string name="import_duplicates_skipped">已略過重複項目</string>
+    <string name="website_open_failed">沒有可用來開啟網站的應用程式。</string>
 </resources>

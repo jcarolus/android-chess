@@ -1,5 +1,6 @@
 package jwtc.android.chess.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -106,7 +108,10 @@ public class StartBaseActivity extends AppCompatActivity {
 
         setContentView(layoutResource);
         // The launcher action bar sits outside the activity's content layout.
-        ActivityHelper.padTvContent(getWindow().getDecorView().findViewById(androidx.appcompat.R.id.decor_content_parent));
+        ActivityHelper.padTvContent(
+                getWindow()
+                        .getDecorView()
+                        .findViewById(androidx.appcompat.R.id.decor_content_parent));
 
         List<StartItem> startItemList =
                 List.of(
@@ -152,10 +157,18 @@ public class StartBaseActivity extends AppCompatActivity {
                                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(i);
                             } else {
-                                startActivity(
-                                        new Intent(
-                                                Intent.ACTION_VIEW,
-                                                Uri.parse("https://www.jwtc.nl/")));
+                                try {
+                                    startActivity(
+                                            new Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse("https://www.jwtc.nl/")));
+                                } catch (ActivityNotFoundException e) {
+                                    Toast.makeText(
+                                                    StartBaseActivity.this,
+                                                    R.string.website_open_failed,
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+                                }
                             }
                         });
 

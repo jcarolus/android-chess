@@ -693,4 +693,5 @@
     <string name="analysis_engine">Engine</string>
     <string name="practice_preparing_position">Oefenstelling voorbereiden…</string>
     <string name="import_duplicates_skipped">Duplicaten overgeslagen</string>
+    <string name="website_open_failed">Geen app beschikbaar om de website te openen.</string>
 </resources>

@@ -645,4 +645,5 @@
     <string name="hotspot_result_repetition">La partie est nulle par triple répétition.</string>
     <string name="hotspot_result_fifty_moves">La partie est nulle selon la règle des 50 coups.</string>
     <string name="hotspot_result_insufficient_material">La partie est nulle par insuffisance de matériel.</string>
+    <string name="website_open_failed">Aucune application disponible pour ouvrir le site Web.</string>
 </resources>

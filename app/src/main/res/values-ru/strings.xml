@@ -645,4 +645,5 @@
     <string name="hotspot_result_repetition">Партия закончилась вничью из-за троекратного повторения позиции.</string>
     <string name="hotspot_result_fifty_moves">Партия закончилась вничью по правилу 50 ходов.</string>
     <string name="hotspot_result_insufficient_material">Партия закончилась вничью из-за недостаточного материала.</string>
+    <string name="website_open_failed">Нет доступного приложения для открытия сайта.</string>
 </resources>

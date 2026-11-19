@@ -652,4 +652,5 @@
     <string name="hotspot_result_repetition">انتهت المباراة بالتعادل بسبب تكرار الوضع ثلاث مرات.</string>
     <string name="hotspot_result_fifty_moves">انتهت المباراة بالتعادل وفقًا لقاعدة الخمسين نقلة.</string>
     <string name="hotspot_result_insufficient_material">انتهت المباراة بالتعادل بسبب عدم كفاية القطع.</string>
+    <string name="website_open_failed">لا يوجد تطبيق متاح لفتح الموقع الإلكتروني.</string>
 </resources>

@@ -645,4 +645,5 @@
     <string name="hotspot_result_repetition">La partita è patta per triplice ripetizione.</string>
     <string name="hotspot_result_fifty_moves">La partita è patta per la regola delle 50 mosse.</string>
     <string name="hotspot_result_insufficient_material">La partita è patta per materiale insufficiente.</string>
+    <string name="website_open_failed">Nessuna app disponibile per aprire il sito web.</string>
 </resources>

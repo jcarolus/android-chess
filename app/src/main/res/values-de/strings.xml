@@ -652,4 +652,5 @@
     <string name="hotspot_result_repetition">Die Partie endet durch dreifache Stellungswiederholung remis.</string>
     <string name="hotspot_result_fifty_moves">Die Partie endet durch die 50-Züge-Regel remis.</string>
     <string name="hotspot_result_insufficient_material">Die Partie endet wegen unzureichenden Materials remis.</string>
+    <string name="website_open_failed">Keine App zum Öffnen der Website verfügbar.</string>
 </resources>

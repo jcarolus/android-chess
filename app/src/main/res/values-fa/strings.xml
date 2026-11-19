@@ -655,4 +655,5 @@
     <string name="hotspot_result_repetition">بازی به دلیل تکرار سه‌بارهٔ وضعیت مساوی شد.</string>
     <string name="hotspot_result_fifty_moves">بازی بر اساس قانون ۵۰ حرکت مساوی شد.</string>
     <string name="hotspot_result_insufficient_material">بازی به دلیل کافی نبودن مهره‌ها مساوی شد.</string>
+    <string name="website_open_failed">برنامه‌ای برای باز کردن وب‌سایت در دسترس نیست.</string>
 </resources>

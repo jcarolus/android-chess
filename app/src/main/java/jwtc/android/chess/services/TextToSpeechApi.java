@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Handler;
 import android.os.LocaleList;
+import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
@@ -16,11 +18,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class TextToSpeechApi implements TextToSpeech.OnInitListener {
+public class TextToSpeechApi {
     private static final String TAG = "TextToSpeechApi";
     private static final String PROTECTED_PREFIX = "protected-";
     private static final String LAST_MOVE_PREFIX = "last-move-";
+    private static final ExecutorService shutdownExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final Context context;
     private TextToSpeech textToSpeech;
     private final Object speechStateLock = new Object();
@@ -34,6 +40,7 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
     private boolean enabled = true;
     private boolean initializing = false;
     private boolean ready = false;
+    private int initializationGeneration = 0;
     private int lastInitStatus = TextToSpeech.ERROR;
     private int lastLanguageStatus = TextToSpeech.LANG_NOT_SUPPORTED;
     private final Map<Locale, Integer> localeAvailabilityCache = new HashMap<>();
@@ -239,17 +246,27 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
     }
 
     public void shutdown() {
-        if (textToSpeech != null) {
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-            textToSpeech = null;
-        }
+        TextToSpeech releasedSpeech = textToSpeech;
+        textToSpeech = null;
+        initializationGeneration++;
         synchronized (speechStateLock) {
             lastMoveSpeechQueue.clear();
         }
         localeAvailabilityCache.clear();
         initializing = false;
         ready = false;
+        if (releasedSpeech != null) {
+            // TTS setup holds an internal lock across service calls. Cleanup can
+            // wait for that lock, so it must not run on the UI thread.
+            shutdownExecutor.execute(
+                    () -> {
+                        try {
+                            releasedSpeech.stop();
+                        } finally {
+                            releasedSpeech.shutdown();
+                        }
+                    });
+        }
     }
 
     public void setEnabled(boolean enabled, SharedPreferences prefs) {
@@ -257,15 +274,8 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         if (enabled) {
             this.prefs = prefs;
             ensureInitialized();
-        } else if (textToSpeech != null) {
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-            textToSpeech = null;
-            synchronized (speechStateLock) {
-                lastMoveSpeechQueue.clear();
-            }
-            initializing = false;
-            ready = false;
+        } else {
+            shutdown();
         }
     }
 
@@ -285,8 +295,10 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         return lastLanguageStatus;
     }
 
-    @Override
-    public void onInit(int status) {
+    private void onInit(int generation, int status) {
+        if (generation != initializationGeneration) {
+            return;
+        }
         if (!enabled || textToSpeech == null) {
             initializing = false;
             ready = false;
@@ -369,11 +381,14 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             return;
         }
         initializing = true;
+        int generation = ++initializationGeneration;
+        TextToSpeech.OnInitListener listener =
+                status -> mainHandler.post(() -> onInit(generation, status));
         String enginePackage = prefs.getString("speechEngine", null);
         if (enginePackage == null || enginePackage.isEmpty()) {
-            textToSpeech = new TextToSpeech(context, this);
+            textToSpeech = new TextToSpeech(context, listener);
         } else {
-            textToSpeech = new TextToSpeech(context, this, enginePackage);
+            textToSpeech = new TextToSpeech(context, listener, enginePackage);
         }
         textToSpeech.setOnUtteranceProgressListener(
                 new UtteranceProgressListener() {

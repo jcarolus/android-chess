@@ -645,4 +645,5 @@
     <string name="hotspot_result_repetition">A partida terminou empatada por repetição tripla.</string>
     <string name="hotspot_result_fifty_moves">A partida terminou empatada pela regra dos 50 lances.</string>
     <string name="hotspot_result_insufficient_material">A partida terminou empatada por material insuficiente.</string>
+    <string name="website_open_failed">Nenhuma aplicação disponível para abrir o site.</string>
 </resources>

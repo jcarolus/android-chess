@@ -645,4 +645,5 @@
     <string name="hotspot_result_repetition">棋局因三次重复局面而和棋。</string>
     <string name="hotspot_result_fifty_moves">棋局根据五十步规则判为和棋。</string>
     <string name="hotspot_result_insufficient_material">棋局因子力不足而和棋。</string>
+    <string name="website_open_failed">没有可用于打开网站的应用。</string>
 </resources>

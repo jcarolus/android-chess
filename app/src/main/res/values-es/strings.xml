@@ -652,4 +652,5 @@
     <string name="hotspot_result_repetition">La partida termina en tablas por triple repetición.</string>
     <string name="hotspot_result_fifty_moves">La partida termina en tablas por la regla de las 50 jugadas.</string>
     <string name="hotspot_result_insufficient_material">La partida termina en tablas por material insuficiente.</string>
+    <string name="website_open_failed">No hay ninguna aplicación disponible para abrir el sitio web.</string>
 </resources>
