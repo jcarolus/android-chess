@@ -18,8 +18,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
-import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.gamedatabase.GameSelectionActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.StartItem;
@@ -106,7 +106,7 @@ public class StartBaseActivity extends AppCompatActivity {
 
         setContentView(layoutResource);
         // The launcher action bar sits outside the activity's content layout.
-        ActivityHelper.padTvContent(findViewById(androidx.appcompat.R.id.decor_content_parent));
+        ActivityHelper.padTvContent(getWindow().getDecorView().findViewById(androidx.appcompat.R.id.decor_content_parent));
 
         List<StartItem> startItemList =
                 List.of(
@@ -132,7 +132,7 @@ public class StartBaseActivity extends AppCompatActivity {
                         new StartItem(
                                 R.drawable.database,
                                 R.string.start_database,
-                                GamesListActivity.class),
+                                GameSelectionActivity.class),
                         new StartItem(
                                 R.drawable.sliders,
                                 R.string.start_boardpreferences,

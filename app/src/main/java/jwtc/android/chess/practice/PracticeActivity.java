@@ -1,5 +1,6 @@
 package jwtc.android.chess.practice;
 
+import java.util.Locale;
 import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 
 import android.content.Intent;
@@ -262,7 +263,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     @Override
     public void onScore(MateScore score) {
         textViewPercentage.setText(
-                String.format("%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
+                String.format(Locale.getDefault(Locale.Category.FORMAT), "%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
         percentBar.setProgressCompat((int) score.percentage(), /* animated= */ true);
     }
 

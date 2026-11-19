@@ -1,5 +1,6 @@
 package jwtc.android.chess.activities;
 
+import java.util.Locale;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.ClipData;
@@ -1275,7 +1276,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected String getFieldDescription(int pos) {
-        String sPos = Pos.toString(pos).toUpperCase();
+        String sPos = Pos.toString(pos).toUpperCase(Locale.getDefault());
         if (PieceSets.selectedBlindfoldMode != PieceSets.BLINDFOLD_HIDE_PIECES) {
             int whitePiece = gameApi.pieceAt(BoardConstants.WHITE, pos);
             int blackPiece = gameApi.pieceAt(BoardConstants.BLACK, pos);
@@ -1386,7 +1387,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                     piece = gameApi.pieceAt(BoardConstants.BLACK, positions[i]);
                 }
                 if (piece != BoardConstants.FIELD) {
-                    String sPos = Pos.toString(positions[i]).toUpperCase();
+                    String sPos = Pos.toString(positions[i]).toUpperCase(Locale.getDefault());
                     String sPiece = getString(Piece.toResource(piece));
                     pieceDescriptions.append(
                             getString(R.string.square_with_piece_description, sPiece, sPos));

@@ -685,4 +685,12 @@
     <string name="collection_restore_defaults">Standaardstellingen herstellen</string>
     <string name="collection_empty">Geen stellingen. Gebruik het menu om stellingen te importeren of te herstellen.</string>
     <string name="collection_delete_failed">De stellingen konden niet worden verwijderd. Probeer het opnieuw.</string>
+    <string name="lichess_puzzle_move_failed">Een zet van de puzzel kon niet worden uitgevoerd. Je kunt naar de volgende puzzel gaan.</string>
+    <string name="analysis_edit_comment">Opmerking bewerken</string>
+    <string name="analysis_comment_hint">Tik om een opmerking toe te voegen</string>
+    <string name="analysis_comment_title">Opmerking na de zet</string>
+    <string name="analysis_start_comment_title">Opmerking vóór de eerste zet</string>
+    <string name="analysis_engine">Engine</string>
+    <string name="practice_preparing_position">Oefenstelling voorbereiden…</string>
+    <string name="import_duplicates_skipped">Duplicaten overgeslagen</string>
 </resources>

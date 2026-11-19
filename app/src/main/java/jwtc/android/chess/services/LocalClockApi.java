@@ -1,5 +1,6 @@
 package jwtc.android.chess.services;
 
+import java.util.Locale;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -142,7 +143,7 @@ public class LocalClockApi implements GameListener {
     protected String timeToString(final long millies) {
         int seconds = (int) (millies / 1000);
         if (seconds >= 0) {
-            return String.format("%d:%02d", (int) (Math.floor(seconds / 60)), seconds % 60);
+            return String.format(Locale.getDefault(Locale.Category.FORMAT), "%d:%02d", (int) (Math.floor(seconds / 60)), seconds % 60);
         } else {
             return "-:-";
         }

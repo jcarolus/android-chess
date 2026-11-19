@@ -1,5 +1,6 @@
 package jwtc.android.chess.engine;
 
+import java.util.Locale;
 import android.content.Context;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -558,7 +559,7 @@ public class OexEngine extends EngineApi {
         if (promotion == null || promotion.isEmpty()) {
             return -1;
         }
-        switch (promotion.toLowerCase()) {
+        switch (promotion.toLowerCase(Locale.getDefault())) {
             case "q":
                 return BoardConstants.QUEEN;
             case "r":

@@ -85,8 +85,7 @@
                 android:layout_height="4dip"
                 app:trackColor="@color/primaryColor"
                 android:indeterminate="true"
-                android:visibility="invisible"
-                android:layout_alignParentBottom="true" />
+                android:visibility="invisible" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -1,5 +1,6 @@
 package jwtc.android.chess.lichess;
 
+import java.util.Locale;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
@@ -438,7 +439,7 @@ public class LichessApi extends GameApi {
             int to = Pos.fromString(uciMove.substring(2, 4));
             Integer promo =
                     uciMove.length() == 5
-                            ? Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase())
+                            ? Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase(Locale.getDefault()))
                             : null;
             if (applyServerMove(from, to, promo) != 0) {
                 return true;
@@ -1180,7 +1181,7 @@ public class LichessApi extends GameApi {
 
                     Integer promo =
                             sMove.length() == 5
-                                    ? Piece.fromUCIPromo(sMove.substring(4, 5).toLowerCase())
+                                    ? Piece.fromUCIPromo(sMove.substring(4, 5).toLowerCase(Locale.getDefault()))
                                     : null;
 
                     if (applyServerMove(from, to, promo) == 0) {

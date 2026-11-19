@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">Mostrar partidas</string>
+    <string name="gameslist_loading">Carregando partidas…</string>
+    <string name="game_selection_load_failed">Não foi possível carregar as partidas.</string>
+    <string name="gameslist_invalid_dates">Insira datas válidas com a data inicial anterior ou igual à data final.</string>
+    <string name="study_title">Estudo</string>
+    <string name="study_delete_filtered_confirmation">Excluir do banco de dados todas as partidas que correspondem aos filtros ativados?</string>
+</resources>

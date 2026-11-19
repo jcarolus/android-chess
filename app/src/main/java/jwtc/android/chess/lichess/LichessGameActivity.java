@@ -523,9 +523,9 @@ public class LichessGameActivity extends ChessBoardActivity
         textViewPlayerMe.setText(playAsWhite ? gameFull.white.name : gameFull.black.name);
 
         textViewRatingOpp.setText(
-                "" + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
+                String.valueOf(playAsWhite ? gameFull.black.rating : gameFull.white.rating));
         textViewRatingMe.setText(
-                "" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
+                String.valueOf(playAsWhite ? gameFull.white.rating : gameFull.black.rating));
 
         if (gameFull.clock != null) {
             localClockApi.startClock(
@@ -610,7 +610,7 @@ public class LichessGameActivity extends ChessBoardActivity
             PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {
         onPuzzle(nextPuzzle);
         if (glicko != null) {
-            textViewRatingMe.setText("" + (int) glicko.rating);
+            textViewRatingMe.setText(String.valueOf((int) glicko.rating));
             String diffStr =
                     solveRound.ratingDiff >= 0
                             ? "+" + solveRound.ratingDiff

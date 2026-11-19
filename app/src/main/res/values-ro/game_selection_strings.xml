@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">Afișează partidele</string>
+    <string name="gameslist_loading">Se încarcă partidele…</string>
+    <string name="game_selection_load_failed">Partidele nu au putut fi încărcate.</string>
+    <string name="gameslist_invalid_dates">Introduceți date valide, cu data de început anterioară sau egală cu data de sfârșit.</string>
+    <string name="study_title">Studiu</string>
+    <string name="study_delete_filtered_confirmation">Ștergeți din baza de date toate partidele care corespund filtrelor activate?</string>
+</resources>

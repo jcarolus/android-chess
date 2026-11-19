@@ -24,7 +24,6 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.Locale;
-import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
@@ -33,6 +32,7 @@ import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.SearchLimit;
+import jwtc.android.chess.gamedatabase.GameSelectionActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
@@ -617,7 +617,7 @@ public class PlayActivity extends ChessBoardActivity
     public void OnEngineInfo(String message, float value) {
         // Engine updates often leave the score unchanged at one decimal, so only
         // redraw it when the text actually changes.
-        final String scoreText = String.format("%.1f", value);
+        final String scoreText = String.format(Locale.getDefault(Locale.Category.FORMAT), "%.1f", value);
         if (!scoreText.contentEquals(textViewEngineValue.getText())) {
             textViewEngineValue.setText(scoreText);
         }
@@ -894,8 +894,7 @@ public class PlayActivity extends ChessBoardActivity
                     saveGame();
                 } else if (item.equals(getString(R.string.menu_load_game))) {
                     intent = new Intent();
-                    intent.setClass(PlayActivity.this, GamesListActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    intent.setClass(PlayActivity.this, GameSelectionActivity.class);
                     startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog =

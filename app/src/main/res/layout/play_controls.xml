@@ -126,7 +126,7 @@
             <TextView
                 android:id="@+id/TextViewEco"
                 style="@style/MyPaneTextStyle2Lines"
-                android:text="--"
+                android:text="@string/placeholder_engine_value"
                 android:layout_width="match_parent"
                 android:layout_height="38dip"
                 android:layout_marginStart="@dimen/control_gap"

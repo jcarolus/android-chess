@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">نمایش بازی‌ها</string>
+    <string name="gameslist_loading">در حال بارگذاری بازی‌ها…</string>
+    <string name="game_selection_load_failed">بارگذاری بازی‌ها انجام نشد.</string>
+    <string name="gameslist_invalid_dates">تاریخ‌های معتبر وارد کنید؛ تاریخ شروع باید پیش از تاریخ پایان یا برابر با آن باشد.</string>
+    <string name="study_title">مطالعه</string>
+    <string name="study_delete_filtered_confirmation">همهٔ بازی‌های مطابق با فیلترهای فعال از پایگاه دادهٔ بازی‌ها حذف شوند؟</string>
+</resources>

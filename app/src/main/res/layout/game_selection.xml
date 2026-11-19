@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/SelectionRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/ButtonMenu"
+            app:icon="@drawable/ic_three_dots_vertical"
+            android:contentDescription="@string/button_menu_description"
+            android:layout_gravity="end"
+            style="?attr/chessImageButtonStyle" />
+
+        <include layout="@layout/gameslist_filters" />
+
+        <TextView
+            android:id="@+id/TextViewFilterError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:textColor="?attr/colorError"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/TextViewFilterInfo"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/SelectionOpen"
+            style="?attr/chessButtonStyle"
+            android:layout_width="match_parent"
+            android:text="@string/gameslist_show_games" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/SelectionSurprise"
+            style="?attr/chessButtonStyle"
+            android:layout_width="match_parent"
+            android:text="@string/study_surprise"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

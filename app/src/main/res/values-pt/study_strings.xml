@@ -16,4 +16,10 @@
     <string name="study_delete_matching">Excluir estudos correspondentes</string>
     <string name="study_delete_failed">Não foi possível excluir a seleção.</string>
     <string name="study_delete_confirmation">Excluir das partidas os estudos com o tema «%1$s» e o evento «%2$s»?</string>
+    <string name="study_load_failed">Não foi possível carregar os estudos.</string>
+    <string name="study_library_empty">Nenhum estudo importado.</string>
+    <string name="study_download_collections">Transferir coleções</string>
+    <string name="study_import">Importar PGN ou ZIP</string>
+    <string name="study_import_value_required">Introduza um valor</string>
+    <string name="importing_studies">A importar estudos…</string>
 </resources>

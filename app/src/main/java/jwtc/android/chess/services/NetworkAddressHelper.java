@@ -7,7 +7,6 @@ import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -87,31 +86,29 @@ public final class NetworkAddressHelper {
             return null;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network activeNetwork = connectivityManager.getActiveNetwork();
-            if (activeNetwork == null) {
-                return null;
-            }
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork == null) {
+            return null;
+        }
 
-            NetworkCapabilities capabilities =
-                    connectivityManager.getNetworkCapabilities(activeNetwork);
-            if (capabilities == null
-                    || !capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                return null;
-            }
+        NetworkCapabilities capabilities =
+                connectivityManager.getNetworkCapabilities(activeNetwork);
+        if (capabilities == null
+                || !capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            return null;
+        }
 
-            LinkProperties linkProperties = connectivityManager.getLinkProperties(activeNetwork);
-            if (linkProperties == null) {
-                return null;
-            }
+        LinkProperties linkProperties = connectivityManager.getLinkProperties(activeNetwork);
+        if (linkProperties == null) {
+            return null;
+        }
 
-            for (LinkAddress linkAddress : linkProperties.getLinkAddresses()) {
-                InetAddress inetAddress = linkAddress.getAddress();
-                if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()) {
-                    String hostAddress = inetAddress.getHostAddress();
-                    if (hostAddress != null && !hostAddress.startsWith("169.254.")) {
-                        return hostAddress;
-                    }
+        for (LinkAddress linkAddress : linkProperties.getLinkAddresses()) {
+            InetAddress inetAddress = linkAddress.getAddress();
+            if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()) {
+                String hostAddress = inetAddress.getHostAddress();
+                if (hostAddress != null && !hostAddress.startsWith("169.254.")) {
+                    return hostAddress;
                 }
             }
         }

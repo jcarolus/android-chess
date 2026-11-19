@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="321"
-    android:versionName="10.7.9">
+    android:versionCode="322"
+    android:versionName="10.7.10">
     <queries>
         <intent>
             <action
@@ -15,6 +15,26 @@
             <action android:name="intent.chess.provider.ACTIVATION" />
         </intent>
     </queries>
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="false" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FULLSCREEN" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
     <application
         android:name="android.app.Application"
         android:icon="@mipmap/ic_launcher"
@@ -48,7 +68,6 @@
         </activity>
         <activity
             android:name=".start"
-            android:label="@string/app_name"
             android:theme="@style/ChessStart"
             android:exported="true">
             <intent-filter>
@@ -77,7 +96,6 @@
             android:exported="false"></activity>
         <activity
             android:name=".analyze.AnalyzeActivity"
-            android:label="@string/app_name"
             android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <meta-data
@@ -149,9 +167,6 @@
             android:label="@string/app_name_setup"
             android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".play.PlayActivity" />
@@ -161,44 +176,34 @@
             android:label="@string/app_name_setup"
             android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".play.PlayActivity" />
         </activity>
         <activity
+            android:name=".gamedatabase.GameSelectionActivity"
+            android:label="@string/app_name_save_games"
+            android:exported="false" />
+        <activity
             android:name=".GamesListActivity"
             android:label="@string/app_name_save_games"
             android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".play.PlayActivity" />
         </activity>
         <activity
             android:name="jwtc.android.chess.puzzle.PuzzleActivity"
-            android:label="@string/app_name"
             android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
         </activity>
         <activity
             android:name="jwtc.android.chess.practice.PracticeActivity"
-            android:label="@string/app_name"
             android:exported="false">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
@@ -241,12 +246,8 @@
         </activity>
         <activity
             android:name="jwtc.android.chess.hotspotboard.HotspotBoardActivity"
-            android:label="@string/app_name"
             android:screenOrientation="locked"
             android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
@@ -315,23 +316,4 @@
             android:authorities="jwtc.android.chess.puzzle.MyPuzzleProvider"
             android:exported="false" />
     </application>
-    <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:smallScreens="false" />
-
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FULLSCREEN" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
-    <uses-feature
-        android:name="android.hardware.touchscreen"
-        android:required="false" />
-    <uses-feature
-        android:name="android.software.leanback"
-        android:required="false" />
 </manifest>

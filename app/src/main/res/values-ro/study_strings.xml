@@ -16,4 +16,10 @@
     <string name="study_delete_matching">Șterge studiile corespunzătoare</string>
     <string name="study_delete_failed">Selecția nu a putut fi ștearsă.</string>
     <string name="study_delete_confirmation">Ștergi din partide studiile cu tema „%1$s” și evenimentul „%2$s”?</string>
+    <string name="study_load_failed">Studiile nu au putut fi încărcate.</string>
+    <string name="study_library_empty">Niciun studiu importat.</string>
+    <string name="study_download_collections">Descarcă colecții</string>
+    <string name="study_import">Importă PGN sau ZIP</string>
+    <string name="study_import_value_required">Introdu o valoare</string>
+    <string name="importing_studies">Se importă studiile…</string>
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">ورود حرکت با متن</string>
+    <string name="pref_confirm_move_entry">بررسی حرکت‌های متنی پیش از بازی</string>
+    <string name="move_entry_hint">حرکت، برای مثال e2 e4</string>
+    <string name="move_entry_format">یک حرکت وارد کنید، برای مثال e2e4، Nf3 یا اسب f3.</string>
+    <string name="move_entry_illegal">این حرکت در این وضعیت غیرقانونی است.</string>
+    <string name="move_entry_wrong_turn">در بازی در حال انجام، منتظر نوبت خود بمانید.</string>
+    <string name="move_entry_promotion">مهرهٔ ترفیع را مشخص کنید: وزیر، رخ، فیل یا اسب.</string>
+    <string name="move_entry_review">حرکت %1$s (%2$s) انجام شود؟</string>
+</resources>

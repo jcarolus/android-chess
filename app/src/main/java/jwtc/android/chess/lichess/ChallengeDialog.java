@@ -65,10 +65,10 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         editTextPlayer.setText(prefs.getString("lichess_challenge_name", ""));
         boolean withTimeControl = prefs.getBoolean("lichess_challenge_timetcontrol", true);
         int days = prefs.getInt("lichess_challenge_days", 1);
-        editTextDays.setText("" + days);
+        editTextDays.setText(String.valueOf(days));
         int minutes = prefs.getInt("lichess_challenge_minutes", 5);
-        editTextTime.setText("" + minutes);
-        editTextIncrement.setText("" + prefs.getInt("lichess_challenge_increment", 10));
+        editTextTime.setText(String.valueOf(minutes));
+        editTextIncrement.setText(String.valueOf(prefs.getInt("lichess_challenge_increment", 10)));
 
         if (withTimeControl) {
             layoutDays.setVisibility(View.GONE);

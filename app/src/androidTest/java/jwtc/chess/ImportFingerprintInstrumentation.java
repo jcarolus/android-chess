@@ -214,6 +214,7 @@ public final class ImportFingerprintInstrumentation {
         GameStore games = new GameStore(resolver);
         StudyStore studies = new StudyStore(resolver);
         String topic = UUID.randomUUID().toString();
+        String untaggedPlayer = UUID.randomUUID().toString();
         String event = UUID.randomUUID().toString();
         String tagged = "[Topic \"" + topic + "\"]\n[Event \"" + event + "\"]\n";
         String otherTopic = tagged.replace(topic, topic + " other");
@@ -233,8 +234,16 @@ public final class ImportFingerprintInstrumentation {
                     games.importGame(GameRecord.fromPgn(otherEvent + PGN)),
                     "Different Event was skipped");
 
-            List<Long> ids = studies.ids(topic, event);
-            check(ids.size() == 2 && ids.get(0) < ids.get(1), "Studies are not in import order");
+            check(games.importGame(GameRecord.fromPgn("[White \"" + untaggedPlayer + "\"]\n" + PGN)),
+                    "Untagged study game was not imported");
+            GameFilter untagged = new GameFilter().white(untaggedPlayer);
+            check(studies.ids(untagged).size() == 1, "Study excluded a game without Topic and Event");
+            GameFilter filter = new GameFilter().topic(topic).event(event);
+            List<Long> ids = studies.ids(filter);
+            check(ids.size() == 4 && ids.get(0) < ids.get(1), "Study text filters did not match all tagged games");
+            check(games.count(filter) == ids.size(), "Database and Study selections differ");
+            List<Long> ordered = studies.ids(new GameFilter().topic(topic).event(event).orderBy(PGNColumns.EVENT, "DESC"));
+            check(games.load(ordered.get(0)).event.equals(event + " other"), "Study ignored the selected sort order");
             long firstId = ids.get(0);
             check(games.load(firstId).pgn.equals(tagged + PGN), "Study is missing from Games");
             check(games.exportAllAsPgn().contains(tagged + PGN), "Study export lost its tags");
@@ -242,21 +251,18 @@ public final class ImportFingerprintInstrumentation {
             GameRecord annotated = GameRecord.fromPgn(tagged + "1. e4 {annotation} e5 *");
             check(games.update(firstId, annotated), "Could not update the shared Game");
             check(games.load(firstId).pgn.equals(annotated.pgn), "Study edit did not update Games");
-            check(studies.deleteMatching(topic, event, 1) == 0, "Count changed after confirmation");
+            check(studies.deleteMatching(filter, 1) == 0, "Count changed after confirmation");
             check(
-                    studies.deleteMatching(topic, event, 2) == 2,
+                    studies.deleteMatching(filter, 4) == 4,
                     "Filtered delete removed the wrong number");
             check(
-                    studies.ids(topic, event).isEmpty()
-                            && games.load(firstId) == null
-                            && studies.ids(topic + " other", event).size() == 1
-                            && studies.ids(topic, event + " other").size() == 1,
-                    "Filtered delete did not stay within its Topic and Event");
+                    studies.ids(filter).isEmpty() && games.load(firstId) == null && studies.ids(untagged).size() == 1,
+                    "Filtered delete did not remove the matching studies");
         } finally {
             resolver.delete(
                     MyPGNProvider.CONTENT_URI,
-                    "topic IN (?, ?)",
-                    new String[] {topic, topic + " other"});
+                    "topic IN (?, ?) OR white = ?",
+                    new String[] {topic, topic + " other", untaggedPlayer});
         }
     }
 

@@ -16,4 +16,10 @@
     <string name="study_delete_matching">Passende Studien löschen</string>
     <string name="study_delete_failed">Die Auswahl konnte nicht gelöscht werden.</string>
     <string name="study_delete_confirmation">Studien zum Thema „%1$s“ und Ereignis „%2$s“ aus den Partien löschen?</string>
+    <string name="study_load_failed">Studien konnten nicht geladen werden.</string>
+    <string name="study_library_empty">Keine Studien importiert.</string>
+    <string name="study_download_collections">Sammlungen herunterladen</string>
+    <string name="study_import">PGN oder ZIP importieren</string>
+    <string name="study_import_value_required">Gib einen Wert ein</string>
+    <string name="importing_studies">Studien werden importiert…</string>
 </resources>

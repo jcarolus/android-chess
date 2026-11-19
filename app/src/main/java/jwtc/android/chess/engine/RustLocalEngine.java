@@ -1,5 +1,6 @@
 package jwtc.android.chess.engine;
 
+import java.util.Locale;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -344,7 +345,7 @@ public final class RustLocalEngine extends EngineApi {
                             + message;
         }
         if (result.hasEvaluation) {
-            message += "\n" + String.format("%.2f", score / 100.0);
+            message += "\n" + String.format(Locale.getDefault(Locale.Category.FORMAT), "%.2f", score / 100.0);
         }
         for (EngineListener listener : new ArrayList<>(listeners)) {
             if (!isCurrentSearch(id) || destroyed) {

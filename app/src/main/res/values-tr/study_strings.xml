@@ -16,4 +16,10 @@
     <string name="study_delete_matching">Eşleşen çalışmaları sil</string>
     <string name="study_delete_failed">Seçim silinemedi.</string>
     <string name="study_delete_confirmation">“%1$s” konulu ve “%2$s” etkinliğine ait çalışmalar oyunlardan silinsin mi?</string>
+    <string name="study_load_failed">Çalışmalar yüklenemedi.</string>
+    <string name="study_library_empty">İçe aktarılmış çalışma yok.</string>
+    <string name="study_download_collections">Koleksiyonları indir</string>
+    <string name="study_import">PGN veya ZIP içe aktar</string>
+    <string name="study_import_value_required">Bir değer girin</string>
+    <string name="importing_studies">Çalışmalar içe aktarılıyor…</string>
 </resources>

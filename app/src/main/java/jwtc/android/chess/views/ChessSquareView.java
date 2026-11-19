@@ -1,5 +1,6 @@
 package jwtc.android.chess.views;
 
+import java.util.Locale;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -126,7 +127,7 @@ public class ChessSquareView extends View {
         if (ColorSchemes.showCoords) {
             String coord = "";
             if (pos > 55) {
-                coord = Pos.colToString(pos).toUpperCase();
+                coord = Pos.colToString(pos).toUpperCase(Locale.getDefault());
             } else {
                 if (pos % 8 == 0) {
                     coord = Pos.rowToString(pos);

@@ -83,12 +83,16 @@ public final class GameStore {
     }
 
     public int count() {
+        return count(new GameFilter());
+    }
+
+    public int count(GameFilter filter) {
         try (Cursor cursor =
                 resolver.query(
                         MyPGNProvider.CONTENT_URI,
                         new String[] {PGNColumns._ID},
-                        null,
-                        null,
+                        filter.selection(),
+                        filter.selectionArgs(),
                         null)) {
             return cursor == null ? 0 : cursor.getCount();
         }
@@ -101,7 +105,7 @@ public final class GameStore {
                 PGNColumns.COLUMNS,
                 filter.selection(),
                 filter.selectionArgs(),
-                filter.orderBy());
+                filter.orderBy() + ", " + PGNColumns._ID + " ASC");
     }
 
     /** All Games, newest first, each PGN followed by blank lines. */

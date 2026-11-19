@@ -16,4 +16,10 @@
     <string name="study_delete_matching">Geselecteerde studies verwijderen</string>
     <string name="study_delete_failed">De selectie kon niet worden verwijderd.</string>
     <string name="study_delete_confirmation">Studies met onderwerp ‘%1$s’ en evenement ‘%2$s’ uit Partijen verwijderen?</string>
+    <string name="study_load_failed">De studies konden niet worden geladen.</string>
+    <string name="study_library_empty">Geen studies geïmporteerd.</string>
+    <string name="study_download_collections">Verzamelingen downloaden</string>
+    <string name="study_import">PGN of ZIP importeren</string>
+    <string name="study_import_value_required">Voer een waarde in</string>
+    <string name="importing_studies">Studies importeren…</string>
 </resources>

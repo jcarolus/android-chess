@@ -43,8 +43,10 @@ import jwtc.android.chess.study.StudyNavigation;
 import jwtc.android.chess.study.StudyStore;
 import jwtc.android.chess.views.EngineEvaluationView;
 import jwtc.chess.GameRecord;
+import jwtc.chess.GameSelection;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.PGNEntry;
+import jwtc.chess.Pgn;
 import jwtc.chess.PgnComment;
 import jwtc.chess.board.BoardConstants;
 
@@ -54,8 +56,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
     public static final String EXTRA_PGN = "analysisPgn";
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
-    private static final String EXTRA_STUDY_TOPIC = "analysisStudyTopic";
-    private static final String EXTRA_STUDY_EVENT = "analysisStudyEvent";
     private static final String EXTRA_STUDY_SURPRISE = "analysisStudySurprise";
     private static final String PREF_STUDY_ENGINE = "studyEngineEnabled";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
@@ -96,11 +96,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private int studyIndex;
     private String studySavedPgn;
 
-    public static Intent studyIntent(
-            Context context, String topic, String event, boolean surprise) {
+    public static Intent studyIntent(Context context, GameSelection selection, boolean surprise) {
         return new Intent(context, AnalyzeActivity.class)
-                .putExtra(EXTRA_STUDY_TOPIC, topic)
-                .putExtra(EXTRA_STUDY_EVENT, event)
+                .putExtra(GameSelection.EXTRA, selection)
                 .putExtra(EXTRA_STUDY_SURPRISE, surprise);
     }
 
@@ -291,13 +289,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                     }
                     sessionLoaded = false;
                     if (isStudy()) {
-                        getPrefs()
-                                .edit()
-                                .remove(
-                                        StudyStore.resumeKey(
-                                                getIntent().getStringExtra(EXTRA_STUDY_TOPIC),
-                                                getIntent().getStringExtra(EXTRA_STUDY_EVENT)))
-                                .apply();
+                        getPrefs().edit().remove(studySelection().resumeKey()).apply();
                     }
                     finish();
                 },
@@ -763,20 +755,23 @@ public class AnalyzeActivity extends ChessBoardActivity {
     }
 
     private boolean isStudy() {
-        return getIntent().hasExtra(EXTRA_STUDY_TOPIC);
+        return getIntent().hasExtra(GameSelection.EXTRA);
+    }
+
+    private GameSelection studySelection() {
+        return (GameSelection) getIntent().getSerializableExtra(GameSelection.EXTRA);
     }
 
     private boolean loadStudySelection() {
-        String topic = getIntent().getStringExtra(EXTRA_STUDY_TOPIC);
-        String event = getIntent().getStringExtra(EXTRA_STUDY_EVENT);
-        if (topic == null || event == null) {
+        GameSelection selection = studySelection();
+        if (selection == null || !selection.hasValidDates()) {
             return false;
         }
-        studyIds = new StudyStore(getContentResolver()).ids(topic, event);
+        studyIds = new StudyStore(getContentResolver()).ids(selection.filter());
         if (studyIds.isEmpty()) {
             return false;
         }
-        long savedId = getPrefs().getLong(StudyStore.resumeKey(topic, event), 0);
+        long savedId = getPrefs().getLong(selection.resumeKey(), 0);
         boolean restoring =
                 restoredSession != null && sessionId.equals(restoredSession.getString("id"));
         if (restoring) {
@@ -795,7 +790,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
             studyNavigation =
                     new StudyNavigation(findViewById(R.id.root_layout), this::selectStudy);
         }
-        studyNavigation.show(event, studyIds.size(), studyIndex);
         return true;
     }
 
@@ -812,6 +806,14 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     private void applyStudyOrientation() {
         chessBoardView.setRotated("black".equalsIgnoreCase(gameApi.pgnTags.get("Orientation")));
+        String title = Pgn.optionalTagValue(gameApi.pgnTags.get("Event"));
+        if (title == null) {
+            title = Pgn.optionalTagValue(gameApi.pgnTags.get("Topic"));
+        }
+        studyNavigation.show(
+                title == null ? getString(R.string.study_title) : title,
+                studyIds.size(),
+                studyIndex);
     }
 
     private void selectStudy(int index) {
@@ -934,10 +936,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         if (sessionLoaded) {
             if (isStudy()) {
                 saveStudy();
-                String key =
-                        StudyStore.resumeKey(
-                                getIntent().getStringExtra(EXTRA_STUDY_TOPIC),
-                                getIntent().getStringExtra(EXTRA_STUDY_EVENT));
+                String key = studySelection().resumeKey();
                 getPrefs().edit().putLong(key, studyIds.get(studyIndex)).apply();
             } else if (lGameID > 0) {
                 saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);

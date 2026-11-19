@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">Oyunları göster</string>
+    <string name="gameslist_loading">Oyunlar yükleniyor…</string>
+    <string name="game_selection_load_failed">Oyunlar yüklenemedi.</string>
+    <string name="gameslist_invalid_dates">Başlangıç tarihi bitiş tarihinden önce veya aynı gün olacak şekilde geçerli tarihler girin.</string>
+    <string name="study_title">Çalışma</string>
+    <string name="study_delete_filtered_confirmation">Etkin filtrelere uyan tüm oyunlar oyun veritabanından silinsin mi?</string>
+</resources>

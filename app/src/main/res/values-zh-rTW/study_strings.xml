@@ -16,4 +16,10 @@
     <string name="study_delete_matching">刪除符合條件的研習</string>
     <string name="study_delete_failed">無法刪除所選研習。</string>
     <string name="study_delete_confirmation">要從棋譜中刪除主題為「%1$s」、賽事為「%2$s」的研習嗎？</string>
+    <string name="study_load_failed">無法載入研習。</string>
+    <string name="study_library_empty">尚未匯入研習。</string>
+    <string name="study_download_collections">下載合集</string>
+    <string name="study_import">匯入 PGN 或 ZIP</string>
+    <string name="study_import_value_required">請輸入一個值</string>
+    <string name="importing_studies">正在匯入研習…</string>
 </resources>

@@ -6,7 +6,7 @@ import android.widget.TextView;
 import java.util.function.IntConsumer;
 import jwtc.android.chess.R;
 
-/** The event and study controls shown above the move history. */
+/** The game heading and study controls shown above the move history. */
 public final class StudyNavigation {
     private final View header, navigation, previous, next;
     private final TextView title, position;
@@ -55,10 +55,10 @@ public final class StudyNavigation {
                 });
     }
 
-    public void show(String event, int count, int index) {
+    public void show(String heading, int count, int index) {
         this.count = count;
         header.setVisibility(View.VISIBLE);
-        title.setText(event);
+        title.setText(heading);
         navigation.setVisibility(count > 1 ? View.VISIBLE : View.GONE);
         seek.setMax(count - 1);
         setIndex(index);

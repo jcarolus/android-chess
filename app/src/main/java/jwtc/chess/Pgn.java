@@ -220,7 +220,7 @@ public final class Pgn {
         Matcher matcher = TAG.matcher(text);
         int pos = 0;
         while (pos < text.length()) {
-            if (Character.isWhitespace(text.charAt(pos)) || text.charAt(pos) == '﻿') {
+            if (Character.isWhitespace(text.charAt(pos)) || text.charAt(pos) == '\uFEFF') {
                 pos++;
             } else if (matcher.region(pos, text.length()).lookingAt()) {
                 tags.put(matcher.group(1), unescape(matcher.group(2)));

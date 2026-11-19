@@ -16,4 +16,10 @@
     <string name="study_delete_matching">حذف الدراسات المطابقة</string>
     <string name="study_delete_failed">تعذّر حذف التحديد.</string>
     <string name="study_delete_confirmation">هل تريد حذف الدراسات ذات الموضوع «%1$s» والحدث «%2$s» من قائمة المباريات؟</string>
+    <string name="study_load_failed">تعذّر تحميل الدراسات.</string>
+    <string name="study_library_empty">لم تُستورد أي دراسات.</string>
+    <string name="study_download_collections">تنزيل المجموعات</string>
+    <string name="study_import">استيراد PGN أو ZIP</string>
+    <string name="study_import_value_required">أدخل قيمة</string>
+    <string name="importing_studies">جارٍ استيراد الدراسات…</string>
 </resources>

@@ -1,7 +1,5 @@
 package jwtc.android.chess;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,8 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +19,18 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
+import jwtc.android.chess.gamedatabase.GameSelectionActivity;
+import jwtc.android.chess.gamedatabase.GameSelectionPreferences;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.play.MenuDialog;
@@ -50,10 +42,9 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.android.chess.views.FixedDropdownView;
-import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
+import jwtc.chess.GameSelection;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.PgnDate;
@@ -66,29 +57,15 @@ public class GamesListActivity extends ChessBoardActivity {
     private static final String EMPTY_BOARD_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
     private ActivityResultLauncher<String[]> importGames;
     private ActivityResultLauncher<String> exportGames;
-    private String sortOrder, sortBy;
+    private GameSelection selection;
     private TextView textViewResult,
             textViewTotal,
             textViewPlayerWhite,
             textViewPlayerBlack,
             textViewEvent,
             textViewDate,
-            textViewFilterInfo,
             textViewRating;
-    private TextInputEditText editTextFilterWhite,
-            editTextFilterBlack,
-            editTextFilterEvent,
-            editTextFilterTopic;
     private MaterialButton buttonFilters, buttonOpen, buttonAnalyze, buttonEdit, buttonDelete;
-    private PGNDateView pgnDateAfter, pgnDateBefore;
-    private SwitchMaterial switchFilterWhite,
-            switchFilterBlack,
-            switchFilterDateAfter,
-            switchFilterDateBefore,
-            switchFilterEvent,
-            switchFilterTopic,
-            switchFilterResult;
-    private FixedDropdownView dropDownResult, dropDownOrderBy, dropDownOrderDirection;
     private MaterialButtonToggleGroup buttonToggleGroup;
     private GridView gridLayoutPgn;
     private ListView listView;
@@ -96,7 +73,6 @@ public class GamesListActivity extends ChessBoardActivity {
     private final ArrayList<MoveItem> mapMoves = new ArrayList<MoveItem>();
     private MoveItemAdapter adapterMoves;
     private SimpleCursorAdapter adapterGames;
-    private FilterDialog filterDialog;
     private SeekBar seekBarGames;
     private Cursor cursor;
     private long currentGameId;
@@ -132,8 +108,11 @@ public class GamesListActivity extends ChessBoardActivity {
 
         gameApi = new GameApi();
 
-        sortBy = PGNColumns.DATE;
-        sortOrder = "ASC";
+        selection = (GameSelection) getIntent().getSerializableExtra(GameSelection.EXTRA);
+        if (selection == null) {
+            selection =
+                    GameSelectionPreferences.load(getPrefs(), GameSelectionPreferences.DATABASE);
+        }
 
         textViewPlayerWhite = findViewById(R.id.TextViewPlayerWhite);
         textViewPlayerBlack = findViewById(R.id.TextViewPlayerBlack);
@@ -193,10 +172,14 @@ public class GamesListActivity extends ChessBoardActivity {
         textViewDate = findViewById(R.id.TextViewDate);
         textViewEvent = findViewById(R.id.TextViewEvent);
 
-        filterDialog = new FilterDialog(this);
-
         buttonFilters = findViewById(R.id.ButtonOpenFilters);
-        buttonFilters.setOnClickListener(v -> filterDialog.show());
+        buttonFilters.setOnClickListener(
+                v ->
+                        startActivity(
+                                new Intent(this, GameSelectionActivity.class)
+                                        .addFlags(
+                                                Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                                        | Intent.FLAG_ACTIVITY_SINGLE_TOP)));
 
         final MenuDialog menuDialog =
                 new MenuDialog(
@@ -367,8 +350,6 @@ public class GamesListActivity extends ChessBoardActivity {
         SharedPreferences prefs = getPrefs();
         currentGameId = prefs.getLong("gameslist_current_game_id", 0);
 
-        filterDialog.init();
-
         int view = prefs.getInt("gameslist_current_view", VIEW_BOARD);
         Log.d(TAG, "View " + view);
         switch (view) {
@@ -395,40 +376,6 @@ public class GamesListActivity extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        editor.putString(
-                "gameslist_filter_event",
-                Utils.getTrimmedOrDefault(editTextFilterEvent.getText(), ""));
-        editor.putString(
-                "gameslist_filter_topic",
-                Utils.getTrimmedOrDefault(editTextFilterTopic.getText(), ""));
-        editor.putString(
-                "gameslist_filter_white",
-                Utils.getTrimmedOrDefault(editTextFilterWhite.getText(), ""));
-        editor.putString(
-                "gameslist_filter_black",
-                Utils.getTrimmedOrDefault(editTextFilterBlack.getText(), ""));
-        editor.putString(
-                "gameslist_filter_result",
-                Utils.getTrimmedOrDefault(dropDownResult.getSelectionText(), ""));
-        editor.putLong("gameslist_filter_date_after", pgnDateAfter.getDate().getTime());
-        editor.putLong("gameslist_filter_date_before", pgnDateBefore.getDate().getTime());
-
-        editor.putBoolean("gameslist_filter_switch_event", switchFilterEvent.isChecked());
-        editor.putBoolean("gameslist_filter_switch_topic", switchFilterTopic.isChecked());
-        editor.putBoolean("gameslist_filter_switch_white", switchFilterWhite.isChecked());
-        editor.putBoolean("gameslist_filter_switch_black", switchFilterBlack.isChecked());
-        editor.putBoolean(
-                "gameslist_filter_switch_date_before", switchFilterDateBefore.isChecked());
-        editor.putBoolean("gameslist_filter_switch_date_after", switchFilterDateAfter.isChecked());
-        editor.putBoolean("gameslist_filter_switch_result", switchFilterResult.isChecked());
-
-        editor.putString(
-                "gameslist_filter_order_by",
-                Utils.getTrimmedOrDefault(dropDownOrderBy.getSelectionText(), ""));
-        editor.putString(
-                "gameslist_filter_order_direction",
-                Utils.getTrimmedOrDefault(dropDownOrderDirection.getSelectionText(), ""));
-
         editor.putLong("gameslist_current_game_id", currentGameId);
 
         int currentView = VIEW_BOARD;
@@ -446,7 +393,12 @@ public class GamesListActivity extends ChessBoardActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ++queryGeneration;
         queryExecutor.shutdownNow();
+        adapterGames.swapCursor(null);
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
     }
 
     @Override
@@ -457,7 +409,6 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void onQueryUpdated() {
         int count = cursor == null ? 0 : cursor.getCount();
-        textViewFilterInfo.setText(getString(R.string.gameslist_result_count, count));
         adapterGames.swapCursor(cursor);
         if (count == 0) {
             seekBarGames.setVisibility(View.INVISIBLE);
@@ -653,38 +604,8 @@ public class GamesListActivity extends ChessBoardActivity {
         saveDialog.show();
     }
 
-    private void updateParams() {
-        doFilterSort();
-    }
-
     private void doFilterSort() {
-        GameFilter filter = new GameFilter();
-
-        if (switchFilterWhite.isChecked()) {
-            filter.white(Utils.getTrimmedOrNull(editTextFilterWhite.getText()));
-        }
-        if (switchFilterBlack.isChecked()) {
-            filter.black(Utils.getTrimmedOrNull(editTextFilterBlack.getText()));
-        }
-        if (switchFilterEvent.isChecked()) {
-            filter.event(Utils.getTrimmedOrNull(editTextFilterEvent.getText()));
-        }
-        if (switchFilterTopic.isChecked()) {
-            filter.topic(Utils.getTrimmedOrNull(editTextFilterTopic.getText()));
-        }
-        if (switchFilterDateAfter.isChecked()) {
-            filter.after(pgnDateAfter.getDate());
-        }
-        if (switchFilterDateBefore.isChecked()) {
-            filter.before(pgnDateBefore.getDate());
-        }
-        if (switchFilterResult.isChecked()) {
-            filter.result(dropDownResult.getSelectionText());
-        }
-
-        sortBy = Utils.getTrimmedOrDefault(dropDownOrderBy.getSelectionText(), PGNColumns.DATE);
-        sortOrder = Utils.getTrimmedOrDefault(dropDownOrderDirection.getSelectionText(), "DESC");
-        filter.orderBy(sortBy, sortOrder);
+        GameFilter filter = selection.filter();
 
         Log.i(TAG, "runQuery " + filter.selection() + " BY " + filter.orderBy());
 
@@ -744,133 +665,5 @@ public class GamesListActivity extends ChessBoardActivity {
         gridLayoutPgn.setVisibility(View.INVISIBLE);
         listView.setVisibility(View.VISIBLE);
         scrollView.setVisibility(View.GONE);
-    }
-
-    private class FilterDialog extends Dialog {
-        public FilterDialog(@NonNull Context context) {
-            super(
-                    context,
-                    EinkMode.isThemeEnabled()
-                            ? R.style.ChessDialogThemeEink
-                            : R.style.ChessDialogTheme);
-
-            setContentView(R.layout.gameslist_filters);
-            ActivityHelper.constrainDialogToTvSafeArea(this);
-        }
-
-        public void init() {
-            SharedPreferences prefs = getPrefs();
-
-            final TextWatcher textWatcher =
-                    new TextWatcher() {
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                            updateParams();
-                        }
-
-                        @Override
-                        public void beforeTextChanged(
-                                CharSequence s, int start, int count, int after) {}
-
-                        @Override
-                        public void onTextChanged(
-                                CharSequence s, int start, int before, int count) {}
-                    };
-
-            MaterialButton buttonFilterClose = findViewById(R.id.ButtonFilterClose);
-            buttonFilterClose.setOnClickListener(v -> dismiss());
-
-            textViewFilterInfo = findViewById(R.id.TextViewFilterInfo);
-
-            editTextFilterWhite = findViewById(R.id.EditTextFilterWhite);
-            editTextFilterWhite.setText(prefs.getString("gameslist_filter_white", ""));
-            editTextFilterWhite.addTextChangedListener(textWatcher);
-
-            editTextFilterBlack = findViewById(R.id.EditTextFilterBlack);
-            editTextFilterBlack.setText(prefs.getString("gameslist_filter_black", ""));
-            editTextFilterBlack.addTextChangedListener(textWatcher);
-
-            editTextFilterEvent = findViewById(R.id.EditTextFilterEvent);
-            editTextFilterEvent.setText(prefs.getString("gameslist_filter_event", ""));
-            editTextFilterEvent.addTextChangedListener(textWatcher);
-
-            editTextFilterTopic = findViewById(R.id.EditTextFilterTopic);
-            editTextFilterTopic.setText(prefs.getString("gameslist_filter_topic", ""));
-            editTextFilterTopic.addTextChangedListener(textWatcher);
-
-            pgnDateAfter = findViewById(R.id.PGNDateAfter);
-            pgnDateAfter.setDate(
-                    new Date(
-                            prefs.getLong(
-                                    "gameslist_filter_date_after",
-                                    Calendar.getInstance().getTime().getTime())));
-            pgnDateAfter.addOnTextChangedListener(textWatcher);
-
-            pgnDateBefore = findViewById(R.id.PGNDateBefore);
-            pgnDateBefore.setDate(
-                    new Date(
-                            prefs.getLong(
-                                    "gameslist_filter_date_before",
-                                    Calendar.getInstance().getTime().getTime())));
-            pgnDateBefore.addOnTextChangedListener(textWatcher);
-
-            switchFilterWhite = findViewById(R.id.SwitchFilterWhite);
-            switchFilterWhite.setChecked(prefs.getBoolean("gameslist_filter_switch_white", false));
-            switchFilterWhite.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterBlack = findViewById(R.id.SwitchFilterBlack);
-            switchFilterBlack.setChecked(prefs.getBoolean("gameslist_filter_switch_black", false));
-            switchFilterBlack.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterEvent = findViewById(R.id.SwitchFilterEvent);
-            switchFilterEvent.setChecked(prefs.getBoolean("gameslist_filter_switch_event", false));
-            switchFilterEvent.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterTopic = findViewById(R.id.SwitchFilterTopic);
-            switchFilterTopic.setChecked(prefs.getBoolean("gameslist_filter_switch_topic", false));
-            switchFilterTopic.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterDateAfter = findViewById(R.id.SwitchFilterDateAfter);
-            switchFilterDateAfter.setChecked(
-                    prefs.getBoolean("gameslist_filter_switch_date_after", false));
-            switchFilterDateAfter.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterDateBefore = findViewById(R.id.SwitchFilterDateBefore);
-            switchFilterDateBefore.setChecked(
-                    prefs.getBoolean("gameslist_filter_switch_date_before", false));
-            switchFilterDateBefore.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterResult = findViewById(R.id.SwitchFilterResult);
-            switchFilterResult.setChecked(
-                    prefs.getBoolean("gameslist_filter_switch_result", false));
-            switchFilterResult.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            String[] resultOptions = {"1-0", "0-1", "1/2-1/2", "*"};
-            dropDownResult = findViewById(R.id.DropdownResult);
-            dropDownResult.setSelectionText(prefs.getString("gameslist_filter_result", "1-0"));
-            dropDownResult.setItems(resultOptions);
-            dropDownResult.addOnTextChangedListener(textWatcher);
-
-            String[] orderByOptions = {
-                PGNColumns.DATE,
-                PGNColumns.WHITE,
-                PGNColumns.BLACK,
-                PGNColumns.EVENT,
-                PGNColumns.RESULT
-            };
-            dropDownOrderBy = findViewById(R.id.DropdownOrderBy);
-            dropDownOrderBy.setSelectionText(PGNColumns.DATE);
-            dropDownOrderBy.setItems(orderByOptions);
-            dropDownOrderBy.setSelectionText(
-                    prefs.getString("gameslist_filter_order_by", PGNColumns.DATE));
-            dropDownOrderBy.addOnTextChangedListener(textWatcher);
-
-            String[] orderDirectionOptions = {"ASC", "DESC"};
-            dropDownOrderDirection = findViewById(R.id.DropdownOrderDirection);
-            dropDownOrderDirection.setItems(orderDirectionOptions);
-            dropDownOrderDirection.setSelectionText(
-                    prefs.getString("gameslist_filter_order_direction", "DESC"));
-            dropDownOrderDirection.addOnTextChangedListener(textWatcher);
-        }
     }
 }

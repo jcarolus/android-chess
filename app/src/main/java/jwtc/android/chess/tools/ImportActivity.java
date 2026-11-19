@@ -204,8 +204,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
     @Override
     public void OnImportProgress(int mode, int succeeded, int failed, int duplicates, int updated) {
-        _tvWorkCnt.setText("" + succeeded);
-        _tvWorkCntFail.setText("" + failed);
+        _tvWorkCnt.setText(String.valueOf(succeeded));
+        _tvWorkCntFail.setText(String.valueOf(failed));
         _tvWorkCntDuplicates.setText(String.valueOf(duplicates));
     }
 

@@ -16,4 +16,10 @@
     <string name="study_delete_matching">حذف مطالعه‌های مطابق</string>
     <string name="study_delete_failed">موارد انتخاب‌شده حذف نشدند.</string>
     <string name="study_delete_confirmation">مطالعه‌های دارای موضوع «%1$s» و رویداد «%2$s» از بازی‌ها حذف شوند؟</string>
+    <string name="study_load_failed">مطالعه‌ها بارگیری نشدند.</string>
+    <string name="study_library_empty">هیچ مطالعه‌ای وارد نشده است.</string>
+    <string name="study_download_collections">بارگیری مجموعه‌ها</string>
+    <string name="study_import">وارد کردن PGN یا ZIP</string>
+    <string name="study_import_value_required">یک مقدار وارد کنید</string>
+    <string name="importing_studies">در حال وارد کردن مطالعه‌ها…</string>
 </resources>

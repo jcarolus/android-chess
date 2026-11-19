@@ -16,4 +16,10 @@
     <string name="study_delete_matching">删除匹配的研习</string>
     <string name="study_delete_failed">无法删除所选研习。</string>
     <string name="study_delete_confirmation">要从对局中删除主题为“%1$s”、赛事为“%2$s”的研习吗？</string>
+    <string name="study_load_failed">无法加载研习。</string>
+    <string name="study_library_empty">尚未导入研习。</string>
+    <string name="study_download_collections">下载合集</string>
+    <string name="study_import">导入 PGN 或 ZIP</string>
+    <string name="study_import_value_required">请输入一个值</string>
+    <string name="importing_studies">正在导入研习…</string>
 </resources>

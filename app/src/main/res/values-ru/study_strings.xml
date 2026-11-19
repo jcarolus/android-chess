@@ -16,4 +16,10 @@
     <string name="study_delete_matching">Удалить подходящие этюды</string>
     <string name="study_delete_failed">Не удалось удалить выбранные этюды.</string>
     <string name="study_delete_confirmation">Удалить из партий этюды с темой «%1$s» и событием «%2$s»?</string>
+    <string name="study_load_failed">Не удалось загрузить этюды.</string>
+    <string name="study_library_empty">Нет импортированных этюдов.</string>
+    <string name="study_download_collections">Скачать коллекции</string>
+    <string name="study_import">Импортировать PGN или ZIP</string>
+    <string name="study_import_value_required">Введите значение</string>
+    <string name="importing_studies">Импорт этюдов…</string>
 </resources>
