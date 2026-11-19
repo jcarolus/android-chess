@@ -6,4 +6,7 @@
     <string name="gameslist_invalid_dates">Enter valid dates with the start date on or before the end date.</string>
     <string name="study_title">Study</string>
     <string name="study_delete_filtered_confirmation">Delete all games matching the enabled filters from the Game Database?</string>
+    <string name="gameslist_delete_matching">Delete matching games</string>
+    <string name="gameslist_delete_matching_confirmation">Delete all games matching the enabled filters from the Game Database?</string>
+    <string name="gameslist_delete_failed">Could not delete the selection.</string>
 </resources>

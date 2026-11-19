@@ -16,6 +16,7 @@ public final class GameFilter {
                     PGNColumns.WHITE,
                     PGNColumns.BLACK,
                     PGNColumns.EVENT,
+                    PGNColumns.TOPIC,
                     PGNColumns.RESULT);
 
     private String white, black, event, topic, result;

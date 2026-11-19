@@ -49,11 +49,5 @@
             android:contentDescription="@string/gameslist_filters_description"
             android:checkable="true"
             style="?attr/chessImageButtonStyle" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/ButtonMenu"
-            app:icon="@drawable/ic_three_dots_vertical"
-            android:contentDescription="@string/button_menu_description"
-            style="?attr/chessImageButtonStyle" />
     </LinearLayout>
 </com.google.android.flexbox.FlexboxLayout>

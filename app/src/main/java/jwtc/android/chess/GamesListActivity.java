@@ -3,7 +3,6 @@ package jwtc.android.chess;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,8 +16,6 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.material.button.MaterialButton;
@@ -33,14 +30,11 @@ import jwtc.android.chess.gamedatabase.GameSelectionPreferences;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
-import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.play.MoveItem;
 import jwtc.android.chess.play.MoveItemAdapter;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.GameApi;
-import jwtc.android.chess.tools.ImportActivity;
-import jwtc.android.chess.tools.ImportService;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
@@ -55,8 +49,6 @@ public class GamesListActivity extends ChessBoardActivity {
     private static final String TAG = "GamesListActivity";
     private static final int VIEW_BOARD = 1, VIEW_PGN = 2, VIEW_LIST = 3;
     private static final String EMPTY_BOARD_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
-    private ActivityResultLauncher<String[]> importGames;
-    private ActivityResultLauncher<String> exportGames;
     private GameSelection selection;
     private TextView textViewResult,
             textViewTotal,
@@ -84,23 +76,6 @@ public class GamesListActivity extends ChessBoardActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        importGames =
-                registerForActivityResult(
-                        new ActivityResultContracts.OpenDocument(),
-                        uri -> {
-                            if (uri != null) {
-                                startDatabaseTransfer(uri, ImportService.IMPORT_GAMES);
-                            }
-                        });
-        exportGames =
-                registerForActivityResult(
-                        new ActivityResultContracts.CreateDocument("application/x-chess-pgn"),
-                        uri -> {
-                            if (uri != null) {
-                                startDatabaseTransfer(uri, ImportService.EXPORT_GAME_DATABASE);
-                            }
-                        });
 
         setContentView(R.layout.gameslist);
 
@@ -180,24 +155,6 @@ public class GamesListActivity extends ChessBoardActivity {
                                         .addFlags(
                                                 Intent.FLAG_ACTIVITY_CLEAR_TOP
                                                         | Intent.FLAG_ACTIVITY_SINGLE_TOP)));
-
-        final MenuDialog menuDialog =
-                new MenuDialog(
-                        this,
-                        (requestCode, data) -> {
-                            String item = data.getString("item");
-                            if (getString(R.string.pgntool_import_explanation).equals(item)) {
-                                importGames.launch(new String[] {"*/*"});
-                            } else if (getString(R.string.pgntool_export_explanation)
-                                    .equals(item)) {
-                                exportGames.launch("chess.pgn");
-                            } else if (getString(R.string.menu_delete_game_database).equals(item)) {
-                                confirmDeleteDatabase();
-                            }
-                        },
-                        0,
-                        R.array.gameslist_menu);
-        findViewById(R.id.ButtonMenu).setOnClickListener(v -> menuDialog.show());
 
         buttonToggleGroup = findViewById(R.id.ButtonToggleGroupView);
 
@@ -548,33 +505,6 @@ public class GamesListActivity extends ChessBoardActivity {
         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
         startActivity(i);
-    }
-
-    private void startDatabaseTransfer(Uri uri, int mode) {
-        Intent intent = new Intent(this, ImportActivity.class);
-        intent.setData(uri);
-        intent.addFlags(
-                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        intent.putExtra("mode", mode);
-        startActivity(intent);
-    }
-
-    private void confirmDeleteDatabase() {
-        GameStore games = new GameStore(getContentResolver());
-        openConfirmDialog(
-                getString(R.string.pgntool_confirm_delete_games)
-                        + "\n\n"
-                        + getString(R.string.pgntool_delete_item_count, games.count()),
-                getString(R.string.choice_delete),
-                getString(R.string.button_cancel),
-                () -> {
-                    games.deleteAll();
-                    currentGameId = 0;
-                    getPrefs().edit().putLong("game_id", 0).apply();
-                    doFilterSort();
-                    doToast(getString(R.string.pgntool_games_deleted));
-                },
-                null);
     }
 
     private void deleteGame() {

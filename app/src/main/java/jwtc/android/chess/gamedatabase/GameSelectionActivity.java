@@ -17,6 +17,7 @@ import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.tools.ImportActivity;
@@ -77,6 +78,12 @@ public class GameSelectionActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         refreshCount();
+    }
+
+    @Override
+    protected void onPause() {
+        GameSelectionPreferences.save(getPrefs(), preferencePrefix(), currentSelection());
+        super.onPause();
     }
 
     @Override
@@ -202,6 +209,12 @@ public class GameSelectionActivity extends BaseActivity {
                                                                             .menu_delete_game_database)
                                                             .equals(item)) {
                                                         confirmDeleteDatabase();
+                                                    } else if (getString(
+                                                                            R.string
+                                                                                    .gameslist_delete_matching)
+                                                                    .equals(item)
+                                                            && canSubmit()) {
+                                                        confirmDeleteMatching();
                                                     }
                                                 },
                                                 0,
@@ -217,6 +230,49 @@ public class GameSelectionActivity extends BaseActivity {
                                 Intent.FLAG_GRANT_READ_URI_PERMISSION
                                         | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                         .putExtra("mode", mode));
+    }
+
+    private void confirmDeleteMatching() {
+        GameSelection selection = currentSelection();
+        int count = matchingCount;
+        new ChessAlertDialogBuilder(this)
+                .setTitle(R.string.gameslist_delete_matching)
+                .setMessage(
+                        getString(R.string.gameslist_delete_matching_confirmation)
+                                + "\n\n"
+                                + getString(R.string.pgntool_delete_item_count, count))
+                .setNegativeButton(R.string.button_cancel, null)
+                .setPositiveButton(
+                        R.string.choice_delete, (dialog, which) -> deleteMatching(selection, count))
+                .show();
+    }
+
+    private void deleteMatching(GameSelection selection, int count) {
+        setBusy(true);
+        executor.execute(
+                () -> {
+                    try {
+                        int deleted =
+                                new GameStore(getContentResolver())
+                                        .deleteMatching(selection.filter(), count);
+                        handler.post(() -> finishDeleteMatching(deleted == count));
+                    } catch (Exception failure) {
+                        Log.w("GameSelection", "Could not delete matching games", failure);
+                        handler.post(() -> finishDeleteMatching(false));
+                    }
+                });
+    }
+
+    private void finishDeleteMatching(boolean success) {
+        if (isDestroyed() || isFinishing()) {
+            return;
+        }
+        doToast(
+                getString(
+                        success
+                                ? R.string.pgntool_games_deleted
+                                : R.string.gameslist_delete_failed));
+        setBusy(false);
     }
 
     private void confirmDeleteDatabase() {

@@ -76,6 +76,8 @@ public class GameFilterTest {
     public void orderByAcceptsTheSortableColumns() {
         assertEquals("white ASC", new GameFilter().orderBy("white", "ASC").orderBy());
         assertEquals("event DESC", new GameFilter().orderBy(" event ", "DESC").orderBy());
+        assertEquals("topic ASC", new GameFilter().orderBy("topic", "ASC").orderBy());
+        assertEquals("topic DESC", new GameFilter().orderBy("topic", "DESC").orderBy());
         assertEquals("result ASC", new GameFilter().orderBy("result", "asc").orderBy());
     }
 

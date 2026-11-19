@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import java.util.Date;
 import jwtc.chess.GameSelection;
 
-/** Separate submitted defaults for the Game Database and Study selection screens. */
+/** Separate saved filter values for the Game Database and Study selection screens. */
 public final class GameSelectionPreferences {
     public static final String DATABASE = "gameslist_filter_";
     public static final String STUDY = "studies_filter_";

@@ -11,7 +11,7 @@ import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameSelection;
 
-/** Binds the shared selection controls without saving drafts to preferences. */
+/** Binds the shared selection controls to editable criteria. */
 final class GameSelectionForm {
     private final TextInputEditText white, black, event, topic;
     private final SwitchMaterial useWhite,
