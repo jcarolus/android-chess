@@ -145,6 +145,12 @@ public final class Pgn {
                     current.nags.add(parseNag(token));
                     break;
                 case SYMBOL:
+                    int annotation = annotationNag(token.text);
+                    if (annotation > 0) {
+                        current = requireMove(current, token);
+                        current.nags.add(annotation);
+                        break;
+                    }
                     if (RESULT.matcher(token.text).matches()) {
                         if (!stack.isEmpty()) {
                             throw new PgnSyntaxError("Result inside variation", token.offset);
@@ -336,6 +342,17 @@ public final class Pgn {
             throw new PgnSyntaxError("Invalid NAG", token.offset);
         }
         return current;
+    }
+
+    private static int annotationNag(String text) {
+        switch (text) {
+            case "+-":
+                return 18;
+            case "-+":
+                return 19;
+            default:
+                return Arrays.asList(GLYPHS).indexOf(text);
+        }
     }
 
     private static int parseNag(PGNTokenizer.Token token) {
