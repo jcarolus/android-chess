@@ -32,6 +32,14 @@ public final class GameSelection implements Serializable {
                 .orderBy(sortColumn, sortDirection);
     }
 
+    /** All Games, retaining the order selected on the database screen. */
+    public GameSelection withoutFilters() {
+        GameSelection all = new GameSelection();
+        all.sortColumn = sortColumn;
+        all.sortDirection = sortDirection;
+        return all;
+    }
+
     /** Only applied criteria and sorting identify a study's resume position. */
     public String resumeKey() {
         GameFilter filter = filter();

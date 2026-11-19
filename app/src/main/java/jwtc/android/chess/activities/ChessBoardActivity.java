@@ -1,6 +1,5 @@
 package jwtc.android.chess.activities;
 
-import java.util.Locale;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.ClipData;
@@ -21,6 +20,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
@@ -39,6 +39,7 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.services.TextToSpeechApi;
+import jwtc.android.chess.tools.ExportActivity;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
 import jwtc.android.chess.views.ChessPieceView;
@@ -244,8 +245,8 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         new SaveGameDialog(this, gameApi, gameId, this::saveGameFromDialog).show();
     }
 
-    protected void startSaveGameToFile(int requestCode) {
-        startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", requestCode);
+    protected void startSaveGameToFile() {
+        ExportActivity.exportGame(this, gameApi.exportFullPGN());
     }
 
     protected void copyGameToClipboard() {
@@ -893,7 +894,8 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
             }
 
             ChessPieceView existing = existingPieces == null ? null : existingPieces[i];
-            if (existing != null && (existing.getPiece() != piece || existing.getColor() != color)) {
+            if (existing != null
+                    && (existing.getPiece() != piece || existing.getColor() != color)) {
                 chessBoardView.removeView(existing);
                 existing = null;
             }

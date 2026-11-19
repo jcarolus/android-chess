@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">Exportă PGN</string>
+    <string name="export_create">Creează fișier nou</string>
+    <string name="export_append">Adaugă la un fișier</string>
+    <string name="export_replace">Înlocuiește fișierul</string>
+    <string name="export_choose_action">Alege cum să exporți partidele.</string>
+    <string name="export_all">Toate partidele</string>
+    <string name="export_matching">Partide care corespund filtrelor curente</string>
+    <string name="export_replace_confirm">Înlocuiești tot conținutul fișierului „%1$s”? Această acțiune nu poate fi anulată.</string>
+    <string name="export_preparing">Se pregătesc partidele pentru export…</string>
+    <string name="export_writing">Se exportă partidele…</string>
+    <string name="export_done">Export finalizat.</string>
+    <string name="export_no_games">Nu există partide de exportat.</string>
+    <string name="export_failed">Exportul a eșuat. Alege altă destinație sau închide și încearcă din nou.</string>
+    <string name="export_partial">Exportul a eșuat. Fișierul poate fi scris parțial. Verifică conținutul înainte de a reîncerca pentru a evita partidele duplicate sau incomplete. Poți alege altă destinație.</string>
+</resources>

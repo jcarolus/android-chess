@@ -11,6 +11,22 @@ import org.junit.Test;
 
 public class GameSelectionTest {
     @Test
+    public void allGamesExportDiscardsFiltersAndKeepsChosenOrder() {
+        GameSelection selection = new GameSelection();
+        selection.white = "Carlsen";
+        selection.useWhite = selection.useBefore = true;
+        selection.before = null;
+        selection.sortColumn = "event";
+        selection.sortDirection = "ASC";
+        GameSelection all = selection.withoutFilters();
+        assertTrue(all.filter().isEmpty());
+        assertTrue(all.hasValidDates());
+        assertEquals("event ASC", all.filter().orderBy());
+        assertFalse(selection.filter().isEmpty());
+        assertFalse(selection.hasValidDates());
+    }
+
+    @Test
     public void disabledFiltersKeepValuesWithoutRestrictingGames() {
         GameSelection selection = new GameSelection();
         selection.white = "White";
@@ -37,8 +53,12 @@ public class GameSelectionTest {
         selection.sortColumn = "white";
         selection.sortDirection = "ASC";
         GameFilter filter = selection.filter();
-        assertEquals("white LIKE ? AND black LIKE ? AND event LIKE ? AND topic LIKE ? AND date >= ? AND date <= ? AND result = ?", filter.selection());
-        assertArrayEquals(new String[] {"%A%", "%B%", "%Open%", "%Mate%", "1000", "2000", "*"}, filter.selectionArgs());
+        assertEquals(
+                "white LIKE ? AND black LIKE ? AND event LIKE ? AND topic LIKE ? AND date >= ? AND date <= ? AND result = ?",
+                filter.selection());
+        assertArrayEquals(
+                new String[] {"%A%", "%B%", "%Open%", "%Mate%", "1000", "2000", "*"},
+                filter.selectionArgs());
         assertEquals("white ASC", filter.orderBy());
     }
 
@@ -100,7 +120,8 @@ public class GameSelectionTest {
             output.writeObject(selection);
         }
         GameSelection restored;
-        try (ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+        try (ObjectInputStream input =
+                new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
             restored = (GameSelection) input.readObject();
         }
         assertEquals(selection.resumeKey(), restored.resumeKey());

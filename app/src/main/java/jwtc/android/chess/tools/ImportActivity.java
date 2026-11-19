@@ -74,6 +74,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         _tvWorkCntFail = findViewById(R.id.TextViewDoImportCntFail);
         _tvWorkCntDuplicates = findViewById(R.id.TextViewDoImportCntDuplicates);
         _progress = findViewById(R.id.ProgressDoImport);
+        findViewById(R.id.ButtonClose).setOnClickListener(view -> finish());
 
         _progress.setVisibility(View.INVISIBLE);
 
@@ -200,6 +201,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     public void OnImportStarted(int mode) {
         _tvWorkCntDuplicates.setText(String.valueOf(0));
         _progress.setVisibility(View.VISIBLE);
+        findViewById(R.id.ButtonClose).setVisibility(View.GONE);
     }
 
     @Override
@@ -213,7 +215,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     public void OnImportFinished(int mode) {
         _progress.setVisibility(View.INVISIBLE);
         setResult(RESULT_OK);
-        finish();
+        findViewById(R.id.ButtonClose).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -225,6 +227,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     public void OnImportFatalError(int mode) {
         _progress.setVisibility(View.INVISIBLE);
         _tvWorkCnt.setText(R.string.import_failed);
+        findViewById(R.id.ButtonClose).setVisibility(View.VISIBLE);
     }
 
     @Override

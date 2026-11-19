@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">Exportar PGN</string>
+    <string name="export_create">Crear archivo nuevo</string>
+    <string name="export_append">Añadir a un archivo</string>
+    <string name="export_replace">Reemplazar archivo</string>
+    <string name="export_choose_action">Elige cómo exportar las partidas.</string>
+    <string name="export_all">Todas las partidas</string>
+    <string name="export_matching">Partidas que coinciden con los filtros actuales</string>
+    <string name="export_replace_confirm">¿Reemplazar todo el contenido de «%1$s»? Esta acción no se puede deshacer.</string>
+    <string name="export_preparing">Preparando partidas para exportar…</string>
+    <string name="export_writing">Exportando partidas…</string>
+    <string name="export_done">Exportación completada.</string>
+    <string name="export_no_games">No hay partidas para exportar.</string>
+    <string name="export_failed">Error al exportar. Elige otro destino o cierra e inténtalo de nuevo.</string>
+    <string name="export_partial">Error al exportar. El archivo puede haberse escrito parcialmente. Revisa su contenido antes de volver a intentarlo para evitar partidas duplicadas o incompletas. Puedes elegir otro destino.</string>
+</resources>

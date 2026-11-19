@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">PGN exportieren</string>
+    <string name="export_create">Neue Datei erstellen</string>
+    <string name="export_append">An Datei anhängen</string>
+    <string name="export_replace">Datei ersetzen</string>
+    <string name="export_choose_action">Wählen Sie, wie die Partien exportiert werden sollen.</string>
+    <string name="export_all">Alle Partien</string>
+    <string name="export_matching">Partien passend zu den aktuellen Filtern</string>
+    <string name="export_replace_confirm">Den gesamten Inhalt von „%1$s“ ersetzen? Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="export_preparing">Partien für den Export vorbereiten…</string>
+    <string name="export_writing">Partien exportieren…</string>
+    <string name="export_done">Export abgeschlossen.</string>
+    <string name="export_no_games">Keine Partien zum Exportieren.</string>
+    <string name="export_failed">Export fehlgeschlagen. Wählen Sie ein anderes Ziel oder schließen Sie und versuchen Sie es erneut.</string>
+    <string name="export_partial">Export fehlgeschlagen. Die Datei wurde möglicherweise teilweise geschrieben. Prüfen Sie den Inhalt vor einem erneuten Versuch, um doppelte oder unvollständige Partien zu vermeiden. Sie können ein anderes Ziel wählen.</string>
+</resources>

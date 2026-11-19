@@ -22,7 +22,8 @@
             <TextView
                 android:id="@+id/TextViewDoImport"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/control_gap"/>
 
             <TableLayout
                 android:layout_width="wrap_content"
@@ -89,5 +90,14 @@
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/ButtonClose"
+        style="?attr/chessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/control_gap"
+        android:text="@string/button_close"
+        android:visibility="gone" />
 
 </LinearLayout>

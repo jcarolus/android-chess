@@ -6,6 +6,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +15,7 @@ import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNProvider;
+import jwtc.chess.PgnExport;
 
 /** The Game Database: saved Games in the PGN content provider. */
 public final class GameStore {
@@ -144,6 +147,21 @@ public final class GameStore {
             }
         }
         return out.toString();
+    }
+
+    /** Streams matching Games in the selected order, returning the number written. */
+    public int exportAsPgn(GameFilter filter, OutputStream output) throws IOException {
+        int count = 0;
+        try (Cursor cursor = query(filter)) {
+            if (cursor == null) {
+                throw new IOException("Could not read the Game Database");
+            }
+            while (cursor.moveToNext()) {
+                PgnExport.writeGame(output, Utils.getColumnString(cursor, PGNColumns.PGN));
+                ++count;
+            }
+        }
+        return count;
     }
 
     /** The Game the cursor is on. */

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -60,13 +59,11 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private static final String PREF_STUDY_ENGINE = "studyEngineEnabled";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
     private static final int REQUEST_MENU = 1;
-    private static final int REQUEST_SAVE_GAME_TO_FILE = 2;
     private boolean engineWarningAcknowledged;
     private AlertDialog analysisDialog;
     private String sessionId;
     private boolean sessionLoaded;
     private Bundle restoredSession;
-    private Uri pendingSaveUri;
     // The game came from Play's "game_pgn" preference, so analysis changes are written back there.
     private boolean fromGamePgnPref;
     private long lGameID;
@@ -261,7 +258,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         } else if (getString(R.string.title_delete_game).equals(item)) {
             deleteGame();
         } else if (getString(R.string.menu_save_game_to_file).equals(item)) {
-            startSaveGameToFile(REQUEST_SAVE_GAME_TO_FILE);
+            startSaveGameToFile();
         } else if (getString(R.string.menu_clip_pgn).equals(item)) {
             copyGameToClipboard();
         }
@@ -294,14 +291,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
                     finish();
                 },
                 null);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SAVE_GAME_TO_FILE && resultCode == RESULT_OK && data != null) {
-            pendingSaveUri = data.getData();
-        }
     }
 
     @Override
@@ -381,10 +370,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 }
             }
             sessionLoaded = true;
-        }
-        if (pendingSaveUri != null) {
-            saveToFile(pendingSaveUri, gameApi.exportFullPGN());
-            pendingSaveUri = null;
         }
         AnalysisResults.Saved saved = readAnalysisState(restoredSession);
         if (engineEnabled) {

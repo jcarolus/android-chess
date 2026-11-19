@@ -20,6 +20,7 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.play.MenuDialog;
+import jwtc.android.chess.tools.ExportActivity;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.GameSelection;
@@ -179,14 +180,6 @@ public class GameSelectionActivity extends BaseActivity {
                                 transfer(uri, ImportService.IMPORT_GAMES);
                             }
                         });
-        ActivityResultLauncher<String> export =
-                registerForActivityResult(
-                        new ActivityResultContracts.CreateDocument("application/x-chess-pgn"),
-                        uri -> {
-                            if (uri != null) {
-                                transfer(uri, ImportService.EXPORT_GAME_DATABASE);
-                            }
-                        });
         findViewById(R.id.ButtonMenu)
                 .setOnClickListener(
                         v ->
@@ -203,7 +196,7 @@ public class GameSelectionActivity extends BaseActivity {
                                                                     R.string
                                                                             .pgntool_export_explanation)
                                                             .equals(item)) {
-                                                        export.launch("chess.pgn");
+                                                        chooseExportScope();
                                                     } else if (getString(
                                                                     R.string
                                                                             .menu_delete_game_database)
@@ -220,6 +213,33 @@ public class GameSelectionActivity extends BaseActivity {
                                                 0,
                                                 R.array.gameslist_menu)
                                         .show());
+    }
+
+    private void chooseExportScope() {
+        GameSelection selection = currentSelection();
+        int checked = selection.filter().isEmpty() ? 0 : 1;
+        int[] scope = {checked};
+        new ChessAlertDialogBuilder(this)
+                .setTitle(R.string.pgntool_export_explanation)
+                .setSingleChoiceItems(
+                        new String[] {
+                            getString(R.string.export_all), getString(R.string.export_matching)
+                        },
+                        checked,
+                        (dialog, which) -> scope[0] = which)
+                .setNegativeButton(R.string.button_cancel, null)
+                .setPositiveButton(
+                        R.string.button_ok,
+                        (dialog, which) -> {
+                            GameSelection export =
+                                    scope[0] == 0 ? selection.withoutFilters() : selection;
+                            if (!export.hasValidDates()) {
+                                doToast(getString(R.string.gameslist_invalid_dates));
+                                return;
+                            }
+                            ExportActivity.exportDatabase(this, export);
+                        })
+                .show();
     }
 
     private void transfer(Uri uri, int mode) {

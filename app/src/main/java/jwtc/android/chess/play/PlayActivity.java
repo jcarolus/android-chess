@@ -67,7 +67,6 @@ public class PlayActivity extends ChessBoardActivity
     public static final int REQUEST_CLOCK = 6;
     public static final int REQUEST_ECO = 7;
     public static final int REQUEST_RANDOM_FISCHER = 8;
-    public static final int REQUEST_SAVE_GAME_TO_FILE = 9;
     public static final int REQUEST_SAVE_POSITION_TO_FILE = 10;
     public static final int REQUEST_OPEN_POSITION_FILE = 11;
     public static final int REQUEST_OPEN_GAME_FILE = 12;
@@ -528,10 +527,6 @@ public class PlayActivity extends ChessBoardActivity
                     editor.putString("game_pgn", null);
                     editor.commit();
                 }
-            } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
-                if (uri != null) {
-                    saveToFile(uri, gameApi.exportFullPGN());
-                }
             } else if (requestCode == REQUEST_SAVE_POSITION_TO_FILE) {
                 if (uri != null) {
                     saveToFile(uri, gameApi.getFEN());
@@ -617,7 +612,8 @@ public class PlayActivity extends ChessBoardActivity
     public void OnEngineInfo(String message, float value) {
         // Engine updates often leave the score unchanged at one decimal, so only
         // redraw it when the text actually changes.
-        final String scoreText = String.format(Locale.getDefault(Locale.Category.FORMAT), "%.1f", value);
+        final String scoreText =
+                String.format(Locale.getDefault(Locale.Category.FORMAT), "%.1f", value);
         if (!scoreText.contentEquals(textViewEngineValue.getText())) {
             textViewEngineValue.setText(scoreText);
         }
@@ -912,7 +908,7 @@ public class PlayActivity extends ChessBoardActivity
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
                     copyGameToClipboard();
                 } else if (item.equals(getString(R.string.menu_save_game_to_file))) {
-                    startSaveGameToFile(REQUEST_SAVE_GAME_TO_FILE);
+                    startSaveGameToFile();
                 } else if (item.equals(getString(R.string.menu_save_position_to_file))) {
                     startIntentForSaveDocument(
                             "application/x-chess-fen",
