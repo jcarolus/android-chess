@@ -16,12 +16,7 @@ final class TopicImport implements ImportSource {
     }
 
     static final class DefaultTopic {
-        final boolean required;
         String value;
-
-        DefaultTopic(boolean required) {
-            this.required = required;
-        }
     }
 
     private final String filename;
@@ -45,8 +40,7 @@ final class TopicImport implements ImportSource {
                     item -> {
                         if (Pgn.optionalTagValue(Pgn.readHeaderTags(item.pgn).get("Topic"))
                                 == null) {
-                            defaults.computeIfAbsent(
-                                    item.sourceName, key -> new DefaultTopic(studies));
+                            defaults.computeIfAbsent(item.sourceName, key -> new DefaultTopic());
                         }
                         return !cancelled;
                     });

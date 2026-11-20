@@ -10,8 +10,6 @@ import jwtc.chess.board.BoardConstants;
 
 public class Pos {
     // returns positional value [0-63] for squares [a8-h1]
-    // when a position cannot be created a message is sent on console out (co).
-    // used to initialize values, no speed needed
     public static int fromString(final String s) throws Exception {
         if (s.length() != 2) {
             throw new Exception("Invalid position [" + s + "]");

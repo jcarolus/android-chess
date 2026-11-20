@@ -1086,25 +1086,6 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    //    @Override
-    //    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten
-    // in certain appcompat versions
-    //    public boolean dispatchKeyEvent(KeyEvent event) {
-    //        int keyCode = event.getKeyCode();
-    //        int action = event.getAction();
-    //        boolean isDown = action == 0;
-    //
-    //        if (skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
-    //            return true;
-    //        }
-    //
-    //        if (keyCode == KeyEvent.KEYCODE_MENU) {
-    //            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
-    //        }
-    //
-    //        return super.dispatchKeyEvent(event);
-    //    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 

@@ -51,9 +51,6 @@ public class FixedDropdownView extends LinearLayout {
         autoCompleteTextView.setAdapter(adapter);
 
         autoCompleteTextView.setOnClickListener(v -> autoCompleteTextView.showDropDown());
-        //        autoCompleteTextView.setOnFocusChangeListener((v, hasFocus) -> {
-        //            if (hasFocus) autoCompleteTextView.showDropDown();
-        //        });
 
         textInputLayout.setEndIconOnClickListener(
                 v -> {

@@ -237,7 +237,6 @@ public class GamesListActivity extends ChessBoardActivity {
                     if (nImageIndex == columnIndex) {
                         float fR = Utils.getColumnFloat(cursor, PGNColumns.RATING);
                         ((RatingBar) view).setRating(fR);
-                        // ((RatingBar)view).setRating(0.4F);
                         return true;
                     }
                     int nDateIndex = cursor.getColumnIndex(PGNColumns.DATE);

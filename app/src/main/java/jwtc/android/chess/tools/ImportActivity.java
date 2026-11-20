@@ -26,6 +26,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
     private static final String PREF_LAST_STUDY_IMPORT_TOPIC = "lastStudyImportTopic";
 
+    private static final String PREF_LAST_GAME_IMPORT_TOPIC = "lastGameImportTopic";
+
     private ImportService importService = null;
     private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail, _tvWorkCntDuplicates;
     private LinearProgressIndicator _progress;
@@ -105,11 +107,9 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
-                // API 5+ solution
                 onBackPressed();
                 return true;
             default:
@@ -242,19 +242,19 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         topicField = new EditText(this);
         topicField.setSingleLine(true);
         topicField.setHint(R.string.study_topic);
-        boolean studyImport = _mode == ImportService.IMPORT_STUDIES;
-        if (topicDraft == null && studyImport) {
-            topicDraft = getPrefs().getString(PREF_LAST_STUDY_IMPORT_TOPIC, null);
+        String topicPreference =
+                _mode == ImportService.IMPORT_STUDIES
+                        ? PREF_LAST_STUDY_IMPORT_TOPIC
+                        : PREF_LAST_GAME_IMPORT_TOPIC;
+        if (topicDraft == null) {
+            topicDraft = getPrefs().getString(topicPreference, null);
         }
         topicField.setText(topicDraft);
         fields.addView(topicField);
         topicDraft = null;
         topicDialog =
                 new ChessAlertDialogBuilder(this)
-                        .setTitle(
-                                prompt.defaults.required
-                                        ? R.string.study_import_topic
-                                        : R.string.import_optional_topic)
+                        .setTitle(R.string.study_import_topic)
                         .setMessage(prompt.filename)
                         .setView(fields)
                         .setPositiveButton(R.string.button_ok, null)
@@ -269,16 +269,11 @@ public class ImportActivity extends BaseActivity implements ImportListener {
                 .setOnClickListener(
                         view -> {
                             String topic = Pgn.optionalTagValue(topicField.getText().toString());
-                            if (topic == null && prompt.defaults.required) {
+                            if (topic == null) {
                                 topicField.setError(
                                         getString(R.string.study_import_value_required));
                             } else if (importService != null) {
-                                if (studyImport) {
-                                    getPrefs()
-                                            .edit()
-                                            .putString(PREF_LAST_STUDY_IMPORT_TOPIC, topic)
-                                            .apply();
-                                }
+                                getPrefs().edit().putString(topicPreference, topic).apply();
                                 topicDialog.dismiss();
                                 topicDialog = null;
                                 importService.answerTopicPrompt(prompt, topic, true);

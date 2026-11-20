@@ -244,15 +244,6 @@ public class PlayActivity extends ChessBoardActivity
                     return true;
                 });
 
-        //        ImageButton butPgn = findViewById(R.id.ButtonPGN);
-        //        butPgn.setOnClickListener(new View.OnClickListener() {
-        //            @Override
-        //            public void onClick(View v) {
-        //                PGNDialog dialog = new PGNDialog(PlayActivity.this, gameApi);
-        //                dialog.show();
-        //            }
-        //        });
-
         imageBottomTurn = findViewById(R.id.ImageBottomTurn);
         imageTopTurn = findViewById(R.id.ImageTopTurn);
         textViewTopPlayer = findViewById(R.id.TextViewTopPlayer);
@@ -316,12 +307,10 @@ public class PlayActivity extends ChessBoardActivity
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
 
-        // Horizontal layout manager
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         historyRecyclerView.setLayoutManager(layoutManager);
 
-        // Set adapter
         moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
         historyRecyclerView.setAdapter(moveAdapter);
         historyRecyclerView.setHorizontalScrollBarEnabled(true);

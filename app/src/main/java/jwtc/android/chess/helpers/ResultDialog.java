@@ -12,8 +12,6 @@ public class ResultDialog<T> extends Dialog {
 
     public ResultDialog(
             @NonNull Context context, ResultDialogListener<T> listener, int requestCode) {
-        // The dialog theme was hardcoded, so every dialog kept the colour palette
-        // even with the e-ink theme on.
         super(
                 context,
                 EinkMode.isThemeEnabled()

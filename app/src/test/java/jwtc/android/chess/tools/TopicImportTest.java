@@ -1,7 +1,6 @@
 package jwtc.android.chess.tools;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +31,6 @@ public class TopicImportTest {
                         "lesson.pgn",
                         () -> pgn(pgn + "\n\n" + TAGGED),
                         (filename, defaults) -> {
-                            assertTrue(defaults.required);
                             prompted.add(filename);
                             defaults.value = "Minor \"pieces\" \\ tactics";
                             return true;
@@ -79,17 +77,22 @@ public class TopicImportTest {
     }
 
     @Test
-    public void optionalTopicCanBeLeftBlankWithoutAddingTags() throws Exception {
+    public void gameImportFillsMissingTopicsWithoutDefaultingEvents() throws Exception {
         TopicImport source =
                 new TopicImport(
-                        "practice.pgn",
-                        () -> pgn(MOVES),
+                        "games.pgn",
+                        () -> pgn(MOVES + "\n\n" + TAGGED),
                         (filename, defaults) -> {
-                            assertFalse(defaults.required);
+                            assertEquals("games.pgn", filename);
+                            defaults.value = "My games";
                             return true;
                         },
                         false);
-        assertEquals(Map.of(), Pgn.parse(games(source).get(0)).tags);
+        List<String> imported = games(source);
+        assertEquals(2, imported.size());
+        assertEquals(Map.of("Topic", "My games"), Pgn.parse(imported.get(0)).tags);
+        assertEquals(Pgn.parse(TAGGED).tags, Pgn.parse(imported.get(1)).tags);
+        assertTrue(imported.get(0).trim().endsWith(MOVES));
     }
 
     @Test

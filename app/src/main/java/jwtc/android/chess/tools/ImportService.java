@@ -210,9 +210,7 @@ public class ImportService extends Service {
                             importApi = new ImportApi();
                             return new ImportJob(
                                     mode,
-                                    uri == null
-                                            ? bundledPgn("puzzles.pgn")
-                                            : topicImport(uri, false),
+                                    uri == null ? bundledPgn("puzzles.pgn") : openPgnSource(uri),
                                     new PuzzleImportHandler(importApi, getContentResolver()));
                         });
                 break;
@@ -234,7 +232,7 @@ public class ImportService extends Service {
                             () ->
                                     new ImportJob(
                                             mode,
-                                            openPgnSource(uri),
+                                            topicImport(uri, false),
                                             new GameImportHandler(getContentResolver())));
                 }
                 break;
@@ -246,7 +244,7 @@ public class ImportService extends Service {
                                         mode,
                                         uri == null
                                                 ? bundledPgn("practice.pgn")
-                                                : topicImport(uri, false),
+                                                : openPgnSource(uri),
                                         new PracticeImportHandler(getContentResolver())));
                 break;
             case IMPORT_OPENINGS:

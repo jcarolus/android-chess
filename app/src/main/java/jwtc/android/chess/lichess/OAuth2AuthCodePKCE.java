@@ -79,22 +79,6 @@ public class OAuth2AuthCodePKCE {
         return tokenResponse != null ? tokenResponse.accessToken : null;
     }
 
-    //    public void refreshAccessToken(Callback<TokenResponse> callback) {
-    //        if (tokenResponse == null || tokenResponse.refreshToken == null) {
-    //            callback.onError(new Exception("No refresh token"));
-    //            return;
-    //        }
-    //
-    //        TokenRequest request = tokenResponse.createRefreshRequest();
-    //        authService.performTokenRequest(request, (response, ex) -> {
-    //            if (ex != null) callback.onError(ex);
-    //            else {
-    //                tokenResponse = response;
-    //                callback.onSuccess(response);
-    //            }
-    //        });
-    //    }
-
     public interface Callback<T, E> {
         void onSuccess(T result);
 
