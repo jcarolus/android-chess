@@ -1,5 +1,6 @@
 package jwtc.android.chess.practice;
 
+import java.util.Locale;
 import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 
 import android.content.Intent;
@@ -8,14 +9,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.matecollection.MateCollection;
+import jwtc.android.chess.matecollection.MateCollectionDefaults;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.matecollection.MateScore;
+import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
@@ -24,6 +29,8 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeActivity extends ChessBoardActivity implements MateCollection.Listener {
     private static final String TAG = "PracticeActivity";
     private MateCollection mateCollection;
+    private MateCollectionDefaults collectionDefaults;
+    private boolean emptyCollection;
     private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
     private ImageView imageTurn, imgStatus;
@@ -32,8 +39,13 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     @Override
     public boolean requestMove(final int from, final int to) {
+        if (!mateCollection.isPositionReady()) {
+            rebuildBoard();
+            return false;
+        }
+
         if (gameApi.isEnded()) {
-            setMessage("Finished position");
+            setMessage(getString(R.string.practice_finished_position));
             rebuildBoard();
             return false;
         }
@@ -59,6 +71,12 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
         gameApi = new GameApi();
         mateCollection = new MateCollection(this, MateKind.PRACTICE_POSITIONS, gameApi, this);
+        collectionDefaults =
+                new MateCollectionDefaults(
+                        this,
+                        MateKind.PRACTICE_POSITIONS,
+                        savedInstanceState,
+                        this::importDefaultPositions);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
@@ -80,6 +98,32 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
         percentBar = findViewById(R.id.percentBar);
 
+        ActivityResultLauncher<String[]> pickFile =
+                registerForActivityResult(
+                        new ActivityResultContracts.OpenDocument(),
+                        uri -> {
+                            if (uri != null) {
+                                Intent intent = new Intent(this, ImportActivity.class);
+                                intent.setData(uri);
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                intent.putExtra("mode", ImportService.IMPORT_PRACTICE);
+                                startActivity(intent);
+                            }
+                        });
+        View.OnClickListener openMenu =
+                v ->
+                        new MenuDialog(
+                                        this,
+                                        (request, data) ->
+                                                onMenuItem(data.getString("item"), pickFile),
+                                        0,
+                                        emptyCollection
+                                                ? R.array.practice_empty_menu
+                                                : R.array.practice_menu)
+                                .show();
+        findViewById(R.id.ButtonMenu).setOnClickListener(openMenu);
+        findViewById(R.id.EmptyCollectionMenu).setOnClickListener(openMenu);
+
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -93,6 +137,45 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
                 findViewById(R.id.play_board_bottom));
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
+    }
+
+    private void onMenuItem(String item, ActivityResultLauncher<String[]> pickFile) {
+        if (getString(R.string.pgntool_import_practice).equals(item)) {
+            pickFile.launch(new String[] {"*/*"});
+        } else if (getString(R.string.collection_restore_defaults).equals(item)) {
+            collectionDefaults.restoreDefaults();
+        } else if (getString(R.string.pgntool_delete_practice).equals(item)) {
+            confirmDeleteCollection();
+        } else if (getString(R.string.pgntool_reset_practice).equals(item)) {
+            openConfirmDialog(
+                    getString(R.string.pgntool_confirm_practice_reset),
+                    getString(R.string.button_ok),
+                    getString(R.string.button_cancel),
+                    () -> {
+                        mateCollection.pause();
+                        MateCollection.resetProgress(this, MateKind.PRACTICE_POSITIONS);
+                        mateCollection.resume();
+                        doToast(getString(R.string.practice_set_reset));
+                    },
+                    null);
+        }
+    }
+
+    private void confirmDeleteCollection() {
+        openConfirmDialog(
+                getString(R.string.practice_delete_confirmation)
+                        + "\n\n"
+                        + getString(
+                                R.string.pgntool_delete_item_count,
+                                MateCollection.countPositions(this, MateKind.PRACTICE_POSITIONS)),
+                getString(R.string.choice_delete),
+                getString(R.string.button_cancel),
+                () -> {
+                    mateCollection.pause();
+                    collectionDefaults.deleteAllPositions();
+                    mateCollection.resume();
+                },
+                null);
     }
 
     @Override
@@ -117,7 +200,15 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     }
 
     @Override
+    public void onPositionPreparing() {
+        showCollection(true);
+        buttonRetry.setEnabled(false);
+        textViewSolution.setText(R.string.practice_preparing_position);
+    }
+
+    @Override
     public void onPositionStarted(int position, int total, int usersColor) {
+        showCollection(true);
         buttonRetry.setEnabled(false);
         chessBoardView.setRotated(usersColor == BoardConstants.BLACK);
 
@@ -132,21 +223,47 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     @Override
     public void onEmptyCollection() {
-        Intent intent = new Intent();
-        intent.setClass(PracticeActivity.this, ImportActivity.class);
+        showCollection(false);
+        collectionDefaults.onEmptyCollection();
+    }
+
+    private void importDefaultPositions() {
+        Intent intent = new Intent(this, ImportActivity.class);
         intent.putExtra("mode", ImportService.IMPORT_PRACTICE);
-        startActivityForResult(intent, ImportService.IMPORT_PRACTICE);
+        startActivity(intent);
+    }
+
+    private void showCollection(boolean hasPositions) {
+        emptyCollection = !hasPositions;
+        findViewById(R.id.board_area).setVisibility(hasPositions ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.play_controls)
+                .setVisibility(hasPositions ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.EmptyCollection).setVisibility(hasPositions ? View.GONE : View.VISIBLE);
+        buttonNext.setEnabled(hasPositions);
+        buttonRetry.setEnabled(false);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        collectionDefaults.saveState(state);
+    }
+
+    @Override
+    protected void onDestroy() {
+        collectionDefaults.close();
+        super.onDestroy();
     }
 
     @Override
     public void onEndOfCollection() {
-        setMessage("You completed all puzzles!!!");
+        setMessage(getString(R.string.practice_completed_collection));
     }
 
     @Override
     public void onScore(MateScore score) {
         textViewPercentage.setText(
-                String.format("%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
+                String.format(Locale.getDefault(Locale.Category.FORMAT), "%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
         percentBar.setProgressCompat((int) score.percentage(), /* animated= */ true);
     }
 

@@ -112,6 +112,11 @@ public class PGNDateView extends LinearLayout {
         return calendar.getTime();
     }
 
+    /** Parses the visible input, including dates entered with the keyboard. */
+    public Date getEnteredDate() {
+        return PgnDate.parse(textInputEditText.getText().toString());
+    }
+
     public void addOnTextChangedListener(TextWatcher watcher) {
         textInputEditText.addTextChangedListener(watcher);
     }

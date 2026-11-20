@@ -1,35 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>Avanzado</h3>
-        <p>Crea o importa tu propio contenido aquí.</p>
-
-        <h4>Exportar la base de datos de partidas a la tarjeta SD</h4>
-        <p>Todas las partidas de la base de datos pueden exportarse a un único archivo PGN en la tarjeta SD. Este archivo se llamará chess.pgn y, si existe, se sobrescribirá.</p>
-
-        <h4>Importar partidas a la base de datos</h4>
-        <p>Usa esta opción para añadir partidas a la base de datos. Te permite buscar un archivo PGN. Selecciónalo y elige importar.</p>
-
-        <h4>Eliminar todas las partidas de la base de datos</h4>
-        <p>Usa esta opción si quieres limpiar la base de datos. Asegúrate primero de hacer una copia de seguridad en la tarjeta SD; esta acción no se puede deshacer.</p>
-
-        <h4>Crear conjunto de práctica</h4>
-        <p>Crea posiciones de práctica a partir de partidas que terminan en jaque mate. Navega hasta el archivo que deseas procesar. Las entradas fallidas suelen ser partidas que no terminaron en jaque mate o que están duplicadas.</p>
-
-        <h4>Restablecer conjunto de práctica</h4>
-        <p>¿Quieres volver a empezar a practicar? Esto también restablecerá tu contador de tiempo promedio.</p>
-
-
-                ]]>
-            </string>
     <string name="alert_no">No</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Sí</string>
     <string name="app_name">Ajedrez</string>
     <string name="app_name_help">Ayuda</string>
     <string name="app_name_import">Importar</string>
-    <string name="app_name_pgntools">Avanzado</string>
     <string name="app_name_play">Jugar</string>
     <string name="app_name_playonline">Jugar en línea</string>
     <string name="app_name_save_games">Partidas guardadas</string>
@@ -289,13 +265,13 @@
     <string name="options_play_white">Blancas</string>
     <string name="options_quiescent_off">Búsqueda de quietud desactivada</string>
     <string name="options_quiescent_on">Búsqueda de quietud activada</string>
-    <string name="pgntool_confirm_delete_games">¿Estás seguro?</string>
+    <string name="pgntool_delete_item_count">Elementos que se eliminarán: %1$d</string>
+    <string name="pgntool_confirm_delete_games">¿Eliminar todas las partidas de la base de datos, incluidos los estudios?</string>
     <string name="pgntool_confirm_practice_reset">¿Seguro que quieres reiniciar?</string>
     <string name="pgntool_create_db_explanation">Crear base de datos de aperturas</string>
     <string name="pgntool_delete_games">Eliminar todas las partidas de la base de datos</string>
     <string name="pgntool_games_deleted">Todas las partidas eliminadas</string>
     <string name="pgntool_export_explanation">Exportar base de datos de partidas</string>
-    <string name="pgntool_help">Ayuda</string>
     <string name="pgntool_import_explanation">Importar partidas a la base de datos</string>
     <string name="importing_games">Importando partidas…</string>
     <string name="importing_puzzles">Importando problemas…</string>
@@ -367,6 +343,7 @@
     <string name="pref_speech">Voz</string>
     <string name="pref_user_long_move_descriptions">Usar descripción completa del movimiento</string>
     <string name="tts_locale_not_supported">La conversión de texto a voz no admite tu configuración regional</string>
+    <string name="tts_language_differs_from_app">La conversión de texto a voz usa un idioma distinto al de la aplicación</string>
     <string name="tts_not_loaded">No se pudo cargar el texto a voz</string>
     <string name="tts_example_move">Alfil captura en G7, jaque</string>
     <string name="tts_selected">Seleccionado</string>
@@ -423,7 +400,6 @@
     <string name="start_wifiboard">Tablero WiFi</string>
     <string name="start_ics">Jugar en línea</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Avanzado</string>
     <string name="start_play">Jugar</string>
     <string name="start_practice">Practicar</string>
     <string name="start_puzzles">Problemas</string>
@@ -457,6 +433,7 @@
     <string name="title_challenge">Desafío</string>
     <string name="title_overwrite_main_line">¿Sobrescribir la línea principal desde esta posición?</string>
     <string name="title_delete_game">Eliminar partida</string>
+    <string name="game_delete_failed">No se pudo eliminar la partida. Inténtalo de nuevo.</string>
     <string name="title_edit_command">Editar comando</string>
     <string name="title_edit_or_delete">¿Editar o eliminar?</string>
     <string name="title_error">Error</string>
@@ -558,7 +535,6 @@
     <string name="analysis_move_mistake">Error</string>
     <string name="analysis_move_blunder">Error grave</string>
     <string name="analysis_move_forced">Forzado</string>
-    <string name="analysis_move_pending">Analizando movimiento…</string>
     <string name="analysis_move_unavailable">Análisis no disponible</string>
     <string name="analysis_white_to_move">Juegan las blancas</string>
     <string name="analysis_black_to_move">Juegan las negras</string>
@@ -576,7 +552,6 @@
     <string name="analysis_builtin_warning">Para un mejor análisis, instala un motor de ajedrez compatible con OEX.</string>
     <string name="analysis_dont_show_again">No volver a mostrar</string>
     <string name="analysis_continue">Continuar</string>
-    <string name="analysis_duck_unsupported">No se admite el análisis de ajedrez pato.</string>
     <string name="new_game_variant_standard">Estándar</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Rey de la colina</string>
@@ -593,6 +568,89 @@
     <string name="share_lichess_profile">Compartir mi perfil de Lichess</string>
     <string name="app_link_invalid">Este enlace de Chess no es válido o no es compatible.</string>
     <string name="app_link_too_large">Esta partida es demasiado grande para un enlace. Comparte la partida completa como PGN.</string>
-    <string name="app_link_no_engine">El análisis con motor no está disponible para esta variante. Puedes explorar el tablero y las jugadas.</string>
     <string name="share_failed">No se pudo compartir la partida. Inténtalo de nuevo.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>uno|un</item>
+        <item>dos</item>
+        <item>tres</item>
+        <item>cuatro</item>
+        <item>cinco</item>
+        <item>seis</item>
+        <item>siete</item>
+        <item>ocho</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>caballo</item>
+        <item>alfil</item>
+        <item>torre</item>
+        <item>dama|reina</item>
+    </string-array>
+    <string name="move_input_castle">enroque|enrocar</string>
+    <string name="move_input_captures">toma|captura</string>
+    <string name="menu_delete_game_database">Eliminar todas las partidas, incluidos los estudios</string>
+    <string name="practice_delete_confirmation">¿Eliminar todas las posiciones de práctica y el progreso?</string>
+    <string name="puzzle_delete_confirmation">¿Eliminar todas las posiciones de problemas y el progreso?</string>
+    <string name="collection_restore_prompt">Has eliminado todas las posiciones. ¿Quieres restaurar las posiciones predeterminadas?</string>
+    <string name="collection_restore_defaults">Restaurar las posiciones predeterminadas</string>
+    <string name="collection_empty">No hay posiciones. Usa el menú para importar o restaurar posiciones.</string>
+    <string name="collection_delete_failed">No se pudieron eliminar las posiciones. Inténtalo de nuevo.</string>
+    <string name="lichess_create_challenge_player_invalid">Ese nombre de usuario de Lichess no es válido.</string>
+    <string name="pgntool_confirm_delete_practice">¿Eliminar todas las posiciones de práctica?</string>
+    <string name="pgntool_confirm_delete_puzzles">¿Eliminar todas las posiciones de los problemas?</string>
+    <string name="pgntool_delete_practice">Eliminar todas las posiciones de práctica</string>
+    <string name="pgntool_delete_puzzles">Eliminar todas las posiciones de los problemas</string>
+    <string name="pgntool_practice_deleted">Se eliminaron todas las posiciones de práctica</string>
+    <string name="pgntool_puzzles_deleted">Se eliminaron todas las posiciones de los problemas</string>
+    <string name="pgntool_import_busy">Ya hay una importación en curso</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes de flugsio (CC BY-SA 4.0); Firi de James Faure y Kiwen-suwi de neverRare (CC BY 4.0); Celtic y Spatial de Maurizio Monge (MIT). Diseños adaptados para Android; Firi recoloreado. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">No se pudo cargar esta partida.</string>
+    <string name="lichess_puzzle_move_failed">No se pudo realizar una jugada del problema. Puedes pasar al siguiente problema.</string>
+    <string name="analysis_edit_comment">Editar comentario</string>
+    <string name="analysis_comment_hint">Toca para añadir un comentario</string>
+    <string name="analysis_comment_title">Comentario después de la jugada</string>
+    <string name="analysis_start_comment_title">Comentario antes de la primera jugada</string>
+    <string name="analysis_engine">Motor</string>
+    <string name="menu_analyse_game">Analizar partida</string>
+    <string name="menu_new_king_of_the_hill">Nueva partida Rey de la colina</string>
+    <string name="state_hill_win">El rey ha llegado a la colina</string>
+    <string name="state_duck_stalemate_win">No quedan jugadas, lo que da la victoria en ajedrez pato</string>
+    <string name="options_engine_oex_variant_disabled">Esta variante utiliza el motor integrado.</string>
+    <string name="practice_finished_position">Posición terminada</string>
+    <string name="practice_preparing_position">Preparando posición de práctica…</string>
+    <string name="practice_completed_collection">¡Has completado todos los problemas!</string>
+    <string name="import_start_failed">No se pudo iniciar la importación</string>
+    <string name="import_failed">Error de importación</string>
+    <string name="import_duplicates_skipped">Duplicados omitidos</string>
+    <string name="engine_uninstalled">Motor %1$s desinstalado</string>
+    <string name="engine_not_installed">No hay ningún motor instalado</string>
+    <string name="opening_database_uninstalled">Base de datos %1$s desinstalada</string>
+    <string name="opening_database_not_installed">No hay ninguna base de datos instalada</string>
+    <string name="setup_use_illegal_position">¿Usar una posición ilegal?</string>
+    <string name="clock_minutes_hint">Minutos</string>
+    <string name="clock_increment_hint">Incremento en segundos</string>
+    <string name="import_added">Añadidas</string>
+    <string name="import_ignored">Ignoradas</string>
+    <string name="pgn_date_hint">Fecha PGN</string>
+    <string name="eco_openings_description">Aperturas ECO</string>
+    <string name="hotspot_result_game_over">Fin de la partida</string>
+    <string name="hotspot_result_defeat">Derrota</string>
+    <string name="hotspot_result_victory">¡Victoria!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s se ha rendido.</string>
+    <string name="hotspot_result_you_resigned">Te has rendido.</string>
+    <string name="hotspot_result_mate_lost">Has perdido por jaque mate.</string>
+    <string name="hotspot_result_mate_won">Has ganado por jaque mate.</string>
+    <string name="hotspot_result_draw">La partida termina en tablas.</string>
+    <string name="hotspot_result_stalemate">La partida termina en tablas por ahogado.</string>
+    <string name="hotspot_result_repetition">La partida termina en tablas por triple repetición.</string>
+    <string name="hotspot_result_fifty_moves">La partida termina en tablas por la regla de las 50 jugadas.</string>
+    <string name="hotspot_result_insufficient_material">La partida termina en tablas por material insuficiente.</string>
+    <string name="website_open_failed">No hay ninguna aplicación disponible para abrir el sitio web.</string>
 </resources>

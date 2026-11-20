@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Studii</string>
+    <string name="study_topic">Subiect</string>
+    <string name="study_surprise">Surprinde-mă</string>
+    <string name="study_variations">Variante</string>
+    <string name="study_before_move">Înainte de mutare: %1$s</string>
+    <string name="study_after_move">După mutare: %1$s</string>
+    <string name="study_pgn_evaluation">Evaluarea studiului: %1$s</string>
+    <string name="study_loading">Se încarcă studiile…</string>
+    <string name="study_position">%1$d din %2$d</string>
+    <string name="study_previous">Studiul anterior</string>
+    <string name="study_next">Studiul următor</string>
+    <string name="study_import_topic">Temă implicită</string>
+    <string name="import_optional_topic">Temă implicită (opțională)</string>
+    <string name="study_delete_matching">Șterge studiile corespunzătoare</string>
+    <string name="study_delete_failed">Selecția nu a putut fi ștearsă.</string>
+    <string name="study_delete_confirmation">Ștergi din partide studiile cu tema „%1$s” și evenimentul „%2$s”?</string>
+    <string name="study_load_failed">Studiile nu au putut fi încărcate.</string>
+    <string name="study_library_empty">Niciun studiu importat.</string>
+    <string name="study_download_collections">Descarcă colecții</string>
+    <string name="study_import">Importă PGN sau ZIP</string>
+    <string name="study_import_value_required">Introdu o valoare</string>
+    <string name="importing_studies">Se importă studiile…</string>
+</resources>

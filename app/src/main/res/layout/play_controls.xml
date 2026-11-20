@@ -8,6 +8,7 @@
     android:paddingEnd="@dimen/control_padding">
 
     <LinearLayout
+        android:id="@+id/play_controls_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -119,13 +120,13 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEco"
                 app:icon="@drawable/ic_signpost_split"
-                android:contentDescription="ECO openings"
+                android:contentDescription="@string/eco_openings_description"
                 style="?attr/chessImageButtonStyle" />
 
             <TextView
                 android:id="@+id/TextViewEco"
                 style="@style/MyPaneTextStyle2Lines"
-                android:text="--"
+                android:text="@string/placeholder_engine_value"
                 android:layout_width="match_parent"
                 android:layout_height="38dip"
                 android:layout_marginStart="@dimen/control_gap"

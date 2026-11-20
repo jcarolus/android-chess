@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Estudios</string>
+    <string name="study_topic">Tema</string>
+    <string name="study_surprise">Sorpréndeme</string>
+    <string name="study_variations">Variantes</string>
+    <string name="study_before_move">Antes de la jugada: %1$s</string>
+    <string name="study_after_move">Después de la jugada: %1$s</string>
+    <string name="study_pgn_evaluation">Evaluación del estudio: %1$s</string>
+    <string name="study_loading">Cargando estudios…</string>
+    <string name="study_position">%1$d de %2$d</string>
+    <string name="study_previous">Estudio anterior</string>
+    <string name="study_next">Siguiente estudio</string>
+    <string name="study_import_topic">Tema predeterminado</string>
+    <string name="import_optional_topic">Tema predeterminado (opcional)</string>
+    <string name="study_delete_matching">Eliminar estudios coincidentes</string>
+    <string name="study_delete_failed">No se pudo eliminar la selección.</string>
+    <string name="study_delete_confirmation">¿Eliminar de Partidas los estudios con el tema «%1$s» y el evento «%2$s»?</string>
+    <string name="study_load_failed">No se pudieron cargar los estudios.</string>
+    <string name="study_library_empty">No se han importado estudios.</string>
+    <string name="study_download_collections">Descargar colecciones</string>
+    <string name="study_import">Importar PGN o ZIP</string>
+    <string name="study_import_value_required">Introduce un valor</string>
+    <string name="importing_studies">Importando estudios…</string>
+</resources>

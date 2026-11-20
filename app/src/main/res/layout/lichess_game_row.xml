@@ -26,7 +26,7 @@
             <TextView
                 android:id="@+id/text_time_white"
                 android:textSize="16sp"
-                android:text="00:00"
+                android:text="@string/placeholder_clock_time"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/compact_control_gap" />
@@ -55,7 +55,7 @@
             <TextView
                 android:id="@+id/text_time_black"
                 android:textSize="16sp"
-                android:text="00:00"
+                android:text="@string/placeholder_clock_time"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/compact_control_gap" />

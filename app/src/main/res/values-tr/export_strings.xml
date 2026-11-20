@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">PGN dışa aktar</string>
+    <string name="export_create">Yeni dosya oluştur</string>
+    <string name="export_append">Dosyaya ekle</string>
+    <string name="export_replace">Dosyanın üzerine yaz</string>
+    <string name="export_choose_action">Oyunların nasıl dışa aktarılacağını seçin.</string>
+    <string name="export_all">Tüm oyunlar</string>
+    <string name="export_matching">Geçerli filtrelere uyan oyunlar</string>
+    <string name="export_replace_confirm">“%1$s” dosyasının tüm içeriğinin üzerine yazılsın mı? Bu işlem geri alınamaz.</string>
+    <string name="export_preparing">Oyunlar dışa aktarılmak üzere hazırlanıyor…</string>
+    <string name="export_writing">Oyunlar dışa aktarılıyor…</string>
+    <string name="export_done">Dışa aktarma tamamlandı.</string>
+    <string name="export_no_games">Dışa aktarılacak oyun yok.</string>
+    <string name="export_failed">Dışa aktarma başarısız. Başka bir hedef seçin veya kapatıp yeniden deneyin.</string>
+    <string name="export_partial">Dışa aktarma başarısız. Dosya kısmen yazılmış olabilir. Yinelenen veya eksik oyunları önlemek için yeniden denemeden önce içeriği kontrol edin. Başka bir hedef seçebilirsiniz.</string>
+</resources>

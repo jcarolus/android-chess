@@ -17,6 +17,8 @@ public final class PGNColumns implements BaseColumns {
     public static final String RATING = "rating";
     public static final String EVENT = "event";
     public static final String RESULT = "result";
+    public static final String TOPIC = "topic";
+    public static final String FINGERPRINT = "fingerprint";
 
     public static final String[] COLUMNS = {
         PGNColumns._ID,

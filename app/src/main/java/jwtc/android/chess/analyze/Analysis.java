@@ -49,6 +49,7 @@ final class Analysis implements EngineListener {
             };
     private final Map<Node, PositionSnapshot> positions = new WeakHashMap<>();
     private Node displayedNode;
+    private boolean pendingDuckMove;
     private PositionSnapshot requestedPosition;
 
     Analysis(Context context, GameApi gameApi, Listener listener) {
@@ -58,6 +59,7 @@ final class Analysis implements EngineListener {
     }
 
     void resume(String engine, int millis, Saved saved) {
+        engine = effectiveEngine(engine);
         results.configure(engine, millis, saved);
         configuredEngine = engine;
         configuredMillis = millis;
@@ -70,6 +72,7 @@ final class Analysis implements EngineListener {
     }
 
     boolean configure(String engine, int millis) {
+        engine = effectiveEngine(engine);
         if (!analysisActive
                 || Objects.equals(engine, configuredEngine) && millis == configuredMillis) {
             return false;
@@ -77,6 +80,10 @@ final class Analysis implements EngineListener {
         pause();
         resume(engine, millis, null);
         return true;
+    }
+
+    private String effectiveEngine(String preferredEngine) {
+        return gameApi.requiresBuiltinEngine() ? EngineSession.LOCAL_ENGINE_ID : preferredEngine;
     }
 
     void pause() {
@@ -120,18 +127,12 @@ final class Analysis implements EngineListener {
         final boolean ready;
         final boolean unavailable;
         final MoveClassifier.Feedback feedback;
-        final Node branchPoint;
         final PositionMove recommendation;
 
-        Summary(
-                boolean ready,
-                MoveClassifier.Feedback feedback,
-                Node branchPoint,
-                PositionMove recommendation) {
+        Summary(boolean ready, MoveClassifier.Feedback feedback, PositionMove recommendation) {
             this.ready = ready;
             this.unavailable = ready && feedback == null;
             this.feedback = feedback;
-            this.branchPoint = branchPoint;
             this.recommendation = recommendation;
         }
     }
@@ -142,10 +143,6 @@ final class Analysis implements EngineListener {
         Result before = result(parent);
         Result after = result(position);
         boolean ready = after != null && (current.getParent() == null || before != null);
-        boolean continuation =
-                gameApi.getContinuations(current).isEmpty()
-                        && after != null
-                        && after.preferredMove != null;
         PGNEntry entry = current.getEntry();
         PositionMove preferred = before == null ? null : before.preferredMove;
         boolean matches =
@@ -155,7 +152,11 @@ final class Analysis implements EngineListener {
                         && Move.isPromotionMove(entry.move) == Move.isPromotionMove(preferred.move)
                         && (!Move.isPromotionMove(entry.move)
                                 || Move.getPromotionPiece(entry.move)
-                                        == Move.getPromotionPiece(preferred.move));
+                                        == Move.getPromotionPiece(preferred.move))
+                        && entry.duckMove == preferred.duckMove;
+        int winner = AnalysisResults.terminalWinner(position);
+        // Duck snapshots list piece moves, so their count cannot identify a forced turn.
+        int legalMoveCount = parent == null || gameApi.isDuckVariant() ? 0 : parent.moves.size();
         MoveClassifier.Feedback feedback =
                 entry == null || parent == null || position == null
                         ? null
@@ -164,20 +165,18 @@ final class Analysis implements EngineListener {
                                 after == null ? null : after.evaluation,
                                 parent.turn == BoardConstants.WHITE,
                                 matches,
-                                parent.moves.size(),
-                                position.state == BoardConstants.MATE,
+                                legalMoveCount,
+                                winner == parent.turn,
                                 AnalysisResults.isDraw(position.state));
-        return new Summary(
-                ready,
-                feedback,
-                continuation ? current : current.getParent(),
-                continuation ? after.preferredMove : entry == null || matches ? null : preferred);
+        return new Summary(ready, feedback, after == null ? null : after.preferredMove);
     }
 
     boolean selectPosition() {
-        boolean changed = displayedNode != gameApi.getCurrentNode();
+        boolean pending = gameApi.hasPendingDuckMove();
+        boolean changed = displayedNode != gameApi.getCurrentNode() || pending != pendingDuckMove;
         displayedNode = gameApi.getCurrentNode();
-        if (!gameApi.isDuckVariant()) {
+        pendingDuckMove = pending;
+        if (!pending) {
             rememberPosition(displayedNode);
             if (displayedNode.getParent() != null) {
                 rememberPosition(displayedNode.getParent());
@@ -235,6 +234,7 @@ final class Analysis implements EngineListener {
                 || analysisFen != null
                 || engineSession == null
                 || !engineSession.supportsAnalysis()
+                || gameApi.hasPendingDuckMove()
                 || displayedNode != gameApi.getCurrentNode()) {
             return;
         }

@@ -61,14 +61,13 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
         final CheckBox checkBoxRated = findViewById(R.id.CheckBoxSeekRated);
 
-        // initial values
         editTextPlayer.setText(prefs.getString("lichess_challenge_name", ""));
         boolean withTimeControl = prefs.getBoolean("lichess_challenge_timetcontrol", true);
         int days = prefs.getInt("lichess_challenge_days", 1);
-        editTextDays.setText("" + days);
+        editTextDays.setText(String.valueOf(days));
         int minutes = prefs.getInt("lichess_challenge_minutes", 5);
-        editTextTime.setText("" + minutes);
-        editTextIncrement.setText("" + prefs.getInt("lichess_challenge_increment", 10));
+        editTextTime.setText(String.valueOf(minutes));
+        editTextIncrement.setText(String.valueOf(prefs.getInt("lichess_challenge_increment", 10)));
 
         if (withTimeControl) {
             layoutDays.setVisibility(View.GONE);
@@ -97,7 +96,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
         checkBoxRated.setChecked(prefs.getBoolean("lichess_challenge_rated", false));
 
-        // toggle group behaviour
         toggleTimeControl.addOnButtonCheckedListener(
                 (group, checkedId, isChecked) -> {
                     if (!isChecked) {
@@ -120,7 +118,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                     SharedPreferences.Editor editor = prefs.edit();
                     Map<String, Object> data = new HashMap<>();
 
-                    // username
                     if (requestCode == REQUEST_CHALLENGE) {
                         String username = Utils.getTrimmedOrNull(editTextPlayer.getText());
                         if (username == null) {
@@ -144,7 +141,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                         editor.putString("lichess_challenge_name", username);
                     }
 
-                    // timecontrol
                     if (toggleTimeControl.getCheckedButtonId() == R.id.RadioButtonTimeControl) {
 
                         int editMinutes = Utils.parseInt(editTextTime.getText().toString(), 5);
@@ -175,7 +171,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                         data.put("days", editDays);
                     }
 
-                    // variant
                     String editVariant =
                             toggleVariant.getCheckedButtonId() == R.id.RadioButtonStandard
                                     ? "standard"
@@ -183,7 +178,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                     editor.putString("lichess_challenge_variant", editVariant);
                     data.put("variant", editVariant);
 
-                    // color
                     int selectedColor = toggleColor.getCheckedButtonId();
                     String editColor =
                             selectedColor == R.id.RadioButtonWhite

@@ -141,6 +141,6 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
 
     protected void onUpdateProgress(int progress) {
         gameApi.newGameRandomFischer(progress);
-        textViewSeed.setText("" + (progress + 1));
+        textViewSeed.setText(String.valueOf(progress + 1));
     }
 }

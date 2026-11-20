@@ -10,11 +10,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.hotspotboard.HotspotBoardApi;
+import jwtc.android.chess.hotspotboard.HotspotVariantInstrumentation;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportApi;
 import jwtc.chess.GameRecord;
+import jwtc.chess.Pgn;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
@@ -26,6 +28,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
     private boolean analysisOnly;
     private boolean importOnly;
     private boolean ownershipOnly;
+    private boolean textMoveOnly;
+    private boolean hotspotOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -34,6 +38,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
         analysisOnly = arguments != null && "analysis".equals(arguments.getString("suite"));
         importOnly = arguments != null && "import".equals(arguments.getString("suite"));
         ownershipOnly = arguments != null && "ownership".equals(arguments.getString("suite"));
+        textMoveOnly = arguments != null && "text-move".equals(arguments.getString("suite"));
+        hotspotOnly = arguments != null && "hotspot".equals(arguments.getString("suite"));
         start();
     }
 
@@ -41,6 +47,18 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (hotspotOnly) {
+                HotspotVariantInstrumentation.verify();
+                report.putString("stream", "Hotspot variant compatibility passed\n");
+                finish(-1, report);
+                return;
+            }
+            if (textMoveOnly) {
+                textMoveEntry();
+                report.putString("stream", "Text move resolution and execution passed\n");
+                finish(-1, report);
+                return;
+            }
             if (ownershipOnly) {
                 boardOwnership();
                 report.putString(
@@ -50,7 +68,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
             }
             if (importOnly) {
                 jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
-                jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
+                jwtc.android.chess.matecollection.PracticePositionSelectionInstrumentation.verify(this);
+                jwtc.chess.ImportFingerprintInstrumentation.verify(getTargetContext());
                 importedGamesValidateOnOpening();
                 pgnReplayPreservesBranchesAndRollback();
                 report.putString(
@@ -74,9 +93,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 return;
             }
             jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
-            jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
+            jwtc.android.chess.matecollection.PracticePositionSelectionInstrumentation.verify(this);
+            jwtc.chess.ImportFingerprintInstrumentation.verify(getTargetContext());
             boardSnapshots();
             boardOwnership();
+            HotspotVariantInstrumentation.verify();
             importedGamesValidateOnOpening();
             pgnReplayPreservesBranchesAndRollback();
             kingOfTheHillPersistence();
@@ -99,6 +120,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionDuckTurns(true);
             sessionDuckPendingAndStale();
             duckPositionIdentity();
+            textMoveEntry();
             gameApiSanDisambiguationUsesRustBoardApi();
             gameApiPromotionRequiresLegalMove();
             ecoLookupPreservesLivePosition();
@@ -110,6 +132,60 @@ public final class RustEngineInstrumentation extends Instrumentation {
             report.putString("stream", "FAIL: " + error + "\n");
             finish(0, report);
         }
+    }
+
+    private void textMoveEntry() {
+        runOnMainSync(
+                () -> {
+                    GameApi game = new GameApi();
+                    check(
+                            game.initFEN("4k3/8/8/8/8/8/8/1R2KR2 w KQ - 0 1", true),
+                            "Text Chess960 castling setup failed");
+                    check(game.resolveTextMove(60, 63, -1) == null, "Empty rook square accepted");
+                    GameApi.PositionMove textCastle = game.resolveTextMove(60, 61, -1);
+                    check(textCastle != null, "Text Chess960 king-to-rook castle rejected");
+                    check(
+                            "e1f1".equals(textCastle.boardCoordinate),
+                            "Chess960 UCI must target the rook");
+                    game.move(textCastle.move, -1);
+                    check(game.getCurrentPly() == 1, "Text Chess960 castle was not recorded");
+
+                    GameApi standard = new GameApi();
+                    check(
+                            standard.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true),
+                            "Text standard castling setup failed");
+                    check(
+                            standard.resolveTextMove(60, 62, -1) == null,
+                            "King destination accepted");
+                    GameApi.PositionMove standardCastle = standard.resolveTextMove(60, 63, -1);
+                    check(standardCastle != null, "Rook destination rejected");
+                    check(
+                            "e1g1".equals(standardCastle.boardCoordinate),
+                            "Standard UCI must target the king destination");
+                    GameApi promotion = new GameApi();
+                    check(
+                            promotion.initFEN("8/P6k/8/8/8/8/7K/8 w - - 0 1", true),
+                            "Text promotion setup failed");
+                    check(
+                            promotion.resolveTextMove(8, 0, -1) == null,
+                            "Missing promotion accepted");
+                    GameApi.PositionMove knight =
+                            promotion.resolveTextMove(8, 0, BoardConstants.KNIGHT);
+                    check(
+                            knight != null && knight.uci.equals("a7a8n"),
+                            "Explicit knight rejected");
+                    check("a7a8n".equals(knight.boardCoordinate), "Knight promotion UCI is invalid");
+                    GameApi enPassant = new GameApi();
+                    check(
+                            enPassant.initFEN("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", true),
+                            "Text en passant setup failed");
+                    GameApi.PositionMove capture = enPassant.resolveTextMove(28, 19, -1);
+                    check(capture != null, "Text en passant rejected");
+                    enPassant.move(capture.move, -1);
+                    check(
+                            enPassant.getFEN().startsWith("4k3/8/3P4/8/"),
+                            "En passant did not remove the pawn");
+                });
     }
 
     private void kingOfTheHillPersistence() throws Exception {
@@ -372,10 +448,17 @@ public final class RustEngineInstrumentation extends Instrumentation {
 
     private void pgnReplayPreservesBranchesAndRollback() {
         GameApi game = new ImportApi();
+        String illegalBranch = "1. e4 e5 (1... c5 2. Ke4) *";
+        try {
+            PgnReplay.validate(Pgn.parse(illegalBranch));
+            throw new AssertionError("SAN batch accepted an illegal branch");
+        } catch (IllegalArgumentException expected) {
+            check(expected.getMessage().contains("SAN token"), "SAN batch omitted the failing move");
+        }
         for (String pgn :
                 new String[] {
                     "[Event \"Branches\"]\n\n{root} 1. e4 $1 {main} e5 (1... c5 {Sicilian} 2. Nf3 (2. Nc3) d6) (1... e6 2. d4) 2. Nf3 Nc6 *",
-                    "1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
+                    "1. Ng1f3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
                     "[Variant \"Fischerandom\"]\n[FEN \"4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1\"]\n\n1. O-O (1. O-O-O) *",
                     "[Variant \"Duck\"]\n\n1. e4@d5 (1. d4@e5 d5@e4) e5@d4 2. Nf3@c6 *",
                     "[Variant \"Duck\"]\n[FEN \"4k3/8/8/8/8/8/4R3/4K3 w - - 0 1\"]\n\n1. Rxe8 *",
@@ -384,10 +467,16 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     "[FEN \"4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1\"]\n\n1. exd6 *"
                 }) {
             check(game.loadPGN(pgn), "Replay rejected " + pgn);
+            RustBoardResult batch = PgnReplay.validate(Pgn.parse(pgn));
+            check(
+                    batch.fen.equals(game.getFEN())
+                            && batch.hashKey == game.getHashKey()
+                            && batch.boardState() == game.getEngineState(),
+                    "SAN batch differed from Java replay: " + pgn);
             String saved = game.exportFullPGN();
             String fen = game.getFEN();
             int state = game.getEngineState();
-            check(!game.loadPGN("1. e4 e5 (1... c5 2. Ke4) *"), "Illegal branch accepted");
+            check(!game.loadPGN(illegalBranch), "Illegal branch accepted");
             check(
                     saved.equals(game.exportFullPGN()) && fen.equals(game.getFEN()),
                     "Failed replay changed game");

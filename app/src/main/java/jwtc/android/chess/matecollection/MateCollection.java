@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.SearchLimit;
@@ -40,6 +43,9 @@ public final class MateCollection {
     }
 
     public interface Listener {
+        /** The starting position for a full Practice Game is being selected. */
+        default void onPositionPreparing() {}
+
         /** A Position was loaded into the GameApi and the board is at its start. */
         void onPositionStarted(int position, int total, int usersColor);
 
@@ -99,6 +105,13 @@ public final class MateCollection {
     private int total;
     private int usersColor;
     private int numMoved;
+    private int startPly;
+    private boolean positionReady;
+    private ExecutorService practiceWorker;
+    private Future<?> preparation;
+    private int preparationId;
+    private String preparedPgn;
+    private int preparedPly;
     private boolean solvedPendingAdvance;
     private MateScore score = MateScore.NONE;
 
@@ -128,12 +141,19 @@ public final class MateCollection {
             listener.onEmptyCollection();
             return;
         }
+        MateCollectionDefaults.positionsAvailable(context, kind);
         position = MateRules.restore(position, total);
         startPosition();
     }
 
     /** Cancels the pending reply, saves progress and releases the Engine session and cursor. */
     public void pause() {
+        cancelPreparation();
+        if (practiceWorker != null) {
+            practiceWorker.shutdownNow();
+            practiceWorker = null;
+        }
+        positionReady = false;
         handler.removeCallbacks(requestReply);
         gameApi.removeListener(gameListener);
         if (engineSession != null) {
@@ -162,9 +182,13 @@ public final class MateCollection {
         editor.apply();
     }
 
+    public boolean isPositionReady() {
+        return positionReady;
+    }
+
     /** Whether the side to move is the user's, the only time the board takes a move. */
     public boolean isUsersTurn() {
-        return gameApi.getTurn() == usersColor;
+        return positionReady && gameApi.getTurn() == usersColor;
     }
 
     public void next() {
@@ -200,10 +224,13 @@ public final class MateCollection {
      * like after any move of the user.
      */
     public void showSolution() {
+        if (!positionReady) {
+            return;
+        }
         handler.removeCallbacks(requestReply);
         // Rewind along the line actually played: a wrong move stays on the board's main line.
         Node node = gameApi.getCurrentNode();
-        while (node != null && node.getPly() > numMoved) {
+        while (node != null && node.getPly() > startPly + numMoved) {
             node = node.getParent();
         }
         gameApi.goTo(node);
@@ -223,6 +250,19 @@ public final class MateCollection {
         editor.apply();
     }
 
+    public static int countPositions(Context context, MateKind kind) {
+        try (Cursor rows =
+                context.getContentResolver()
+                        .query(
+                                kind.uri(),
+                                new String[] {MyPuzzleProvider.COL_ID},
+                                null,
+                                null,
+                                null)) {
+            return rows == null ? 0 : rows.getCount();
+        }
+    }
+
     /** Deletes every Position of the collection and resets the progress through it. */
     public static void clearCollection(Context context, MateKind kind) {
         context.getContentResolver().delete(kind.uri(), "1=1", null);
@@ -234,6 +274,9 @@ public final class MateCollection {
     }
 
     private void startPosition() {
+        cancelPreparation();
+        positionReady = false;
+        solvedPendingAdvance = false;
         handler.removeCallbacks(requestReply);
         // A reply still being searched belongs to the previous attempt.
         if (engineSession != null) {
@@ -244,13 +287,65 @@ public final class MateCollection {
         if (pgn == null) {
             return;
         }
-        gameApi.loadPGN(pgn);
+        boolean fullPracticeGame =
+                kind == MateKind.PRACTICE_POSITIONS
+                        && cursor.getInt(
+                                        cursor.getColumnIndexOrThrow(
+                                                MyPuzzleProvider.COL_FULL_GAME))
+                                != 0;
+        if (!fullPracticeGame) {
+            openPosition(pgn, 0);
+        } else if (pgn.equals(preparedPgn)) {
+            openPosition(pgn, preparedPly);
+        } else {
+            preparePracticePosition(pgn);
+        }
+    }
+
+    private void preparePracticePosition(String pgn) {
+        if (practiceWorker == null) {
+            practiceWorker = Executors.newSingleThreadExecutor();
+        }
+        int id = preparationId;
+        listener.onPositionPreparing();
+        preparation =
+                practiceWorker.submit(
+                        () -> {
+                            int ply = PracticePositionSelector.startPly(pgn);
+                            handler.post(
+                                    () -> {
+                                        if (id != preparationId) {
+                                            return;
+                                        }
+                                        preparation = null;
+                                        if (ply >= 0) {
+                                            preparedPgn = pgn;
+                                            preparedPly = ply;
+                                            openPosition(pgn, ply);
+                                        }
+                                    });
+                        });
+    }
+
+    private void cancelPreparation() {
+        preparationId++;
+        if (preparation != null) {
+            preparation.cancel(true);
+            preparation = null;
+        }
+    }
+
+    private void openPosition(String pgn, int ply) {
+        if (!gameApi.loadPGN(pgn)) {
+            return;
+        }
         // The source game's resignation must not end the position before checkmate.
         gameApi.resetForfeitTime();
         numMoved = 0;
-        solvedPendingAdvance = false;
-        gameApi.jumpToBoardNum(0);
+        startPly = ply;
+        gameApi.jumpToBoardNum(startPly);
         usersColor = gameApi.getTurn();
+        positionReady = true;
 
         listener.onPositionStarted(position, total, usersColor);
         if (kind.hasScore()) {
@@ -271,6 +366,9 @@ public final class MateCollection {
     }
 
     private void moveApplied() {
+        if (!positionReady) {
+            return;
+        }
         numMoved++;
         if (MateRules.isSolved(gameApi.getEngineState(), gameApi.getTurn(), usersColor)) {
             solved();
@@ -289,6 +387,9 @@ public final class MateCollection {
     }
 
     private void judgeReply(int move, int duckMove, int value) {
+        if (!positionReady) {
+            return;
+        }
         if (MateRules.isMateReply(value, isUsersTurn())) {
             gameApi.move(move, duckMove);
             // a mate on the board was already reported as solved by the move itself

@@ -6,32 +6,24 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
-import java.util.ArrayList;
-import java.util.Arrays;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 
 public class MenuDialog extends ResultDialog<Bundle> {
-    public void setKingOfTheHill(boolean active) {
-        ArrayList<String> items =
-                new ArrayList<>(
-                        Arrays.asList(
-                                getContext().getResources().getStringArray(R.array.play_menu)));
-        if (active) {
-            items.remove(getContext().getString(R.string.menu_analyse_game));
-            items.remove(getContext().getString(R.string.menu_setup));
-        }
-        ListView list = findViewById(R.id.ListMenu);
-        list.setAdapter(
-                new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, items));
+    public MenuDialog(
+            @NonNull Context context,
+            ResultDialogListener<Bundle> listener,
+            int requestCode,
+            @ArrayRes int menuItems) {
+        this(context, listener, requestCode, context.getResources().getStringArray(menuItems));
     }
 
     public MenuDialog(
             @NonNull Context context,
             ResultDialogListener<Bundle> listener,
             int requestCode,
-            @ArrayRes int menuItems) {
+            String[] menuItems) {
         super(context, listener, requestCode);
 
         setTitle(R.string.title_menu);
@@ -39,10 +31,7 @@ public class MenuDialog extends ResultDialog<Bundle> {
 
         ListView list = findViewById(R.id.ListMenu);
         list.setAdapter(
-                new ArrayAdapter<>(
-                        context,
-                        android.R.layout.simple_list_item_1,
-                        context.getResources().getStringArray(menuItems)));
+                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, menuItems));
         list.setOnItemClickListener(
                 (parent, view, position, id) -> {
                     String item = parent.getItemAtPosition(position).toString();

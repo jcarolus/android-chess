@@ -20,7 +20,7 @@
             android:id="@+id/TextViewTopClockTime"
             android:layout_height="wrap_content"
             android:layout_width="60dip"
-            android:text="00:00"
+            android:text="@string/placeholder_clock_time"
             android:importantForAccessibility="no"
             style="@style/MyHeaderTextStyle" />
 

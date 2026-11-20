@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Studies</string>
+    <string name="study_topic">Onderwerp</string>
+    <string name="study_surprise">Verras me</string>
+    <string name="study_variations">Varianten</string>
+    <string name="study_before_move">Voor de zet: %1$s</string>
+    <string name="study_after_move">Na de zet: %1$s</string>
+    <string name="study_pgn_evaluation">Studie-evaluatie: %1$s</string>
+    <string name="study_loading">Studies laden…</string>
+    <string name="study_position">%1$d van %2$d</string>
+    <string name="study_previous">Vorige studie</string>
+    <string name="study_next">Volgende studie</string>
+    <string name="study_import_topic">Standaardonderwerp</string>
+    <string name="import_optional_topic">Standaardonderwerp (optioneel)</string>
+    <string name="study_delete_matching">Geselecteerde studies verwijderen</string>
+    <string name="study_delete_failed">De selectie kon niet worden verwijderd.</string>
+    <string name="study_delete_confirmation">Studies met onderwerp ‘%1$s’ en evenement ‘%2$s’ uit Partijen verwijderen?</string>
+    <string name="study_load_failed">De studies konden niet worden geladen.</string>
+    <string name="study_library_empty">Geen studies geïmporteerd.</string>
+    <string name="study_download_collections">Verzamelingen downloaden</string>
+    <string name="study_import">PGN of ZIP importeren</string>
+    <string name="study_import_value_required">Voer een waarde in</string>
+    <string name="importing_studies">Studies importeren…</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Texteingabe von Zügen</string>
+    <string name="pref_confirm_move_entry">Textzüge vor dem Spielen prüfen</string>
+    <string name="move_entry_hint">Zug, zum Beispiel e2 e4</string>
+    <string name="move_entry_format">Gib einen Zug ein, zum Beispiel e2e4, Nf3 oder Springer f3.</string>
+    <string name="move_entry_illegal">Dieser Zug ist in dieser Stellung nicht erlaubt.</string>
+    <string name="move_entry_wrong_turn">Warte in einer laufenden Partie, bis du am Zug bist.</string>
+    <string name="move_entry_promotion">Gib eine Umwandlungsfigur an: Dame, Turm, Läufer oder Springer.</string>
+    <string name="move_entry_review">%1$s (%2$s) spielen?</string>
+</resources>

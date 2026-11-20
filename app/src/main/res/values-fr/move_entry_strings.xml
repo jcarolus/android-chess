@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Saisie des coups par texte</string>
+    <string name="pref_confirm_move_entry">Vérifier les coups saisis avant de jouer</string>
+    <string name="move_entry_hint">Coup, par exemple e2 e4</string>
+    <string name="move_entry_format">Saisissez un coup, par exemple e2e4, Nf3 ou Cavalier f3.</string>
+    <string name="move_entry_illegal">Ce coup est illégal dans cette position.</string>
+    <string name="move_entry_wrong_turn">Attendez votre tour dans une partie en cours.</string>
+    <string name="move_entry_promotion">Précisez la pièce de promotion : dame, tour, fou ou cavalier.</string>
+    <string name="move_entry_review">Jouer %1$s (%2$s) ?</string>
+</resources>

@@ -8,7 +8,6 @@
         <item>@string/start_puzzles</item>
         <item>@string/start_wifiboard</item>
         <item>@string/start_boardpreferences</item>
-        <item>@string/start_pgn</item>
     </string-array>
     <string-array name="play_menu">
         <item>@string/menu_game_settings</item>
@@ -26,10 +25,17 @@
         <item>@string/menu_fromclip</item>
         <item>@string/menu_clip_pgn</item>
     </string-array>
+    <string-array name="gameslist_menu">
+        <item>@string/pgntool_import_explanation</item>
+        <item>@string/pgntool_export_explanation</item>
+        <item>@string/menu_delete_game_database</item>
+        <item>@string/gameslist_delete_matching</item>
+    </string-array>
     <string-array name="analyze_menu">
         <item>@string/analysis_settings</item>
         <item>@string/share_chess_link</item>
         <item>@string/menu_save_game</item>
+        <item>@string/title_delete_game</item>
         <item>@string/menu_save_game_to_file</item>
         <item>@string/menu_clip_pgn</item>
     </string-array>
@@ -179,20 +185,27 @@
         <item>g</item>
         <item>h</item>
     </string-array>
-    <string-array name="pgn_tool_menu">
-        <item>@string/pgntool_export_explanation</item>
-        <item>@string/pgntool_import_explanation</item>
-        <item>@string/pgntool_delete_games</item>
-        <!--        <item>@string/pgntool_create_db_explanation</item>-->
-        <!--        <item>@string/pgntool_point_db_explanation</item>-->
-        <!--        <item>@string/pgntool_unset_uci_engine</item>-->
-        <!--        <item>@string/pgntool_unset_uci_database</item>-->
+    <string-array name="practice_menu">
         <item>@string/pgntool_import_practice</item>
         <item>@string/pgntool_reset_practice</item>
         <item>@string/pgntool_delete_practice</item>
+    </string-array>
+    <string-array name="puzzle_menu">
         <item>@string/pgntool_import_puzzle</item>
         <item>@string/pgntool_delete_puzzles</item>
-        <item>@string/pgntool_help</item>
+    </string-array>
+    <string-array name="practice_empty_menu">
+        <item>@string/pgntool_import_practice</item>
+        <item>@string/collection_restore_defaults</item>
+    </string-array>
+    <string-array name="puzzle_empty_menu">
+        <item>@string/pgntool_import_puzzle</item>
+        <item>@string/collection_restore_defaults</item>
+    </string-array>
+    <string-array name="studies_menu">
+        <item>@string/study_import</item>
+        <item>@string/study_download_collections</item>
+        <item>@string/study_delete_matching</item>
     </string-array>
     <string-array name="tileKeyArray">
         <item>0</item>

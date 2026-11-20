@@ -44,6 +44,23 @@ public class ChessBoardView extends ViewGroup {
         }
     }
 
+    /** Collects existing pieces by their displayed square after any drag or animation. */
+    public ChessPieceView[] piecesBySquare() {
+        ChessPieceView[] pieces = new ChessPieceView[64];
+        for (int i = getChildCount() - 1; i >= 0; i--) {
+            if (getChildAt(i) instanceof ChessPieceView) {
+                ChessPieceView piece = (ChessPieceView) getChildAt(i);
+                int square = piece.getPos();
+                if (pieces[square] == null) {
+                    pieces[square] = piece;
+                } else {
+                    removeViewAt(i);
+                }
+            }
+        }
+        return pieces;
+    }
+
     public void removeLabels() {
         int i = 0;
         while (i < getChildCount()) {

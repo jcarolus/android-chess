@@ -19,7 +19,10 @@ public class Clipboard {
         ClipData pData = clipboardManager.getPrimaryClip();
         if (pData != null && pData.getItemCount() > 0) {
             ClipData.Item item = pData.getItemAt(0);
-            return item.getText().toString();
+            CharSequence text = item.getText();
+            if (text != null) {
+                return text.toString();
+            }
         }
         return "";
     }

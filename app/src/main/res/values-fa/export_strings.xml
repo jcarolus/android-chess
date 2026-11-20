@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">صدور PGN</string>
+    <string name="export_create">ایجاد فایل جدید</string>
+    <string name="export_append">افزودن به فایل</string>
+    <string name="export_replace">جایگزینی فایل</string>
+    <string name="export_choose_action">روش صدور بازی‌ها را انتخاب کنید.</string>
+    <string name="export_all">همهٔ بازی‌ها</string>
+    <string name="export_matching">بازی‌های مطابق با فیلترهای فعلی</string>
+    <string name="export_replace_confirm">همهٔ محتوای «%1$s» جایگزین شود؟ این کار قابل بازگشت نیست.</string>
+    <string name="export_preparing">در حال آماده‌سازی بازی‌ها برای صدور…</string>
+    <string name="export_writing">در حال صدور بازی‌ها…</string>
+    <string name="export_done">صدور کامل شد.</string>
+    <string name="export_no_games">بازی‌ای برای صدور وجود ندارد.</string>
+    <string name="export_failed">صدور ناموفق بود. مقصد دیگری انتخاب کنید یا ببندید و دوباره تلاش کنید.</string>
+    <string name="export_partial">صدور ناموفق بود. ممکن است فایل به‌طور ناقص نوشته شده باشد. برای جلوگیری از بازی‌های تکراری یا ناقص، پیش از تلاش مجدد محتوا را بررسی کنید. می‌توانید مقصد دیگری انتخاب کنید.</string>
+</resources>

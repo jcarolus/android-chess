@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Inserimento delle mosse tramite testo</string>
+    <string name="pref_confirm_move_entry">Controlla le mosse di testo prima di giocare</string>
+    <string name="move_entry_hint">Mossa, ad esempio e2 e4</string>
+    <string name="move_entry_format">Inserisci una mossa, ad esempio e2e4, Nf3 o Cavallo f3.</string>
+    <string name="move_entry_illegal">Questa mossa non è legale in questa posizione.</string>
+    <string name="move_entry_wrong_turn">Attendi il tuo turno in una partita in corso.</string>
+    <string name="move_entry_promotion">Indica un pezzo per la promozione: donna, torre, alfiere o cavallo.</string>
+    <string name="move_entry_review">Giocare %1$s (%2$s)?</string>
+</resources>

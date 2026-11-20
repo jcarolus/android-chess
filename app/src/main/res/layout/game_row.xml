@@ -66,7 +66,7 @@
 
     <TextView
         android:id="@+id/text_result"
-        android:text="*"
+        android:text="@string/pgn_unknown_result"
         android:singleLine="false"
         style="@style/MyNormalTextStyle"
         android:layout_width="0dp"

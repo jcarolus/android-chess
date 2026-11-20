@@ -1,39 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>Advanced</h3>
-            <p>Create or import your own stuff here.</p>
-
-            <h4>Export game database to sd-card</h4>
-            <p>All games in the game database can be exported to a single PGN file on sd-card. This file
-                will be named chess.pgn and an existing file will be overwritten.</p>
-
-            <h4>Import games into the game database</h4>
-            <p>Use this option to add games to the game database. It lets you browse to a PGN file. Select
-                and choose to import.</p>
-
-            <h4>Delete all games in the game database</h4>
-            <p>Use this option if you want to clean up the game database. Make sure you first make a backup
-                to sd-card, this action can not be undone.</p>
-
-            <h4>Create practice set</h4>
-            <p>Creates practice positions from games that end in a check-mate. Browse to the file to
-                process. Failed entries are usually games that did not end in a check-mate or are a
-                duplicate</p>
-
-            <h4>Reset practice set</h4>
-            <p>Want to start over practicing? This will also reset your average time counter.</p>
-
-                ]]>
-            </string>
     <string name="alert_no">No</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Yes</string>
     <string name="app_name">Chess</string>
     <string name="app_name_help">Help</string>
     <string name="app_name_import">Import</string>
-    <string name="app_name_pgntools">Advanced</string>
     <string name="app_name_play">Play</string>
     <string name="app_name_playonline">Play online</string>
     <string name="app_name_save_games">Saved games</string>
@@ -315,7 +287,8 @@
     <string name="options_play_white">White</string>
     <string name="options_quiescent_off">Quiescence search off</string>
     <string name="options_quiescent_on">Quiescence search on</string>
-    <string name="pgntool_confirm_delete_games">Delete all games from the game database?</string>
+    <string name="pgntool_delete_item_count">Items to delete: %1$d</string>
+    <string name="pgntool_confirm_delete_games">Delete all games, including studies, from the game database?</string>
     <string name="pgntool_confirm_delete_practice">Delete all practice positions?</string>
     <string name="pgntool_confirm_delete_puzzles">Delete all puzzle positions?</string>
     <string name="pgntool_confirm_practice_reset">Are you sure you want to reset?</string>
@@ -327,7 +300,6 @@
     <string name="pgntool_practice_deleted">All practice positions deleted</string>
     <string name="pgntool_puzzles_deleted">All puzzle positions deleted</string>
     <string name="pgntool_export_explanation">Export game database</string>
-    <string name="pgntool_help">Help</string>
     <string name="pgntool_import_busy">An import is already running</string>
     <string name="importing_games">Importing games…</string>
     <string name="importing_puzzles">Importing puzzles…</string>
@@ -408,6 +380,7 @@
     <string name="pref_user_long_move_descriptions">Use full move description</string>
     <string name="pref_add_turn_in_move_description">Include whose turn it is in move descriptions</string>
     <string name="tts_locale_not_supported">Text to speech does not support your locale</string>
+    <string name="tts_language_differs_from_app">Text to speech is using a different language than the app</string>
     <string name="tts_not_loaded">Could not load text to speech</string>
     <string name="tts_example_move">Bishop takes G7 check</string>
     <string name="tts_selected">Selected</string>
@@ -484,11 +457,11 @@
     <string name="start_wifiboard">WiFi board</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Advanced</string>
     <string name="start_play">Play</string>
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
     <string name="start_website">Developer website</string>
+    <string name="website_open_failed">No app available to open the website.</string>
     <string name="state_black_forfeits_time">black forfeits on time</string>
     <string name="state_black_resigned">black resigned</string>
     <string name="state_check">check</string>
@@ -519,6 +492,7 @@
     <string name="title_challenge">Challenge</string>
     <string name="title_overwrite_main_line">Overwrite main line from this position?</string>
     <string name="title_delete_game">Delete game</string>
+    <string name="game_delete_failed">Could not delete the game. Please try again.</string>
     <string name="title_edit_command">Edit command</string>
     <string name="title_edit_or_delete">Edit or delete?</string>
     <string name="title_error">Error</string>
@@ -539,6 +513,7 @@
     <string name="lichess_puzzle_difficulty">Difficulty</string>
     <string name="lichess_puzzle_angle">Theme</string>
     <string name="lichess_puzzle_solved_rated">Puzzle solved! Rating %1$s</string>
+    <string name="lichess_puzzle_move_failed">Could not apply a puzzle move. You can go to the next puzzle.</string>
     <string name="lichess_puzzle_solved_hint_rated">Solved with mistakes. Rating %1$s</string>
     <string name="lichess_lobby_button_teams">Teams</string>
     <string name="lichess_swiss_title">Pick a team to see its Swiss tournaments</string>
@@ -585,12 +560,16 @@
     <string name="analysis_move_mistake">Mistake</string>
     <string name="analysis_move_blunder">Blunder</string>
     <string name="analysis_move_forced">Forced</string>
-    <string name="analysis_move_pending">Analyzing move…</string>
     <string name="analysis_move_unavailable">Analysis unavailable</string>
     <string name="analysis_white_to_move">White to move</string>
     <string name="analysis_black_to_move">Black to move</string>
     <string name="analysis_variation">Variation</string>
     <string name="analysis_back_to_main">Back to main</string>
+    <string name="analysis_edit_comment">Edit comment</string>
+    <string name="analysis_comment_hint">Tap to add a comment</string>
+    <string name="analysis_comment_title">Comment after the move</string>
+    <string name="analysis_start_comment_title">Comment before the first move</string>
+    <string name="analysis_engine">Engine</string>
     <string name="pgn_return_main_line">Return to main line</string>
     <string name="pgn_promote_variation">Make preferred continuation</string>
     <string name="pgn_delete_variation">Delete variation</string>
@@ -603,12 +582,10 @@
     <string name="analysis_builtin_warning">For better analysis, install an OEX-compatible chess engine.</string>
     <string name="analysis_dont_show_again">Don\'t show again</string>
     <string name="analysis_continue">Continue</string>
-    <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
     <string name="menu_analyse_game">Analyse game</string>
     <string name="menu_new_king_of_the_hill">New King of the Hill game</string>
     <string name="state_hill_win">King reached the hill</string>
     <string name="state_duck_stalemate_win">No moves left, which wins in Duck chess</string>
-    <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
     <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
@@ -626,6 +603,77 @@
     <string name="share_lichess_profile">Share my Lichess profile</string>
     <string name="app_link_invalid">This Chess link is invalid or unsupported.</string>
     <string name="app_link_too_large">This game is too large to share as a link. Share the complete game as PGN instead.</string>
-    <string name="app_link_no_engine">Engine analysis is unavailable for this variant. You can browse the board and moves.</string>
     <string name="share_failed">Could not share the game. Please try again.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_languages" translatable="false">
+        <item>en</item>
+        <item>ar</item>
+        <item>de</item>
+        <item>es</item>
+        <item>fa</item>
+        <item>fr</item>
+        <item>it</item>
+        <item>nl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>tr</item>
+        <item>zh</item>
+        <item>zh-TW</item>
+    </string-array>
+    <string-array name="move_input_ranks">
+        <item>one</item>
+        <item>two</item>
+        <item>three</item>
+        <item>four</item>
+        <item>five</item>
+        <item>six</item>
+        <item>seven</item>
+        <item>eight</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>knight|night</item>
+        <item>bishop</item>
+        <item>rook</item>
+        <item>queen</item>
+    </string-array>
+    <string name="practice_finished_position">Finished position</string>
+    <string name="practice_preparing_position">Preparing practice position…</string>
+    <string name="practice_completed_collection">You completed all puzzles!</string>
+    <string name="import_start_failed">Could not start import</string>
+    <string name="import_failed">Import failed</string>
+    <string name="import_duplicates_skipped">Duplicates skipped</string>
+    <string name="engine_uninstalled">Engine %1$s uninstalled</string>
+    <string name="engine_not_installed">No engine installed</string>
+    <string name="opening_database_uninstalled">Database %1$s uninstalled</string>
+    <string name="opening_database_not_installed">No database installed</string>
+    <string name="setup_use_illegal_position">Use illegal position?</string>
+    <string name="clock_minutes_hint">Minutes</string>
+    <string name="clock_increment_hint">Increment in seconds</string>
+    <string name="import_added">Added</string>
+    <string name="import_ignored">Ignored</string>
+    <string name="pgn_date_hint">PGN date</string>
+    <string name="eco_openings_description">ECO openings</string>
+    <string name="hotspot_result_game_over">Game over</string>
+    <string name="hotspot_result_defeat">Defeat</string>
+    <string name="hotspot_result_victory">Victory!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s has resigned.</string>
+    <string name="hotspot_result_you_resigned">You resigned.</string>
+    <string name="hotspot_result_mate_lost">You lost by checkmate.</string>
+    <string name="hotspot_result_mate_won">You won by checkmate.</string>
+    <string name="hotspot_result_draw">The game is a draw.</string>
+    <string name="hotspot_result_stalemate">The game is a draw by stalemate.</string>
+    <string name="hotspot_result_repetition">The game is a draw by 3-fold repetition.</string>
+    <string name="hotspot_result_fifty_moves">The game is a draw by the 50-move rule.</string>
+    <string name="hotspot_result_insufficient_material">The game is a draw by insufficient material.</string>
+    <string name="move_input_castle">castle</string>
+    <string name="move_input_captures">takes|captures</string>
+    <string name="menu_delete_game_database">Delete all games, including studies</string>
+    <string name="practice_delete_confirmation">Delete all practice positions and progress?</string>
+    <string name="puzzle_delete_confirmation">Delete all puzzle positions and progress?</string>
+    <string name="collection_restore_prompt">You have deleted all positions, do you want to restore to defaults?</string>
+    <string name="collection_restore_defaults">Restore default positions</string>
+    <string name="collection_empty">No positions. Use the menu to import or restore positions.</string>
+    <string name="collection_delete_failed">Could not delete positions. Please try again.</string>
 </resources>

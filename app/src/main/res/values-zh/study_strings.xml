@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">研习</string>
+    <string name="study_topic">主题</string>
+    <string name="study_surprise">随机选取</string>
+    <string name="study_variations">变着</string>
+    <string name="study_before_move">走棋前：%1$s</string>
+    <string name="study_after_move">走棋后：%1$s</string>
+    <string name="study_pgn_evaluation">研习评估：%1$s</string>
+    <string name="study_loading">正在加载研习…</string>
+    <string name="study_position">第 %1$d 项，共 %2$d 项</string>
+    <string name="study_previous">上一项研习</string>
+    <string name="study_next">下一项研习</string>
+    <string name="study_import_topic">默认主题</string>
+    <string name="import_optional_topic">默认主题（可选）</string>
+    <string name="study_delete_matching">删除匹配的研习</string>
+    <string name="study_delete_failed">无法删除所选研习。</string>
+    <string name="study_delete_confirmation">要从对局中删除主题为“%1$s”、赛事为“%2$s”的研习吗？</string>
+    <string name="study_load_failed">无法加载研习。</string>
+    <string name="study_library_empty">尚未导入研习。</string>
+    <string name="study_download_collections">下载合集</string>
+    <string name="study_import">导入 PGN 或 ZIP</string>
+    <string name="study_import_value_required">请输入一个值</string>
+    <string name="importing_studies">正在导入研习…</string>
+</resources>

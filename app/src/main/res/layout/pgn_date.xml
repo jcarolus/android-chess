@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minWidth="220dp"
-    android:hint="PGN date">
+    android:hint="@string/pgn_date_hint">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/TextInputEditText"

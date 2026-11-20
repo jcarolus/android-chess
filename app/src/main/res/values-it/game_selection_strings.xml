@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">Mostra partite</string>
+    <string name="gameslist_loading">Caricamento delle partite…</string>
+    <string name="game_selection_load_failed">Impossibile caricare le partite.</string>
+    <string name="gameslist_invalid_dates">Inserisci date valide con la data iniziale precedente o uguale a quella finale.</string>
+    <string name="study_title">Studio</string>
+    <string name="study_delete_filtered_confirmation">Eliminare dal database tutte le partite che corrispondono ai filtri attivati?</string>
+</resources>

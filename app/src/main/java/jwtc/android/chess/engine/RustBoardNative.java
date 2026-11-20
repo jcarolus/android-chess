@@ -19,6 +19,8 @@ public final class RustBoardNative {
 
     private static native RustBoardResult query(int variant, String fen, String[] history);
 
+    static native RustBoardResult replaySan(int variant, String fen, String tokens);
+
     private static native RustBoardResult legalMoves(int variant, String fen, String[] history);
 
     private static native RustBoardResult legalTurns(int variant, String fen, String[] history);

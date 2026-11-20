@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ExportRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="@dimen/screen_padding">
+        <TextView
+            android:id="@+id/ExportStatus"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:textAlignment="center"
+            android:layout_marginBottom="@dimen/control_gap" />
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/ExportProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+        <LinearLayout
+            android:id="@+id/ExportActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ExportCreate"
+                style="?attr/chessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/export_create" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ExportAppend"
+                style="?attr/chessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/export_append" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ExportReplace"
+                style="?attr/chessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/export_replace" />
+        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/ExportClose"
+            style="?attr/chessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_close" />
+    </LinearLayout>
+</ScrollView>

@@ -17,15 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import jwtc.android.chess.GamesListActivity;
+import java.util.ArrayList;
+import java.util.Locale;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
@@ -34,6 +32,7 @@ import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.SearchLimit;
+import jwtc.android.chess.gamedatabase.GameSelectionActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
@@ -51,11 +50,7 @@ import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameRecord;
 import jwtc.chess.board.BoardConstants;
-
 import org.json.JSONArray;
-
-import java.util.ArrayList;
-import java.util.Locale;
 
 public class PlayActivity extends ChessBoardActivity
         implements EngineListener,
@@ -72,7 +67,6 @@ public class PlayActivity extends ChessBoardActivity
     public static final int REQUEST_CLOCK = 6;
     public static final int REQUEST_ECO = 7;
     public static final int REQUEST_RANDOM_FISCHER = 8;
-    public static final int REQUEST_SAVE_GAME_TO_FILE = 9;
     public static final int REQUEST_SAVE_POSITION_TO_FILE = 10;
     public static final int REQUEST_OPEN_POSITION_FILE = 11;
     public static final int REQUEST_OPEN_GAME_FILE = 12;
@@ -109,6 +103,15 @@ public class PlayActivity extends ChessBoardActivity
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
     private View boardTopLayout, boardBottomLayout, layoutHistory, layoutEco;
+
+    private MoveEntry moveEntry;
+
+    private void updateMoveEntry() {
+        if (moveEntry != null) {
+            moveEntry.update(
+                    gameApi, gameApi.getCurrentNode(), !vsCPU || gameApi.getTurn() == myTurn);
+        }
+    }
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -181,6 +184,13 @@ public class PlayActivity extends ChessBoardActivity
 
         afterCreate();
 
+        moveEntry =
+                new MoveEntry(
+                        this,
+                        this::promotionDialog,
+                        () -> false,
+                        move -> gameApi.move(move.move, -1));
+
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
         final View controlsLayout = findViewById(R.id.play_controls);
@@ -209,11 +219,7 @@ public class PlayActivity extends ChessBoardActivity
         final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU, R.array.play_menu);
 
         MaterialButton buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(
-                v -> {
-                    menuDialog.setKingOfTheHill(gameApi.isKingOfTheHillVariant());
-                    menuDialog.show();
-                });
+        buttonMenu.setOnClickListener(v -> menuDialog.show());
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -237,15 +243,6 @@ public class PlayActivity extends ChessBoardActivity
                     navigateHistory(() -> gameApi.jumpToBoardNum(1));
                     return true;
                 });
-
-        //        ImageButton butPgn = findViewById(R.id.ButtonPGN);
-        //        butPgn.setOnClickListener(new View.OnClickListener() {
-        //            @Override
-        //            public void onClick(View v) {
-        //                PGNDialog dialog = new PGNDialog(PlayActivity.this, gameApi);
-        //                dialog.show();
-        //            }
-        //        });
 
         imageBottomTurn = findViewById(R.id.ImageBottomTurn);
         imageTopTurn = findViewById(R.id.ImageTopTurn);
@@ -288,6 +285,7 @@ public class PlayActivity extends ChessBoardActivity
                     } else {
                         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
                     }
+                    chessBoardView.invalidatePieces();
                     rebuildBoard();
                     applyCapturedPiecesVisibility();
                     capturedWhitePieces.invalidatePieces();
@@ -309,12 +307,10 @@ public class PlayActivity extends ChessBoardActivity
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
 
-        // Horizontal layout manager
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         historyRecyclerView.setLayoutManager(layoutManager);
 
-        // Set adapter
         moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
         historyRecyclerView.setAdapter(moveAdapter);
         historyRecyclerView.setHorizontalScrollBarEnabled(true);
@@ -324,8 +320,14 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     @Override
+    protected boolean reusesPieceViews() {
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        chessBoardView.invalidatePieces();
 
         SharedPreferences prefs = getPrefs();
 
@@ -398,6 +400,7 @@ public class PlayActivity extends ChessBoardActivity
             gameApi.newGame();
         }
 
+        updateMoveEntry();
         new Handler(Looper.getMainLooper()).postDelayed(this::playIfEngineMove, 500);
     }
 
@@ -443,6 +446,7 @@ public class PlayActivity extends ChessBoardActivity
 
     @Override
     protected void onPause() {
+        moveEntry.reset();
         super.onPause();
 
         if (engineSession != null) {
@@ -511,10 +515,6 @@ public class PlayActivity extends ChessBoardActivity
                     editor.putString("FEN", contents);
                     editor.putString("game_pgn", null);
                     editor.commit();
-                }
-            } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
-                if (uri != null) {
-                    saveToFile(uri, gameApi.exportFullPGN());
                 }
             } else if (requestCode == REQUEST_SAVE_POSITION_TO_FILE) {
                 if (uri != null) {
@@ -601,7 +601,8 @@ public class PlayActivity extends ChessBoardActivity
     public void OnEngineInfo(String message, float value) {
         // Engine updates often leave the score unchanged at one decimal, so only
         // redraw it when the text actually changes.
-        final String scoreText = String.format("%.1f", value);
+        final String scoreText =
+                String.format(Locale.getDefault(Locale.Category.FORMAT), "%.1f", value);
         if (!scoreText.contentEquals(textViewEngineValue.getText())) {
             textViewEngineValue.setText(scoreText);
         }
@@ -656,12 +657,14 @@ public class PlayActivity extends ChessBoardActivity
 
     @Override
     public void onPlayerResigned(int color) {
+        updateMoveEntry();
         Log.d(TAG, "onPlayerResigned " + color);
         feedbackPlayerResigned(color, textViewLastMove);
     }
 
     @Override
     public void onDrawAgreed() {
+        updateMoveEntry();
         Log.d(TAG, "onDrawAgreed");
         feedbackDrawAgreed(textViewLastMove);
     }
@@ -697,6 +700,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateGUI() {
+        updateMoveEntry();
         updateSelectedSquares();
         updateCapturedPieces();
         updateSeekBar();
@@ -706,6 +710,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     protected void updateLastMove() {
+        updateMoveEntry();
         final int state = chessStateToR(gameApi.getState());
         String sState = "";
         // in play or mate are clear from last move.
@@ -865,9 +870,6 @@ public class PlayActivity extends ChessBoardActivity
                             PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
                     startActivityForResult(intent, REQUEST_SETUP);
                 } else if (item.equals(getString(R.string.menu_analyse_game))) {
-                    if (gameApi.isKingOfTheHillVariant()) {
-                        return;
-                    }
                     intent = new Intent(this, AnalyzeActivity.class);
                     intent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
                     startActivity(intent);
@@ -877,8 +879,7 @@ public class PlayActivity extends ChessBoardActivity
                     saveGame();
                 } else if (item.equals(getString(R.string.menu_load_game))) {
                     intent = new Intent();
-                    intent.setClass(PlayActivity.this, GamesListActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    intent.setClass(PlayActivity.this, GameSelectionActivity.class);
                     startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog =
@@ -896,7 +897,7 @@ public class PlayActivity extends ChessBoardActivity
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
                     copyGameToClipboard();
                 } else if (item.equals(getString(R.string.menu_save_game_to_file))) {
-                    startSaveGameToFile(REQUEST_SAVE_GAME_TO_FILE);
+                    startSaveGameToFile();
                 } else if (item.equals(getString(R.string.menu_save_position_to_file))) {
                     startIntentForSaveDocument(
                             "application/x-chess-fen",

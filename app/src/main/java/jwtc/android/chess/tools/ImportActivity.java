@@ -10,21 +10,33 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
+import jwtc.chess.Pgn;
 
 public class ImportActivity extends BaseActivity implements ImportListener {
 
+    private static final String PREF_LAST_STUDY_IMPORT_TOPIC = "lastStudyImportTopic";
+
+    private static final String PREF_LAST_GAME_IMPORT_TOPIC = "lastGameImportTopic";
+
     private ImportService importService = null;
-    private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail;
+    private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail, _tvWorkCntDuplicates;
     private LinearProgressIndicator _progress;
     private int _mode = 0;
     private Intent _intent;
     private boolean importStarted;
+    private AlertDialog topicDialog;
+    private EditText topicField;
+    private String topicDraft;
 
     protected boolean _processing;
 
@@ -62,27 +74,42 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         _tvWork = findViewById(R.id.TextViewDoImport);
         _tvWorkCnt = findViewById(R.id.TextViewDoImportCnt);
         _tvWorkCntFail = findViewById(R.id.TextViewDoImportCntFail);
+        _tvWorkCntDuplicates = findViewById(R.id.TextViewDoImportCntDuplicates);
         _progress = findViewById(R.id.ProgressDoImport);
+        findViewById(R.id.ButtonClose).setOnClickListener(view -> finish());
 
         _progress.setVisibility(View.INVISIBLE);
 
         importStarted =
                 savedInstanceState != null && savedInstanceState.getBoolean("importStarted");
+        if (savedInstanceState != null) {
+            topicDraft = savedInstanceState.getString("importTopic");
+        }
+        _intent = getIntent();
+        _mode = _intent.getIntExtra("mode", ImportService.IMPORT_GAMES);
+        boolean tracksDuplicates =
+                _mode == ImportService.IMPORT_GAMES
+                        || _mode == ImportService.IMPORT_PRACTICE
+                        || _mode == ImportService.IMPORT_PUZZLES
+                        || _mode == ImportService.IMPORT_STUDIES;
+        findViewById(R.id.ImportDuplicatesRow)
+                .setVisibility(tracksDuplicates ? View.VISIBLE : View.GONE);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("importStarted", importStarted);
+        if (topicDialog != null) {
+            outState.putString("importTopic", topicField.getText().toString());
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
-                // API 5+ solution
                 onBackPressed();
                 return true;
             default:
@@ -100,7 +127,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
             startService(new Intent(this, ImportService.class));
             if (!bindService(
                     new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
-                doToast("Could not start import");
+                doToast(getString(R.string.import_start_failed));
             }
         }
     }
@@ -108,6 +135,10 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
+
+        if (topicDialog != null) {
+            topicDialog.dismiss();
+        }
 
         if (importService != null) {
             importService.removeListener(this);
@@ -150,6 +181,9 @@ public class ImportActivity extends BaseActivity implements ImportListener {
                 case ImportService.IMPORT_PRACTICE:
                     _tvWork.setText(R.string.importing_practice_positions);
                     break;
+                case ImportService.IMPORT_STUDIES:
+                    _tvWork.setText(R.string.importing_studies);
+                    break;
                 case ImportService.IMPORT_OPENINGS:
                     _tvWork.setText(R.string.importing_openings);
                     break;
@@ -165,20 +199,23 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
     @Override
     public void OnImportStarted(int mode) {
+        _tvWorkCntDuplicates.setText(String.valueOf(0));
         _progress.setVisibility(View.VISIBLE);
+        findViewById(R.id.ButtonClose).setVisibility(View.GONE);
     }
 
     @Override
-    public void OnImportProgress(int mode, int succeeded, int failed) {
-        _tvWorkCnt.setText("" + succeeded);
-        _tvWorkCntFail.setText("" + failed);
+    public void OnImportProgress(int mode, int succeeded, int failed, int duplicates, int updated) {
+        _tvWorkCnt.setText(String.valueOf(succeeded));
+        _tvWorkCntFail.setText(String.valueOf(failed));
+        _tvWorkCntDuplicates.setText(String.valueOf(duplicates));
     }
 
     @Override
     public void OnImportFinished(int mode) {
         _progress.setVisibility(View.INVISIBLE);
         setResult(RESULT_OK);
-        finish();
+        findViewById(R.id.ButtonClose).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -189,6 +226,65 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     @Override
     public void OnImportFatalError(int mode) {
         _progress.setVisibility(View.INVISIBLE);
-        _tvWorkCnt.setText("An error occured, import failed");
+        _tvWorkCnt.setText(R.string.import_failed);
+        findViewById(R.id.ButtonClose).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onTopicRequired(ImportService.TopicPrompt prompt) {
+        if (isFinishing() || topicDialog != null) {
+            return;
+        }
+        LinearLayout fields = new LinearLayout(this);
+        fields.setOrientation(LinearLayout.VERTICAL);
+        int padding = getResources().getDimensionPixelSize(R.dimen.screen_padding);
+        fields.setPadding(padding, 0, padding, 0);
+        topicField = new EditText(this);
+        topicField.setSingleLine(true);
+        topicField.setHint(R.string.study_topic);
+        String topicPreference =
+                _mode == ImportService.IMPORT_STUDIES
+                        ? PREF_LAST_STUDY_IMPORT_TOPIC
+                        : PREF_LAST_GAME_IMPORT_TOPIC;
+        if (topicDraft == null) {
+            topicDraft = getPrefs().getString(topicPreference, null);
+        }
+        topicField.setText(topicDraft);
+        fields.addView(topicField);
+        topicDraft = null;
+        topicDialog =
+                new ChessAlertDialogBuilder(this)
+                        .setTitle(R.string.study_import_topic)
+                        .setMessage(prompt.filename)
+                        .setView(fields)
+                        .setPositiveButton(R.string.button_ok, null)
+                        .setNegativeButton(
+                                R.string.button_cancel,
+                                (dialog, which) -> cancelTopicImport(prompt))
+                        .setOnCancelListener(dialog -> cancelTopicImport(prompt))
+                        .create();
+        topicDialog.show();
+        topicDialog
+                .getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(
+                        view -> {
+                            String topic = Pgn.optionalTagValue(topicField.getText().toString());
+                            if (topic == null) {
+                                topicField.setError(
+                                        getString(R.string.study_import_value_required));
+                            } else if (importService != null) {
+                                getPrefs().edit().putString(topicPreference, topic).apply();
+                                topicDialog.dismiss();
+                                topicDialog = null;
+                                importService.answerTopicPrompt(prompt, topic, true);
+                            }
+                        });
+    }
+
+    private void cancelTopicImport(ImportService.TopicPrompt prompt) {
+        finish();
+        if (importService != null) {
+            importService.answerTopicPrompt(prompt, null, false);
+        }
     }
 }

@@ -117,16 +117,22 @@ final class AnalysisResults {
         if (position.state == BoardConstants.MATE) {
             return new Result((PositionMove) null, new EngineEvaluation(true, 0, 0));
         }
+        int winner = terminalWinner(position);
+        if (winner != -1) {
+            return new Result(
+                    (PositionMove) null,
+                    new EngineEvaluation(true, winner == BoardConstants.WHITE ? 1 : -1, 0));
+        }
         Result result = get(position.positionCommand);
         if (result != null && result.preferredMove == null && result.bestMove != null) {
-            result = new Result(position.findMove(result.bestMove), result.evaluation);
+            result = new Result(position.findTurn(result.bestMove), result.evaluation);
             put(position.positionCommand, result);
         }
         return result;
     }
 
     void complete(PositionSnapshot position, String bestMove, EngineEvaluation evaluation) {
-        PositionMove preferredMove = position.findMove(bestMove);
+        PositionMove preferredMove = position.findTurn(bestMove);
         EngineEvaluation whiteEvaluation =
                 evaluation == null
                         ? null
@@ -136,6 +142,23 @@ final class AnalysisResults {
 
     void unavailable(PositionSnapshot position) {
         put(position.positionCommand, new Result((PositionMove) null, null));
+    }
+
+    static int terminalWinner(PositionSnapshot position) {
+        if (position == null) {
+            return -1;
+        }
+        switch (position.state) {
+            case BoardConstants.MATE:
+            case BoardConstants.HILL_WIN:
+                return position.turn == BoardConstants.WHITE
+                        ? BoardConstants.BLACK
+                        : BoardConstants.WHITE;
+            case BoardConstants.DUCK_STALEMATE_WIN:
+                return position.turn;
+            default:
+                return -1;
+        }
     }
 
     static boolean isDraw(int state) {

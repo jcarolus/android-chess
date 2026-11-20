@@ -178,6 +178,14 @@ public class SetupActivity extends ChessBoardActivity {
         gameApi.setTurn(turn);
 
         int iEP = getEpSquare(turn);
+        if (iEP >= 0) {
+            int pawnSquare = turn == BoardConstants.WHITE ? iEP + 8 : iEP - 8;
+            if (gameApi.hasAnyPieceOnPosition(iEP)
+                    || gameApi.pieceAt(turn ^ 1, pawnSquare) != BoardConstants.PAWN) {
+                iEP = -1;
+                setEpPosition(iEP);
+            }
+        }
 
         gameApi.setCastlingsEPAnd50(
                 checkWhiteCastleLong.isChecked() ? 1 : 0,
@@ -190,7 +198,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         if (gameApi.isLegalPosition() == 0) {
             openConfirmDialog(
-                    "Use illegal position?",
+                    getString(R.string.setup_use_illegal_position),
                     getString(R.string.alert_yes),
                     getString(R.string.alert_no),
                     onReady,

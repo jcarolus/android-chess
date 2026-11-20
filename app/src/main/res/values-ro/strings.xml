@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Avansat</h3>
-        <p>Creați sau importați aici conținutul dvs.</p>
-
-        <h4>Exportați baza de date de partide pe cardul SD</h4>
-        <p>Toate partidele din baza de date pot fi exportate într-un singur fișier PGN pe cardul SD. Acest fișier se va numi chess.pgn, iar un fișier existent va fi suprascris.</p>
-
-        <h4>Importați partide în baza de date</h4>
-        <p>Folosiți această opțiune pentru a adăuga partide în baza de date. Vă permite să navigați la un fișier PGN. Selectați-l și alegeți importul.</p>
-
-        <h4>Ștergeți toate partidele din baza de date</h4>
-        <p>Folosiți această opțiune dacă doriți să curățați baza de date. Asigurați-vă că mai întâi faceți o copie de siguranță pe cardul SD; această acțiune nu poate fi anulată.</p>
-
-        <h4>Creați set de antrenament</h4>
-        <p>Creează poziții de antrenament din partide care se termină cu șah mat. Selectați fișierul de procesat. Intrările eșuate sunt de obicei partide care nu s-au încheiat cu șah mat sau sunt duplicate.</p>
-
-        <h4>Resetați setul de antrenament</h4>
-        <p>Doriți să începeți antrenamentul de la zero? Aceasta va reseta și contorul mediei timpului.</p>
-
-        ]]></string>
     <string name="alert_no">Nu</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Da</string>
     <string name="app_name">Șah</string>
     <string name="app_name_help">Ajutor</string>
     <string name="app_name_import">Importă</string>
-    <string name="app_name_pgntools">Avansat</string>
     <string name="app_name_play">Joacă</string>
     <string name="app_name_playonline">Joacă online</string>
     <string name="app_name_save_games">Partide salvate</string>
@@ -279,13 +258,13 @@
     <string name="options_play_white">Albele</string>
     <string name="options_quiescent_off">Căutare liniște inactivă</string>
     <string name="options_quiescent_on">Căutare liniște activă</string>
-    <string name="pgntool_confirm_delete_games">Ești sigur?</string>
+    <string name="pgntool_delete_item_count">Elemente de șters: %1$d</string>
+    <string name="pgntool_confirm_delete_games">Ștergi toate partidele din baza de date, inclusiv studiile?</string>
     <string name="pgntool_confirm_practice_reset">Sigur vrei să resetezi?</string>
     <string name="pgntool_create_db_explanation">Creează baza de deschideri</string>
     <string name="pgntool_delete_games">Șterge toate partidele din baza de date</string>
     <string name="pgntool_games_deleted">Toate partidele au fost șterse</string>
     <string name="pgntool_export_explanation">Exportă baza de date cu partide</string>
-    <string name="pgntool_help">Ajutor</string>
     <string name="pgntool_import_explanation">Importă partide în baza de date</string>
     <string name="importing_games">Se importă partidele…</string>
     <string name="importing_puzzles">Se importă problemele…</string>
@@ -357,6 +336,7 @@
     <string name="pref_speech">Vorbire</string>
     <string name="pref_user_long_move_descriptions">Folosește descrierea completă a mutării</string>
     <string name="tts_locale_not_supported">Funcția text-în-vorbire nu acceptă localizarea dvs.</string>
+    <string name="tts_language_differs_from_app">Funcția de redare vocală folosește o altă limbă decât aplicația</string>
     <string name="tts_not_loaded">Nu s-a putut încărca funcția text-în-vorbire</string>
     <string name="tts_example_move">Nebunul capturează la G7, șah</string>
     <string name="tts_selected">Selectat</string>
@@ -413,7 +393,6 @@
     <string name="start_wifiboard">Tablă Wi‑Fi</string>
     <string name="start_ics">Joacă online</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Avansat</string>
     <string name="start_play">Joacă</string>
     <string name="start_practice">Antrenament</string>
     <string name="start_puzzles">Probleme</string>
@@ -447,6 +426,7 @@
     <string name="title_challenge">Provocare</string>
     <string name="title_overwrite_main_line">Suprascrii linia principală din această poziție?</string>
     <string name="title_delete_game">Șterge partida</string>
+    <string name="game_delete_failed">Partida nu a putut fi ștearsă. Încearcă din nou.</string>
     <string name="title_edit_command">Editează comanda</string>
     <string name="title_edit_or_delete">Editează sau șterge?</string>
     <string name="title_error">Eroare</string>
@@ -548,7 +528,6 @@
     <string name="analysis_move_mistake">Greșeală</string>
     <string name="analysis_move_blunder">Greșeală gravă</string>
     <string name="analysis_move_forced">Forțată</string>
-    <string name="analysis_move_pending">Se analizează mutarea…</string>
     <string name="analysis_move_unavailable">Analiză indisponibilă</string>
     <string name="analysis_white_to_move">Albul la mutare</string>
     <string name="analysis_black_to_move">Negrul la mutare</string>
@@ -566,7 +545,6 @@
     <string name="analysis_builtin_warning">Pentru o analiză mai bună, instalează un motor de șah compatibil cu OEX.</string>
     <string name="analysis_dont_show_again">Nu mai afișa</string>
     <string name="analysis_continue">Continuă</string>
-    <string name="analysis_duck_unsupported">Analiza pentru șahul cu rața nu este acceptată.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Regele dealului</string>
@@ -583,6 +561,89 @@
     <string name="share_lichess_profile">Distribuie profilul meu Lichess</string>
     <string name="app_link_invalid">Acest link Chess este invalid sau incompatibil.</string>
     <string name="app_link_too_large">Partida este prea mare pentru un link. Distribuie partida completă în format PGN.</string>
-    <string name="app_link_no_engine">Analiza motorului nu este disponibilă pentru această variantă. Poți explora tabla și mutările.</string>
     <string name="share_failed">Partida nu a putut fi distribuită. Încearcă din nou.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>unu|una</item>
+        <item>doi|două</item>
+        <item>trei</item>
+        <item>patru</item>
+        <item>cinci</item>
+        <item>șase</item>
+        <item>șapte</item>
+        <item>opt</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cal</item>
+        <item>nebun</item>
+        <item>turn</item>
+        <item>damă|regină</item>
+    </string-array>
+    <string name="move_input_castle">rocadă</string>
+    <string name="move_input_captures">ia|capturează</string>
+    <string name="menu_delete_game_database">Șterge toate partidele, inclusiv studiile</string>
+    <string name="practice_delete_confirmation">Ștergi toate pozițiile de antrenament și progresul?</string>
+    <string name="puzzle_delete_confirmation">Ștergi toate pozițiile problemelor și progresul?</string>
+    <string name="collection_restore_prompt">Ai șters toate pozițiile. Vrei să restabilești pozițiile implicite?</string>
+    <string name="collection_restore_defaults">Restabilește pozițiile implicite</string>
+    <string name="collection_empty">Nu există poziții. Folosește meniul pentru a importa sau a restabili poziții.</string>
+    <string name="collection_delete_failed">Pozițiile nu au putut fi șterse. Încearcă din nou.</string>
+    <string name="lichess_create_challenge_player_invalid">Acesta nu este un nume de utilizator Lichess valid.</string>
+    <string name="pgntool_confirm_delete_practice">Ștergi toate pozițiile de antrenament?</string>
+    <string name="pgntool_confirm_delete_puzzles">Ștergi toate pozițiile problemelor?</string>
+    <string name="pgntool_delete_practice">Șterge toate pozițiile de antrenament</string>
+    <string name="pgntool_delete_puzzles">Șterge toate pozițiile problemelor</string>
+    <string name="pgntool_practice_deleted">Toate pozițiile de antrenament au fost șterse</string>
+    <string name="pgntool_puzzles_deleted">Toate pozițiile problemelor au fost șterse</string>
+    <string name="pgntool_import_busy">Un import este deja în curs</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes de flugsio (CC BY-SA 4.0); Firi de James Faure și Kiwen-suwi de neverRare (CC BY 4.0); Celtic și Spatial de Maurizio Monge (MIT). Grafică adaptată pentru Android; Firi recolorat. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">Această partidă nu a putut fi încărcată.</string>
+    <string name="lichess_puzzle_move_failed">Nu s-a putut executa o mutare a problemei. Poți trece la problema următoare.</string>
+    <string name="analysis_edit_comment">Editează comentariul</string>
+    <string name="analysis_comment_hint">Atinge pentru a adăuga un comentariu</string>
+    <string name="analysis_comment_title">Comentariu după mutare</string>
+    <string name="analysis_start_comment_title">Comentariu înaintea primei mutări</string>
+    <string name="analysis_engine">Motor</string>
+    <string name="menu_analyse_game">Analizează partida</string>
+    <string name="menu_new_king_of_the_hill">Partidă nouă Regele dealului</string>
+    <string name="state_hill_win">Regele a ajuns pe deal</string>
+    <string name="state_duck_stalemate_win">Nu mai sunt mutări posibile, ceea ce aduce victoria în șahul cu rața</string>
+    <string name="options_engine_oex_variant_disabled">Această variantă folosește motorul integrat.</string>
+    <string name="practice_finished_position">Poziție încheiată</string>
+    <string name="practice_preparing_position">Se pregătește poziția de antrenament…</string>
+    <string name="practice_completed_collection">Ai terminat toate problemele!</string>
+    <string name="import_start_failed">Importul nu a putut fi pornit</string>
+    <string name="import_failed">Import eșuat</string>
+    <string name="import_duplicates_skipped">Duplicate omise</string>
+    <string name="engine_uninstalled">Motorul %1$s a fost dezinstalat</string>
+    <string name="engine_not_installed">Niciun motor instalat</string>
+    <string name="opening_database_uninstalled">Baza de date %1$s a fost dezinstalată</string>
+    <string name="opening_database_not_installed">Nicio bază de date instalată</string>
+    <string name="setup_use_illegal_position">Folosești o poziție ilegală?</string>
+    <string name="clock_minutes_hint">Minute</string>
+    <string name="clock_increment_hint">Increment în secunde</string>
+    <string name="import_added">Adăugate</string>
+    <string name="import_ignored">Ignorate</string>
+    <string name="pgn_date_hint">Dată PGN</string>
+    <string name="eco_openings_description">Deschideri ECO</string>
+    <string name="hotspot_result_game_over">Partidă încheiată</string>
+    <string name="hotspot_result_defeat">Înfrângere</string>
+    <string name="hotspot_result_victory">Victorie!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s a abandonat.</string>
+    <string name="hotspot_result_you_resigned">Ai abandonat.</string>
+    <string name="hotspot_result_mate_lost">Ai pierdut prin șah mat.</string>
+    <string name="hotspot_result_mate_won">Ai câștigat prin șah mat.</string>
+    <string name="hotspot_result_draw">Partida este remiză.</string>
+    <string name="hotspot_result_stalemate">Partida este remiză prin pat.</string>
+    <string name="hotspot_result_repetition">Partida este remiză prin repetarea de trei ori a poziției.</string>
+    <string name="hotspot_result_fifty_moves">Partida este remiză conform regulii celor 50 de mutări.</string>
+    <string name="hotspot_result_insufficient_material">Partida este remiză din cauza materialului insuficient.</string>
+    <string name="website_open_failed">Nu există nicio aplicație disponibilă pentru a deschide site-ul.</string>
 </resources>

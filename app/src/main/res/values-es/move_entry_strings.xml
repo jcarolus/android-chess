@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Entrada de jugadas por texto</string>
+    <string name="pref_confirm_move_entry">Revisar las jugadas de texto antes de jugar</string>
+    <string name="move_entry_hint">Jugada, por ejemplo e2 e4</string>
+    <string name="move_entry_format">Introduce una jugada, por ejemplo e2e4, Nf3 o Caballo f3.</string>
+    <string name="move_entry_illegal">Esa jugada es ilegal en esta posición.</string>
+    <string name="move_entry_wrong_turn">Espera tu turno en una partida en curso.</string>
+    <string name="move_entry_promotion">Añade una pieza de promoción: dama, torre, alfil o caballo.</string>
+    <string name="move_entry_review">¿Jugar %1$s (%2$s)?</string>
+</resources>

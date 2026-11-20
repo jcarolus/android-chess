@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">إدخال النقلات بالنص</string>
+    <string name="pref_confirm_move_entry">مراجعة النقلات النصية قبل لعبها</string>
+    <string name="move_entry_hint">نقلة، مثل e2 e4</string>
+    <string name="move_entry_format">أدخل نقلة، مثل e2e4 أو Nf3 أو حصان f3.</string>
+    <string name="move_entry_illegal">هذه النقلة غير قانونية في هذا الوضع.</string>
+    <string name="move_entry_wrong_turn">انتظر دورك في المباراة الجارية.</string>
+    <string name="move_entry_promotion">أضف قطعة للترقية: وزير أو قلعة أو فيل أو حصان.</string>
+    <string name="move_entry_review">هل تريد لعب %1$s (%2$s)؟</string>
+</resources>

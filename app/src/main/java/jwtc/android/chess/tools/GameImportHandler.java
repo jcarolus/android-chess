@@ -14,13 +14,13 @@ public class GameImportHandler implements ImportHandler {
     }
 
     @Override
-    public boolean handle(ImportItem item) {
+    public Result handle(ImportItem item) {
         final GameRecord record;
         try {
             record = GameRecord.fromPgn(item.pgn).withRating(2.5F);
         } catch (PgnSyntaxError ex) {
-            return false;
+            return Result.FAILED;
         }
-        return store.insert(record) > 0;
+        return store.importGame(record) ? Result.INSERTED : Result.DUPLICATE;
     }
 }

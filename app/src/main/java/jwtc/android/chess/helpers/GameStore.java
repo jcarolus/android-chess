@@ -6,10 +6,16 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.PGNProvider;
+import jwtc.chess.PgnExport;
 
 /** The Game Database: saved Games in the PGN content provider. */
 public final class GameStore {
@@ -44,6 +50,16 @@ public final class GameStore {
         return uri == null ? -1 : ContentUris.parseId(uri);
     }
 
+    /** Inserts an imported Game, returning false when the database already has a match. */
+    public boolean importGame(GameRecord record) {
+        Uri uri =
+                MyPGNProvider.CONTENT_URI
+                        .buildUpon()
+                        .appendQueryParameter(PGNProvider.IMPORT_PARAMETER, "true")
+                        .build();
+        return resolver.insert(uri, toValues(record)) != null;
+    }
+
     /** Writes the columns the record has; a record without a rating keeps the stored rating. */
     public boolean update(long id, GameRecord record) {
         return resolver.update(uriOf(id), toValues(record), null, null) > 0;
@@ -71,6 +87,41 @@ public final class GameStore {
         return resolver.delete(MyPGNProvider.CONTENT_URI, "1=1", null);
     }
 
+    public int deleteMatching(GameFilter filter, int expectedCount) {
+        String match = filter.selection() == null ? "1=1" : filter.selection();
+        String[] args = filter.selectionArgs();
+        List<String> values = new ArrayList<>();
+        if (args != null) {
+            java.util.Collections.addAll(values, args);
+            java.util.Collections.addAll(values, args);
+        }
+        values.add(Integer.toString(expectedCount));
+        return resolver.delete(
+                MyPGNProvider.CONTENT_URI,
+                "("
+                        + match
+                        + ") AND (SELECT COUNT(*) FROM games WHERE "
+                        + match
+                        + ") = CAST(? AS INTEGER)",
+                values.toArray(new String[0]));
+    }
+
+    public int count() {
+        return count(new GameFilter());
+    }
+
+    public int count(GameFilter filter) {
+        try (Cursor cursor =
+                resolver.query(
+                        MyPGNProvider.CONTENT_URI,
+                        new String[] {PGNColumns._ID},
+                        filter.selection(),
+                        filter.selectionArgs(),
+                        null)) {
+            return cursor == null ? 0 : cursor.getCount();
+        }
+    }
+
     /** The Games that match, as a cursor over {@link PGNColumns#COLUMNS} that the caller closes. */
     public Cursor query(GameFilter filter) {
         return resolver.query(
@@ -78,7 +129,7 @@ public final class GameStore {
                 PGNColumns.COLUMNS,
                 filter.selection(),
                 filter.selectionArgs(),
-                filter.orderBy());
+                filter.orderBy() + ", " + PGNColumns._ID + " ASC");
     }
 
     /** All Games, newest first, each PGN followed by blank lines. */
@@ -96,6 +147,21 @@ public final class GameStore {
             }
         }
         return out.toString();
+    }
+
+    /** Streams matching Games in the selected order, returning the number written. */
+    public int exportAsPgn(GameFilter filter, OutputStream output) throws IOException {
+        int count = 0;
+        try (Cursor cursor = query(filter)) {
+            if (cursor == null) {
+                throw new IOException("Could not read the Game Database");
+            }
+            while (cursor.moveToNext()) {
+                PgnExport.writeGame(output, Utils.getColumnString(cursor, PGNColumns.PGN));
+                ++count;
+            }
+        }
+        return count;
     }
 
     /** The Game the cursor is on. */

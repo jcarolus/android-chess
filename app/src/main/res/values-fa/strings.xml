@@ -1,39 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>پیشرفته</h3>
-            <p>در اینجا می‌توانید موارد خودتان را بسازید یا وارد کنید.</p>
-
-            <h4>خروجی گرفتن از پایگاه‌داده‌ی بازی‌ها روی کارت حافظه</h4>
-            <p>همه‌ی بازی‌های موجود در پایگاه‌داده را می‌توان در یک فایل PGN روی کارت حافظه ذخیره کرد. نام این فایل
-                chess.pgn خواهد بود و اگر فایلی با همین نام وجود داشته باشد بازنویسی می‌شود.</p>
-
-            <h4>وارد کردن بازی‌ها به پایگاه‌داده</h4>
-            <p>از این گزینه برای افزودن بازی‌ها به پایگاه‌داده استفاده کنید. می‌توانید یک فایل PGN را انتخاب
-                کرده و برای وارد کردن آن اقدام کنید.</p>
-
-            <h4>حذف همه‌ی بازی‌های پایگاه‌داده</h4>
-            <p>اگر می‌خواهید پایگاه‌داده را پاک‌سازی کنید از این گزینه استفاده کنید. ابتدا حتماً یک نسخه‌ی پشتیبان
-                روی کارت حافظه بگیرید؛ این کار قابل بازگشت نیست.</p>
-
-            <h4>ساخت مجموعه‌ی تمرین</h4>
-            <p>از بازی‌هایی که به کیش و مات ختم می‌شوند موقعیت‌های تمرینی می‌سازد. فایل موردنظر را برای پردازش
-                انتخاب کنید. موارد ناموفق معمولاً بازی‌هایی هستند که به کیش و مات ختم نشده‌اند یا تکراری
-                هستند.</p>
-
-            <h4>بازنشانی مجموعه‌ی تمرین</h4>
-            <p>می‌خواهید تمرین را از نو شروع کنید؟ این کار شمارنده‌ی میانگین زمان شما را نیز بازنشانی می‌کند.</p>
-
-                ]]>
-            </string>
     <string name="alert_no">خیر</string>
     <string name="alert_ok">تأیید</string>
     <string name="alert_yes">بله</string>
     <string name="app_name">شطرنج</string>
     <string name="app_name_help">راهنما</string>
     <string name="app_name_import">وارد کردن</string>
-    <string name="app_name_pgntools">پیشرفته</string>
     <string name="app_name_play">بازی</string>
     <string name="app_name_playonline">بازی آنلاین</string>
     <string name="app_name_save_games">بازی‌های ذخیره‌شده</string>
@@ -314,13 +286,13 @@
     <string name="options_play_white">سفید</string>
     <string name="options_quiescent_off">جستجوی آرام خاموش</string>
     <string name="options_quiescent_on">جستجوی آرام روشن</string>
-    <string name="pgntool_confirm_delete_games">مطمئن هستید؟</string>
+    <string name="pgntool_delete_item_count">تعداد موارد برای حذف: %1$d</string>
+    <string name="pgntool_confirm_delete_games">همهٔ بازی‌ها، از جمله مطالعه‌ها، از پایگاه داده حذف شوند؟</string>
     <string name="pgntool_confirm_practice_reset">مطمئن هستید که می‌خواهید بازنشانی کنید؟</string>
     <string name="pgntool_create_db_explanation">ساخت پایگاه‌داده‌ی آغازین</string>
     <string name="pgntool_delete_games">حذف همه‌ی بازی‌های پایگاه‌داده</string>
     <string name="pgntool_games_deleted">همه‌ی بازی‌ها حذف شدند</string>
     <string name="pgntool_export_explanation">خروجی گرفتن از پایگاه‌داده‌ی بازی‌ها</string>
-    <string name="pgntool_help">راهنما</string>
     <string name="pgntool_import_explanation">وارد کردن بازی‌ها به پایگاه‌داده</string>
     <string name="importing_games">در حال وارد کردن بازی‌ها…</string>
     <string name="importing_puzzles">در حال وارد کردن پازل‌ها…</string>
@@ -392,6 +364,7 @@
     <string name="pref_speech">گفتار</string>
     <string name="pref_user_long_move_descriptions">استفاده از توضیح کامل حرکت</string>
     <string name="tts_locale_not_supported">تبدیل متن به گفتار از زبان شما پشتیبانی نمی‌کند</string>
+    <string name="tts_language_differs_from_app">تبدیل متن به گفتار از زبانی متفاوت با زبان برنامه استفاده می‌کند</string>
     <string name="tts_not_loaded">بارگذاری تبدیل متن به گفتار ممکن نشد</string>
     <string name="tts_example_move">فیل، G7 را می‌زند کیش</string>
     <string name="tts_selected">انتخاب‌شده</string>
@@ -451,7 +424,6 @@
     <string name="start_wifiboard">صفحه‌ی وای‌فای</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">پیشرفته</string>
     <string name="start_play">بازی</string>
     <string name="start_practice">تمرین</string>
     <string name="start_puzzles">پازل‌ها</string>
@@ -486,6 +458,7 @@
     <string name="title_challenge">چالش</string>
     <string name="title_overwrite_main_line">خط اصلی از این موقعیت بازنویسی شود؟</string>
     <string name="title_delete_game">حذف بازی</string>
+    <string name="game_delete_failed">حذف بازی ممکن نشد. لطفاً دوباره تلاش کنید.</string>
     <string name="title_edit_command">ویرایش فرمان</string>
     <string name="title_edit_or_delete">ویرایش یا حذف؟</string>
     <string name="title_error">خطا</string>
@@ -565,7 +538,6 @@
     <string name="analysis_move_mistake">اشتباه</string>
     <string name="analysis_move_blunder">اشتباه فاحش</string>
     <string name="analysis_move_forced">اجباری</string>
-    <string name="analysis_move_pending">در حال تحلیل حرکت…</string>
     <string name="analysis_move_unavailable">تحلیل در دسترس نیست</string>
     <string name="analysis_white_to_move">نوبت سفید</string>
     <string name="analysis_black_to_move">نوبت سیاه</string>
@@ -583,7 +555,6 @@
     <string name="analysis_builtin_warning">برای تحلیل بهتر، یک موتور شطرنج سازگار با OEX نصب کنید.</string>
     <string name="analysis_dont_show_again">دیگر نشان نده</string>
     <string name="analysis_continue">ادامه</string>
-    <string name="analysis_duck_unsupported">تحلیل شطرنج اردک پشتیبانی نمی‌شود.</string>
     <string name="new_game_variant_standard">استاندارد</string>
     <string name="new_game_variant_duck">اردک</string>
     <string name="new_game_variant_king_of_the_hill">شاه تپه</string>
@@ -600,6 +571,89 @@
     <string name="share_lichess_profile">اشتراک‌گذاری نمایهٔ Lichess من</string>
     <string name="app_link_invalid">این پیوند Chess نامعتبر است یا پشتیبانی نمی‌شود.</string>
     <string name="app_link_too_large">این بازی برای اشتراک‌گذاری با پیوند بیش از حد بزرگ است. بازی کامل را با قالب PGN به اشتراک بگذارید.</string>
-    <string name="app_link_no_engine">تحلیل موتور برای این گونه در دسترس نیست. می‌توانید صفحه و حرکت‌ها را مرور کنید.</string>
     <string name="share_failed">اشتراک‌گذاری بازی ممکن نشد. دوباره تلاش کنید.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>یک</item>
+        <item>دو</item>
+        <item>سه</item>
+        <item>چهار</item>
+        <item>پنج</item>
+        <item>شش</item>
+        <item>هفت</item>
+        <item>هشت</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>اسب</item>
+        <item>فیل</item>
+        <item>رخ|قلعه</item>
+        <item>وزیر|ملکه</item>
+    </string-array>
+    <string name="move_input_castle">قلعه|قلعه رفتن</string>
+    <string name="move_input_captures">می‌زند</string>
+    <string name="menu_delete_game_database">حذف همهٔ بازی‌ها، از جمله مطالعه‌ها</string>
+    <string name="practice_delete_confirmation">همهٔ وضعیت‌های تمرینی و پیشرفت حذف شوند؟</string>
+    <string name="puzzle_delete_confirmation">همهٔ وضعیت‌های پازل و پیشرفت حذف شوند؟</string>
+    <string name="collection_restore_prompt">همهٔ وضعیت‌ها را حذف کرده‌اید. آیا می‌خواهید وضعیت‌های پیش‌فرض را بازیابی کنید؟</string>
+    <string name="collection_restore_defaults">بازیابی وضعیت‌های پیش‌فرض</string>
+    <string name="collection_empty">هیچ وضعیتی وجود ندارد. برای وارد کردن یا بازیابی وضعیت‌ها از منو استفاده کنید.</string>
+    <string name="collection_delete_failed">وضعیت‌ها حذف نشدند. لطفاً دوباره تلاش کنید.</string>
+    <string name="lichess_create_challenge_player_invalid">این نام کاربری Lichess معتبر نیست.</string>
+    <string name="pgntool_confirm_delete_practice">همهٔ وضعیت‌های تمرینی حذف شوند؟</string>
+    <string name="pgntool_confirm_delete_puzzles">همهٔ وضعیت‌های پازل حذف شوند؟</string>
+    <string name="pgntool_delete_practice">حذف همهٔ وضعیت‌های تمرینی</string>
+    <string name="pgntool_delete_puzzles">حذف همهٔ وضعیت‌های پازل</string>
+    <string name="pgntool_practice_deleted">همهٔ وضعیت‌های تمرینی حذف شدند</string>
+    <string name="pgntool_puzzles_deleted">همهٔ وضعیت‌های پازل حذف شدند</string>
+    <string name="pgntool_import_busy">یک فرایند وارد کردن از قبل در حال انجام است</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes اثر flugsio (CC BY-SA 4.0)؛ Firi اثر James Faure و Kiwen-suwi اثر neverRare (CC BY 4.0)؛ Celtic و Spatial اثر Maurizio Monge (MIT). طرح‌ها برای Android سازگار شده‌اند؛ رنگ‌های Firi تغییر کرده‌اند. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">این بازی بارگیری نشد.</string>
+    <string name="lichess_puzzle_move_failed">انجام یکی از حرکت‌های پازل ممکن نشد. می‌توانید به پازل بعدی بروید.</string>
+    <string name="analysis_edit_comment">ویرایش توضیح</string>
+    <string name="analysis_comment_hint">برای افزودن توضیح ضربه بزنید</string>
+    <string name="analysis_comment_title">توضیح پس از حرکت</string>
+    <string name="analysis_start_comment_title">توضیح پیش از نخستین حرکت</string>
+    <string name="analysis_engine">موتور</string>
+    <string name="menu_analyse_game">تحلیل بازی</string>
+    <string name="menu_new_king_of_the_hill">بازی جدید شاه تپه</string>
+    <string name="state_hill_win">شاه به تپه رسید</string>
+    <string name="state_duck_stalemate_win">حرکت دیگری وجود ندارد؛ این وضعیت در شطرنج اردک موجب برد می‌شود</string>
+    <string name="options_engine_oex_variant_disabled">این گونه از موتور داخلی استفاده می‌کند.</string>
+    <string name="practice_finished_position">وضعیت تکمیل‌شده</string>
+    <string name="practice_preparing_position">در حال آماده‌سازی وضعیت تمرینی…</string>
+    <string name="practice_completed_collection">همهٔ پازل‌ها را تکمیل کردید!</string>
+    <string name="import_start_failed">شروع وارد کردن ممکن نشد</string>
+    <string name="import_failed">وارد کردن ناموفق بود</string>
+    <string name="import_duplicates_skipped">موارد تکراری رد شدند</string>
+    <string name="engine_uninstalled">موتور %1$s حذف شد</string>
+    <string name="engine_not_installed">هیچ موتوری نصب نیست</string>
+    <string name="opening_database_uninstalled">پایگاه دادهٔ %1$s حذف شد</string>
+    <string name="opening_database_not_installed">هیچ پایگاه داده‌ای نصب نیست</string>
+    <string name="setup_use_illegal_position">از وضعیت غیرقانونی استفاده شود؟</string>
+    <string name="clock_minutes_hint">دقیقه</string>
+    <string name="clock_increment_hint">زمان افزوده به ثانیه</string>
+    <string name="import_added">افزوده‌شده</string>
+    <string name="import_ignored">نادیده‌گرفته‌شده</string>
+    <string name="pgn_date_hint">تاریخ PGN</string>
+    <string name="eco_openings_description">گشایش‌های ECO</string>
+    <string name="hotspot_result_game_over">بازی تمام شد</string>
+    <string name="hotspot_result_defeat">شکست</string>
+    <string name="hotspot_result_victory">پیروزی!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s تسلیم شد.</string>
+    <string name="hotspot_result_you_resigned">تسلیم شدید.</string>
+    <string name="hotspot_result_mate_lost">با کیش و مات باختید.</string>
+    <string name="hotspot_result_mate_won">با کیش و مات بردید.</string>
+    <string name="hotspot_result_draw">بازی مساوی شد.</string>
+    <string name="hotspot_result_stalemate">بازی به دلیل پات مساوی شد.</string>
+    <string name="hotspot_result_repetition">بازی به دلیل تکرار سه‌بارهٔ وضعیت مساوی شد.</string>
+    <string name="hotspot_result_fifty_moves">بازی بر اساس قانون ۵۰ حرکت مساوی شد.</string>
+    <string name="hotspot_result_insufficient_material">بازی به دلیل کافی نبودن مهره‌ها مساوی شد.</string>
+    <string name="website_open_failed">برنامه‌ای برای باز کردن وب‌سایت در دسترس نیست.</string>
 </resources>

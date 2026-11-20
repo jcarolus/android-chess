@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Ввод ходов текстом</string>
+    <string name="pref_confirm_move_entry">Проверять текстовые ходы перед выполнением</string>
+    <string name="move_entry_hint">Ход, например e2 e4</string>
+    <string name="move_entry_format">Введите ход, например e2e4, Nf3 или Конь f3.</string>
+    <string name="move_entry_illegal">Этот ход недопустим в данной позиции.</string>
+    <string name="move_entry_wrong_turn">Дождитесь своей очереди в текущей партии.</string>
+    <string name="move_entry_promotion">Укажите фигуру для превращения: ферзь, ладья, слон или конь.</string>
+    <string name="move_entry_review">Сыграть %1$s (%2$s)?</string>
+</resources>

@@ -16,7 +16,7 @@ public final class PgnDocument {
         /** Character position of the move token, for error reporting. */
         public final int offset;
 
-        /** Annotation glyph first (!, ?, ...), then explicit $n codes in order. */
+        /** Symbolic annotations and explicit $n codes, in the order they appear. */
         public final List<Integer> nags;
 
         public final String comment;

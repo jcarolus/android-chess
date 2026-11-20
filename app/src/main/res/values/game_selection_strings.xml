@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">Show games</string>
+    <string name="gameslist_loading">Loading games…</string>
+    <string name="game_selection_load_failed">Could not load games.</string>
+    <string name="gameslist_invalid_dates">Enter valid dates with the start date on or before the end date.</string>
+    <string name="study_title">Study</string>
+    <string name="study_delete_filtered_confirmation">Delete all games matching the enabled filters from the Game Database?</string>
+    <string name="gameslist_delete_matching">Delete matching games</string>
+    <string name="gameslist_delete_matching_confirmation">Delete all games matching the enabled filters from the Game Database?</string>
+    <string name="gameslist_delete_failed">Could not delete the selection.</string>
+</resources>

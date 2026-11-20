@@ -10,7 +10,7 @@ import jwtc.chess.board.BoardPosition;
 
 /** Java-owned board snapshots, with a scoped native position for PGN replay. */
 public final class RustBoard {
-    public static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String START = BoardPosition.START_FEN;
     private final List<Frame> frames = new ArrayList<>();
     private RustSearchRequest.Variant variant;
     private String initialFen;
@@ -100,6 +100,42 @@ public final class RustBoard {
             this.coordinate = coordinate;
             this.san = san;
         }
+    }
+
+    /** A completed Position and its legal moves, ready to display without native replay. */
+    public static final class Snapshot {
+        private final Frame frame;
+        private final RustSearchRequest.Variant variant;
+        public final List<LegalMove> moves;
+
+        private Snapshot(Frame frame, RustSearchRequest.Variant variant, List<LegalMove> moves) {
+            this.frame = frame;
+            this.variant = variant;
+            this.moves = moves;
+        }
+
+        public String fen() {
+            return frame.fen;
+        }
+    }
+
+    public synchronized Snapshot capturePosition() {
+        return new Snapshot(current(), variant, legalMoves());
+    }
+
+    /** Installs the recorded path so subsequent moves still have their repetition history. */
+    public synchronized void restorePath(List<Snapshot> path) {
+        if (replay != null) {
+            replay.reset();
+        }
+        Snapshot root = path.get(0);
+        initialFen = root.fen();
+        variant = root.variant;
+        frames.clear();
+        for (Snapshot snapshot : path) {
+            frames.add(snapshot.frame);
+        }
+        legal = path.get(path.size() - 1).moves;
     }
 
     public RustBoard() {
@@ -265,14 +301,16 @@ public final class RustBoard {
         } catch (IllegalArgumentException ex) {
             return false;
         }
-        RustSearchRequest.Variant selected =
-                position.duck() >= 0
-                        ? RustSearchRequest.Variant.DUCK
-                        : position.chess960()
-                                ? RustSearchRequest.Variant.CHESS_960
-                                : RustSearchRequest.Variant.STANDARD;
-        load(position.fen(), selected);
+        load(position.fen(), inferVariant(position));
         return true;
+    }
+
+    static RustSearchRequest.Variant inferVariant(BoardPosition position) {
+        return position.duck() >= 0
+                ? RustSearchRequest.Variant.DUCK
+                : position.chess960()
+                        ? RustSearchRequest.Variant.CHESS_960
+                        : RustSearchRequest.Variant.STANDARD;
     }
 
     public synchronized boolean initFEN(String fen, RustSearchRequest.Variant selected) {
@@ -321,10 +359,7 @@ public final class RustBoard {
         if (variant == BoardConstants.VARIANT_KING_OF_THE_HILL) {
             load(START, RustSearchRequest.Variant.KING_OF_THE_HILL);
         } else {
-            initFEN(
-                    variant == BoardConstants.VARIANT_DUCK
-                            ? START.replace("8/8/8/8", "8/7$/8/8")
-                            : START);
+            initFEN(variant == BoardConstants.VARIANT_DUCK ? BoardPosition.DUCK_START_FEN : START);
         }
     }
 
@@ -523,11 +558,16 @@ public final class RustBoard {
         if (query() == null) {
             return new int[0];
         }
+        return attackersForPosition(variant, toFEN(), square, colour);
+    }
+
+    public static int[] attackersForPosition(
+            RustSearchRequest.Variant variant, String fen, int square, int colour) {
         String[] positions =
                 RustBoardResult.words(
                         RustBoardNative.attackers(
                                         variant,
-                                        toFEN(),
+                                        fen,
                                         new String[0],
                                         colour == BoardConstants.WHITE,
                                         Pos.toString(square))

@@ -32,7 +32,7 @@ public class CapturedCountView extends AppCompatTextView {
         }
 
         if (count > 0) {
-            setText("" + count);
+            setText(String.valueOf(count));
         } else {
             setText("");
         }

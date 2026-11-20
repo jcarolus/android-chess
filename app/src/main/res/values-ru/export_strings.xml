@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">Экспорт PGN</string>
+    <string name="export_create">Создать новый файл</string>
+    <string name="export_append">Добавить в файл</string>
+    <string name="export_replace">Заменить файл</string>
+    <string name="export_choose_action">Выберите способ экспорта партий.</string>
+    <string name="export_all">Все партии</string>
+    <string name="export_matching">Партии по текущим фильтрам</string>
+    <string name="export_replace_confirm">Заменить всё содержимое файла «%1$s»? Это действие нельзя отменить.</string>
+    <string name="export_preparing">Подготовка партий к экспорту…</string>
+    <string name="export_writing">Экспорт партий…</string>
+    <string name="export_done">Экспорт завершён.</string>
+    <string name="export_no_games">Нет партий для экспорта.</string>
+    <string name="export_failed">Ошибка экспорта. Выберите другое место или закройте экран и повторите попытку.</string>
+    <string name="export_partial">Ошибка экспорта. Файл мог быть записан частично. Перед повторной попыткой проверьте содержимое, чтобы избежать повторных или неполных партий. Можно выбрать другое место.</string>
+</resources>

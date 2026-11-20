@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Metinle hamle girişi</string>
+    <string name="pref_confirm_move_entry">Metin hamlelerini oynamadan önce gözden geçir</string>
+    <string name="move_entry_hint">Hamle, örneğin e2 e4</string>
+    <string name="move_entry_format">Bir hamle girin, örneğin e2e4, Nf3 veya At f3.</string>
+    <string name="move_entry_illegal">Bu hamle bu konumda kurallara aykırıdır.</string>
+    <string name="move_entry_wrong_turn">Devam eden bir oyunda sıranızın gelmesini bekleyin.</string>
+    <string name="move_entry_promotion">Bir terfi taşı ekleyin: vezir, kale, fil veya at.</string>
+    <string name="move_entry_review">%1$s (%2$s) oynansın mı?</string>
+</resources>

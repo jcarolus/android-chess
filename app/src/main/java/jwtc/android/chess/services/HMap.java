@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.net.Uri;
-import android.os.Build;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -269,10 +268,7 @@ public final class HMap {
         // Build the same bytes as the existing path-based writer, but buffer first
         ArrayList<Pair> list = new ArrayList<>(pairs);
 
-        // @TODO
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            list.sort(Comparator.comparingLong(p -> p.hash));
-        }
+        list.sort(Comparator.comparingLong(p -> p.hash));
 
         // entries + blob
         long prev = Long.MIN_VALUE;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="castling_long_notation" translatable="false" formatted="false">0-0-0</string>
+    <string name="castling_short_notation" translatable="false" formatted="false">0-0</string>
+    <string name="pgn_unknown_result" translatable="false" formatted="false">*</string>
+    <string name="placeholder_clock_time" translatable="false" formatted="false">00:00</string>
+    <string name="placeholder_engine_value" translatable="false" formatted="false">--</string>
+    <string name="placeholder_game_count" translatable="false" formatted="false">0/0</string>
+    <string name="placeholder_move_number" translatable="false" formatted="false">1.</string>
+    <string name="placeholder_percentage" translatable="false" formatted="false">0%</string>
+    <string name="placeholder_rating" translatable="false" formatted="false">----</string>
+    <string name="placeholder_zero" translatable="false" formatted="false">0</string>
+</resources>

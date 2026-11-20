@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Introducerea mutărilor prin text</string>
+    <string name="pref_confirm_move_entry">Verifică mutările text înainte de a juca</string>
+    <string name="move_entry_hint">Mutare, de exemplu e2 e4</string>
+    <string name="move_entry_format">Introdu o mutare, de exemplu e2e4, Nf3 sau Cal f3.</string>
+    <string name="move_entry_illegal">Această mutare este ilegală în poziția curentă.</string>
+    <string name="move_entry_wrong_turn">Așteaptă să îți vină rândul într-o partidă în curs.</string>
+    <string name="move_entry_promotion">Adaugă o piesă pentru promovare: regină, turn, nebun sau cal.</string>
+    <string name="move_entry_review">Joci %1$s (%2$s)?</string>
+</resources>
