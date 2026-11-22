@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Rapport</string>
+    <string name="analysis_report_title">Rapport van de hoofdvariant</string>
+    <string name="analysis_report_progress">Stellingen analyseren: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Nauwkeurigheid\nWit: %1$s · Zwart: %2$s</string>
+    <string name="analysis_report_graph">Evaluatiegrafiek</string>
+    <string name="analysis_report_graph_hint">Wit vlak: winstkansen van wit. Tik op de grafiek om naar een stelling te gaan.</string>
+    <string name="analysis_report_go_to_move">Ga naar geselecteerde stelling</string>
+    <string name="analysis_report_key_moments">Sleutelmomenten</string>
+    <string name="analysis_report_no_moments">Geen fouten of blunders gevonden.</string>
+    <string name="analysis_report_partial">Sommige stellingen konden niet worden beoordeeld. Open Rapport opnieuw om het nogmaals te proberen. Nauwkeurigheid is pas beschikbaar als alle stellingen zijn beoordeeld.</string>
+    <string name="analysis_report_unavailable">Rapport niet beschikbaar. Voltooi de huidige zet en zorg dat de partij zetten bevat om te analyseren.</string>
+    <string name="analysis_report_start">Beginstelling</string>
+    <string name="analysis_report_position">%1$s · Evaluatie: %2$s</string>
+    <string name="analysis_report_unknown">Niet beschikbaar</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Informe</string>
+    <string name="analysis_report_title">Informe de la línea principal</string>
+    <string name="analysis_report_progress">Analizando posiciones: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Precisión\nBlancas: %1$s · Negras: %2$s</string>
+    <string name="analysis_report_graph">Gráfico de evaluación</string>
+    <string name="analysis_report_graph_hint">Área blanca: probabilidades de victoria de las blancas. Toca el gráfico para ir a una posición.</string>
+    <string name="analysis_report_go_to_move">Ir a la posición seleccionada</string>
+    <string name="analysis_report_key_moments">Momentos clave</string>
+    <string name="analysis_report_no_moments">No se encontraron errores ni errores graves.</string>
+    <string name="analysis_report_partial">No se pudieron evaluar algunas posiciones. Vuelve a abrir el informe para reintentarlo. La precisión estará disponible cuando se hayan evaluado todas las posiciones.</string>
+    <string name="analysis_report_unavailable">Informe no disponible. Completa la jugada actual y comprueba que la partida contiene jugadas para analizar.</string>
+    <string name="analysis_report_start">Posición inicial</string>
+    <string name="analysis_report_position">%1$s · Evaluación: %2$s</string>
+    <string name="analysis_report_unknown">No disponible</string>
+</resources>

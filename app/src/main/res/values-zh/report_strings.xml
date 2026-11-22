@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">报告</string>
+    <string name="analysis_report_title">主线报告</string>
+    <string name="analysis_report_progress">正在分析局面：%1$d / %2$d</string>
+    <string name="analysis_report_accuracy">准确率\n白方：%1$s · 黑方：%2$s</string>
+    <string name="analysis_report_graph">评估曲线</string>
+    <string name="analysis_report_graph_hint">白色区域表示白方的获胜机会。点击图表可跳转到相应局面。</string>
+    <string name="analysis_report_go_to_move">跳转到所选局面</string>
+    <string name="analysis_report_key_moments">关键时刻</string>
+    <string name="analysis_report_no_moments">未发现错误或严重失误。</string>
+    <string name="analysis_report_partial">部分局面无法评估。重新打开报告可重试。所有局面评估完成后才会显示准确率。</string>
+    <string name="analysis_report_unavailable">报告不可用。请完成当前走棋，并确保棋局包含可分析的着法。</string>
+    <string name="analysis_report_start">初始局面</string>
+    <string name="analysis_report_position">%1$s · 评估：%2$s</string>
+    <string name="analysis_report_unknown">不可用</string>
+</resources>

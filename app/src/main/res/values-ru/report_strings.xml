@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Отчёт</string>
+    <string name="analysis_report_title">Отчёт по основной линии</string>
+    <string name="analysis_report_progress">Анализ позиций: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Точность\nБелые: %1$s · Чёрные: %2$s</string>
+    <string name="analysis_report_graph">График оценки</string>
+    <string name="analysis_report_graph_hint">Белая область: шансы белых на победу. Нажмите на график, чтобы перейти к позиции.</string>
+    <string name="analysis_report_go_to_move">Перейти к выбранной позиции</string>
+    <string name="analysis_report_key_moments">Ключевые моменты</string>
+    <string name="analysis_report_no_moments">Ошибок и зевков не найдено.</string>
+    <string name="analysis_report_partial">Некоторые позиции не удалось оценить. Откройте отчёт снова для повторной попытки. Точность будет доступна после оценки всех позиций.</string>
+    <string name="analysis_report_unavailable">Отчёт недоступен. Завершите текущий ход и убедитесь, что в партии есть ходы для анализа.</string>
+    <string name="analysis_report_start">Начальная позиция</string>
+    <string name="analysis_report_position">%1$s · Оценка: %2$s</string>
+    <string name="analysis_report_unknown">Недоступно</string>
+</resources>

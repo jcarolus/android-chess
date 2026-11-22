@@ -3,8 +3,13 @@ package jwtc.android.chess.analyze;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.WeakHashMap;
 import jwtc.android.chess.analyze.AnalysisResults.Result;
 import jwtc.android.chess.analyze.AnalysisResults.Saved;
@@ -51,6 +56,8 @@ final class Analysis implements EngineListener {
     private Node displayedNode;
     private boolean pendingDuckMove;
     private PositionSnapshot requestedPosition;
+    private List<Node> reportNodes = Collections.emptyList();
+    private boolean reporting;
 
     Analysis(Context context, GameApi gameApi, Listener listener) {
         this.context = context;
@@ -87,6 +94,7 @@ final class Analysis implements EngineListener {
     }
 
     void pause() {
+        reporting = false;
         analysisActive = false;
         analysisGeneration++;
         analysisHandler.removeCallbacks(resumeAnalysis);
@@ -101,6 +109,7 @@ final class Analysis implements EngineListener {
         pause();
         results.clear();
         positions.clear();
+        reportNodes = Collections.emptyList();
     }
 
     Saved save() {
@@ -171,6 +180,93 @@ final class Analysis implements EngineListener {
         return new Summary(ready, feedback, after == null ? null : after.preferredMove);
     }
 
+    boolean startReport() {
+        if (!analysisActive
+                || engineSession == null
+                || !engineSession.supportsAnalysis()
+                || gameApi.hasPendingDuckMove()) {
+            return false;
+        }
+        List<Node> line = new ArrayList<>();
+        line.add(gameApi.getRootNode());
+        line.addAll(gameApi.getMainLineNodes());
+        if (line.size() < 2) {
+            return false;
+        }
+        Set<String> histories = new HashSet<>();
+        for (Node node : line) {
+            rememberPosition(node);
+            PositionSnapshot position = position(node);
+            if (position == null) {
+                return false;
+            }
+            histories.add(position.positionCommand);
+        }
+        reportNodes = line;
+        results.retain(histories);
+        results.retryUnavailable();
+        reporting = true;
+        analysisHandler.removeCallbacks(resumeAnalysis);
+        analysisDebouncing = false;
+        listener.onChanged();
+        startNextAnalysis();
+        return true;
+    }
+
+    boolean isReporting() {
+        return reporting;
+    }
+
+    List<Node> reportNodes() {
+        return Collections.unmodifiableList(reportNodes);
+    }
+
+    int reportCompleted() {
+        int completed = 0;
+        for (Node node : reportNodes) {
+            if (result(position(node)) != null) {
+                completed++;
+            }
+        }
+        return completed;
+    }
+
+    AnalysisReport report() {
+        List<AnalysisReport.Position> scores = new ArrayList<>();
+        for (Node node : reportNodes) {
+            PositionSnapshot position = position(node);
+            Result result = result(position);
+            scores.add(
+                    new AnalysisReport.Position(
+                            result == null ? null : result.evaluation,
+                            position.turn == BoardConstants.WHITE,
+                            node.getParent() == null ? null : summary(node).feedback));
+        }
+        return new AnalysisReport(scores);
+    }
+
+    void cancelReport() {
+        if (!reporting) {
+            return;
+        }
+        reporting = false;
+        if (analysisFen != null && engineSession != null) {
+            analysisFen = null;
+            requestedPosition = null;
+            analysisSwitchPending = true;
+            int generation = ++analysisGeneration;
+            engineSession.abort(
+                    () -> {
+                        if (analysisActive && generation == analysisGeneration) {
+                            analysisSwitchPending = false;
+                            startNextAnalysis();
+                        }
+                    });
+        } else {
+            analysisHandler.post(this::startNextAnalysis);
+        }
+    }
+
     boolean selectPosition() {
         boolean pending = gameApi.hasPendingDuckMove();
         boolean changed = displayedNode != gameApi.getCurrentNode() || pending != pendingDuckMove;
@@ -185,7 +281,7 @@ final class Analysis implements EngineListener {
         if (!analysisActive || engineSession == null || !engineSession.supportsAnalysis()) {
             return changed;
         }
-        if (changed) {
+        if (changed && !reporting) {
             analysisHandler.removeCallbacks(resumeAnalysis);
             analysisDebouncing = true;
             analysisHandler.postDelayed(resumeAnalysis, ANALYSIS_DEBOUNCE_MILLIS);
@@ -238,6 +334,17 @@ final class Analysis implements EngineListener {
                 || displayedNode != gameApi.getCurrentNode()) {
             return;
         }
+        if (reporting) {
+            for (Node node : reportNodes) {
+                PositionSnapshot position = position(node);
+                if (result(position) == null) {
+                    analyze(position);
+                    return;
+                }
+            }
+            reporting = false;
+            listener.onChanged();
+        }
         PositionSnapshot current = positions.get(displayedNode);
         if (current == null) {
             return;
@@ -252,10 +359,14 @@ final class Analysis implements EngineListener {
             listener.onChanged();
             return;
         }
-        requestedPosition = next;
-        analysisFen = next.fen;
-        analysisTurn = next.turn;
-        engineSession.analyze(next, configuredMillis);
+        analyze(next);
+    }
+
+    private void analyze(PositionSnapshot position) {
+        requestedPosition = position;
+        analysisFen = position.fen;
+        analysisTurn = position.turn;
+        engineSession.analyze(position, configuredMillis);
     }
 
     public void OnEngineInfo(String message, float value) {

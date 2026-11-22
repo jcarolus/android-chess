@@ -61,6 +61,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private static final int REQUEST_MENU = 1;
     private boolean engineWarningAcknowledged;
     private AlertDialog analysisDialog;
+    private AnalysisReportDialog reportDialog;
     private String sessionId;
     private boolean sessionLoaded;
     private Bundle restoredSession;
@@ -124,6 +125,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
                         new Analysis.Listener() {
                             @Override
                             public void onChanged() {
+                                if (reportDialog != null) {
+                                    reportDialog.update();
+                                }
                                 updateMoveSummary();
                                 updateEvaluation();
                             }
@@ -137,6 +141,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                                 }
                             }
                         });
+        findViewById(R.id.ButtonReport).setOnClickListener(v -> showReport());
         buttonVariations = findViewById(R.id.ButtonVariations);
         buttonVariations.setOnClickListener(v -> chooseVariation());
         textViewComment = findViewById(R.id.TextViewComment);
@@ -397,6 +402,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
             analysisDialog = null;
         }
         restoredSession = null;
+        dismissReport();
         analysis.reset();
         navigationLine = new ArrayList<>();
         evaluationView.clearEvaluation();
@@ -446,6 +452,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
                                 : R.string.analysis_black_to_move));
         boolean onMainLine = gameApi.isOnMainLine();
         buttonBackToMain.setVisibility(onMainLine ? View.GONE : View.VISIBLE);
+        findViewById(R.id.ButtonReport)
+                .setEnabled(!gameApi.hasPendingDuckMove() && !gameApi.getMainLineNodes().isEmpty());
         boolean changed = analysis.selectPosition();
         updateNavigation();
         updateMoveSummary();
@@ -527,6 +535,46 @@ public class AnalyzeActivity extends ChessBoardActivity {
         rebuildBoard();
     }
 
+    private void showReport() {
+        if (!engineEnabled) {
+            switchEngine.setChecked(true);
+        }
+        // Pressing Report explicitly enables analysis, including on study screens.
+        if (analysisDialog != null) {
+            analysisDialog.dismiss();
+            analysisDialog = null;
+            engineWarningAcknowledged = true;
+        }
+        reportDialog =
+                new AnalysisReportDialog(
+                        this,
+                        analysis,
+                        gameApi,
+                        node -> {
+                            navigationLine = new ArrayList<>();
+                            gameApi.goTo(node);
+                        },
+                        node ->
+                                node.getParent() == null
+                                        ? getString(R.string.analysis_report_start)
+                                        : gameApi.getMoveNumber(node)
+                                                + " "
+                                                + getMoveDescription(
+                                                        false,
+                                                        node.getEntry().sMove,
+                                                        node.getEntry().move));
+        if (!reportDialog.show()) {
+            doToast(getString(R.string.analysis_report_unavailable));
+        }
+    }
+
+    private void dismissReport() {
+        if (reportDialog != null) {
+            reportDialog.dismiss();
+            reportDialog = null;
+        }
+    }
+
     private void restartAnalysis() {
         if (analysis.configure(
                 getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null),
@@ -569,6 +617,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     @Override
     protected void onDestroy() {
+        dismissReport();
         boardDescriptions.close();
         if (analysisDialog != null) {
             analysisDialog.dismiss();
@@ -893,7 +942,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 v -> gameApi.createVariation(branchPoint, recommendation.san));
     }
 
-    private static int feedbackText(MoveClassifier.Feedback feedback) {
+    static int feedbackText(MoveClassifier.Feedback feedback) {
         switch (feedback) {
             case BEST:
                 return R.string.analysis_move_best;
@@ -916,6 +965,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
     @Override
     protected void onPause() {
+        dismissReport();
         boardDescriptions.clear();
         analysis.pause();
         if (sessionLoaded) {

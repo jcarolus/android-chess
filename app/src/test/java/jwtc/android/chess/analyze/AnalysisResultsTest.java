@@ -2,6 +2,8 @@ package jwtc.android.chess.analyze;
 
 import static org.junit.Assert.*;
 
+import java.util.HashSet;
+import java.util.Set;
 import jwtc.android.chess.engine.EngineEvaluation;
 import org.junit.Test;
 
@@ -52,6 +54,41 @@ public class AnalysisResultsTest {
         assertNotNull(restored.get("failed"));
         assertNull(restored.get("failed").evaluation);
         assertEquals(40, restored.get("complete").evaluation.value);
+    }
+
+    @Test
+    public void fullReportSurvivesNavigationEvictionAndRestoration() {
+        AnalysisResults results = new AnalysisResults();
+        results.configure("local", 100, null);
+        Set<String> histories = new HashSet<>();
+        for (int i = 0; i < 300; i++) {
+            histories.add("main" + i);
+        }
+        results.retain(histories);
+        for (int i = 0; i < 300; i++) {
+            results.put("main" + i, score(i));
+            results.put("variation" + i, score(-i));
+        }
+        AnalysisResults restored = new AnalysisResults();
+        restored.configure("local", 100, results.save());
+        for (int i = 0; i < 300; i++) {
+            assertEquals(i, restored.get("main" + i).evaluation.value);
+        }
+        restored.configure("local", 200, null);
+        assertNull(restored.get("main0"));
+    }
+
+    @Test
+    public void reportReusesExistingScoresAndRetriesOnlyUnavailablePositions() {
+        AnalysisResults results = new AnalysisResults();
+        results.put("complete", score(30));
+        results.put("failed", new AnalysisResults.Result((String) null, null));
+        results.retain(Set.of("complete", "failed"));
+        results.retryUnavailable();
+        assertEquals(30, results.get("complete").evaluation.value);
+        assertNull(results.get("failed"));
+        results.retain(Set.of("replacement"));
+        assertNull(results.get("complete"));
     }
 
     @Test

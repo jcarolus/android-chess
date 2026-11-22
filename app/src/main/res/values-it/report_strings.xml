@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Rapporto</string>
+    <string name="analysis_report_title">Rapporto della linea principale</string>
+    <string name="analysis_report_progress">Analisi delle posizioni: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Precisione\nBianco: %1$s · Nero: %2$s</string>
+    <string name="analysis_report_graph">Grafico di valutazione</string>
+    <string name="analysis_report_graph_hint">Area bianca: probabilità di vittoria del Bianco. Tocca il grafico per andare a una posizione.</string>
+    <string name="analysis_report_go_to_move">Vai alla posizione selezionata</string>
+    <string name="analysis_report_key_moments">Momenti chiave</string>
+    <string name="analysis_report_no_moments">Nessun errore o errore grave rilevato.</string>
+    <string name="analysis_report_partial">Non è stato possibile valutare alcune posizioni. Riapri il rapporto per riprovare. La precisione sarà disponibile dopo la valutazione di tutte le posizioni.</string>
+    <string name="analysis_report_unavailable">Rapporto non disponibile. Completa la mossa attuale e verifica che la partita contenga mosse da analizzare.</string>
+    <string name="analysis_report_start">Posizione iniziale</string>
+    <string name="analysis_report_position">%1$s · Valutazione: %2$s</string>
+    <string name="analysis_report_unknown">Non disponibile</string>
+</resources>

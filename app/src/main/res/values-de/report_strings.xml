@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Bericht</string>
+    <string name="analysis_report_title">Bericht zur Hauptvariante</string>
+    <string name="analysis_report_progress">Stellungen analysieren: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Genauigkeit\nWeiß: %1$s · Schwarz: %2$s</string>
+    <string name="analysis_report_graph">Bewertungsdiagramm</string>
+    <string name="analysis_report_graph_hint">Weiße Fläche: Gewinnchancen von Weiß. Tippe auf das Diagramm, um zu einer Stellung zu springen.</string>
+    <string name="analysis_report_go_to_move">Zur ausgewählten Stellung</string>
+    <string name="analysis_report_key_moments">Schlüsselmomente</string>
+    <string name="analysis_report_no_moments">Keine Fehler oder groben Fehler gefunden.</string>
+    <string name="analysis_report_partial">Einige Stellungen konnten nicht bewertet werden. Öffne den Bericht erneut, um es nochmals zu versuchen. Die Genauigkeit ist erst verfügbar, wenn alle Stellungen bewertet sind.</string>
+    <string name="analysis_report_unavailable">Bericht nicht verfügbar. Schließe den aktuellen Zug ab und stelle sicher, dass die Partie Züge zur Analyse enthält.</string>
+    <string name="analysis_report_start">Ausgangsstellung</string>
+    <string name="analysis_report_position">%1$s · Bewertung: %2$s</string>
+    <string name="analysis_report_unknown">Nicht verfügbar</string>
+</resources>

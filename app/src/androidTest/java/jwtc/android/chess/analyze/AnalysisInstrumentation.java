@@ -3,10 +3,13 @@ package jwtc.android.chess.analyze;
 import android.app.Instrumentation;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Parcel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,8 +18,8 @@ import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.RustSearchRequest;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.GameTree.Node;
-import jwtc.chess.board.BoardPosition;
 import jwtc.chess.board.BoardConstants;
+import jwtc.chess.board.BoardPosition;
 
 /** Exercises Analysis ownership through the real Local Engine, without an Activity. */
 public final class AnalysisInstrumentation {
@@ -24,11 +27,158 @@ public final class AnalysisInstrumentation {
         verifyBoardDescriptions(instrumentation);
         verifyRecordedPositions();
         verifyStandard(instrumentation);
+        verifyReportState();
+        verifyReport(instrumentation);
         verifyVariant(instrumentation, "[Variant \"Duck\"]\n\n1. e4@d5 *", true);
         verifyVariant(
                 instrumentation,
                 "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*",
                 false);
+    }
+
+    private static void verifyReportState() {
+        AnalysisResults results = new AnalysisResults();
+        results.configure("local", 100, null);
+        Set<String> histories = new HashSet<>();
+        String history = "position startpos moves";
+        for (int i = 0; i < 500; i++) {
+            history += " g1f3";
+            histories.add(history);
+        }
+        results.retain(histories);
+        for (String key : histories) {
+            results.put(
+                    key, new AnalysisResults.Result("g1f3", new EngineEvaluation(false, 30, 10)));
+        }
+        Bundle bundle = new Bundle();
+        results.save().writeTo(bundle);
+        Parcel parcel = Parcel.obtain();
+        try {
+            bundle.writeToParcel(parcel, 0);
+            check(parcel.dataSize() < 250000, "Report state duplicates full histories");
+        } finally {
+            parcel.recycle();
+        }
+        AnalysisResults restored = new AnalysisResults();
+        restored.configure("local", 100, AnalysisResults.Saved.readFrom(bundle));
+        check(
+                restored.save().retained.equals(histories),
+                "Report retention did not survive recreation");
+        for (String key : histories) {
+            check(restored.get(key).evaluation.value == 30, "Report result lost during recreation");
+        }
+    }
+
+    private static void verifyReport(Instrumentation instrumentation) throws Exception {
+        AtomicReference<Analysis> owner = new AtomicReference<>();
+        AtomicReference<GameApi> game = new AtomicReference<>();
+        AtomicReference<Node> displayed = new AtomicReference<>();
+        CountDownLatch partial = new CountDownLatch(1);
+        CountDownLatch complete = new CountDownLatch(1);
+        try {
+            instrumentation.runOnMainSync(
+                    () -> {
+                        GameApi board = GameApi.forAnalysis();
+                        check(
+                                board.loadPGN("1. e4 e5 (1... c5 2. Nf3) 2. Nf3 Nc6 3. Bb5 a6 *"),
+                                "Cannot load report game");
+                        Node variation =
+                                board.getContinuations(board.getMainLineNodes().get(0)).get(1);
+                        check(board.goTo(variation), "Cannot select report variation");
+                        game.set(board);
+                        displayed.set(variation);
+                        Analysis analysis =
+                                new Analysis(
+                                        instrumentation.getTargetContext(),
+                                        board,
+                                        new Analysis.Listener() {
+                                            public void onChanged() {
+                                                Analysis analysis = owner.get();
+                                                check(
+                                                        board.getCurrentNode() == displayed.get(),
+                                                        "Report moved the displayed board");
+                                                if (analysis.isReporting()
+                                                        && analysis.reportCompleted() >= 2) {
+                                                    analysis.cancelReport();
+                                                    partial.countDown();
+                                                } else if (!analysis.isReporting()
+                                                        && analysis.reportCompleted() == 7) {
+                                                    complete.countDown();
+                                                }
+                                            }
+
+                                            public void onEvaluation(Float value) {}
+                                        });
+                        owner.set(analysis);
+                        analysis.resume(EngineSession.LOCAL_ENGINE_ID, 100, null);
+                        analysis.selectPosition();
+                        check(analysis.startReport(), "Report did not start");
+                    });
+            check(
+                    partial.await(10, TimeUnit.SECONDS),
+                    "Report did not produce cancellable partial work");
+            instrumentation.runOnMainSync(
+                    () -> {
+                        Analysis analysis = owner.get();
+                        check(!analysis.isReporting(), "Report ignored cancellation");
+                        check(
+                                analysis.reportCompleted() >= 2,
+                                "Cancellation discarded completed report positions");
+                        // A finished partial pass must not trigger cancellation in the listener
+                        // again.
+                        owner.set(
+                                new Analysis(
+                                        instrumentation.getTargetContext(),
+                                        game.get(),
+                                        new Analysis.Listener() {
+                                            public void onChanged() {
+                                                Analysis current = owner.get();
+                                                check(
+                                                        game.get().getCurrentNode()
+                                                                == displayed.get(),
+                                                        "Report changed selected variation");
+                                                if (!current.isReporting()
+                                                        && current.reportCompleted() == 7) {
+                                                    complete.countDown();
+                                                }
+                                            }
+
+                                            public void onEvaluation(Float value) {}
+                                        }));
+                        AnalysisResults.Saved saved = analysis.save();
+                        analysis.pause();
+                        Analysis resumed = owner.get();
+                        resumed.resume(EngineSession.LOCAL_ENGINE_ID, 100, saved);
+                        resumed.selectPosition();
+                        check(resumed.startReport(), "Report could not resume");
+                    });
+            check(complete.await(15, TimeUnit.SECONDS), "Report did not finish the main line");
+            instrumentation.runOnMainSync(
+                    () -> {
+                        Analysis analysis = owner.get();
+                        check(
+                                analysis.report().complete,
+                                "Report finished without usable evaluations");
+                        check(analysis.reportNodes().size() == 7, "Report included variations");
+                        check(
+                                Double.isFinite(analysis.report().whiteAccuracy),
+                                "White accuracy is missing");
+                        check(
+                                Double.isFinite(analysis.report().blackAccuracy),
+                                "Black accuracy is missing");
+                        Node target = analysis.reportNodes().get(3);
+                        check(
+                                game.get().goTo(target) && game.get().getCurrentNode() == target,
+                                "Report navigation did not select the position after the move");
+                    });
+        } finally {
+            instrumentation.runOnMainSync(
+                    () -> {
+                        if (owner.get() != null) {
+                            owner.get().pause();
+                        }
+                    });
+        }
     }
 
     private static void verifyBoardDescriptions(Instrumentation instrumentation) throws Exception {
@@ -45,15 +195,15 @@ public final class AnalysisInstrumentation {
                                         () -> {
                                             if (Looper.myLooper() == Looper.getMainLooper()) {
                                                 delivered.set(
-                                                        owner.get().attackersFor(
-                                                                e4, BoardConstants.BLACK));
+                                                        owner.get()
+                                                                .attackersFor(
+                                                                        e4, BoardConstants.BLACK));
                                             }
                                             ready.countDown();
                                         });
                         owner.set(descriptions);
                         descriptions.show(
-                                RustSearchRequest.Variant.STANDARD,
-                                "7k/8/8/8/8/8/8/K7 w - - 0 1");
+                                RustSearchRequest.Variant.STANDARD, "7k/8/8/8/8/8/8/K7 w - - 0 1");
                         descriptions.show(
                                 RustSearchRequest.Variant.STANDARD,
                                 "7k/8/8/3p4/8/8/8/K7 w - - 0 1");
@@ -62,7 +212,8 @@ public final class AnalysisInstrumentation {
                                 "Square exposed attack details before delivery");
                     });
             check(ready.await(5, TimeUnit.SECONDS), "No square description delivered");
-            check(Arrays.equals(delivered.get(), new int[] {d5}),
+            check(
+                    Arrays.equals(delivered.get(), new int[] {d5}),
                     "Square received stale attackers or a callback off the UI thread");
             instrumentation.runOnMainSync(
                     () -> {
@@ -72,11 +223,12 @@ public final class AnalysisInstrumentation {
                                 "Cleared Position retained attack details");
                     });
         } finally {
-            instrumentation.runOnMainSync(() -> {
-                if (owner.get() != null) {
-                    owner.get().close();
-                }
-            });
+            instrumentation.runOnMainSync(
+                    () -> {
+                        if (owner.get() != null) {
+                            owner.get().close();
+                        }
+                    });
         }
     }
 
@@ -87,8 +239,8 @@ public final class AnalysisInstrumentation {
                     "1. Nf3 Nf6 (1... d5 2. d4) 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
                     "[Variant \"Duck\"]\n\n1. e4@d5 (1. d4@e5 d5@e4) e5@d4 2. Nf3@c6 *",
                     "[Variant \"Fischerandom\"]\n"
-                        + "[FEN \"4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1\"]\n\n"
-                        + "1. O-O (1. O-O-O) *"
+                            + "[FEN \"4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1\"]\n\n"
+                            + "1. O-O (1. O-O-O) *"
                 }) {
             // Compare with the live board's replay, including history-dependent terminal states.
             GameApi replayed = new GameApi();

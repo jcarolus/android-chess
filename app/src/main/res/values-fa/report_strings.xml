@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">گزارش</string>
+    <string name="analysis_report_title">گزارش خط اصلی</string>
+    <string name="analysis_report_progress">در حال تحلیل وضعیت‌ها: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">دقت\nسفید: %1$s · سیاه: %2$s</string>
+    <string name="analysis_report_graph">نمودار ارزیابی</string>
+    <string name="analysis_report_graph_hint">ناحیه سفید: شانس برد سفید. برای رفتن به یک وضعیت، نمودار را لمس کنید.</string>
+    <string name="analysis_report_go_to_move">رفتن به وضعیت انتخاب‌شده</string>
+    <string name="analysis_report_key_moments">لحظه‌های کلیدی</string>
+    <string name="analysis_report_no_moments">هیچ اشتباه یا اشتباه فاحشی یافت نشد.</string>
+    <string name="analysis_report_partial">برخی وضعیت‌ها ارزیابی نشدند. برای تلاش دوباره گزارش را باز کنید. دقت پس از ارزیابی همه وضعیت‌ها در دسترس خواهد بود.</string>
+    <string name="analysis_report_unavailable">گزارش در دسترس نیست. حرکت فعلی را کامل کنید و مطمئن شوید بازی حرکت‌هایی برای تحلیل دارد.</string>
+    <string name="analysis_report_start">وضعیت آغازین</string>
+    <string name="analysis_report_position">%1$s · ارزیابی: %2$s</string>
+    <string name="analysis_report_unknown">در دسترس نیست</string>
+</resources>

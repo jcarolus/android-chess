@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Rapport</string>
+    <string name="analysis_report_title">Rapport de la variante principale</string>
+    <string name="analysis_report_progress">Analyse des positions : %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Précision\nBlancs : %1$s · Noirs : %2$s</string>
+    <string name="analysis_report_graph">Graphique d’évaluation</string>
+    <string name="analysis_report_graph_hint">Zone blanche : chances de gain des Blancs. Touchez le graphique pour aller à une position.</string>
+    <string name="analysis_report_go_to_move">Aller à la position sélectionnée</string>
+    <string name="analysis_report_key_moments">Moments clés</string>
+    <string name="analysis_report_no_moments">Aucune erreur ni gaffe détectée.</string>
+    <string name="analysis_report_partial">Certaines positions n’ont pas pu être évaluées. Rouvrez le rapport pour réessayer. La précision sera disponible lorsque toutes les positions auront été évaluées.</string>
+    <string name="analysis_report_unavailable">Rapport indisponible. Terminez le coup en cours et vérifiez que la partie contient des coups à analyser.</string>
+    <string name="analysis_report_start">Position initiale</string>
+    <string name="analysis_report_position">%1$s · Évaluation : %2$s</string>
+    <string name="analysis_report_unknown">Indisponible</string>
+</resources>

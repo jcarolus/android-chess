@@ -107,6 +107,12 @@
             app:alignItems="center">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonReport"
+                style="?attr/chessButtonStyle"
+                android:layout_width="wrap_content"
+                android:text="@string/analysis_report" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonVariations"
                 style="?attr/chessButtonStyle"
                 android:layout_width="wrap_content"
