@@ -56,7 +56,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
     private static final String EXTRA_STUDY_SURPRISE = "analysisStudySurprise";
-    private static final String PREF_STUDY_ENGINE = "studyEngineEnabled";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
     private static final int REQUEST_MENU = 1;
     private boolean engineWarningAcknowledged;
@@ -152,7 +151,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 getString(R.string.analysis_edit_comment),
                 null);
         switchEngine = findViewById(R.id.SwitchEngine);
-        engineEnabled = !isStudy() || getPrefs().getBoolean(PREF_STUDY_ENGINE, false);
+        engineEnabled = !isStudy();
         if (isStudy()) {
             switchEngine.setVisibility(View.VISIBLE);
             switchEngine.setChecked(engineEnabled);
@@ -404,6 +403,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
         restoredSession = null;
         dismissReport();
         analysis.reset();
+        engineEnabled = !isStudy();
+        switchEngine.setChecked(engineEnabled);
+        switchEngine.setVisibility(isStudy() ? View.VISIBLE : View.GONE);
         navigationLine = new ArrayList<>();
         evaluationView.clearEvaluation();
     }
@@ -524,7 +526,6 @@ public class AnalyzeActivity extends ChessBoardActivity {
             return;
         }
         engineEnabled = enabled;
-        getPrefs().edit().putBoolean(PREF_STUDY_ENGINE, enabled).apply();
         if (enabled) {
             // Results computed earlier on this screen stay cached while the engine is off.
             startEngine(null);
@@ -861,13 +862,12 @@ public class AnalyzeActivity extends ChessBoardActivity {
             return;
         }
         analysis.reset();
+        engineEnabled = false;
+        switchEngine.setChecked(false);
         navigationLine = new ArrayList<>();
         lastScrolledNode = null;
         evaluationView.clearEvaluation();
         studyNavigation.setIndex(studyIndex);
-        if (engineEnabled) {
-            startEngine(null);
-        }
         rebuildBoard();
     }
 
