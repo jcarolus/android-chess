@@ -57,6 +57,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
     private static final String EXTRA_STUDY_SURPRISE = "analysisStudySurprise";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
+    private static final String PREF_ENGINE_ENABLED = "analysisEngineEnabled";
     private static final int REQUEST_MENU = 1;
     private boolean engineWarningAcknowledged;
     private AlertDialog analysisDialog;
@@ -151,12 +152,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
                 getString(R.string.analysis_edit_comment),
                 null);
         switchEngine = findViewById(R.id.SwitchEngine);
-        engineEnabled = !isStudy();
-        if (isStudy()) {
-            switchEngine.setVisibility(View.VISIBLE);
-            switchEngine.setChecked(engineEnabled);
-            switchEngine.setOnCheckedChangeListener((button, checked) -> setEngineEnabled(checked));
-        }
+        engineEnabled = !isStudy() && getPrefs().getBoolean(PREF_ENGINE_ENABLED, true);
+        switchEngine.setChecked(engineEnabled);
+        switchEngine.setOnCheckedChangeListener((button, checked) -> setEngineEnabled(checked));
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         buttonEngineMove = findViewById(R.id.ButtonEngineMove);
@@ -403,9 +401,8 @@ public class AnalyzeActivity extends ChessBoardActivity {
         restoredSession = null;
         dismissReport();
         analysis.reset();
-        engineEnabled = !isStudy();
+        engineEnabled = !isStudy() && getPrefs().getBoolean(PREF_ENGINE_ENABLED, true);
         switchEngine.setChecked(engineEnabled);
-        switchEngine.setVisibility(isStudy() ? View.VISIBLE : View.GONE);
         navigationLine = new ArrayList<>();
         evaluationView.clearEvaluation();
     }
@@ -526,6 +523,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
             return;
         }
         engineEnabled = enabled;
+        if (!isStudy()) {
+            getPrefs().edit().putBoolean(PREF_ENGINE_ENABLED, enabled).apply();
+        }
         if (enabled) {
             // Results computed earlier on this screen stay cached while the engine is off.
             startEngine(null);
