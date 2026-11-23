@@ -6,4 +6,7 @@
     <string name="gameslist_invalid_dates">Introduce fechas válidas con la fecha inicial anterior o igual a la final.</string>
     <string name="study_title">Estudio</string>
     <string name="study_delete_filtered_confirmation">¿Eliminar de la base de datos todas las partidas que coincidan con los filtros activados?</string>
+    <string name="gameslist_delete_matching">Eliminar partidas coincidentes</string>
+    <string name="gameslist_delete_matching_confirmation">¿Eliminar de la base de datos todas las partidas que coincidan con los filtros activados?</string>
+    <string name="gameslist_delete_failed">No se pudo eliminar la selección.</string>
 </resources>

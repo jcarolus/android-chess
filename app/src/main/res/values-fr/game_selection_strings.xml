@@ -6,4 +6,7 @@
     <string name="gameslist_invalid_dates">Saisissez des dates valides, avec une date de début antérieure ou égale à la date de fin.</string>
     <string name="study_title">Étude</string>
     <string name="study_delete_filtered_confirmation">Supprimer de la base de données toutes les parties correspondant aux filtres activés ?</string>
+    <string name="gameslist_delete_matching">Supprimer les parties correspondantes</string>
+    <string name="gameslist_delete_matching_confirmation">Supprimer de la base de données toutes les parties correspondant aux filtres activés ?</string>
+    <string name="gameslist_delete_failed">Impossible de supprimer la sélection.</string>
 </resources>

@@ -6,4 +6,7 @@
     <string name="gameslist_invalid_dates">Voer geldige datums in, met de begindatum op of vóór de einddatum.</string>
     <string name="study_title">Studie</string>
     <string name="study_delete_filtered_confirmation">Alle partijen die aan de ingeschakelde filters voldoen uit de partijendatabase verwijderen?</string>
+    <string name="gameslist_delete_matching">Overeenkomende partijen verwijderen</string>
+    <string name="gameslist_delete_matching_confirmation">Alle partijen die aan de ingeschakelde filters voldoen uit de partijendatabase verwijderen?</string>
+    <string name="gameslist_delete_failed">De selectie kon niet worden verwijderd.</string>
 </resources>

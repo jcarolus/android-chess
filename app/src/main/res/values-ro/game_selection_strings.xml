@@ -6,4 +6,7 @@
     <string name="gameslist_invalid_dates">Introduceți date valide, cu data de început anterioară sau egală cu data de sfârșit.</string>
     <string name="study_title">Studiu</string>
     <string name="study_delete_filtered_confirmation">Ștergeți din baza de date toate partidele care corespund filtrelor activate?</string>
+    <string name="gameslist_delete_matching">Ștergeți partidele corespunzătoare</string>
+    <string name="gameslist_delete_matching_confirmation">Ștergeți din baza de date toate partidele care corespund filtrelor activate?</string>
+    <string name="gameslist_delete_failed">Selecția nu a putut fi ștearsă.</string>
 </resources>

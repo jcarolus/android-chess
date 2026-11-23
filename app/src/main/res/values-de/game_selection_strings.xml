@@ -6,4 +6,7 @@
     <string name="gameslist_invalid_dates">Gültige Daten eingeben: Das Startdatum muss vor oder auf dem Enddatum liegen.</string>
     <string name="study_title">Studie</string>
     <string name="study_delete_filtered_confirmation">Alle Partien, die den aktivierten Filtern entsprechen, aus der Partiedatenbank löschen?</string>
+    <string name="gameslist_delete_matching">Passende Partien löschen</string>
+    <string name="gameslist_delete_matching_confirmation">Alle Partien, die den aktivierten Filtern entsprechen, aus der Partiedatenbank löschen?</string>
+    <string name="gameslist_delete_failed">Die Auswahl konnte nicht gelöscht werden.</string>
 </resources>
