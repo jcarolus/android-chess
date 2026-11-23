@@ -8,8 +8,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/control_padding"
-        android:paddingEnd="@dimen/control_padding">
+        android:padding="@dimen/control_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
