@@ -46,7 +46,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/control_padding">
+            android:padding="@dimen/panel_padding">
 
             <TableLayout
                 android:layout_width="match_parent"

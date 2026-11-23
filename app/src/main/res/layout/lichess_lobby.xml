@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:stretchColumns="1"
         android:layout_marginBottom="@dimen/board_row_gap"
-        android:padding="@dimen/control_padding">
+        android:padding="@dimen/panel_padding">
 
         <TableRow android:gravity="center_vertical">
             <ImageView
@@ -39,7 +39,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="@dimen/control_padding">
+        android:padding="@dimen/panel_padding">
 
         <TextView
             android:id="@+id/TextViewLobbyStatus"

@@ -187,7 +187,7 @@
     <style name="MyDescriptionTextStyle">
         <item name="android:textSize">@dimen/body_text_size</item>
         <item name="android:layout_marginRight">@dimen/control_gap</item>
-        <item name="android:layout_marginLeft">@dimen/control_gap</item>
+        <item name="android:layout_marginLeft">@dimen/preference_control_inset</item>
         <item name="android:layout_marginBottom">@dimen/control_gap</item>
     </style>
 
