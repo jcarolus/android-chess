@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/panel_padding">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:layout_marginTop="@dimen/board_control_gap">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonPrevious"
+                app:icon="@drawable/ic_chevron_left"
+                style="?attr/chessImageButtonStyle" />
+
+            <SeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="959" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonNext"
+                app:icon="@drawable/ic_chevron_right"
+                style="?attr/chessImageButtonStyle" />
+
+            <TextView
+                android:id="@+id/TextViewSeed"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                style="@style/MyHeaderTextStyle"></TextView>
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/board_control_gap"
+        android:stretchColumns="*">
+
+        <TableRow style="@style/MyRowStyle">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsCancel"
+                android:text="@string/button_cancel"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="@dimen/tiny_control_gap"
+                style="?attr/chessButtonStyle" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsRandom"
+                android:text="@string/choice_random"
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/tiny_control_gap"
+                style="?attr/chessButtonStyle" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsOk"
+                android:text="@string/button_ok"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="@dimen/tiny_control_gap"
+                style="?attr/chessButtonStyle" />
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>
