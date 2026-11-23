@@ -213,6 +213,32 @@ public final class BoardPosition {
         return false;
     }
 
+    /** The king file and outermost queen-side/king-side rook files, or -1 when absent. */
+    public int[] chess960Files(boolean white) {
+        int base = white ? 56 : 0;
+        char king = white ? 'K' : 'k', rook = white ? 'R' : 'r';
+        int kingFile = -1;
+        for (int file = 0; file < 8; file++) {
+            if (squares[base + file] == king) {
+                kingFile = file;
+                break;
+            }
+        }
+        int queenside = -1;
+        for (int file = kingFile - 1; file >= 0; file--) {
+            if (squares[base + file] == rook) {
+                queenside = file;
+            }
+        }
+        int kingside = -1;
+        for (int file = kingFile + 1; file < 8; file++) {
+            if (squares[base + file] == rook) {
+                kingside = file;
+            }
+        }
+        return new int[] {kingFile, queenside, kingside};
+    }
+
     public static String chess960Fen(int seed) {
         if (seed < 0 || seed >= 960) {
             throw new IllegalArgumentException("Chess 960 seed must be 0..959");

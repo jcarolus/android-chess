@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import jwtc.chess.board.BoardPosition;
 
 /**
  * Recorded moves, independent of the board currently being viewed. Child zero is the main
@@ -74,10 +75,20 @@ public final class GameTree {
     private final Node root;
     private final String initialFen;
     private final int startingPly;
+    private final int[][] castlingFiles;
     private String rootComment = "";
 
     public GameTree(String initialFen, int boardState, int turn) {
+        this(initialFen, boardState, turn, new BoardPosition(initialFen).chess960());
+    }
+
+    public GameTree(String initialFen, int boardState, int turn, boolean chess960) {
         this.initialFen = initialFen;
+        BoardPosition position = chess960 ? new BoardPosition(initialFen) : null;
+        castlingFiles =
+                position == null
+                        ? null
+                        : new int[][] {position.chess960Files(false), position.chess960Files(true)};
         String[] fields = initialFen.split("\\s+");
         int fullmove = fields.length > 5 ? Integer.parseInt(fields[5]) : 1;
         startingPly = 2 * (Math.max(1, fullmove) - 1) + ("b".equals(fields[1]) ? 1 : 0);
@@ -229,9 +240,12 @@ public final class GameTree {
         }
         for (Node step : path) {
             int move = step.entry.move;
-            command.append(' ')
-                    .append(Pos.toString(Move.getFrom(move)))
-                    .append(Pos.toString(Move.getTo(move)));
+            int from = Move.getFrom(move), to = Move.getTo(move);
+            if (castlingFiles != null && (Move.isOO(move) || Move.isOOO(move))) {
+                int[] files = castlingFiles[from / 8 == 7 ? 1 : 0];
+                to = from / 8 * 8 + files[Move.isOO(move) ? 2 : 1];
+            }
+            command.append(' ').append(Pos.toString(from)).append(Pos.toString(to));
             if (Move.isPromotionMove(move)) {
                 command.append("pnbrqk".charAt(Move.getPromotionPiece(move)));
             }

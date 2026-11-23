@@ -228,6 +228,47 @@ public class GameTreeTest {
     }
 
     @Test
+    public void enginePositionDistinguishesChess960CastlingFromAnOrdinaryKingMove()
+            throws Exception {
+        String fen = "4k3/8/8/8/8/8/8/5K1R w K - 0 1";
+        tree = new GameTree(fen, 0, BoardConstants.WHITE);
+        int from = Pos.fromString("f1"), to = Pos.fromString("g1");
+        Node ordinary = add(tree.getRoot(), "Kg1", Move.makeMove(from, to));
+        Node castle = add(tree.getRoot(), "O-O", Move.makeMoveOO(from, to));
+
+        assertEquals("position fen " + fen + " moves f1g1", tree.positionCommand(ordinary));
+        assertEquals("position fen " + fen + " moves f1h1", tree.positionCommand(castle));
+        assertFalse(tree.positionCommand(ordinary).equals(tree.positionCommand(castle)));
+    }
+
+    @Test
+    public void enginePositionDistinguishesBlackQueensideCastlingFromAnOrdinaryKingMove()
+            throws Exception {
+        String fen = "r2k4/8/8/8/8/8/8/4K3 b q - 0 1";
+        tree = new GameTree(fen, 0, BoardConstants.BLACK);
+        int from = Pos.fromString("d8"), to = Pos.fromString("c8");
+        Node ordinary = add(tree.getRoot(), "Kc8", Move.makeMove(from, to));
+        Node castle = add(tree.getRoot(), "O-O-O", Move.makeMoveOOO(from, to));
+
+        assertEquals("position fen " + fen + " moves d8c8", tree.positionCommand(ordinary));
+        assertEquals("position fen " + fen + " moves d8a8", tree.positionCommand(castle));
+    }
+
+    @Test
+    public void enginePositionUsesExplicitVariantForAnOrthodoxChess960StartingPosition()
+            throws Exception {
+        String fen = "4k3/8/8/8/8/8/8/4K2R w K - 0 1";
+        int castle = Move.makeMoveOO(Pos.fromString("e1"), Pos.fromString("g1"));
+        tree = new GameTree(fen, 0, BoardConstants.WHITE, true);
+        Node chess960 = add(tree.getRoot(), "O-O", castle);
+        assertEquals("position fen " + fen + " moves e1h1", tree.positionCommand(chess960));
+
+        tree = new GameTree(fen, 0, BoardConstants.WHITE, false);
+        Node standard = add(tree.getRoot(), "O-O", castle);
+        assertEquals("position fen " + fen + " moves e1g1", tree.positionCommand(standard));
+    }
+
+    @Test
     public void enginePositionRetainsRepeatedMovesInCacheIdentity() throws Exception {
         Node node = tree.getRoot();
         String[] moves = {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"};

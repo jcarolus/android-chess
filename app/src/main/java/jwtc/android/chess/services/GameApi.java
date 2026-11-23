@@ -306,7 +306,12 @@ public class GameApi {
 
     private void resetPGNHistory(String initialFen) {
         gameVariant = board.variant();
-        gameTree = new GameTree(initialFen, board.getState(), board.getTurn());
+        gameTree =
+                new GameTree(
+                        initialFen,
+                        board.getState(),
+                        board.getTurn(),
+                        gameVariant == RustSearchRequest.Variant.CHESS_960);
         currentNode = gameTree.getRoot();
         rememberRecordedPosition();
         pendingDuckMove = null;
