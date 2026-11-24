@@ -21,6 +21,7 @@ import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.GameState;
+import jwtc.android.chess.lichess.models.LichessVariant;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
 import jwtc.android.chess.lichess.models.PuzzleBatchSelectResponse;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRequest;
@@ -229,8 +230,7 @@ public class LichessApi extends GameApi {
                                                     Challenge.class);
                             if (apiListener != null
                                     && !user.equals(challenge.challenger.id)
-                                    && (challenge.variant.key.equals("standard")
-                                            || challenge.variant.key.equals("chess960"))) {
+                                    && LichessVariant.isSupported(challenge.variant.key)) {
                                 // ignore own challenge and variants we do not support
                                 apiListener.onChallenge(challenge);
                             }
@@ -1268,7 +1268,7 @@ public class LichessApi extends GameApi {
         pgnTags.put("White", ongoingGameFull.white.name);
         pgnTags.put("Black", ongoingGameFull.black.name);
 
-        if (ongoingGameFull.variant.key.equals("chess960")) {
+        if (LichessVariant.toVariant(ongoingGameFull.variant.key) == Variant.CHESS_960) {
             pgnTags.put("Variant", Variant.CHESS_960.pgnTag());
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", getFEN());

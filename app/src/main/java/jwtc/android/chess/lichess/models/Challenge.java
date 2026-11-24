@@ -6,7 +6,7 @@ public class Challenge {
     public String status;
     public Player challenger;
     public Player destUser;
-    public Variant variant;
+    public LichessVariant variant;
     public boolean rated;
     public String speed;
     public TimeControl timeControl;

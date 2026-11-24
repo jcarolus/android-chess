@@ -60,12 +60,12 @@ public class VariantTest {
 
     @Test
     public void capabilitiesMatchTheDomainRules() {
-        // Variant, OEX Engine, opening book, move entry
+        // Variant, OEX Engine, opening book, move entry, Lichess
         Object[][] matrix = {
-            {Variant.STANDARD, true, true, true},
-            {Variant.CHESS_960, true, false, true},
-            {Variant.DUCK, false, false, false},
-            {Variant.KING_OF_THE_HILL, false, false, true},
+            {Variant.STANDARD, true, true, true, true},
+            {Variant.CHESS_960, true, false, true, true},
+            {Variant.DUCK, false, false, false, false},
+            {Variant.KING_OF_THE_HILL, false, false, true, false},
         };
         assertEquals(Variant.values().length, matrix.length);
         for (Object[] row : matrix) {
@@ -73,6 +73,7 @@ public class VariantTest {
             assertEquals(variant + " OEX", row[1], variant.supportsOexEngine());
             assertEquals(variant + " opening book", row[2], variant.hasOpeningBook());
             assertEquals(variant + " move entry", row[3], variant.supportsMoveEntry());
+            assertEquals(variant + " Lichess", row[4], variant.supportsLichess());
         }
     }
 

@@ -31,6 +31,11 @@ public enum Variant {
         return this == STANDARD || this == CHESS_960;
     }
 
+    /** Lichess only hosts Standard and Chess 960 games for the app. */
+    public boolean supportsLichess() {
+        return this == STANDARD || this == CHESS_960;
+    }
+
     /** The opening book only holds lines from the standard setup. */
     public boolean hasOpeningBook() {
         return this == STANDARD;
