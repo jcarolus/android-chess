@@ -73,7 +73,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private String configuredName = "";
     private String configuredHostIp = "";
     private MoveEntry moveEntry;
-    private boolean moveEntryActive;
 
     private ServiceConnection connection =
             new ServiceConnection() {
@@ -127,7 +126,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         HotspotBoardApi game = (HotspotBoardApi) gameApi;
         return new HotspotMoveIntake(
                 game,
-                canPlayMoves(),
+                canPlayMoves() && messengerFromService != null,
                 game.isPlayingAsWhite() ? BoardConstants.WHITE : BoardConstants.BLACK);
     }
 
@@ -141,15 +140,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private void updateMoveEntry() {
         if (isObserving || isShareMode) {
-            moveEntry.update(null, null, false);
+            moveEntry.update(null, null);
             return;
         }
-        boolean canPlay =
-                moveEntryActive
-                        && messengerFromService != null
-                        && canPlayMoves()
-                        && ((HotspotBoardApi) gameApi).isMyTurn();
-        moveEntry.update(gameApi, gameApi.getCurrentNode(), canPlay);
+        moveEntry.update(gameApi, gameApi.getCurrentNode());
     }
 
     public void startSession() {
@@ -442,12 +436,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
 
         afterCreate();
-        moveEntry =
-                new MoveEntry(
-                        this,
-                        this::promotionDialog,
-                        () -> false,
-                        move -> gameApi.move(move.move, -1));
+        moveEntry = new MoveEntry(this);
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
@@ -566,7 +555,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public void onResume() {
         super.onResume();
-        moveEntryActive = true;
 
         Log.d(TAG, "messengerFromService " + (messengerFromService == null));
 
@@ -580,7 +568,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     @Override
     protected void onPause() {
-        moveEntryActive = false;
         moveEntry.reset();
         SharedPreferences.Editor editor = this.getPrefs().edit();
 

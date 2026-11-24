@@ -117,7 +117,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
      * rejected, true when it was played or waits for the user's answer.
      */
     public boolean requestMove(final int from, final int to) {
-        return offerMove(MoveCandidate.of(from, to));
+        return offerMove(MoveCandidate.of(from, to)).kind() != MoveOutcome.Kind.REJECTED;
     }
 
     /** The Move intake this Mode applies to every move the user offers. */
@@ -127,16 +127,17 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
 
     /**
      * Offers the candidate and renders the outcome: asks the question it names and offers the
-     * candidate again with the answer, or restores the board after a rejection.
+     * candidate again with the answer, or restores the board after a rejection. Returns the outcome
+     * of this offer; answers to its question are offered later.
      */
-    protected boolean offerMove(final MoveCandidate candidate) {
+    public MoveOutcome offerMove(final MoveCandidate candidate) {
         MoveOutcome outcome = moveIntake().offer(candidate);
         switch (outcome.kind()) {
             case PLAYED:
-                return true;
+                break;
             case NEEDS_PROMOTION:
                 promotionDialog(piece -> offerMove(candidate.withPromotion(piece))).show();
-                return true;
+                break;
             case NEEDS_CASTLE_CHOICE:
                 openConfirmDialog(
                         getString(R.string.title_castle),
@@ -144,7 +145,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                         getString(R.string.alert_no),
                         () -> offerMove(candidate.withCastle(true)),
                         () -> offerMove(candidate.withCastle(false)));
-                return true;
+                break;
             case CONFIRM_OVERWRITE:
                 openConfirmDialog(
                         getString(R.string.title_overwrite_main_line),
@@ -152,20 +153,21 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                         getString(R.string.alert_no),
                         () -> offerMove(candidate.withOverwriteConfirmed()),
                         this::rebuildBoard);
-                return true;
+                break;
             case CONFIRM_MOVE:
                 confirmMove(candidate);
-                return true;
+                break;
             case QUEUED_AS_PREMOVE:
                 queuePremove(candidate);
-                return true;
+                break;
             default:
                 onMoveRejected(outcome.reason());
                 if (outcome.reason() != MoveOutcome.Reason.ILLEGAL) {
                     rebuildBoard();
                 }
-                return false;
+                break;
         }
+        return outcome;
     }
 
     /**
@@ -184,7 +186,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     /** Lets a Mode tell the user why a move was rejected; the board is restored either way. */
     protected void onMoveRejected(MoveOutcome.Reason reason) {}
 
-    protected ChessAlertDialogBuilder promotionDialog(java.util.function.IntConsumer selected) {
+    public ChessAlertDialogBuilder promotionDialog(java.util.function.IntConsumer selected) {
         ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
         builder.setTitle(R.string.title_pick_promo)
                 .setCancelable(false)

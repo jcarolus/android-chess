@@ -28,7 +28,6 @@ import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
-import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
@@ -171,14 +170,7 @@ public class LichessGameActivity extends ChessBoardActivity
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
-        moveEntry =
-                new MoveEntry(
-                        this,
-                        this::promotionDialog,
-                        () ->
-                                lichessApi.getViewMode() == LichessApi.VIEW_PLAY
-                                        && switchConfirmMoves.isChecked(),
-                        this::submitTextMove);
+        moveEntry = new MoveEntry(this);
 
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -231,7 +223,7 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public void onLichessApiLost() {
-        moveEntry.update(null, null, false);
+        moveEntry.update(null, null);
         if (lichessApi != null) {
             lichessApi.setApiListener(null);
         }
@@ -617,6 +609,16 @@ public class LichessGameActivity extends ChessBoardActivity
         }
     }
 
+    /** A new offer replaces a move still waiting for confirmation. */
+    @Override
+    public MoveOutcome offerMove(MoveCandidate candidate) {
+        if (layoutConfirm.getVisibility() == View.VISIBLE) {
+            layoutConfirm.setVisibility(View.GONE);
+            layoutResignDraw.setVisibility(View.VISIBLE);
+        }
+        return super.offerMove(candidate);
+    }
+
     @Override
     protected void confirmMove(MoveCandidate candidate) {
         layoutConfirm.setVisibility(View.VISIBLE);
@@ -626,12 +628,7 @@ public class LichessGameActivity extends ChessBoardActivity
                         R.string.lichess_game_confirm_move,
                         Pos.toString(candidate.from) + " " + Pos.toString(candidate.to)));
         pulseAnimation(buttonConfirmMove, 1.05f, 1);
-        buttonConfirmMove.setOnClickListener(
-                v -> {
-                    layoutConfirm.setVisibility(View.GONE);
-                    layoutResignDraw.setVisibility(View.VISIBLE);
-                    offerMove(candidate.withMoveConfirmed());
-                });
+        buttonConfirmMove.setOnClickListener(v -> offerMove(candidate.withMoveConfirmed()));
     }
 
     @Override
@@ -643,7 +640,7 @@ public class LichessGameActivity extends ChessBoardActivity
         if (!moveEntryActive
                 || lichessApi == null
                 || !getPrefs().getBoolean(MoveEntry.PREF_MOVE_ENTRY, false)) {
-            moveEntry.update(null, null, false);
+            moveEntry.update(null, null);
             return;
         }
 
@@ -654,25 +651,12 @@ public class LichessGameActivity extends ChessBoardActivity
                         && currentGameId.equals(lichessApi.getOngoingGameId());
         boolean puzzle = mode == LichessApi.VIEW_PUZZLE;
         if (!liveGame && !puzzle) {
-            moveEntry.update(null, null, false);
+            moveEntry.update(null, null);
             return;
         }
 
-        boolean canPlay =
-                (liveGame
-                                ? lichessApi.isOngoingGameInProgress()
-                                : lichessApi.isPuzzleAwaitingMove())
-                        && lichessApi.getMyTurn() == lichessApi.getTurn();
         // The Lichess stream can rebuild the game tree without changing the position.
-        moveEntry.update(gameApi, gameApi.getFEN(), canPlay);
-    }
-
-    private void submitTextMove(PositionMove move) {
-        if (layoutConfirm.getVisibility() == View.VISIBLE) {
-            layoutConfirm.setVisibility(View.GONE);
-            layoutResignDraw.setVisibility(View.VISIBLE);
-        }
-        lichessApi.sendMove(move.boardCoordinate);
+        moveEntry.update(gameApi, gameApi.getFEN());
     }
 
     private void storePremove(int from, int to) {

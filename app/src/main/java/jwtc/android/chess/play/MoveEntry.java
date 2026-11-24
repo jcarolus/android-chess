@@ -10,44 +10,37 @@ import android.widget.LinearLayout;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntConsumer;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
+/**
+ * Text and dictated move entry. It parses what the user typed or said, resolves it against the
+ * position, asks for a promotion piece the words left out and, when the user wants it, reads the
+ * move back for review. The resolved move is offered to the Mode's Move intake like any other.
+ */
 public final class MoveEntry {
     public static final String PREF_MOVE_ENTRY = "play_move_entry";
     public static final String PREF_CONFIRM_MOVE_ENTRY = "play_confirm_move_entry";
 
     private final ChessBoardActivity activity;
-    private final Function<IntConsumer, ChessAlertDialogBuilder> promotionDialog;
-    private final BooleanSupplier requireReview;
-    private final Consumer<PositionMove> playMove;
     private final MoveEntryField field;
     private GameApi gameApi;
     private Node currentNode;
     private Object position;
-    private boolean playerTurn;
+    private boolean available;
     private int positionRevision;
     private boolean reviewingMove;
 
-    public MoveEntry(
-            ChessBoardActivity activity,
-            Function<IntConsumer, ChessAlertDialogBuilder> promotionDialog,
-            BooleanSupplier requireReview,
-            Consumer<PositionMove> playMove) {
+    public MoveEntry(ChessBoardActivity activity) {
         this.activity = activity;
-        this.promotionDialog = promotionDialog;
-        this.requireReview = requireReview;
-        this.playMove = playMove;
         field = new MoveEntryField(activity, this::submitMoveEntry);
         field.setVisibility(View.GONE);
         if (activity.getResources().getConfiguration().orientation
@@ -68,27 +61,28 @@ public final class MoveEntry {
         }
     }
 
-    public void update(GameApi game, Object position, boolean playerTurn) {
-        boolean available =
+    /**
+     * Shows the entry for the Game, or hides it for a null Game. A new Game or position clears what
+     * was typed. Whether a move may be played is the Move intake's decision.
+     */
+    public void update(GameApi game, Object position) {
+        boolean shown =
                 game != null
                         && activity.getPrefs().getBoolean(PREF_MOVE_ENTRY, false)
                         && game.variant().supportsMoveEntry();
-        boolean canPlay = available && playerTurn && !game.isEnded();
-        if (game != gameApi
-                || !Objects.equals(position, this.position)
-                || canPlay != this.playerTurn) {
+        if (game != gameApi || !Objects.equals(position, this.position) || shown != available) {
             reset();
         }
         gameApi = game;
         currentNode = game == null ? null : game.getCurrentNode();
         this.position = position;
-        this.playerTurn = canPlay;
-        field.setVisibility(available ? View.VISIBLE : View.GONE);
+        available = shown;
+        field.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     public void reset() {
         positionRevision++;
-        playerTurn = false;
+        available = false;
         field.resetConnection(true);
     }
 
@@ -128,8 +122,7 @@ public final class MoveEntry {
             field.setError(null);
             reviewingMove = true;
             boolean[] selectedPiece = {false};
-            promotionDialog
-                    .apply(
+            activity.promotionDialog(
                             piece -> {
                                 selectedPiece[0] = true;
                                 reviewingMove = false;
@@ -169,44 +162,35 @@ public final class MoveEntry {
 
     private void confirmMoveEntry(DictatedMove coordinates, PositionMove move) {
         field.setError(null);
-        int revision = positionRevision;
-        int textRevision = field.textRevision();
-        Runnable apply =
-                () -> {
-                    if (revision == positionRevision
-                            && canApplyMoveEntry()
-                            && textRevision == field.textRevision()) {
-                        field.resetConnection(true);
-                        playMove.accept(move);
-                    }
-                };
-        boolean review =
-                activity.getPrefs().getBoolean(PREF_CONFIRM_MOVE_ENTRY, false)
-                        || requireReview.getAsBoolean();
-        boolean overwrite = gameApi.hasContinuationToOverwrite();
-        if (!review && !overwrite) {
-            apply.run();
+        MoveCandidate candidate = MoveCandidate.resolved(move.move);
+        if (!activity.getPrefs().getBoolean(PREF_CONFIRM_MOVE_ENTRY, false)) {
+            offer(candidate);
             return;
         }
+        int revision = positionRevision;
+        int textRevision = field.textRevision();
         String description = coordinates.san == null ? coordinates.describe() : move.san;
-        if (review && Move.isPromotionMove(move.move)) {
+        if (Move.isPromotionMove(move.move)) {
             description +=
                     " "
                             + activity.getResources()
                                     .getStringArray(R.array.promotionpieces)[
                                     BoardConstants.QUEEN - Move.getPromotionPiece(move.move)];
         }
-        String message =
-                review
-                        ? activity.getString(R.string.move_entry_review, description, move.san)
-                        : activity.getString(R.string.title_overwrite_main_line);
-        if (review && overwrite) {
-            message += "\n" + activity.getString(R.string.title_overwrite_main_line);
-        }
         reviewingMove = true;
         new ChessAlertDialogBuilder(activity)
-                .setMessage(message)
-                .setPositiveButton(R.string.alert_yes, (dialog, which) -> apply.run())
+                .setMessage(activity.getString(R.string.move_entry_review, description, move.san))
+                .setPositiveButton(
+                        R.string.alert_yes,
+                        (dialog, which) -> {
+                            if (revision == positionRevision
+                                    && canApplyMoveEntry()
+                                    && textRevision == field.textRevision()) {
+                                // The user has just read the move back, so a Mode that confirms
+                                // moves does not ask again.
+                                offer(candidate.withMoveConfirmed());
+                            }
+                        })
                 .setNegativeButton(R.string.alert_no, null)
                 .setOnDismissListener(
                         dialog -> {
@@ -214,6 +198,19 @@ public final class MoveEntry {
                             field.resetConnection(false);
                         })
                 .show();
+    }
+
+    private void offer(MoveCandidate candidate) {
+        MoveOutcome outcome = activity.offerMove(candidate);
+        if (outcome.kind() != MoveOutcome.Kind.REJECTED) {
+            field.resetConnection(true);
+            return;
+        }
+        field.setError(
+                activity.getString(
+                        outcome.reason() == MoveOutcome.Reason.ILLEGAL
+                                ? R.string.move_entry_illegal
+                                : R.string.move_entry_wrong_turn));
     }
 
     private DictatedMove parseMoveEntry(String text) {
@@ -260,7 +257,8 @@ public final class MoveEntry {
                 });
     }
 
+    /** Whether the position the text was entered for is still the one on the board. */
     private boolean canApplyMoveEntry() {
-        return playerTurn && currentNode == gameApi.getCurrentNode() && !gameApi.isEnded();
+        return available && currentNode == gameApi.getCurrentNode();
     }
 }

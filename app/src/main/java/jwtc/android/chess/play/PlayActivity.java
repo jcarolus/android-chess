@@ -111,8 +111,7 @@ public class PlayActivity extends ChessBoardActivity
 
     private void updateMoveEntry() {
         if (moveEntry != null) {
-            moveEntry.update(
-                    gameApi, gameApi.getCurrentNode(), !vsCPU || gameApi.getTurn() == myTurn);
+            moveEntry.update(gameApi, gameApi.getCurrentNode());
         }
     }
 
@@ -166,12 +165,7 @@ public class PlayActivity extends ChessBoardActivity
 
         afterCreate();
 
-        moveEntry =
-                new MoveEntry(
-                        this,
-                        this::promotionDialog,
-                        () -> false,
-                        move -> gameApi.move(move.move, -1));
+        moveEntry = new MoveEntry(this);
 
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
