@@ -506,10 +506,8 @@ public class GameApi {
     }
 
     public boolean requestDuckMove(int duckPos) {
-        //        Log.d(TAG, " requestDuckMove " + Pos.toString(duckPos));
         if (!moveDuck(duckPos)) {
-            // @TODO is this needed/possible? Prevent from moving on top of a piece should be enough
-            // dispatchIllegalMove();
+            dispatchIllegalMove();
             return false;
         }
 

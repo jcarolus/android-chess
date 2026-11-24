@@ -33,6 +33,10 @@ A named opening line classified by ECO code, shown by the opening explorer. User
 What the user is doing with a Game: Play, Analyze, Mate-in-Two Puzzle, Practice, Setup, Online play.
 _Avoid_: using "Mode" for engine behaviour (see Search Purpose)
 
+**Move intake**:
+The rules a Mode applies to decide whether the user's move is played, queued, needs a choice or confirmation, or is rejected. Every input (board, castle choice, text, dictation, premove) goes through it.
+_Avoid_: requestMove (the name of one input path, not the concept)
+
 **Setup**:
 The Mode where the user builds a Starting Position by hand.
 

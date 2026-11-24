@@ -33,6 +33,10 @@ import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.moveintake.DefaultMoveIntake;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.GameApi;
@@ -108,23 +112,53 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         hapticFeedback = new HapticFeedback(this);
     }
 
+    /**
+     * Offers a move from the board to this Mode's {@link MoveIntake}. Returns false when it was
+     * rejected, true when it was played or waits for the user's answer.
+     */
     public boolean requestMove(final int from, final int to) {
-        if (gameApi.getDuckPos() == from) {
-            return gameApi.requestDuckMove(to);
-        } else if (gameApi.isPromotionMove(from, to)) {
+        return offerMove(MoveCandidate.of(from, to));
+    }
 
-            promotionDialog(
-                            piece -> {
-                                gameApi.setPromo(piece);
-                                if (!gameApi.requestMove(from, to)) {
-                                    rebuildBoard();
-                                }
-                            })
-                    .show();
+    /** The Move intake this Mode applies to every move the user offers. */
+    protected MoveIntake moveIntake() {
+        return new DefaultMoveIntake(gameApi);
+    }
 
-            return true;
+    /**
+     * Offers the candidate and renders the outcome: asks the question it names and offers the
+     * candidate again with the answer, or restores the board after a rejection.
+     */
+    protected boolean offerMove(final MoveCandidate candidate) {
+        MoveOutcome outcome = moveIntake().offer(candidate);
+        switch (outcome.kind()) {
+            case PLAYED:
+                return true;
+            case NEEDS_PROMOTION:
+                promotionDialog(piece -> offerMove(candidate.withPromotion(piece))).show();
+                return true;
+            case NEEDS_CASTLE_CHOICE:
+                openConfirmDialog(
+                        getString(R.string.title_castle),
+                        getString(R.string.alert_yes),
+                        getString(R.string.alert_no),
+                        () -> offerMove(candidate.withCastle(true)),
+                        () -> offerMove(candidate.withCastle(false)));
+                return true;
+            case CONFIRM_OVERWRITE:
+                openConfirmDialog(
+                        getString(R.string.title_overwrite_main_line),
+                        getString(R.string.alert_yes),
+                        getString(R.string.alert_no),
+                        () -> offerMove(candidate.withOverwriteConfirmed()),
+                        this::rebuildBoard);
+                return true;
+            default:
+                if (outcome.reason() != MoveOutcome.Reason.ILLEGAL) {
+                    rebuildBoard();
+                }
+                return false;
         }
-        return gameApi.requestMove(from, to);
     }
 
     protected ChessAlertDialogBuilder promotionDialog(java.util.function.IntConsumer selected) {
@@ -1860,18 +1894,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void handleAmbiguousCastle(int from, int to) {
-        openConfirmDialog(
-                getString(R.string.title_castle),
-                getString(R.string.alert_yes),
-                getString(R.string.alert_no),
-                () -> {
-                    gameApi.requestMoveCastle(from, to);
-                },
-                () -> {
-                    if (from != to) {
-                        gameApi.requestMove(from, to);
-                    }
-                });
+        offerMove(MoveCandidate.of(from, to));
     }
 
     protected void selectPosition(int pos) {
