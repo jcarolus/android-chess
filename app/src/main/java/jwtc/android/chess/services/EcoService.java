@@ -84,7 +84,7 @@ public class EcoService {
             return openings;
         }
         String fen = gameApi.getFEN();
-        Variant variant = gameApi.rustVariant();
+        Variant variant = gameApi.variant();
         int[] files =
                 variant == Variant.CHESS_960
                         ? RustSearchRequest.chess960Files(fen, fen.split(" ")[1].equals("w"))

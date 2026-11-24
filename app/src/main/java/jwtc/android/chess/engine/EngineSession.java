@@ -46,7 +46,7 @@ public final class EngineSession {
             Context context, GameApi gameApi, EngineListener listener, String oexEngineId) {
         EngineSession session = new EngineSession(context, gameApi, listener);
         boolean oexAvailable =
-                !gameApi.requiresBuiltinEngine()
+                gameApi.variant().supportsOexEngine()
                         && !LOCAL_ENGINE_ID.equals(oexEngineId)
                         && OexEngine.hasAvailableEngines(context);
         if (EnginePolicy.forAnalysis(oexAvailable) == EnginePolicy.Backend.OEX) {

@@ -22,6 +22,7 @@ import jwtc.android.chess.services.GameApi.PositionSnapshot;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 /** Owns screen-scoped Analysis work and completed results, keyed by full move history. */
@@ -90,7 +91,9 @@ final class Analysis implements EngineListener {
     }
 
     private String effectiveEngine(String preferredEngine) {
-        return gameApi.requiresBuiltinEngine() ? EngineSession.LOCAL_ENGINE_ID : preferredEngine;
+        return gameApi.variant().supportsOexEngine()
+                ? preferredEngine
+                : EngineSession.LOCAL_ENGINE_ID;
     }
 
     void pause() {
@@ -165,7 +168,8 @@ final class Analysis implements EngineListener {
                         && entry.duckMove == preferred.duckMove;
         int winner = AnalysisResults.terminalWinner(position);
         // Duck snapshots list piece moves, so their count cannot identify a forced turn.
-        int legalMoveCount = parent == null || gameApi.isDuckVariant() ? 0 : parent.moves.size();
+        int legalMoveCount =
+                parent == null || gameApi.variant() == Variant.DUCK ? 0 : parent.moves.size();
         MoveClassifier.Feedback feedback =
                 entry == null || parent == null || position == null
                         ? null

@@ -198,11 +198,12 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     GameApi game = new GameApi();
                     game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
                     check(
-                            game.isKingOfTheHillVariant() && game.requiresBuiltinEngine(),
+                            game.variant() == Variant.KING_OF_THE_HILL
+                                    && !game.variant().supportsOexEngine(),
                             "Hill variant not selected");
                     EngineSession session =
                             EngineSession.forPlay(getTargetContext(), game, new Listener());
-                    session.selectForPlay(true, null, game.requiresBuiltinEngine(), true);
+                    session.selectForPlay(true, null, !game.variant().supportsOexEngine(), true);
                     check(session.isBuiltin(), "Hill game selected an OEX engine");
                     session.close();
                     check(game.requestMove("e4") && game.requestMove("e5"), "Hill opening failed");
@@ -210,9 +211,9 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     check(saved.contains("[Variant \"King of the Hill\"]"), "Missing variant tag");
                     game.newGame();
                     check(
-                            game.loadPGN(saved) && game.isKingOfTheHillVariant(),
+                            game.loadPGN(saved) && game.variant() == Variant.KING_OF_THE_HILL,
                             "Hill PGN reload failed");
-                    check(game.isKingOfTheHillVariant(), "PGN reload lost hill rules");
+                    check(game.variant() == Variant.KING_OF_THE_HILL, "PGN reload lost hill rules");
                     check(
                             game.loadPGN(
                                     "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*"),
@@ -224,7 +225,9 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     saved = game.exportFullPGN();
                     check(saved.contains("[Result \"1-0\"]"), "Hill winner not exported");
                     check(
-                            game.stepBack() && !game.isEnded() && game.isKingOfTheHillVariant(),
+                            game.stepBack()
+                                    && !game.isEnded()
+                                    && game.variant() == Variant.KING_OF_THE_HILL,
                             "Hill undo failed");
                     check(
                             game.stepForward() && game.getState() == BoardConstants.HILL_WIN,
@@ -367,20 +370,26 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             fen.equals(game.getFEN()) && pgn.equals(game.exportFullPGN()),
                             "Failed import changed game");
                     game.newGameRandomFischer(518);
-                    check(game.isChess960Variant(), "Chess960 seed 518 lost its variant");
+                    check(
+                            game.variant() == Variant.CHESS_960,
+                            "Chess960 seed 518 lost its variant");
                     observer.newGame();
-                    check(game.isChess960Variant(), "Second Game changed Chess960 variant");
+                    check(
+                            game.variant() == Variant.CHESS_960,
+                            "Second Game changed Chess960 variant");
                     DisplayedPosition.publish(game);
                     check(
-                            new HotspotBoardApi().isChess960Variant(),
+                            new HotspotBoardApi().variant() == Variant.CHESS_960,
                             "Hotspot lost displayed Chess960 variant");
                     check(
                             game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
                             "Chess960 setup failed");
                     check(
-                            game.requestMove("O-O") && game.isChess960Variant(),
+                            game.requestMove("O-O") && game.variant() == Variant.CHESS_960,
                             "Castling lost Chess960 variant");
-                    check(game.isChess960Variant(), "Castled Position lost Chess960 variant");
+                    check(
+                            game.variant() == Variant.CHESS_960,
+                            "Castled Position lost Chess960 variant");
                     check(
                             game.initFEN("4k3/8/8/8/8/8/8/R5KR w KQ - 0 1", true),
                             "Stationary king setup failed");
@@ -394,7 +403,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
                     DisplayedPosition.publish(game);
                     check(
-                            new HotspotBoardApi().isKingOfTheHillVariant(),
+                            new HotspotBoardApi().variant() == Variant.KING_OF_THE_HILL,
                             "Hotspot lost displayed Hill variant");
                     game.reset();
                     check(
@@ -440,7 +449,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 }) {
             GameApi game = new GameApi();
             check(game.loadPGN("[FEN \"" + example[0] + "\"]\n*"), "Rook-file PGN rejected");
-            check(game.isChess960Variant(), "Rook-file rights did not select Chess 960");
+            check(game.variant() == Variant.CHESS_960, "Rook-file rights did not select Chess 960");
             check(
                     "Chess960".equals(game.getPGNHeadProperty("Variant")),
                     "Imported Variant tag missing");
@@ -474,14 +483,14 @@ public final class RustEngineInstrumentation extends Instrumentation {
             GameApi restored = new GameApi();
             check(
                     restored.loadPGN(pgn)
-                            && restored.isChess960Variant()
+                            && restored.variant() == Variant.CHESS_960
                             && restored.getFEN().equals(game.getFEN()),
                     "Export lost castling position or variant");
         }
         GameApi orthodox = new GameApi();
         check(
                 orthodox.initFEN("4k3/8/8/8/8/8/8/R3K2R w HA - 0 1", true)
-                        && orthodox.isChess960Variant(),
+                        && orthodox.variant() == Variant.CHESS_960,
                 "Orthodox file-letter rights did not select Chess 960");
     }
 
@@ -537,7 +546,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             String saved = game.exportFullPGN();
             String fen = game.getFEN();
             int state = game.getEngineState();
-            if (game.isChess960Variant()) {
+            if (game.variant() == Variant.CHESS_960) {
                 check(saved.contains("[Variant \"Chess960\"]"), "Exported Variant is not Chess960");
             }
             check(!game.loadPGN(illegalBranch), "Illegal branch accepted");
@@ -1259,7 +1268,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
                             "Could not load a Chess 960-shaped FEN");
                     check(
-                            game.isChess960Variant(),
+                            game.variant() == Variant.CHESS_960,
                             "Off-square castling rights were not reported as Chess 960");
                     session[0] =
                             EngineSession.forAnalysis(
@@ -1441,7 +1450,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             castle960.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
                             "Could not load a Chess 960-shaped FEN");
                     check(
-                            castle960.isChess960Variant(),
+                            castle960.variant() == Variant.CHESS_960,
                             "Off-square castling rights were not reported as Chess 960");
                     check(
                             castle960.requestMove("O-O"),

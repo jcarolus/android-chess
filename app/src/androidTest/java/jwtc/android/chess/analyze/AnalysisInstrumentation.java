@@ -246,7 +246,9 @@ public final class AnalysisInstrumentation {
         }
         String fen = game.getFEN();
         check(!game.loadPGN("1. e4 e5 2. Ke4 *"), "Accepted an invalid replacement");
-        check(game.isChess960Variant() && fen.equals(game.getFEN()), "Rollback lost Chess 960");
+        check(
+                game.variant() == Variant.CHESS_960 && fen.equals(game.getFEN()),
+                "Rollback lost Chess 960");
 
         check(game.loadPGN("1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 *"), "Cannot load repetition");
         check(

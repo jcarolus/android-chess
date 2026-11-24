@@ -54,7 +54,9 @@ public final class HotspotVariantInstrumentation {
                         0,
                         "",
                         Variant.CHESS_960));
-        check(guest.isChess960Variant(), "Chess 960 without castling rights lost its variant");
+        check(
+                guest.variant() == Variant.CHESS_960,
+                "Chess 960 without castling rights lost its variant");
 
         host.newGame();
         GameMessage legacy =
@@ -74,9 +76,9 @@ public final class HotspotVariantInstrumentation {
                         "Guest",
                         move,
                         "",
-                        host.rustVariant());
+                        host.variant());
         guest.onGameUpdate(GameMessage.fromJson(update.toJsonString()));
-        check(guest.rustVariant() == host.rustVariant(), "Guest lost the selected variant");
+        check(guest.variant() == host.variant(), "Guest lost the selected variant");
         check(guest.getFEN().equals(host.getFEN()), "Guest position differs from the host");
     }
 

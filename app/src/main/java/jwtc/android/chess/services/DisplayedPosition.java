@@ -20,13 +20,7 @@ public final class DisplayedPosition {
     private DisplayedPosition() {}
 
     public static void publish(GameApi game) {
-        Variant variant =
-                game.isKingOfTheHillVariant()
-                        ? Variant.KING_OF_THE_HILL
-                        : game.isDuckVariant()
-                                ? Variant.DUCK
-                                : game.isChess960Variant() ? Variant.CHESS_960 : Variant.STANDARD;
-        current = new Snapshot(game.getFEN(), variant);
+        current = new Snapshot(game.getFEN(), game.variant());
     }
 
     public static String currentFen() {

@@ -248,7 +248,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
         String item = data.getString("item");
         if (getString(R.string.analysis_settings).equals(item)) {
             AnalysisSettingsDialog.show(
-                    this, getPrefs(), gameApi.requiresBuiltinEngine(), this::restartAnalysis);
+                    this,
+                    getPrefs(),
+                    !gameApi.variant().supportsOexEngine(),
+                    this::restartAnalysis);
         } else if (getString(R.string.share_chess_link).equals(item)) {
             LinkSharing.show(this, gameApi);
         } else if (getString(R.string.menu_save_game).equals(item)) {
@@ -436,7 +439,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     @Override
     public void rebuildBoard() {
         if (includeAttackersAndDefendersInFieldDescription) {
-            boardDescriptions.show(gameApi.rustVariant(), gameApi.getFEN());
+            boardDescriptions.show(gameApi.variant(), gameApi.getFEN());
         } else {
             boardDescriptions.clear();
         }
@@ -588,7 +591,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     }
 
     private void showEngineWarning() {
-        if (gameApi.requiresBuiltinEngine()
+        if (!gameApi.variant().supportsOexEngine()
                 || !analysis.isBuiltin()
                 || engineWarningAcknowledged
                 || analysisDialog != null

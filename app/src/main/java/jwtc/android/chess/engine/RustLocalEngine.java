@@ -70,7 +70,7 @@ public final class RustLocalEngine extends EngineApi {
             return;
         }
         long id = beginSearch(SearchPurpose.ANALYSIS);
-        Variant variant = variant();
+        Variant variant = gameApi.variant();
         boolean quiescence = quiescentSearchOn;
         launch(
                 id,
@@ -89,7 +89,7 @@ public final class RustLocalEngine extends EngineApi {
             if (position == null) {
                 throw new IllegalArgumentException("Missing position");
             }
-            Variant variant = variant();
+            Variant variant = gameApi.variant();
             boolean quiescence = quiescentSearchOn;
             launch(
                     id,
@@ -102,14 +102,6 @@ public final class RustLocalEngine extends EngineApi {
         } catch (RuntimeException | LinkageError error) {
             reportError(id, error);
         }
-    }
-
-    private Variant variant() {
-        return gameApi.isKingOfTheHillVariant()
-                ? Variant.KING_OF_THE_HILL
-                : gameApi.isDuckVariant()
-                        ? Variant.DUCK
-                        : gameApi.isChess960Variant() ? Variant.CHESS_960 : Variant.STANDARD;
     }
 
     private boolean positionIsCurrent() {

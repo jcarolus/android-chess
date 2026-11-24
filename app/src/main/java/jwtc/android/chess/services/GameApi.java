@@ -66,16 +66,8 @@ public class GameApi {
         return pendingDuckMove != null;
     }
 
-    public boolean isKingOfTheHillVariant() {
-        return board.variant() == Variant.KING_OF_THE_HILL;
-    }
-
-    public boolean requiresBuiltinEngine() {
-        return isDuckVariant() || isKingOfTheHillVariant();
-    }
-
-    public boolean isDuckVariant() {
-        return board.getVariant() == BoardConstants.VARIANT_DUCK;
+    public Variant variant() {
+        return board.variant();
     }
 
     public Node getRootNode() {
@@ -235,10 +227,6 @@ public class GameApi {
         }
     }
 
-    public Variant rustVariant() {
-        return board.variant();
-    }
-
     private static List<PositionMove> positionMoves(List<RustBoard.LegalMove> legalMoves) {
         List<PositionMove> moves = new ArrayList<>();
         for (RustBoard.LegalMove move : legalMoves) {
@@ -374,10 +362,6 @@ public class GameApi {
         return board.variant() == Variant.STANDARD;
     }
 
-    public boolean isChess960Variant() {
-        return board.variant() == Variant.CHESS_960;
-    }
-
     public int getState() {
         int finalState = getFinalState();
         if (finalState != -1) {
@@ -421,7 +405,7 @@ public class GameApi {
             }
             int destination = Move.getTo(move.packed);
             if (Move.isOO(move.packed) || Move.isOOO(move.packed)) {
-                if (isChess960Variant()) {
+                if (variant() == Variant.CHESS_960) {
                     if (move.coordinate.equals(Pos.toString(from) + Pos.toString(to))) {
                         return new PositionMove(move);
                     }
@@ -861,7 +845,7 @@ public class GameApi {
             }
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", sFEN);
-            if (isChess960Variant()) {
+            if (variant() == Variant.CHESS_960) {
                 pgnTags.put("Variant", Variant.CHESS_960.pgnTag());
             }
 
@@ -1343,7 +1327,7 @@ public class GameApi {
         }
         String fen = board.toFEN();
         boolean whiteToMove = fen.trim().split("\\s+")[1].equals("w");
-        Variant variant = rustVariant();
+        Variant variant = variant();
         int from, to;
         Integer promotionPiece = null;
         if (castle != null) {

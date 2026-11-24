@@ -62,10 +62,10 @@ public class HotspotBoardApi extends GameApi {
         Variant variant = message.variant == null ? Variant.STANDARD : message.variant;
         if (message.type != GameMessage.TYPE_MOVE
                 && (message.variant != null
-                        || message.FEN.equals(getFEN()) && variant == rustVariant())) {
+                        || message.FEN.equals(getFEN()) && variant == variant())) {
             return;
         }
-        if (message.variant != null && message.lastMove != 0 && variant == rustVariant()) {
+        if (message.variant != null && message.lastMove != 0 && variant == variant()) {
             // Replay complete turns when possible so both players retain repetition history.
             int duck = variant == Variant.DUCK ? new BoardPosition(message.FEN).duck() : -1;
             if (applyMove(message.lastMove, duck) && message.FEN.equals(getFEN())) {

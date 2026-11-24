@@ -59,6 +59,24 @@ public class VariantTest {
     }
 
     @Test
+    public void capabilitiesMatchTheDomainRules() {
+        // Variant, OEX Engine, opening book, move entry
+        Object[][] matrix = {
+            {Variant.STANDARD, true, true, true},
+            {Variant.CHESS_960, true, false, true},
+            {Variant.DUCK, false, false, false},
+            {Variant.KING_OF_THE_HILL, false, false, true},
+        };
+        assertEquals(Variant.values().length, matrix.length);
+        for (Object[] row : matrix) {
+            Variant variant = (Variant) row[0];
+            assertEquals(variant + " OEX", row[1], variant.supportsOexEngine());
+            assertEquals(variant + " opening book", row[2], variant.hasOpeningBook());
+            assertEquals(variant + " move entry", row[3], variant.supportsMoveEntry());
+        }
+    }
+
+    @Test
     public void nativeCodesAndWireNamesAreStable() {
         assertEquals(0, Variant.STANDARD.ordinal());
         assertEquals(1, Variant.CHESS_960.ordinal());

@@ -36,12 +36,7 @@ final class PracticePositionSelector {
             RustSearchResult result =
                     RustNative.search(
                             RustSearchRequest.fromSnapshot(
-                                    1,
-                                    position,
-                                    MateRules.plyBudget(0),
-                                    0,
-                                    false,
-                                    game.rustVariant()));
+                                    1, position, MateRules.plyBudget(0), 0, false, game.variant()));
             int mateScore =
                     position.turn == BoardConstants.WHITE
                             ? BoardConstants.VALUATION_MATE

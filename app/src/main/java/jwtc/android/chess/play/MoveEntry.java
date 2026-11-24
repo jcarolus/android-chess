@@ -72,7 +72,7 @@ public final class MoveEntry {
         boolean available =
                 game != null
                         && activity.getPrefs().getBoolean(PREF_MOVE_ENTRY, false)
-                        && !game.isDuckVariant();
+                        && game.variant().supportsMoveEntry();
         boolean canPlay = available && playerTurn && !game.isEnded();
         if (game != gameApi
                 || !Objects.equals(position, this.position)

@@ -219,7 +219,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             return;
         }
         try {
-            Variant variant = gameApi.rustVariant();
+            Variant variant = gameApi.variant();
             GameMessage message =
                     new GameMessage(
                             type,
@@ -573,7 +573,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 LinkActivity.EXTRA_HOST, getIntent().getStringExtra(LinkActivity.EXTRA_HOST));
         outState.putString("hotspotLastMove", textViewLastMove.getText().toString());
         outState.putString("hotspotPosition", gameApi.getFEN());
-        outState.putString("hotspotVariant", gameApi.rustVariant().name());
+        outState.putString("hotspotVariant", gameApi.variant().name());
         HotspotBoardApi api = (HotspotBoardApi) gameApi;
         outState.putString("opponent", api.getOpponentName());
         outState.putBoolean("playingWhite", api.isPlayingAsWhite());
@@ -1239,7 +1239,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     won = !won;
                 }
                 int reason =
-                        state == BoardConstants.MATE && !gameApi.isDuckVariant()
+                        state == BoardConstants.MATE && gameApi.variant() != Variant.DUCK
                                 ? (won
                                         ? R.string.hotspot_result_mate_won
                                         : R.string.hotspot_result_mate_lost)

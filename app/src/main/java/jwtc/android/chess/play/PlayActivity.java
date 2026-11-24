@@ -860,7 +860,7 @@ public class PlayActivity extends ChessBoardActivity
                                     this,
                                     REQUEST_GAME_SETTINGS,
                                     getPrefs(),
-                                    gameApi.requiresBuiltinEngine());
+                                    !gameApi.variant().supportsOexEngine());
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
                     new NewGameDialog(this, this, REQUEST_NEW_GAME, getPrefs()).show();
@@ -1038,7 +1038,7 @@ public class PlayActivity extends ChessBoardActivity
         engineSession.selectForPlay(
                 "oex".equals(getPreferredEngineBackend()),
                 prefs.getString("oexEngineId", null),
-                gameApi.requiresBuiltinEngine(),
+                !gameApi.variant().supportsOexEngine(),
                 prefs.getBoolean("quiescentSearchOn", true));
     }
 
@@ -1165,7 +1165,7 @@ public class PlayActivity extends ChessBoardActivity
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
-            if (!gameApi.requiresBuiltinEngine() && moves.size() > 0) {
+            if (gameApi.variant().hasOpeningBook() && moves.size() > 0) {
                 int r = (int) (Math.random() * moves.size());
                 Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
                 gameApi.move(moves.get(r), -1);

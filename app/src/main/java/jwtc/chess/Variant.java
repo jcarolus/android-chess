@@ -26,6 +26,21 @@ public enum Variant {
         return pgnTag;
     }
 
+    /** OEX Engines only play Standard and Chess 960; other Variants need the Local Engine. */
+    public boolean supportsOexEngine() {
+        return this == STANDARD || this == CHESS_960;
+    }
+
+    /** The opening book only holds lines from the standard setup. */
+    public boolean hasOpeningBook() {
+        return this == STANDARD;
+    }
+
+    /** Text and dictated move entry has no notation for placing the Duck. */
+    public boolean supportsMoveEntry() {
+        return this != DUCK;
+    }
+
     /**
      * Returns the Variant a PGN {@code Variant} tag names, or null when the tag is absent, names
      * Standard or "From Position", or names a rule set the app does not play. A null result means
