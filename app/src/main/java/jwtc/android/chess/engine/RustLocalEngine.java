@@ -390,11 +390,15 @@ public final class RustLocalEngine extends EngineApi {
 
     /**
      * UCI-style "mate N" for a side-to-move mate score. Rust scores carry no distance, so it is
-     * taken from the principal line: N full moves until the mating move.
+     * taken from the principal line: N full moves until the mating move. A finished Position has no
+     * line and is "mate 0", as UCI engines report it.
      */
     private static int mateIn(int score, String principalVariation) {
         String line = principalVariation.trim();
-        int plies = line.isEmpty() ? 1 : line.split("\\s+").length;
+        if (line.isEmpty()) {
+            return 0;
+        }
+        int plies = line.split("\\s+").length;
         return (score > 0 ? 1 : -1) * ((plies + 1) / 2);
     }
 

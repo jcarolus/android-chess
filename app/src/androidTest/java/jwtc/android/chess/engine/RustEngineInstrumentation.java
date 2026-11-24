@@ -1101,8 +1101,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
                                                         Looper.myLooper() == Looper.getMainLooper(),
                                                         "Analysis off main thread");
                                                 check(
-                                                        best.isEmpty() && evaluation == null,
-                                                        "Terminal mate invented a distance");
+                                                        best.isEmpty()
+                                                                && evaluation != null
+                                                                && evaluation.mate
+                                                                && evaluation.value == 0,
+                                                        "Terminal mate is not mate 0");
                                                 check(
                                                         completed.incrementAndGet() == 1,
                                                         "Duplicate completion");
