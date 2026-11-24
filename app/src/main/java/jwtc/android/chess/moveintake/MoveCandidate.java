@@ -1,5 +1,7 @@
 package jwtc.android.chess.moveintake;
 
+import jwtc.chess.Move;
+
 /**
  * A move the user offers to a Mode's {@link MoveIntake}, together with the answers the user has
  * given so far. Answering a question offers a copy with that one answer filled in.
@@ -12,7 +14,7 @@ public final class MoveCandidate {
     public enum Castle {
         UNASKED,
         CASTLE,
-        KING_MOVE
+        ORDINARY_MOVE
     }
 
     public final int from;
@@ -41,6 +43,21 @@ public final class MoveCandidate {
         return new MoveCandidate(from, to, NO_PROMOTION, Castle.UNASKED, false, false);
     }
 
+    /**
+     * A move already resolved against the board, such as one picked from a list: it answers the
+     * promotion and castle questions itself.
+     */
+    public static MoveCandidate resolved(int move) {
+        boolean castles = Move.isOO(move) || Move.isOOO(move);
+        return new MoveCandidate(
+                Move.getFrom(move),
+                Move.getTo(move),
+                Move.isPromotionMove(move) ? Move.getPromotionPiece(move) : NO_PROMOTION,
+                castles ? Castle.CASTLE : Castle.ORDINARY_MOVE,
+                false,
+                false);
+    }
+
     public MoveCandidate withPromotion(int piece) {
         return new MoveCandidate(from, to, piece, castle, overwriteConfirmed, moveConfirmed);
     }
@@ -50,7 +67,7 @@ public final class MoveCandidate {
                 from,
                 to,
                 promotion,
-                castles ? Castle.CASTLE : Castle.KING_MOVE,
+                castles ? Castle.CASTLE : Castle.ORDINARY_MOVE,
                 overwriteConfirmed,
                 moveConfirmed);
     }

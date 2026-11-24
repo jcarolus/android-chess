@@ -40,6 +40,9 @@ import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.moveintake.PlayMoveIntake;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
@@ -115,32 +118,16 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     @Override
-    public boolean requestMove(final int from, final int to) {
-        // A Duck piece preview reports the next side to move before placement completes the turn.
-        boolean isMyTurn =
-                gameApi.hasPendingDuckMove()
-                        ? gameApi.getTurn() != myTurn && from == gameApi.getDuckPos()
-                        : gameApi.getTurn() == myTurn;
-        if (!gameApi.isEnded() && (isMyTurn || !vsCPU)) {
-            if (gameApi.hasContinuationToOverwrite()) {
-                confirmOverwrite(
-                        () -> {
-                            if (!super.requestMove(from, to)) {
-                                rebuildBoard();
-                            }
-                        });
-                rebuildBoard();
-                return true;
-            }
-
-            if (super.requestMove(from, to)) {
-                return true;
-            }
-        }
-        rebuildBoard();
-        return false;
+    protected MoveIntake moveIntake() {
+        return new PlayMoveIntake(gameApi, vsCPU, myTurn);
     }
 
+    /** Opening lines may write castling with zeros and leave out check marks. */
+    private static String normalizedSan(String san) {
+        return san.trim().replace('0', 'O').replaceAll("[+#]+$", "");
+    }
+
+    /** Asks before the Engine plays from earlier in the Game and replaces the moves that follow. */
     private void confirmOverwrite(Runnable action) {
         if (gameApi.hasContinuationToOverwrite()) {
             openConfirmDialog(
@@ -152,11 +139,6 @@ public class PlayActivity extends ChessBoardActivity
         } else {
             action.run();
         }
-    }
-
-    @Override
-    protected void handleAmbiguousCastle(int from, int to) {
-        confirmOverwrite(() -> super.handleAmbiguousCastle(from, to));
     }
 
     @Override
@@ -952,8 +934,12 @@ public class PlayActivity extends ChessBoardActivity
 
             case REQUEST_ECO:
                 item = data.getString("item");
-                final String openingMove = item;
-                confirmOverwrite(() -> gameApi.requestMove(openingMove));
+                final String openingMove = normalizedSan(item);
+                GameApi.PositionMove move =
+                        gameApi.resolveSanMove(san -> normalizedSan(san).equals(openingMove));
+                if (move != null) {
+                    offerMove(MoveCandidate.resolved(move.move));
+                }
                 break;
         }
     }
