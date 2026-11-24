@@ -668,20 +668,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         hasReceivedGameUpdate = true;
         overrideGameState = 0;
         ((HotspotBoardApi) gameApi).setPlayingAsWhite(isPlayAsWhite);
-        switch (variant) {
-            case STANDARD:
-                gameApi.newGame();
-                break;
-            case CHESS_960:
-                gameApi.newGameRandomFischer(-1);
-                break;
-            case DUCK:
-                gameApi.newGame(BoardConstants.VARIANT_DUCK);
-                break;
-            case KING_OF_THE_HILL:
-                gameApi.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
-                break;
-        }
+        gameApi.newGame(variant);
         sendGameMessage(GameMessage.TYPE_MOVE, 0, "");
 
         rebuildBoard();

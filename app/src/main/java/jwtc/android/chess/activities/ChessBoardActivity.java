@@ -46,6 +46,7 @@ import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public abstract class ChessBoardActivity extends BaseActivity implements GameListener {
@@ -210,7 +211,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void onNewGameStarted(int variant) {
+    public void onNewGameStarted(Variant variant) {
         Log.d(TAG, "onNewGameStarted " + variant);
         clearPendingDraggedMove();
     }

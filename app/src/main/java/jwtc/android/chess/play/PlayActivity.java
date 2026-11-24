@@ -49,6 +49,7 @@ import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameRecord;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import org.json.JSONArray;
 
@@ -646,7 +647,7 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     @Override
-    public void onNewGameStarted(int variant) {
+    public void onNewGameStarted(Variant variant) {
         enginePausedForHistory = false;
         super.onNewGameStarted(variant);
 
@@ -922,7 +923,11 @@ public class PlayActivity extends ChessBoardActivity
                 break;
 
             case REQUEST_NEW_GAME:
-                if (data.getBoolean(NewGameDialog.EXTRA_CHESS960)) {
+                Variant variant =
+                        Variant.valueOf(
+                                data.getString(
+                                        NewGameDialog.EXTRA_VARIANT, Variant.STANDARD.name()));
+                if (variant == Variant.CHESS_960) {
                     Intent setupIntent =
                             new Intent(
                                     this,
@@ -934,9 +939,7 @@ public class PlayActivity extends ChessBoardActivity
                                     ? BoardConstants.WHITE
                                     : BoardConstants.BLACK;
                     lGameID = 0;
-                    gameApi.newGame(
-                            data.getInt(
-                                    NewGameDialog.EXTRA_VARIANT, BoardConstants.VARIANT_DEFAULT));
+                    gameApi.newGame(variant);
                     playIfEngineMove();
                 }
                 break;

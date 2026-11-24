@@ -196,7 +196,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
+                    game.newGame(Variant.KING_OF_THE_HILL);
                     check(
                             game.variant() == Variant.KING_OF_THE_HILL
                                     && !game.variant().supportsOexEngine(),
@@ -276,7 +276,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         assertSnapshot(board);
         board.initRandomFisher(42);
         assertSnapshot(board);
-        board.newGame(BoardConstants.VARIANT_DUCK);
+        board.newGame(Variant.DUCK);
         String duckStart = board.toFEN();
         assertSnapshot(board);
         check(board.requestMove(52, 36) != 0, "Snapshot Duck preview failed");
@@ -287,7 +287,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         board.undo();
         check(duckStart.equals(board.toFEN()), "Duck undo mutated earlier snapshot");
         assertSnapshot(board);
-        board.setVariant(BoardConstants.VARIANT_DEFAULT);
+        board.setVariant(Variant.STANDARD);
         check(board.getDuckPos() == -1, "Variant change retained duck");
         assertSnapshot(board);
         check(board.initFEN(START), "Snapshot load failed");
@@ -400,7 +400,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true),
                             "King-to-rook setup failed");
                     check(game.requestMove(60, 63), "King-to-rook castle request failed");
-                    game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
+                    game.newGame(Variant.KING_OF_THE_HILL);
                     DisplayedPosition.publish(game);
                     check(
                             new HotspotBoardApi().variant() == Variant.KING_OF_THE_HILL,
@@ -413,7 +413,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     game.putPiece(4, BoardConstants.KING, BoardConstants.BLACK);
                     game.commitBoard();
                     check(game.isLegalPosition() == 1, "Valid edited board rejected");
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     check(
                             game.getMyDuckPos() == game.getDuckPos(),
                             "Starting Duck position appears unfinished");
@@ -1206,7 +1206,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     check(game.requestMove("e4@d5"), "Duck recorded turn");
                     String original = game.getFEN();
                     check(!game.isStandardVariant(), "Duck game was reported as Standard");
@@ -1538,7 +1538,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game[0].initFEN(START.replace("0 1", "100 1"), true),
                             "Could not load drawn position");
                     assertEcoProbePreservesPosition(game[0], eco[0]);
-                    game[0].newGame(BoardConstants.VARIANT_DUCK);
+                    game[0].newGame(Variant.DUCK);
                     assertEcoProbePreservesPosition(game[0], eco[0]);
                     check(game[0].requestMove("e4@d5"), "Could not play Duck turn");
                     assertEcoProbePreservesPosition(game[0], eco[0]);
@@ -1583,7 +1583,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     check(
                             game.requestMove("e4@d5") && game.requestMove("e5@e2"),
                             "First Duck path");
@@ -1606,7 +1606,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     if (terminal) {
                         check(
                                 game.initFEN("4k3/4R3/8/3$4/8/8/8/4K3 w - - 0 1", true),
@@ -1689,7 +1689,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     GameApi.PositionSnapshot root = game.getPositionSnapshot(game.getCurrentNode());
                     session[0] =
                             EngineSession.forAnalysis(

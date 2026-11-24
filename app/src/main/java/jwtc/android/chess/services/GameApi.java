@@ -793,10 +793,15 @@ public class GameApi {
     }
 
     public void newGame() {
-        newGame(BoardConstants.VARIANT_DEFAULT);
+        newGame(Variant.STANDARD);
     }
 
-    public void newGame(int variant) {
+    /** Chess 960 starts from a random arrangement; see {@link #newGameRandomFischer(int)}. */
+    public void newGame(Variant variant) {
+        if (variant == Variant.CHESS_960) {
+            newGameRandomFischer(-1);
+            return;
+        }
 
         pgnTags.clear();
         pgnTags.put("Event", "?");
@@ -808,11 +813,11 @@ public class GameApi {
 
         board.newGame(variant);
         resetPGNHistory();
-        if (variant == BoardConstants.VARIANT_KING_OF_THE_HILL) {
-            pgnTags.put("Variant", Variant.KING_OF_THE_HILL.pgnTag());
+        if (variant.pgnTag() != null) {
+            pgnTags.put("Variant", variant.pgnTag());
         }
 
-        if (variant == BoardConstants.VARIANT_DUCK) {
+        if (variant == Variant.DUCK) {
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", board.toFEN());
         }
@@ -935,7 +940,7 @@ public class GameApi {
         return board.getEnpassantPosition();
     }
 
-    public void setVariant(int variant) {
+    public void setVariant(Variant variant) {
         board.setVariant(variant);
     }
 
@@ -1010,7 +1015,7 @@ public class GameApi {
 
         resetPGNHistory();
 
-        dispatchNewGameStarted(board.getVariant());
+        dispatchNewGameStarted(board.variant());
         dispatchState();
         return ret;
     }
@@ -1194,7 +1199,7 @@ public class GameApi {
         }
     }
 
-    protected void dispatchNewGameStarted(final int variant) {
+    protected void dispatchNewGameStarted(final Variant variant) {
         for (GameListener listener : listeners) {
             listener.onNewGameStarted(variant);
         }
@@ -1358,9 +1363,7 @@ public class GameApi {
         }
         String san = board.getMySan();
         if (duck != null && board.requestDuckMove(duckSquare) == 0
-                || duck == null
-                        && board.getVariant() == BoardConstants.VARIANT_DUCK
-                        && board.isEnded() == 0) {
+                || duck == null && board.variant() == Variant.DUCK && board.isEnded() == 0) {
             board.undo();
             return false;
         }
@@ -1413,9 +1416,7 @@ public class GameApi {
             throw new IllegalStateException("Move must follow the current tree position");
         }
         PGNEntry entry = new PGNEntry(san, annotation == null ? "" : annotation, move, duckMove);
-        if (board.getVariant() == BoardConstants.VARIANT_DUCK
-                && duckMove == -1
-                && board.isEnded() == 0) {
+        if (board.variant() == Variant.DUCK && duckMove == -1 && board.isEnded() == 0) {
             pendingDuckMove = entry;
         } else {
             recordEntry(entry);

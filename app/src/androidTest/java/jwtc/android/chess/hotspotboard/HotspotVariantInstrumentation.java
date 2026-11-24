@@ -26,7 +26,7 @@ public final class HotspotVariantInstrumentation {
         HotspotBoardApi guest = new HotspotBoardApi();
         guest.setMyName("Guest");
 
-        host.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
+        host.newGame(Variant.KING_OF_THE_HILL);
         sync(host, guest, 0);
         for (String san : new String[] {"Nf3", "Nf6", "Ng1", "Ng8", "Nf3", "Nf6", "Ng1", "Ng8"}) {
             check(host.requestMove(san), "Could not apply " + san);
@@ -34,7 +34,7 @@ public final class HotspotVariantInstrumentation {
         }
         check(guest.getState() == BoardConstants.DRAW_REPEAT, "Guest lost repetition history");
 
-        host.newGame(BoardConstants.VARIANT_DUCK);
+        host.newGame(Variant.DUCK);
         sync(host, guest, 0);
         check(
                 host.requestMove(Pos.fromString("e2"), Pos.fromString("e4")),
