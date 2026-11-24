@@ -270,7 +270,11 @@ public final class RustBoard {
     }
 
     private int right(char c) {
-        return current().position.castling.indexOf(c) < 0 ? 0 : 1;
+        return current()
+                        .position
+                        .canCastle(Character.isUpperCase(c), Character.toLowerCase(c) == 'k')
+                ? 1
+                : 0;
     }
 
     public synchronized int getWhiteCanCastleLong() {

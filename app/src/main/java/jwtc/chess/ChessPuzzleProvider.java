@@ -22,7 +22,7 @@ public class ChessPuzzleProvider extends ContentProvider {
     public static Uri CONTENT_URI_PRACTICES = Uri.parse("content://" + AUTHORITY + "/practices");
 
     private static final String DATABASE_NAME = "chess_puzzles.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     private static final String GAMES_TABLE_NAME = "games";
 
     private static HashMap<String, String> sGamesProjectionMap;
@@ -90,6 +90,9 @@ public class ChessPuzzleProvider extends ContentProvider {
                 PgnTopicColumn.backfill(db, GAMES_TABLE_NAME, COL_ID, COL_PGN);
                 db.execSQL("DROP INDEX IF EXISTS mate_collection_fingerprint");
                 createFingerprintIndex(db);
+            }
+            if (oldVersion >= 9 && oldVersion < 12) {
+                PgnFingerprintColumn.backfill(db, GAMES_TABLE_NAME, COL_ID, COL_PGN);
             }
         }
 

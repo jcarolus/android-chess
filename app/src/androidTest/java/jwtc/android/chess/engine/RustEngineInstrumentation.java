@@ -68,9 +68,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
             }
             if (importOnly) {
                 jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
-                jwtc.android.chess.matecollection.PracticePositionSelectionInstrumentation.verify(this);
+                jwtc.android.chess.matecollection.PracticePositionSelectionInstrumentation.verify(
+                        this);
                 jwtc.chess.ImportFingerprintInstrumentation.verify(getTargetContext());
                 importedGamesValidateOnOpening();
+                explicitRookFileCastling();
                 pgnReplayPreservesBranchesAndRollback();
                 report.putString(
                         "stream",
@@ -99,6 +101,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             boardOwnership();
             HotspotVariantInstrumentation.verify();
             importedGamesValidateOnOpening();
+            explicitRookFileCastling();
             pgnReplayPreservesBranchesAndRollback();
             kingOfTheHillPersistence();
             nativeContract();
@@ -171,10 +174,10 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             "Missing promotion accepted");
                     GameApi.PositionMove knight =
                             promotion.resolveTextMove(8, 0, BoardConstants.KNIGHT);
+                    check(knight != null && knight.uci.equals("a7a8n"), "Explicit knight rejected");
                     check(
-                            knight != null && knight.uci.equals("a7a8n"),
-                            "Explicit knight rejected");
-                    check("a7a8n".equals(knight.boardCoordinate), "Knight promotion UCI is invalid");
+                            "a7a8n".equals(knight.boardCoordinate),
+                            "Knight promotion UCI is invalid");
                     GameApi enPassant = new GameApi();
                     check(
                             enPassant.initFEN("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", true),
@@ -297,16 +300,16 @@ public final class RustEngineInstrumentation extends Instrumentation {
         check(board.getDuckPos() == expected.duck(), "Snapshot duck mismatch");
         check(board.getEnpassantPosition() == expected.ep, "Snapshot en passant mismatch");
         check(
-                board.getWhiteCanCastleLong() == (expected.castling.contains("Q") ? 1 : 0),
+                board.getWhiteCanCastleLong() == (expected.canCastle(true, false) ? 1 : 0),
                 "Snapshot white long castle mismatch");
         check(
-                board.getWhiteCanCastleShort() == (expected.castling.contains("K") ? 1 : 0),
+                board.getWhiteCanCastleShort() == (expected.canCastle(true, true) ? 1 : 0),
                 "Snapshot white short castle mismatch");
         check(
-                board.getBlackCanCastleLong() == (expected.castling.contains("q") ? 1 : 0),
+                board.getBlackCanCastleLong() == (expected.canCastle(false, false) ? 1 : 0),
                 "Snapshot black long castle mismatch");
         check(
-                board.getBlackCanCastleShort() == (expected.castling.contains("k") ? 1 : 0),
+                board.getBlackCanCastleShort() == (expected.canCastle(false, true) ? 1 : 0),
                 "Snapshot black short castle mismatch");
         for (int square = 0; square < 64; square++) {
             for (int colour : new int[] {BoardConstants.WHITE, BoardConstants.BLACK}) {
@@ -426,6 +429,61 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 });
     }
 
+    private void explicitRookFileCastling() {
+        for (String[] example :
+                new String[][] {
+                    {"8/4k3/8/8/8/8/8/4KR1R w F - 0 1", "O-O", "5RKR", "7"},
+                    {"8/4k3/8/8/8/8/8/RR2K3 w B - 0 1", "O-O-O", "R1KR4", "7"},
+                    {"4kr1r/8/8/8/8/8/4K3/8 b f - 0 1", "O-O", "5rkr", "0"},
+                    {"rr2k3/8/8/8/8/8/4K3/8 b b - 0 1", "O-O-O", "r1kr4", "0"}
+                }) {
+            GameApi game = new GameApi();
+            check(game.loadPGN("[FEN \"" + example[0] + "\"]\n*"), "Rook-file PGN rejected");
+            check(game.isChess960Variant(), "Rook-file rights did not select Chess 960");
+            check(
+                    "Chess960".equals(game.getPGNHeadProperty("Variant")),
+                    "Imported Variant tag missing");
+            GameApi.PositionSnapshot start = game.getPositionSnapshot(game.getRootNode());
+            check(game.requestMove(example[1]), "Explicit-rook castle rejected");
+            check(
+                    game.getFEN()
+                            .split(" ")[0]
+                            .split("/")[Integer.parseInt(example[3])]
+                            .equals(example[2]),
+                    "Wrong rook moved during castling");
+            RustSearchRequest request =
+                    RustSearchRequest.fromSnapshot(
+                            1,
+                            game.getPositionSnapshot(game.getCurrentNode()),
+                            1,
+                            0,
+                            true,
+                            RustSearchRequest.Variant.CHESS_960);
+            check(
+                    request.getHistory()[0].endsWith(
+                            example[0].contains(" F ")
+                                    ? "f1"
+                                    : example[0].contains(" B ")
+                                            ? "b1"
+                                            : example[0].contains(" f ") ? "f8" : "b8"),
+                    "Engine history lost explicit rook");
+            check(game.stepBack() && game.getFEN().equals(start.fen), "Undo lost explicit rights");
+            check(game.stepForward(), "Castling replay failed");
+            String pgn = game.exportFullPGN();
+            GameApi restored = new GameApi();
+            check(
+                    restored.loadPGN(pgn)
+                            && restored.isChess960Variant()
+                            && restored.getFEN().equals(game.getFEN()),
+                    "Export lost castling position or variant");
+        }
+        GameApi orthodox = new GameApi();
+        check(
+                orthodox.initFEN("4k3/8/8/8/8/8/8/R3K2R w HA - 0 1", true)
+                        && orthodox.isChess960Variant(),
+                "Orthodox file-letter rights did not select Chess 960");
+    }
+
     private void importedGamesValidateOnOpening() {
         GameApi game = new ImportApi();
         GameRecord record =
@@ -453,7 +511,9 @@ public final class RustEngineInstrumentation extends Instrumentation {
             PgnReplay.validate(Pgn.parse(illegalBranch));
             throw new AssertionError("SAN batch accepted an illegal branch");
         } catch (IllegalArgumentException expected) {
-            check(expected.getMessage().contains("SAN token"), "SAN batch omitted the failing move");
+            check(
+                    expected.getMessage().contains("SAN token"),
+                    "SAN batch omitted the failing move");
         }
         for (String pgn :
                 new String[] {
@@ -476,6 +536,9 @@ public final class RustEngineInstrumentation extends Instrumentation {
             String saved = game.exportFullPGN();
             String fen = game.getFEN();
             int state = game.getEngineState();
+            if (game.isChess960Variant()) {
+                check(saved.contains("[Variant \"Chess960\"]"), "Exported Variant is not Chess960");
+            }
             check(!game.loadPGN(illegalBranch), "Illegal branch accepted");
             check(
                     saved.equals(game.exportFullPGN()) && fen.equals(game.getFEN()),

@@ -10,6 +10,12 @@ placement. The core exposes no placement-only search. A legal unfinished trailin
 piece move is omitted during request preparation, retaining the preceding complete
 position in `SearchRequest::position`; unfinished moves earlier in history fail.
 
+Chess 960 FEN accepts both `KQkq` (the outermost rook on each side of the king)
+and explicit rook files `A`–`H`/`a`–`h`. Output uses rook files so a promoted
+or relocated rook cannot change which rook owns a castling right on reload.
+Java infers Chess 960 from explicit file rights, including orthodox piece layouts,
+and PGN exports retain the Variant tag after castling rights are gone.
+
 `bridge` exposes an owned search handle and a small C ABI. The separate
 `jni/rust-chess-jni.cpp` adapter packages that static Rust library as
 `librust-chess-jni.so`. `EngineSession.forRustTesting` is a separate internal Java integration entry

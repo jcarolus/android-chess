@@ -27,7 +27,7 @@ public class PGNProvider extends ContentProvider {
     private static final String TAG = "PGNProvider";
 
     private static final String DATABASE_NAME = "chess_pgn.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     public static final String IMPORT_PARAMETER = "import";
     private static final String GAMES_TABLE_NAME = "games";
 
@@ -170,6 +170,9 @@ public class PGNProvider extends ContentProvider {
                 createStudySelectionIndex(db);
                 db.execSQL("DROP TABLE IF EXISTS study_chapters");
                 db.execSQL("DROP TABLE IF EXISTS studies");
+            }
+            if (oldVersion >= 9 && oldVersion < 11) {
+                PgnFingerprintColumn.backfill(db, GAMES_TABLE_NAME, PGNColumns._ID, PGNColumns.PGN);
             }
         }
 

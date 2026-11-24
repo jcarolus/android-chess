@@ -1,12 +1,11 @@
 package jwtc.chess;
 
-import jwtc.chess.board.BoardPosition;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.StringJoiner;
+import jwtc.chess.board.BoardPosition;
 
 /** Identity of a PGN's main line, independent of presentation and descriptive tags. */
 public final class PgnFingerprint {
@@ -49,6 +48,21 @@ public final class PgnFingerprint {
             }
         } else if (variant.equals("fischerandom")) {
             variant = "chess960";
+        }
+
+        if (position != null && variant.equals("chess960")) {
+            StringBuilder rights = new StringBuilder();
+            for (boolean white : new boolean[] {true, false}) {
+                int[] files = position.chess960Files(white);
+                for (boolean kingside : new boolean[] {true, false}) {
+                    int file = files[kingside ? 2 : 1];
+                    if (position.canCastle(white, kingside) && file >= 0) {
+                        rights.append((char) ((white ? 'A' : 'a') + file));
+                    }
+                }
+            }
+            position.castling = rights.toString();
+            fen = position.fen();
         }
 
         if (variant.equals("duck") && fen.equals(BoardPosition.DUCK_START_FEN)

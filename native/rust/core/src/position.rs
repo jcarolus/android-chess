@@ -386,10 +386,13 @@ impl Position {
             _ => return Err(invalid("Invalid side to move")),
         };
         if fields[2] != "-"
-            && (!fields[2].bytes().all(|b| b"KQkq".contains(&b))
-                || fields[2]
-                    .bytes()
-                    .any(|b| fields[2].bytes().filter(|v| *v == b).count() != 1))
+            && (!fields[2].bytes().all(|b| {
+                b"KQkq".contains(&b)
+                    || variant == Variant::Chess960
+                        && (b'A'..=b'H').contains(&b.to_ascii_uppercase())
+            }) || fields[2]
+                .bytes()
+                .any(|b| fields[2].bytes().filter(|v| *v == b).count() != 1))
         {
             return Err(invalid("Invalid castling rights"));
         }
@@ -422,26 +425,47 @@ impl Position {
                     | (u8::from(!short) << 1)
                     | (if !long && !short { 4 } else { 0 });
             } else {
-                // Chess 960: scan outward from the king along the back rank for the
-                // outermost rook on each side; a claimed right that resolves to no
-                // rook is dropped silently.
                 let king = p.king(t);
-                let mut lost = 0u8;
-                if long {
-                    match outermost_rook_file(p.pieces[t][ROOK], (base..king).rev()) {
-                        Some(file) => p.rook_file[t][0] = file,
-                        None => lost |= 1,
+                let mut claimed = [false; 2];
+                let mut lost = 3u8;
+                for right in fields[2]
+                    .bytes()
+                    .filter(|b| b.is_ascii_uppercase() == (t == WHITE))
+                {
+                    if right == b'-' {
+                        continue;
                     }
-                } else {
-                    lost |= 1;
-                }
-                if short {
-                    match outermost_rook_file(p.pieces[t][ROOK], king + 1..=base + 7) {
-                        Some(file) => p.rook_file[t][1] = file,
-                        None => lost |= 2,
+                    let lower = right.to_ascii_lowercase();
+                    let explicit = (b'a'..=b'h').contains(&lower);
+                    let side = usize::from(if explicit {
+                        usize::from(lower - b'a') > king % 8
+                    } else {
+                        lower == b'k'
+                    });
+                    if claimed[side] {
+                        return Err(invalid("Multiple castling rooks on one side"));
                     }
-                } else {
-                    lost |= 2;
+                    claimed[side] = true;
+                    let file = if explicit {
+                        let file = usize::from(lower - b'a');
+                        if king / 8 != base / 8
+                            || file == king % 8
+                            || p.pieces[t][ROOK] & bit(base + file) == 0
+                        {
+                            return Err(invalid("Invalid castling rook file"));
+                        }
+                        Some(file)
+                    } else if king / 8 != base / 8 {
+                        None
+                    } else if side == 0 {
+                        outermost_rook_file(p.pieces[t][ROOK], (base..king).rev())
+                    } else {
+                        outermost_rook_file(p.pieces[t][ROOK], king + 1..=base + 7)
+                    };
+                    if let Some(file) = file {
+                        p.rook_file[t][side] = file;
+                        lost &= !(1 << side);
+                    }
                 }
                 p.castling[t] = lost | (if lost & 3 == 3 { 4 } else { 0 });
             }
@@ -478,7 +502,7 @@ impl Position {
         p.key = p.computed_key();
         Ok(p)
     }
-    /// Zobrist key of the pieces, side to move, castling rights and a capturable
+    /// Zobrist key of the pieces, side to move, castling rook identities and a capturable
     /// en-passant square. The duck square is left out, so a Duck position keys the
     /// same as its pieces alone.
     pub fn hash_key(&self) -> u64 {
@@ -521,6 +545,10 @@ impl Position {
             for side in 0..2 {
                 if rights[t] & (1 << side) != 0 {
                     key ^= ZOBRIST[CASTLING_KEYS + t * 2 + side];
+                    if self.variant == Variant::Chess960 && self.rook_file[t][side] != side * 7 {
+                        key ^=
+                            mix_key(0x9600 + ((t * 2 + side) * 8 + self.rook_file[t][side]) as u64);
+                    }
                 }
             }
         }
@@ -1157,7 +1185,12 @@ impl Position {
         let mut rights = String::new();
         for (t, mask, ch) in [(1, 6, 'K'), (1, 5, 'Q'), (0, 6, 'k'), (0, 5, 'q')] {
             if self.castling[t] & mask == 0 {
-                rights.push(ch);
+                rights.push(if self.variant == Variant::Chess960 {
+                    let file = self.rook_file[t][usize::from(mask == 6)];
+                    char::from(if t == WHITE { b'A' } else { b'a' } + file as u8)
+                } else {
+                    ch
+                });
             }
         }
         s.push_str(if rights.is_empty() { "-" } else { &rights });

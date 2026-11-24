@@ -48,8 +48,23 @@ public class BoardPositionTest {
                 new BoardPosition("r3k2r/8/8/8/8/8/8/R3K2R w qkQK - 0 1").fen());
         // Shredder/X-FEN: rook files beyond the king are kingside, others queenside.
         assertEquals(
-                "1r2k1r1/8/8/8/8/8/8/1R2K1R1 w KQkq - 0 1",
+                "1r2k1r1/8/8/8/8/8/8/1R2K1R1 w GBgb - 0 1",
                 new BoardPosition("1r2k1r1/8/8/8/8/8/8/1R2K1R1 w GBgb - 0 1").fen());
+    }
+
+    @Test
+    public void explicitRookFilesPreserveRightsAndIdentifyChess960() {
+        for (String rights : new String[] {"F", "H", "A", "f", "h", "a"}) {
+            String fen = "r3kr1r/8/8/8/8/8/8/R3KR1R w " + rights + " - 0 1";
+            BoardPosition position = new BoardPosition(fen);
+            assertEquals(fen, position.fen());
+            assertTrue(position.chess960());
+        }
+        BoardPosition inner = new BoardPosition("4k3/8/8/8/8/8/8/4KR1R w F - 0 1");
+        assertArrayEquals(new int[] {4, -1, 5}, inner.chess960Files(true));
+        assertTrue(inner.canCastle(true, true));
+        assertFalse(inner.canCastle(true, false));
+        assertFalse(inner.canCastle(false, true));
     }
 
     @Test

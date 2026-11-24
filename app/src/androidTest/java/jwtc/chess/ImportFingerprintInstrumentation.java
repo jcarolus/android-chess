@@ -26,9 +26,11 @@ public final class ImportFingerprintInstrumentation {
         verifyGameAndStudyUpgrade(context, 7);
         verifyGameAndStudyUpgrade(context, 8);
         verifyGameAndStudyUpgrade(context, 9);
+        verifyGameAndStudyUpgrade(context, 10);
         verifyMateCollectionUpgrade(context, 8);
         verifyMateCollectionUpgrade(context, 9);
         verifyMateCollectionUpgrade(context, 10);
+        verifyMateCollectionUpgrade(context, 11);
         verifyGameImports(context);
         verifyStudyImports(context);
         verifyMateCollectionImports(context);
@@ -51,12 +53,21 @@ public final class ImportFingerprintInstrumentation {
                 db.execSQL(
                         "INSERT INTO games (_id, pgn) VALUES (14, ?)",
                         new Object[] {"[Topic \"Legacy Topic\"]\n" + PGN});
-                if (version == 9) {
+                if (version >= 9) {
                     db.execSQL("ALTER TABLE games ADD COLUMN fingerprint TEXT");
                     db.execSQL(
                             "UPDATE games SET fingerprint = ? WHERE _id IN (12, 14)",
                             new Object[] {PgnFingerprint.of(PGN)});
                     db.execSQL("CREATE INDEX games_fingerprint ON games (fingerprint)");
+                }
+                if (version >= 10) {
+                    db.execSQL("ALTER TABLE games ADD COLUMN topic TEXT");
+                    db.execSQL("UPDATE games SET topic = 'Legacy Topic' WHERE _id = 14");
+                }
+                if (version >= 9) {
+                    db.execSQL(
+                            "INSERT INTO games (_id, pgn, fingerprint) VALUES (15, ?, 'stale')",
+                            new Object[] {"[FEN \"4k3/8/8/8/8/8/8/4KR1R w F - 0 1\"]\n*"});
                 }
                 if (version == 7) {
                     db.execSQL(
@@ -74,7 +85,7 @@ public final class ImportFingerprintInstrumentation {
                             "INSERT INTO study_chapters VALUES ('collection', 'study', 'chapter',"
                                     + " 7, 'Chapter', ?)",
                             new Object[] {PGN});
-                } else if (version >= 8) {
+                } else if (version >= 8 && version < 10) {
                     db.execSQL(
                             "CREATE TABLE study_chapters (id INTEGER PRIMARY KEY, collection_id TEXT"
                                     + " NOT NULL, study_id TEXT NOT NULL, chapter_id TEXT NOT NULL,"
@@ -91,7 +102,17 @@ public final class ImportFingerprintInstrumentation {
             try (PGNProvider.DatabaseHelper helper =
                     new PGNProvider.DatabaseHelper(context, name)) {
                 SQLiteDatabase db = helper.getWritableDatabase();
-                check(db.getVersion() == 10, "Game Database was not upgraded");
+                check(db.getVersion() == 11, "Game Database was not upgraded");
+                if (version >= 9) {
+                    check(
+                            PgnFingerprint.of("[FEN \"4k3/8/8/8/8/8/8/4KR1R w F - 0 1\"]\n*")
+                                    .equals(
+                                            DatabaseUtils.stringForQuery(
+                                                    db,
+                                                    "SELECT fingerprint FROM games WHERE _id = 15",
+                                                    null)),
+                            "Castling fingerprint was not recalculated");
+                }
                 check(
                         PgnFingerprint.of(PGN)
                                 .equals(
@@ -148,17 +169,23 @@ public final class ImportFingerprintInstrumentation {
                     db.execSQL(
                             "UPDATE games SET fingerprint = ?",
                             new Object[] {PgnFingerprint.of(PGN)});
+                    db.execSQL("UPDATE games SET fingerprint = 'stale' WHERE _ID = 8");
                 }
-                if (version == 10) {
+                if (version >= 10) {
                     db.execSQL("ALTER TABLE games ADD COLUMN full_game INTEGER NOT NULL DEFAULT 0");
                     db.execSQL("UPDATE games SET full_game = 1 WHERE _ID = 8");
+                }
+                if (version >= 11) {
+                    db.execSQL("ALTER TABLE games ADD COLUMN topic TEXT");
+                    db.execSQL(
+                            "CREATE INDEX mate_collection_fingerprint ON games (PUZZLE_TYPE, fingerprint, topic)");
                 }
                 db.setVersion(version);
             }
             try (ChessPuzzleProvider.DatabaseHelper helper =
                     new ChessPuzzleProvider.DatabaseHelper(context, name)) {
                 SQLiteDatabase db = helper.getWritableDatabase();
-                check(db.getVersion() == 11, "Mate Collection database was not upgraded");
+                check(db.getVersion() == 12, "Mate Collection database was not upgraded");
                 check(
                         DatabaseUtils.longForQuery(
                                         db,
@@ -171,7 +198,7 @@ public final class ImportFingerprintInstrumentation {
                 check(
                         DatabaseUtils.longForQuery(
                                         db, "SELECT full_game FROM games WHERE _ID = 8", null)
-                                == (version == 10 ? 1 : 0),
+                                == (version >= 10 ? 1 : 0),
                         "Practice format changed during migration");
             }
         } finally {
@@ -234,16 +261,29 @@ public final class ImportFingerprintInstrumentation {
                     games.importGame(GameRecord.fromPgn(otherEvent + PGN)),
                     "Different Event was skipped");
 
-            check(games.importGame(GameRecord.fromPgn("[White \"" + untaggedPlayer + "\"]\n" + PGN)),
+            check(
+                    games.importGame(
+                            GameRecord.fromPgn("[White \"" + untaggedPlayer + "\"]\n" + PGN)),
                     "Untagged study game was not imported");
             GameFilter untagged = new GameFilter().white(untaggedPlayer);
-            check(studies.ids(untagged).size() == 1, "Study excluded a game without Topic and Event");
+            check(
+                    studies.ids(untagged).size() == 1,
+                    "Study excluded a game without Topic and Event");
             GameFilter filter = new GameFilter().topic(topic).event(event);
             List<Long> ids = studies.ids(filter);
-            check(ids.size() == 4 && ids.get(0) < ids.get(1), "Study text filters did not match all tagged games");
+            check(
+                    ids.size() == 4 && ids.get(0) < ids.get(1),
+                    "Study text filters did not match all tagged games");
             check(games.count(filter) == ids.size(), "Database and Study selections differ");
-            List<Long> ordered = studies.ids(new GameFilter().topic(topic).event(event).orderBy(PGNColumns.EVENT, "DESC"));
-            check(games.load(ordered.get(0)).event.equals(event + " other"), "Study ignored the selected sort order");
+            List<Long> ordered =
+                    studies.ids(
+                            new GameFilter()
+                                    .topic(topic)
+                                    .event(event)
+                                    .orderBy(PGNColumns.EVENT, "DESC"));
+            check(
+                    games.load(ordered.get(0)).event.equals(event + " other"),
+                    "Study ignored the selected sort order");
             long firstId = ids.get(0);
             check(games.load(firstId).pgn.equals(tagged + PGN), "Study is missing from Games");
             check(games.exportAllAsPgn().contains(tagged + PGN), "Study export lost its tags");
@@ -256,7 +296,9 @@ public final class ImportFingerprintInstrumentation {
                     studies.deleteMatching(filter, 4) == 4,
                     "Filtered delete removed the wrong number");
             check(
-                    studies.ids(filter).isEmpty() && games.load(firstId) == null && studies.ids(untagged).size() == 1,
+                    studies.ids(filter).isEmpty()
+                            && games.load(firstId) == null
+                            && studies.ids(untagged).size() == 1,
                     "Filtered delete did not remove the matching studies");
         } finally {
             resolver.delete(

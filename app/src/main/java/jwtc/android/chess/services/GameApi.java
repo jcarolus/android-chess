@@ -860,6 +860,9 @@ public class GameApi {
             }
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", sFEN);
+            if (isChess960Variant()) {
+                pgnTags.put("Variant", "Chess960");
+            }
 
             resetPGNHistory(sFEN);
 
@@ -1016,7 +1019,7 @@ public class GameApi {
         pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
         pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
 
-        pgnTags.put("Variant", "Fischerandom");
+        pgnTags.put("Variant", "Chess960");
         pgnTags.put("Setup", "1");
         pgnTags.put("FEN", board.toFEN());
 
@@ -1057,6 +1060,9 @@ public class GameApi {
             }
             if (pgnTags.containsKey("FEN")) {
                 pgnTags.put("FEN", start.fen);
+            }
+            if (start.variant == RustSearchRequest.Variant.CHESS_960) {
+                pgnTags.put("Variant", "Chess960");
             }
             resetPGNHistory(pgnTags.getOrDefault("FEN", board.toFEN()));
             gameTree.setRootComment(document.rootComment);

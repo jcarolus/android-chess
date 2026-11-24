@@ -269,6 +269,18 @@ public class GameTreeTest {
     }
 
     @Test
+    public void enginePositionUsesTheExplicitCastlingRookFile() throws Exception {
+        String fen = "8/4k3/8/8/8/8/8/4KR1R w F - 0 1";
+        tree = new GameTree(fen, 0, BoardConstants.WHITE);
+        Node castle =
+                add(
+                        tree.getRoot(),
+                        "O-O",
+                        Move.makeMoveOO(Pos.fromString("e1"), Pos.fromString("g1")));
+        assertEquals("position fen " + fen + " moves e1f1", tree.positionCommand(castle));
+    }
+
+    @Test
     public void enginePositionRetainsRepeatedMovesInCacheIdentity() throws Exception {
         Node node = tree.getRoot();
         String[] moves = {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"};

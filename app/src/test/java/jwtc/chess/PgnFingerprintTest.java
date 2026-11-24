@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import jwtc.chess.board.BoardPosition;
-
 import org.junit.Test;
 
 public class PgnFingerprintTest {
@@ -44,6 +43,18 @@ public class PgnFingerprintTest {
         assertEquals(
                 PgnFingerprint.of("[Variant \"Fischerandom\"]\n1. O-O *"),
                 PgnFingerprint.of("[Variant \"Chess960\"]\n1. O-O *"));
+    }
+
+    @Test
+    public void distinguishesExplicitCastlingRooksAndInfersChess960() {
+        String inner = "[FEN \"4k3/8/8/8/8/8/8/4KR1R w F - 0 1\"]\n*";
+        String outer = inner.replace(" w F ", " w H ");
+        assertNotEquals(PgnFingerprint.of(inner), PgnFingerprint.of(outer));
+        assertEquals(
+                PgnFingerprint.of(inner), PgnFingerprint.of("[Variant \"Chess960\"]\n" + inner));
+        assertEquals(
+                PgnFingerprint.of(outer),
+                PgnFingerprint.of("[Variant \"Chess960\"]\n" + outer.replace(" w H ", " w K ")));
     }
 
     @Test

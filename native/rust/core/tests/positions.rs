@@ -238,7 +238,7 @@ fn chess960_rights_do_not_restore_once_the_rook_returns() {
     let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
     assert!(!legal.contains(&"e1a1".to_string()), "{legal:?}");
     assert!(legal.contains(&"e1h1".to_string()), "{legal:?}");
-    assert!(p.fen().contains(" K "), "{}", p.fen());
+    assert!(p.fen().contains(" H "), "{}", p.fen());
 }
 
 #[test]
@@ -247,7 +247,7 @@ fn chess960_fen_drops_a_claimed_right_with_no_matching_rook() {
     let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
     assert!(legal.contains(&"e1b1".to_string()), "{legal:?}");
     assert!(!legal.contains(&"e1h1".to_string()), "{legal:?}");
-    assert!(p.fen().contains(" Q "), "{}", p.fen());
+    assert!(p.fen().contains(" B "), "{}", p.fen());
 }
 
 #[test]

@@ -36,6 +36,77 @@ fn mirror(fen: &str) -> String {
 }
 
 #[test]
+fn explicit_rook_files_select_the_inner_rook_and_survive_round_trips() {
+    for black in [false, true] {
+        for (rank, right, mv, expected) in [
+            ("4KR1R", "F", "e1f1", "5RKR"),
+            ("RR2K3", "B", "e1b1", "R1KR4"),
+        ] {
+            let fen = format!("8/4k3/8/8/8/8/8/{rank} w {right} - 0 1");
+            let fen = if black { mirror(&fen) } else { fen };
+            let mv = if black {
+                mv.replace('1', "8")
+            } else {
+                mv.into()
+            };
+            let p = position(&fen);
+            let mut restored = position(&p.fen());
+            assert_eq!(
+                restored.to_san(&mv).unwrap(),
+                if right == "F" { "O-O" } else { "O-O-O" }
+            );
+            restored.apply(&mv).unwrap();
+            let output = restored.fen();
+            let rank = output
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .split('/')
+                .nth(if black { 0 } else { 7 })
+                .unwrap();
+            assert_eq!(
+                rank,
+                if black {
+                    expected.to_ascii_lowercase()
+                } else {
+                    expected.into()
+                }
+            );
+            assert_eq!(restored.castling_rights(), [false; 4]);
+        }
+    }
+}
+
+#[test]
+fn castling_fen_preserves_the_original_rook_after_another_rook_moves_outside_it() {
+    let mut p = position("8/4k3/8/8/8/8/7R/4KR2 w K - 0 1");
+    p.apply("h2h1").unwrap();
+    p.apply("e7e6").unwrap();
+    let restored = position(&p.fen());
+    assert!(restored.legal_moves().iter().any(|m| m.as_str() == "e1f1"));
+}
+
+#[test]
+fn explicit_castling_rights_reject_missing_rooks_and_duplicate_wings() {
+    for rights in ["G", "E", "FH", "KF", "FF"] {
+        let fen = format!("8/4k3/8/8/8/8/8/4KR1R w {rights} - 0 1");
+        assert!(
+            Position::from_fen(Variant::Chess960, &fen).is_err(),
+            "{rights}"
+        );
+    }
+}
+
+#[test]
+fn position_keys_distinguish_castling_rooks_but_not_their_notation() {
+    let inner = position("8/4k3/8/8/8/8/8/4KR1R w F - 0 1");
+    let outer = position("8/4k3/8/8/8/8/8/4KR1R w H - 0 1");
+    let default = position("8/4k3/8/8/8/8/8/4KR1R w K - 0 1");
+    assert_ne!(inner.hash_key(), outer.hash_key());
+    assert_eq!(outer.hash_key(), default.hash_key());
+}
+
+#[test]
 fn overlapping_castles_work_for_both_wings_and_colours() {
     for (rank, mv, expected, san) in [
         ("3RK2R", "e1d1", "2KR3R", "O-O-O"),
@@ -222,7 +293,15 @@ fn all_960_starting_arrangements_parse_with_four_castling_rights() {
                             rank.to_ascii_lowercase()
                         );
                         let p = position(&fen);
-                        assert_eq!(p.fen(), fen);
+                        let rights = format!(
+                            "{}{}{}{}",
+                            char::from(b'A' + rank.rfind('R').unwrap() as u8),
+                            char::from(b'A' + rank.find('R').unwrap() as u8),
+                            char::from(b'a' + rank.rfind('R').unwrap() as u8),
+                            char::from(b'a' + rank.find('R').unwrap() as u8),
+                        );
+                        assert_eq!(p.fen(), fen.replace("KQkq", &rights));
+                        assert_eq!(position(&p.fen()).fen(), p.fen());
                         assert_eq!(p.castling_rights(), [true; 4]);
                         assert_eq!(p.game_state(), GameState::Play);
                         count += 1;

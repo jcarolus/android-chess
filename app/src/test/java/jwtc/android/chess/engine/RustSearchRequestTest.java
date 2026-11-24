@@ -17,6 +17,20 @@ public class RustSearchRequestTest {
     }
 
     @Test
+    public void explicitRookFilesOverrideOutermostRooksInHistoryCoordinates() throws Exception {
+        int[] white = RustSearchRequest.chess960Files("rr2k3/8/8/8/8/8/8/4KR1R w Fb - 0 1", true);
+        int[] black = RustSearchRequest.chess960Files("rr2k3/8/8/8/8/8/8/4KR1R w Fb - 0 1", false);
+        assertEquals(
+                "e1f1",
+                RustSearchRequest.toRustCoordinate(
+                        Move.makeMoveOO(Pos.fromString("e1"), Pos.fromString("g1")), white));
+        assertEquals(
+                "e8b8",
+                RustSearchRequest.toRustCoordinate(
+                        Move.makeMoveOOO(Pos.fromString("e8"), Pos.fromString("c8")), black));
+    }
+
+    @Test
     public void chess960FilesLocatesTheOutermostRookOnEachSide() {
         int[] files = RustSearchRequest.chess960Files("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true);
         assertArrayEquals(new int[] {4, 1, 6}, files);

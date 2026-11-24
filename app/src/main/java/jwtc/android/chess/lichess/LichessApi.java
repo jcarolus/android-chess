@@ -1265,7 +1265,7 @@ public class LichessApi extends GameApi {
         pgnTags.put("Black", ongoingGameFull.black.name);
 
         if (ongoingGameFull.variant.key.equals("chess960")) {
-            pgnTags.put("Variant", "Fischerandom");
+            pgnTags.put("Variant", "Chess960");
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", getFEN());
         }
