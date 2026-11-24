@@ -18,8 +18,11 @@ import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateCollectionDefaults;
+import jwtc.android.chess.matecollection.MateCollectionMoveIntake;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.matecollection.MateScore;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportActivity;
@@ -38,28 +41,15 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     private LinearProgressIndicator percentBar;
 
     @Override
-    public boolean requestMove(final int from, final int to) {
-        if (!mateCollection.isPositionReady()) {
-            rebuildBoard();
-            return false;
-        }
+    protected MoveIntake moveIntake() {
+        return new MateCollectionMoveIntake(gameApi, mateCollection);
+    }
 
-        if (gameApi.isEnded()) {
+    @Override
+    protected void onMoveRejected(MoveOutcome.Reason reason) {
+        if (reason == MoveOutcome.Reason.ENDED) {
             setMessage(getString(R.string.practice_finished_position));
-            rebuildBoard();
-            return false;
         }
-
-        if (!mateCollection.isUsersTurn()) {
-            rebuildBoard();
-            return false;
-        }
-
-        if (super.requestMove(from, to)) {
-            return true;
-        }
-        rebuildBoard();
-        return false;
     }
 
     @Override

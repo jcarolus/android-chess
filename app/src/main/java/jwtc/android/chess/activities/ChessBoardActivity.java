@@ -154,12 +154,16 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                         this::rebuildBoard);
                 return true;
             default:
+                onMoveRejected(outcome.reason());
                 if (outcome.reason() != MoveOutcome.Reason.ILLEGAL) {
                     rebuildBoard();
                 }
                 return false;
         }
     }
+
+    /** Lets a Mode tell the user why a move was rejected; the board is restored either way. */
+    protected void onMoveRejected(MoveOutcome.Reason reason) {}
 
     protected ChessAlertDialogBuilder promotionDialog(java.util.function.IntConsumer selected) {
         ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
