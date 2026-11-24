@@ -395,6 +395,21 @@ public class GameApi {
         return true;
     }
 
+    /**
+     * The board coordinate of the castling move that takes the king from {@code from} to {@code
+     * to}, or null when there is none. Chess 960 castling is written king to rook square.
+     */
+    public String castleCoordinate(int from, int to) {
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if ((Move.isOO(move.packed) || Move.isOOO(move.packed))
+                    && Move.getFrom(move.packed) == from
+                    && Move.getTo(move.packed) == to) {
+                return move.coordinate;
+            }
+        }
+        return null;
+    }
+
     /** Resolves a coordinate entry with explicit promotion and king-to-rook castling. */
     public PositionMove resolveTextMove(int from, int to, int promotion) {
         for (RustBoard.LegalMove move : board.legalMoves()) {

@@ -153,6 +153,12 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                         () -> offerMove(candidate.withOverwriteConfirmed()),
                         this::rebuildBoard);
                 return true;
+            case CONFIRM_MOVE:
+                confirmMove(candidate);
+                return true;
+            case QUEUED_AS_PREMOVE:
+                queuePremove(candidate);
+                return true;
             default:
                 onMoveRejected(outcome.reason());
                 if (outcome.reason() != MoveOutcome.Reason.ILLEGAL) {
@@ -160,6 +166,19 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                 }
                 return false;
         }
+    }
+
+    /**
+     * Asks the user to confirm a move before it is played; confirming offers {@code
+     * candidate.withMoveConfirmed()}. Modes whose Move intake asks for confirmation override this.
+     */
+    protected void confirmMove(MoveCandidate candidate) {
+        throw new UnsupportedOperationException("This Mode does not confirm moves");
+    }
+
+    /** Keeps a premove until it can be offered again. Modes with premoves override this. */
+    protected void queuePremove(MoveCandidate candidate) {
+        throw new UnsupportedOperationException("This Mode has no premoves");
     }
 
     /** Lets a Mode tell the user why a move was rejected; the board is restored either way. */

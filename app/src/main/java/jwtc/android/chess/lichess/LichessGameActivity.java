@@ -18,11 +18,13 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.lichess.models.PuzzleGlicko;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
@@ -598,61 +600,43 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     @Override
-    public boolean requestMove(int from, int to) {
+    protected MoveIntake moveIntake() {
         if (lichessApi == null) {
-            rebuildBoard();
-            return false;
+            return candidate -> MoveOutcome.rejected(MoveOutcome.Reason.NOT_READY);
         }
-
-        int mode = lichessApi.getViewMode();
-        boolean liveGame = mode == LichessApi.VIEW_PLAY;
-        if ((liveGame && !lichessApi.isOngoingGameInProgress())
-                || (mode == LichessApi.VIEW_PUZZLE && !lichessApi.isPuzzleAwaitingMove())) {
-            rebuildBoard();
-            return false;
+        boolean confirmMoves = switchConfirmMoves.isChecked();
+        switch (lichessApi.getViewMode()) {
+            case LichessApi.VIEW_PLAY:
+                return new LichessGameMoveIntake(
+                        lichessApi, lichessApi.isOngoingGameInProgress(), confirmMoves);
+            case LichessApi.VIEW_PUZZLE:
+                return new LichessPuzzleMoveIntake(
+                        lichessApi, lichessApi.isPuzzleAwaitingMove(), confirmMoves);
+            default:
+                return candidate -> MoveOutcome.rejected(MoveOutcome.Reason.NOT_READY);
         }
-
-        if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
-            return submitMove(from, to);
-        }
-
-        // Puzzles share this activity, but their automatic reply window must never accept a
-        // pre-move. Only an active online game reaches the queueing path.
-        if (liveGame && isMyPieceAt(from)) {
-            storePremove(from, to);
-            return true;
-        }
-        rebuildBoard();
-        return false;
     }
 
-    private boolean submitMove(int from, int to) {
-        if (lichessApi.isPromotionMove(from, to)) {
-            showPromotionPicker(
-                    piece -> {
-                        lichessApi.setPromotionPiece(piece);
-                        lichessApi.move(from, to);
-                    });
-            return true;
-        }
-        if (switchConfirmMoves.isChecked()) {
-            layoutConfirm.setVisibility(View.VISIBLE);
-            layoutResignDraw.setVisibility(View.GONE);
-            buttonConfirmMove.setText(
-                    getString(
-                            R.string.lichess_game_confirm_move,
-                            Pos.toString(from) + " " + Pos.toString(to)));
-            pulseAnimation(buttonConfirmMove, 1.05f, 1);
-            buttonConfirmMove.setOnClickListener(
-                    v -> {
-                        lichessApi.move(from, to);
-                        layoutConfirm.setVisibility(View.GONE);
-                        layoutResignDraw.setVisibility(View.VISIBLE);
-                    });
-        } else {
-            lichessApi.move(from, to);
-        }
-        return false;
+    @Override
+    protected void confirmMove(MoveCandidate candidate) {
+        layoutConfirm.setVisibility(View.VISIBLE);
+        layoutResignDraw.setVisibility(View.GONE);
+        buttonConfirmMove.setText(
+                getString(
+                        R.string.lichess_game_confirm_move,
+                        Pos.toString(candidate.from) + " " + Pos.toString(candidate.to)));
+        pulseAnimation(buttonConfirmMove, 1.05f, 1);
+        buttonConfirmMove.setOnClickListener(
+                v -> {
+                    layoutConfirm.setVisibility(View.GONE);
+                    layoutResignDraw.setVisibility(View.VISIBLE);
+                    offerMove(candidate.withMoveConfirmed());
+                });
+    }
+
+    @Override
+    protected void queuePremove(MoveCandidate candidate) {
+        storePremove(candidate.from, candidate.to);
     }
 
     private void updateMoveEntry() {
@@ -696,29 +680,6 @@ public class LichessGameActivity extends ChessBoardActivity
         setPremove(from, to);
         updateSelectedSquares();
         executePremoveIfReady();
-    }
-
-    private interface PromotionSelectionListener {
-        void onPromotionPieceSelected(int piece);
-    }
-
-    private void showPromotionPicker(PromotionSelectionListener listener) {
-        final String[] items = getResources().getStringArray(R.array.promotionpieces);
-        ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
-        builder.setTitle(R.string.title_pick_promo);
-        builder.setCancelable(false);
-        builder.setSingleChoiceItems(
-                items,
-                0,
-                (dialog, item) -> {
-                    dialog.dismiss();
-                    listener.onPromotionPieceSelected(4 - item);
-                });
-        builder.create().show();
-    }
-
-    private boolean isMyPieceAt(int position) {
-        return gameApi.pieceAt(lichessApi.getMyTurn(), position) != BoardConstants.FIELD;
     }
 
     private void executePremoveIfReady() {
