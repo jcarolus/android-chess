@@ -42,7 +42,6 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.moveintake.MoveCandidate;
 import jwtc.android.chess.moveintake.MoveIntake;
-import jwtc.android.chess.moveintake.PlayMoveIntake;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;

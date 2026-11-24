@@ -1,5 +1,10 @@
-package jwtc.android.chess.moveintake;
+package jwtc.android.chess.play;
 
+import jwtc.android.chess.moveintake.BoardFacts;
+import jwtc.android.chess.moveintake.DefaultMoveIntake;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.services.GameApi;
 
 /**

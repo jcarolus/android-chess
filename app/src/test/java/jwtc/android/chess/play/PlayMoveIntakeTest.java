@@ -1,9 +1,12 @@
-package jwtc.android.chess.moveintake;
+package jwtc.android.chess.play;
 
 import static jwtc.chess.board.BoardConstants.BLACK;
 import static jwtc.chess.board.BoardConstants.WHITE;
 import static org.junit.Assert.assertEquals;
 
+import jwtc.android.chess.moveintake.BoardFacts;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.moveintake.MoveOutcome.Reason;
 import org.junit.Test;
 
