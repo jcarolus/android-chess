@@ -34,6 +34,7 @@ import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.links.AppLink;
 import jwtc.android.chess.links.LinkActivity;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.moveintake.MoveIntake;
 import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.chess.Move;
@@ -122,26 +123,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     @Override
-    public boolean requestMove(final int from, final int to) {
-        Log.d(TAG, "requestMove");
-        if (!canPlayMoves()) {
-            rebuildBoard();
-            Log.d(TAG, "requestMove unavailable");
-            return false;
-        }
-        boolean myTurn = ((HotspotBoardApi) gameApi).isMyTurn();
-        boolean canMove =
-                gameApi.hasPendingDuckMove() ? !myTurn && from == gameApi.getDuckPos() : myTurn;
-        if (canMove) {
-            boolean res = super.requestMove(from, to);
-            if (!res) {
-                rebuildBoard();
-            }
-            return res;
-        }
-        rebuildBoard();
-        Log.d(TAG, "requestMove not my turn");
-        return false;
+    protected MoveIntake moveIntake() {
+        HotspotBoardApi game = (HotspotBoardApi) gameApi;
+        return new HotspotMoveIntake(
+                game,
+                canPlayMoves(),
+                game.isPlayingAsWhite() ? BoardConstants.WHITE : BoardConstants.BLACK);
     }
 
     private boolean canPlayMoves() {
@@ -150,13 +137,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 && overrideGameState == 0
                 && !isObserving
                 && !isShareMode;
-    }
-
-    @Override
-    protected void handleAmbiguousCastle(int from, int to) {
-        if (canPlayMoves() && ((HotspotBoardApi) gameApi).isMyTurn()) {
-            super.handleAmbiguousCastle(from, to);
-        }
     }
 
     private void updateMoveEntry() {
