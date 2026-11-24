@@ -1,7 +1,6 @@
 package jwtc.android.chess.tools;
 
 import static jwtc.android.chess.tools.ImportHandler.Result.*;
-
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;

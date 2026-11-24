@@ -1,12 +1,12 @@
 package jwtc.android.chess.views;
 
-import java.util.Locale;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import java.util.Locale;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.Pos;

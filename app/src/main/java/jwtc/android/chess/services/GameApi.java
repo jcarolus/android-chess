@@ -25,6 +25,7 @@ import jwtc.chess.PgnDate;
 import jwtc.chess.PgnDocument;
 import jwtc.chess.PgnSyntaxError;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
 
@@ -42,7 +43,7 @@ public class GameApi {
 
     public final HashMap<String, String> pgnTags; //
     private GameTree gameTree;
-    private RustSearchRequest.Variant gameVariant;
+    private Variant gameVariant;
     private Node currentNode;
     private PGNEntry pendingDuckMove;
     private int promotionPiece = BoardConstants.QUEEN;
@@ -66,7 +67,7 @@ public class GameApi {
     }
 
     public boolean isKingOfTheHillVariant() {
-        return board.variant() == RustSearchRequest.Variant.KING_OF_THE_HILL;
+        return board.variant() == Variant.KING_OF_THE_HILL;
     }
 
     public boolean requiresBuiltinEngine() {
@@ -234,7 +235,7 @@ public class GameApi {
         }
     }
 
-    public RustSearchRequest.Variant rustVariant() {
+    public Variant rustVariant() {
         return board.variant();
     }
 
@@ -311,7 +312,7 @@ public class GameApi {
                         initialFen,
                         board.getState(),
                         board.getTurn(),
-                        gameVariant == RustSearchRequest.Variant.CHESS_960);
+                        gameVariant == Variant.CHESS_960);
         currentNode = gameTree.getRoot();
         rememberRecordedPosition();
         pendingDuckMove = null;
@@ -341,7 +342,7 @@ public class GameApi {
         }
     }
 
-    protected GameApi(String initialFen, RustSearchRequest.Variant variant) {
+    protected GameApi(String initialFen, Variant variant) {
         this();
         if (!board.initFEN(initialFen, variant)) {
             throw new IllegalArgumentException("Invalid starting Position");
@@ -370,11 +371,11 @@ public class GameApi {
     }
 
     public boolean isStandardVariant() {
-        return board.variant() == RustSearchRequest.Variant.STANDARD;
+        return board.variant() == Variant.STANDARD;
     }
 
     public boolean isChess960Variant() {
-        return board.variant() == RustSearchRequest.Variant.CHESS_960;
+        return board.variant() == Variant.CHESS_960;
     }
 
     public int getState() {
@@ -824,7 +825,7 @@ public class GameApi {
         board.newGame(variant);
         resetPGNHistory();
         if (variant == BoardConstants.VARIANT_KING_OF_THE_HILL) {
-            pgnTags.put("Variant", "King of the Hill");
+            pgnTags.put("Variant", Variant.KING_OF_THE_HILL.pgnTag());
         }
 
         if (variant == BoardConstants.VARIANT_DUCK) {
@@ -840,7 +841,7 @@ public class GameApi {
         return initFEN(sFEN, resetHead, null);
     }
 
-    protected boolean initFEN(String sFEN, boolean resetHead, RustSearchRequest.Variant variant) {
+    protected boolean initFEN(String sFEN, boolean resetHead, Variant variant) {
         try {
             sFEN = new BoardPosition(sFEN).fen();
         } catch (IllegalArgumentException invalid) {
@@ -861,7 +862,7 @@ public class GameApi {
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", sFEN);
             if (isChess960Variant()) {
-                pgnTags.put("Variant", "Chess960");
+                pgnTags.put("Variant", Variant.CHESS_960.pgnTag());
             }
 
             resetPGNHistory(sFEN);
@@ -1019,7 +1020,7 @@ public class GameApi {
         pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
         pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
 
-        pgnTags.put("Variant", "Chess960");
+        pgnTags.put("Variant", Variant.CHESS_960.pgnTag());
         pgnTags.put("Setup", "1");
         pgnTags.put("FEN", board.toFEN());
 
@@ -1044,7 +1045,7 @@ public class GameApi {
             return false;
         }
         GameTree oldTree = gameTree;
-        RustSearchRequest.Variant oldVariant = gameVariant;
+        Variant oldVariant = gameVariant;
         Node oldNode = currentNode;
         PGNEntry oldPending = pendingDuckMove;
         String oldResult = importedResult;
@@ -1061,8 +1062,8 @@ public class GameApi {
             if (pgnTags.containsKey("FEN")) {
                 pgnTags.put("FEN", start.fen);
             }
-            if (start.variant == RustSearchRequest.Variant.CHESS_960) {
-                pgnTags.put("Variant", "Chess960");
+            if (start.variant == Variant.CHESS_960) {
+                pgnTags.put("Variant", Variant.CHESS_960.pgnTag());
             }
             resetPGNHistory(pgnTags.getOrDefault("FEN", board.toFEN()));
             gameTree.setRootComment(document.rootComment);
@@ -1342,7 +1343,7 @@ public class GameApi {
         }
         String fen = board.toFEN();
         boolean whiteToMove = fen.trim().split("\\s+")[1].equals("w");
-        RustSearchRequest.Variant variant = rustVariant();
+        Variant variant = rustVariant();
         int from, to;
         Integer promotionPiece = null;
         if (castle != null) {

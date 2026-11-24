@@ -1,9 +1,9 @@
 package jwtc.android.chess.hotspotboard;
 
 import android.util.Log;
-import jwtc.android.chess.engine.RustSearchRequest.Variant;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
 
@@ -61,7 +61,8 @@ public class HotspotBoardApi extends GameApi {
         }
         Variant variant = message.variant == null ? Variant.STANDARD : message.variant;
         if (message.type != GameMessage.TYPE_MOVE
-                && (message.variant != null || message.FEN.equals(getFEN()) && variant == rustVariant())) {
+                && (message.variant != null
+                        || message.FEN.equals(getFEN()) && variant == rustVariant())) {
             return;
         }
         if (message.variant != null && message.lastMove != 0 && variant == rustVariant()) {

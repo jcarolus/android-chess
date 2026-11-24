@@ -31,16 +31,23 @@ public class MateRulesTest {
 
     @Test
     public void onlyCheckmateOfTheOpponentSolvesACollectionPosition() {
-        assertTrue(MateRules.isSolved(BoardConstants.MATE, BoardConstants.BLACK, BoardConstants.WHITE));
-        assertTrue(MateRules.isSolved(BoardConstants.MATE, BoardConstants.WHITE, BoardConstants.BLACK));
-        assertFalse(MateRules.isSolved(BoardConstants.MATE, BoardConstants.WHITE, BoardConstants.WHITE));
-        for (int state : new int[] {
-            BoardConstants.STALEMATE,
-            BoardConstants.DRAW_MATERIAL,
-            BoardConstants.DRAW_50,
-            BoardConstants.DRAW_REPEAT,
-            BoardConstants.DRAW_AGREEMENT
-        }) {
+        assertTrue(
+                MateRules.isSolved(
+                        BoardConstants.MATE, BoardConstants.BLACK, BoardConstants.WHITE));
+        assertTrue(
+                MateRules.isSolved(
+                        BoardConstants.MATE, BoardConstants.WHITE, BoardConstants.BLACK));
+        assertFalse(
+                MateRules.isSolved(
+                        BoardConstants.MATE, BoardConstants.WHITE, BoardConstants.WHITE));
+        for (int state :
+                new int[] {
+                    BoardConstants.STALEMATE,
+                    BoardConstants.DRAW_MATERIAL,
+                    BoardConstants.DRAW_50,
+                    BoardConstants.DRAW_REPEAT,
+                    BoardConstants.DRAW_AGREEMENT
+                }) {
             assertFalse(MateRules.isSolved(state, BoardConstants.BLACK, BoardConstants.WHITE));
         }
     }

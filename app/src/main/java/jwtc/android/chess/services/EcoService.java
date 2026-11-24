@@ -8,6 +8,7 @@ import java.util.Map;
 import jwtc.android.chess.engine.RustBoardNative;
 import jwtc.android.chess.engine.RustBoardResult;
 import jwtc.android.chess.engine.RustSearchRequest;
+import jwtc.chess.Variant;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -83,14 +84,14 @@ public class EcoService {
             return openings;
         }
         String fen = gameApi.getFEN();
-        RustSearchRequest.Variant variant = gameApi.rustVariant();
+        Variant variant = gameApi.rustVariant();
         int[] files =
-                variant == RustSearchRequest.Variant.CHESS_960
+                variant == Variant.CHESS_960
                         ? RustSearchRequest.chess960Files(fen, fen.split(" ")[1].equals("w"))
                         : null;
         String[] history = new String[0];
         Map<String, String> duckTurns = new HashMap<>();
-        if (variant == RustSearchRequest.Variant.DUCK) {
+        if (variant == Variant.DUCK) {
             for (String turn :
                     RustBoardResult.words(
                             RustBoardNative.legalMoves(variant, fen, history).moves)) {
@@ -104,10 +105,7 @@ public class EcoService {
         for (int i = 0; i < count; i++) {
             int move = gameApi.getMoveArrayAt(i);
             String coordinate = RustSearchRequest.toRustCoordinate(move, files);
-            String turn =
-                    variant == RustSearchRequest.Variant.DUCK
-                            ? duckTurns.get(coordinate)
-                            : coordinate;
+            String turn = variant == Variant.DUCK ? duckTurns.get(coordinate) : coordinate;
             if (turn == null) {
                 continue;
             }

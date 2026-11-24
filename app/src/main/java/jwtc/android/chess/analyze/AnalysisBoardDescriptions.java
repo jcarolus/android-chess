@@ -6,7 +6,7 @@ import android.util.Log;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import jwtc.android.chess.engine.RustBoard;
-import jwtc.android.chess.engine.RustSearchRequest;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 /** Prepares optional square descriptions from a detached Position. */
@@ -14,7 +14,8 @@ final class AnalysisBoardDescriptions {
     private static final int[] EMPTY = new int[0];
     private final Handler main = new Handler(Looper.getMainLooper());
     private final ExecutorService worker =
-            Executors.newSingleThreadExecutor(task -> new Thread(task, "AnalysisBoardDescriptions"));
+            Executors.newSingleThreadExecutor(
+                    task -> new Thread(task, "AnalysisBoardDescriptions"));
     private final Runnable onReady;
     private volatile Position requested;
     private int[][][] attackers;
@@ -22,10 +23,10 @@ final class AnalysisBoardDescriptions {
     private boolean closed;
 
     private static final class Position {
-        final RustSearchRequest.Variant variant;
+        final Variant variant;
         final String fen;
 
-        Position(RustSearchRequest.Variant variant, String fen) {
+        Position(Variant variant, String fen) {
             this.variant = variant;
             this.fen = fen;
         }
@@ -35,7 +36,7 @@ final class AnalysisBoardDescriptions {
         this.onReady = onReady;
     }
 
-    void show(RustSearchRequest.Variant variant, String fen) {
+    void show(Variant variant, String fen) {
         if (requested != null && requested.variant == variant && requested.fen.equals(fen)) {
             return;
         }

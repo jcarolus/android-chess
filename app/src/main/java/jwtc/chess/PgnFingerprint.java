@@ -14,6 +14,11 @@ public final class PgnFingerprint {
 
     private PgnFingerprint() {}
 
+    /** Stored fingerprints depend on these exact tokens. */
+    private static String token(Variant variant) {
+        return variant == Variant.STANDARD ? "standard" : variant.pgnTag().toLowerCase(Locale.ROOT);
+    }
+
     /** Returns null when an existing row has no parseable PGN. */
     public static String of(String pgn) {
         if (pgn == null || pgn.trim().isEmpty() || pgn.length() > Pgn.MAX_GAME_SIZE) {
@@ -27,7 +32,7 @@ public final class PgnFingerprint {
     }
 
     public static String of(PgnDocument document) {
-        String variant = document.tags.getOrDefault("Variant", "").trim().toLowerCase(Locale.ROOT);
+        String tag = document.tags.getOrDefault("Variant", "").trim().toLowerCase(Locale.ROOT);
         String fen = document.tags.getOrDefault("FEN", "").trim().replaceAll("\\s+", " ");
         BoardPosition position = null;
         if (!fen.isEmpty()) {
@@ -38,16 +43,15 @@ public final class PgnFingerprint {
                 // Syntax-only imports can still carry an invalid Starting Position.
             }
         }
-        if (variant.isEmpty() || variant.equals("standard") || variant.equals("from position")) {
-            if (position != null && position.duck() >= 0) {
-                variant = "duck";
-            } else if (position != null && position.chess960()) {
-                variant = "chess960";
-            } else {
-                variant = "standard";
-            }
-        } else if (variant.equals("fischerandom")) {
-            variant = "chess960";
+        Variant named = Variant.fromPgnTag(tag);
+        String variant;
+        if (named != null) {
+            variant = token(named);
+        } else if (tag.isEmpty() || tag.equals("standard") || tag.equals("from position")) {
+            variant = token(Variant.infer(position));
+        } else {
+            // Rule sets the app does not play keep their own identity.
+            variant = tag;
         }
 
         if (position != null && variant.equals("chess960")) {

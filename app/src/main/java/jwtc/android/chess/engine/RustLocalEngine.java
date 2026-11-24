@@ -1,12 +1,13 @@
 package jwtc.android.chess.engine;
 
-import java.util.Locale;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.function.Supplier;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 /** Built-in search backend. Every search owns its replayed Rust position. */
@@ -69,7 +70,7 @@ public final class RustLocalEngine extends EngineApi {
             return;
         }
         long id = beginSearch(SearchPurpose.ANALYSIS);
-        RustSearchRequest.Variant variant = variant();
+        Variant variant = variant();
         boolean quiescence = quiescentSearchOn;
         launch(
                 id,
@@ -88,7 +89,7 @@ public final class RustLocalEngine extends EngineApi {
             if (position == null) {
                 throw new IllegalArgumentException("Missing position");
             }
-            RustSearchRequest.Variant variant = variant();
+            Variant variant = variant();
             boolean quiescence = quiescentSearchOn;
             launch(
                     id,
@@ -103,14 +104,12 @@ public final class RustLocalEngine extends EngineApi {
         }
     }
 
-    private RustSearchRequest.Variant variant() {
+    private Variant variant() {
         return gameApi.isKingOfTheHillVariant()
-                ? RustSearchRequest.Variant.KING_OF_THE_HILL
+                ? Variant.KING_OF_THE_HILL
                 : gameApi.isDuckVariant()
-                        ? RustSearchRequest.Variant.DUCK
-                        : gameApi.isChess960Variant()
-                                ? RustSearchRequest.Variant.CHESS_960
-                                : RustSearchRequest.Variant.STANDARD;
+                        ? Variant.DUCK
+                        : gameApi.isChess960Variant() ? Variant.CHESS_960 : Variant.STANDARD;
     }
 
     private boolean positionIsCurrent() {
@@ -121,7 +120,7 @@ public final class RustLocalEngine extends EngineApi {
 
     private void launch(
             long id,
-            RustSearchRequest.Variant variant,
+            Variant variant,
             GameApi.PositionSnapshot snapshot,
             String fen,
             Supplier<RustSearchRequest> prepareRequest) {
@@ -220,7 +219,7 @@ public final class RustLocalEngine extends EngineApi {
             long id,
             GameApi.PositionSnapshot snapshot,
             String fen,
-            RustSearchRequest.Variant variant,
+            Variant variant,
             RustSearchResult result,
             Throwable error) {
         try {
@@ -306,7 +305,7 @@ public final class RustLocalEngine extends EngineApi {
             long id,
             GameApi.PositionSnapshot snapshot,
             String fen,
-            RustSearchRequest.Variant variant,
+            Variant variant,
             RustSearchResult result) {
         if (!isCurrentSearch(id)
                 || destroyed
@@ -345,7 +344,12 @@ public final class RustLocalEngine extends EngineApi {
                             + message;
         }
         if (result.hasEvaluation) {
-            message += "\n" + String.format(Locale.getDefault(Locale.Category.FORMAT), "%.2f", score / 100.0);
+            message +=
+                    "\n"
+                            + String.format(
+                                    Locale.getDefault(Locale.Category.FORMAT),
+                                    "%.2f",
+                                    score / 100.0);
         }
         for (EngineListener listener : new ArrayList<>(listeners)) {
             if (!isCurrentSearch(id) || destroyed) {
@@ -361,9 +365,8 @@ public final class RustLocalEngine extends EngineApi {
      * move the same way as a space-separated principal variation (a single move is a one-move PV),
      * with movers alternating from {@code fen}'s side to move.
      */
-    private static String resolvePrincipalVariation(
-            String pv, RustSearchRequest.Variant variant, String fen) {
-        if (variant != RustSearchRequest.Variant.CHESS_960 || pv.isEmpty()) {
+    private static String resolvePrincipalVariation(String pv, Variant variant, String fen) {
+        if (variant != Variant.CHESS_960 || pv.isEmpty()) {
             return pv;
         }
         boolean whiteToMoveFirst = fen.split("\\s+")[1].equals("w");

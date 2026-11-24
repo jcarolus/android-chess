@@ -3,17 +3,11 @@ package jwtc.android.chess.engine;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardPosition;
 
 /** Immutable coordinate-based input. Packed moves never cross the Rust boundary. */
 public final class RustSearchRequest {
-    public enum Variant {
-        STANDARD,
-        CHESS_960,
-        DUCK,
-        KING_OF_THE_HILL
-    }
-
     public final long searchId;
     public final Variant variant;
     public final String startingPosition;

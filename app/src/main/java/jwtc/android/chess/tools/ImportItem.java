@@ -6,6 +6,7 @@ public final class ImportItem {
 
     /** Null when the file does not name the item. */
     public final String name;
+
     final String sourceName;
     final int sourcePosition;
 

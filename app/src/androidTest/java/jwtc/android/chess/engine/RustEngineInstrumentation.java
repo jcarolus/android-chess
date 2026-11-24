@@ -18,6 +18,7 @@ import jwtc.android.chess.tools.ImportApi;
 import jwtc.chess.GameRecord;
 import jwtc.chess.Pgn;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
 
@@ -458,7 +459,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             1,
                             0,
                             true,
-                            RustSearchRequest.Variant.CHESS_960);
+                            Variant.CHESS_960);
             check(
                     request.getHistory()[0].endsWith(
                             example[0].contains(" F ")
@@ -576,7 +577,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     248,
-                                    RustSearchRequest.Variant.STANDARD,
+                                    Variant.STANDARD,
                                     START,
                                     new String[] {"e2e4", "e7e5"},
                                     2,
@@ -593,13 +594,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 RustNative.search(
                         handle,
                         new RustSearchRequest(
-                                249,
-                                RustSearchRequest.Variant.STANDARD,
-                                START,
-                                new String[] {"e2e5"},
-                                1,
-                                0,
-                                true));
+                                249, Variant.STANDARD, START, new String[] {"e2e5"}, 1, 0, true));
             } catch (IllegalArgumentException expected) {
                 failed = true;
             }
@@ -609,7 +604,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     250,
-                                    RustSearchRequest.Variant.DUCK,
+                                    Variant.DUCK,
                                     START,
                                     new String[] {"e2e4@d5", "e7e5"},
                                     1,
@@ -620,7 +615,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     250,
-                                    RustSearchRequest.Variant.DUCK,
+                                    Variant.DUCK,
                                     START,
                                     new String[] {"e2e4@d5"},
                                     1,
@@ -637,7 +632,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                         handle,
                         new RustSearchRequest(
                                 250,
-                                RustSearchRequest.Variant.DUCK,
+                                Variant.DUCK,
                                 START,
                                 new String[] {"e2e4", "e7e5@d5"},
                                 1,
@@ -652,7 +647,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     251,
-                                    RustSearchRequest.Variant.CHESS_960,
+                                    Variant.CHESS_960,
                                     "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1",
                                     new String[0],
                                     2,
@@ -672,8 +667,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
      * Round-trips a snapshot through every RustBoardNative entry point, without touching GameApi.
      */
     private void nativeBoardContract() {
-        RustBoardResult query =
-                RustBoardNative.query(RustSearchRequest.Variant.STANDARD, START, new String[0]);
+        RustBoardResult query = RustBoardNative.query(Variant.STANDARD, START, new String[0]);
         check(
                 query.turnWhite
                         && query.gameState == 0
@@ -690,9 +684,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             check(count == 0, "Opening position reported a capture");
         }
 
-        RustBoardResult legal =
-                RustBoardNative.legalMoves(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0]);
+        RustBoardResult legal = RustBoardNative.legalMoves(Variant.STANDARD, START, new String[0]);
         String[] moves = RustBoardResult.words(legal.moves);
         check(
                 moves.length == 20,
@@ -705,14 +697,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
         }
         check(hasE4, "Legal moves omitted e2e4");
 
-        RustBoardResult san =
-                RustBoardNative.san(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e2e4");
+        RustBoardResult san = RustBoardNative.san(Variant.STANDARD, START, new String[0], "e2e4");
         check(san.san.equals("e4"), "Wrong SAN for e2e4: " + san.san);
 
         RustBoardResult applied =
-                RustBoardNative.applyMove(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e2e4");
+                RustBoardNative.applyMove(Variant.STANDARD, START, new String[0], "e2e4");
         check(
                 !applied.turnWhite
                         && applied.gameState == 0
@@ -721,22 +710,16 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 "Move application did not advance the position: " + applied.fen);
 
         RustBoardResult king =
-                RustBoardNative.pieceAt(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e1");
+                RustBoardNative.pieceAt(Variant.STANDARD, START, new String[0], "e1");
         check(king.piece == 'K', "Expected a White king on e1");
         RustBoardResult empty =
-                RustBoardNative.pieceAt(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e4");
+                RustBoardNative.pieceAt(Variant.STANDARD, START, new String[0], "e4");
         check(empty.piece == 0, "Expected e4 to be empty on the starting position");
 
         String attackersFen = "4k3/8/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1";
         RustBoardResult attackers =
                 RustBoardNative.attackers(
-                        RustSearchRequest.Variant.STANDARD,
-                        attackersFen,
-                        new String[0],
-                        true,
-                        "d3");
+                        Variant.STANDARD, attackersFen, new String[0], true, "d3");
         String[] attackerSquares = RustBoardResult.words(attackers.attackers);
         check(
                 attackerSquares.length == 2,
@@ -744,7 +727,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
 
         boolean failed = false;
         try {
-            RustBoardNative.query(RustSearchRequest.Variant.STANDARD, "not a fen", new String[0]);
+            RustBoardNative.query(Variant.STANDARD, "not a fen", new String[0]);
         } catch (IllegalArgumentException expected) {
             failed = true;
         }
@@ -846,13 +829,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     RustNative.search(
                             progressHandle,
                             new RustSearchRequest(
-                                    300,
-                                    RustSearchRequest.Variant.STANDARD,
-                                    START,
-                                    new String[0],
-                                    0,
-                                    60_000,
-                                    false),
+                                    300, Variant.STANDARD, START, new String[0], 0, 60_000, false),
                             event -> {
                                 check(
                                         Looper.myLooper() != Looper.getMainLooper(),
@@ -881,13 +858,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     RustNative.search(
                             handle,
                             new RustSearchRequest(
-                                    301,
-                                    RustSearchRequest.Variant.STANDARD,
-                                    START,
-                                    new String[0],
-                                    10,
-                                    0,
-                                    true));
+                                    301, Variant.STANDARD, START, new String[0], 10, 0, true));
             check(
                     result.interrupted && !result.hasEvaluation && result.bestMove.isEmpty(),
                     "Pre-depth interruption fabricated a result");
@@ -1659,7 +1630,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                                                                 1,
                                                                 0,
                                                                 false,
-                                                                RustSearchRequest.Variant.DUCK);
+                                                                Variant.DUCK);
                                                 check(
                                                         request.getHistory().length == 1,
                                                         "Duck history length");

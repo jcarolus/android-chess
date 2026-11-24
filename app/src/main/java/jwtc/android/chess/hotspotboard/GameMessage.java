@@ -1,7 +1,7 @@
 package jwtc.android.chess.hotspotboard;
 
 import java.util.EnumSet;
-import jwtc.android.chess.engine.RustSearchRequest.Variant;
+import jwtc.chess.Variant;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

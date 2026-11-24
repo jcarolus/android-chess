@@ -17,8 +17,9 @@ Any board state during a Game, identified by a FEN.
 The Position a Game begins from: the standard setup, a Chess 960 arrangement or a custom Setup.
 
 **Variant**:
-The rule set a Game is played under: Standard, Chess 960, Duck chess or King of the Hill. Duck chess is supported only by the Local Engine (not OEX Engines, not Lichess). King of the Hill is supported only in Play, against the Local Engine or another person on the same device; it supports PGN persistence but not Analysis or Setup. A legal king move onto d4, e4, d5 or e5 wins, after checking the existing 50-move and repetition draw rules. Insufficient material does not draw this Variant.
-_Avoid_: Chess960 (spell it "Chess 960")
+The rule set a Game is played under: Standard, Chess 960, Duck chess or King of the Hill. Duck chess is supported only by the Local Engine (not OEX Engines, not Lichess). King of the Hill is supported in Play (against the Local Engine or another person on the same device) and in Hotspot Games; it supports PGN persistence but not Analysis or Setup. A legal king move onto d4, e4, d5 or e5 wins, after checking the existing 50-move and repetition draw rules. Insufficient material does not draw this Variant.
+`jwtc.chess.Variant` in code: it owns the PGN `Variant` tag and answers which features a Variant supports (OEX Engines, Lichess, Analysis, Setup, text move entry, opening book). The opening book applies to Standard only. Decisions that depend on the Mode or Engine stay with their owners and ask the Variant.
+_Avoid_: Chess960 (spell it "Chess 960"), except as the PGN tag value `Chess960`, which matches Lichess
 
 **PGN**:
 The only interchange format. A saved Game *is* its PGN, including tags and variations.

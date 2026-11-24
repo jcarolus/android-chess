@@ -20,7 +20,7 @@ public final class ImportPipelineInstrumentation {
                 new OpeningJsonSource(
                         input(
                                 "[{\"name\":\"First\",\"moves\":\"1."
-                                    + " e4\"},{\"name\":\"Second\",\"moves\":\"1. d4\"}]")),
+                                        + " e4\"},{\"name\":\"Second\",\"moves\":\"1. d4\"}]")),
                 true);
         verifySource(
                 instrumentation,
@@ -107,7 +107,7 @@ public final class ImportPipelineInstrumentation {
                                                             == Looper.getMainLooper()) {
                                                         throw new AssertionError(
                                                                 "Import handler ran on the main"
-                                                                    + " thread");
+                                                                        + " thread");
                                                     }
                                                     items.add(item);
                                                     return ImportHandler.Result.INSERTED;

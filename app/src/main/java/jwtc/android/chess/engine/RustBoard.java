@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
 
@@ -12,7 +13,7 @@ import jwtc.chess.board.BoardPosition;
 public final class RustBoard {
     public static final String START = BoardPosition.START_FEN;
     private final List<Frame> frames = new ArrayList<>();
-    private RustSearchRequest.Variant variant;
+    private Variant variant;
     private String initialFen;
     private int promotion = BoardConstants.QUEEN;
     private List<LegalMove> legal;
@@ -105,10 +106,10 @@ public final class RustBoard {
     /** A completed Position and its legal moves, ready to display without native replay. */
     public static final class Snapshot {
         private final Frame frame;
-        private final RustSearchRequest.Variant variant;
+        private final Variant variant;
         public final List<LegalMove> moves;
 
-        private Snapshot(Frame frame, RustSearchRequest.Variant variant, List<LegalMove> moves) {
+        private Snapshot(Frame frame, Variant variant, List<LegalMove> moves) {
             this.frame = frame;
             this.variant = variant;
             this.moves = moves;
@@ -146,7 +147,7 @@ public final class RustBoard {
         return frames.get(frames.size() - 1);
     }
 
-    public synchronized RustSearchRequest.Variant variant() {
+    public synchronized Variant variant() {
         return variant;
     }
 
@@ -210,9 +211,9 @@ public final class RustBoard {
     }
 
     public synchronized int getVariant() {
-        return variant == RustSearchRequest.Variant.KING_OF_THE_HILL
+        return variant == Variant.KING_OF_THE_HILL
                 ? BoardConstants.VARIANT_KING_OF_THE_HILL
-                : variant == RustSearchRequest.Variant.DUCK
+                : variant == Variant.DUCK
                         ? BoardConstants.VARIANT_DUCK
                         : BoardConstants.VARIANT_DEFAULT;
     }
@@ -305,19 +306,11 @@ public final class RustBoard {
         } catch (IllegalArgumentException ex) {
             return false;
         }
-        load(position.fen(), inferVariant(position));
+        load(position.fen(), Variant.infer(position));
         return true;
     }
 
-    static RustSearchRequest.Variant inferVariant(BoardPosition position) {
-        return position.duck() >= 0
-                ? RustSearchRequest.Variant.DUCK
-                : position.chess960()
-                        ? RustSearchRequest.Variant.CHESS_960
-                        : RustSearchRequest.Variant.STANDARD;
-    }
-
-    public synchronized boolean initFEN(String fen, RustSearchRequest.Variant selected) {
+    public synchronized boolean initFEN(String fen, Variant selected) {
         try {
             load(new BoardPosition(fen).fen(), selected);
             return true;
@@ -326,7 +319,7 @@ public final class RustBoard {
         }
     }
 
-    private void load(String fen, RustSearchRequest.Variant selected) {
+    private void load(String fen, Variant selected) {
         if (replay != null) {
             replay.reset();
         }
@@ -361,7 +354,7 @@ public final class RustBoard {
 
     public synchronized void newGame(int variant) {
         if (variant == BoardConstants.VARIANT_KING_OF_THE_HILL) {
-            load(START, RustSearchRequest.Variant.KING_OF_THE_HILL);
+            load(START, Variant.KING_OF_THE_HILL);
         } else {
             initFEN(variant == BoardConstants.VARIANT_DUCK ? BoardPosition.DUCK_START_FEN : START);
         }
@@ -371,7 +364,7 @@ public final class RustBoard {
         if (seed < 0) {
             seed = ThreadLocalRandom.current().nextInt(960);
         }
-        load(BoardPosition.chess960Fen(seed), RustSearchRequest.Variant.CHESS_960);
+        load(BoardPosition.chess960Fen(seed), Variant.CHESS_960);
         return seed;
     }
 
@@ -464,7 +457,7 @@ public final class RustBoard {
             RustBoardResult result = applyMove(move.coordinate);
             // The duck placement still decides whether the opponent is left without moves.
             boolean pending =
-                    variant == RustSearchRequest.Variant.DUCK
+                    variant == Variant.DUCK
                             && (result.boardState() == BoardConstants.PLAY
                                     || result.boardState() == BoardConstants.DUCK_STALEMATE_WIN);
             String fen = result.fen;
@@ -488,7 +481,7 @@ public final class RustBoard {
     }
 
     public synchronized int requestDuckMove(int square) {
-        if (square < 0 || square >= 64 || variant != RustSearchRequest.Variant.DUCK) {
+        if (square < 0 || square >= 64 || variant != Variant.DUCK) {
             return 0;
         }
         if (!current().pending) {
@@ -565,8 +558,7 @@ public final class RustBoard {
         return attackersForPosition(variant, toFEN(), square, colour);
     }
 
-    public static int[] attackersForPosition(
-            RustSearchRequest.Variant variant, String fen, int square, int colour) {
+    public static int[] attackersForPosition(Variant variant, String fen, int square, int colour) {
         String[] positions =
                 RustBoardResult.words(
                         RustBoardNative.attackers(
@@ -584,7 +576,7 @@ public final class RustBoard {
     }
 
     public synchronized void reset() {
-        load("8/8/8/8/8/8/8/8 w - - 0 1", RustSearchRequest.Variant.STANDARD);
+        load("8/8/8/8/8/8/8/8 w - - 0 1", Variant.STANDARD);
     }
 
     private void edit(BoardPosition position) {
@@ -623,11 +615,8 @@ public final class RustBoard {
                         + (bq != 0 ? "q" : "");
         position.ep = ep;
         position.halfmove = halfmove;
-        if (variant != RustSearchRequest.Variant.DUCK) {
-            variant =
-                    position.chess960()
-                            ? RustSearchRequest.Variant.CHESS_960
-                            : RustSearchRequest.Variant.STANDARD;
+        if (variant != Variant.DUCK) {
+            variant = position.chess960() ? Variant.CHESS_960 : Variant.STANDARD;
         }
         edit(position);
     }
@@ -644,12 +633,10 @@ public final class RustBoard {
         load(
                 position.fen(),
                 value == BoardConstants.VARIANT_KING_OF_THE_HILL
-                        ? RustSearchRequest.Variant.KING_OF_THE_HILL
+                        ? Variant.KING_OF_THE_HILL
                         : value == BoardConstants.VARIANT_DUCK
-                                ? RustSearchRequest.Variant.DUCK
-                                : position.chess960()
-                                        ? RustSearchRequest.Variant.CHESS_960
-                                        : RustSearchRequest.Variant.STANDARD);
+                                ? Variant.DUCK
+                                : position.chess960() ? Variant.CHESS_960 : Variant.STANDARD);
     }
 
     public synchronized int placeDuck(int square) {
@@ -657,7 +644,7 @@ public final class RustBoard {
         if (square < 0
                 || square >= 64
                 || position.squares[square] != 0
-                || variant != RustSearchRequest.Variant.DUCK) {
+                || variant != Variant.DUCK) {
             return 0;
         }
         if (position.duck() >= 0) {

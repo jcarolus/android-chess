@@ -42,12 +42,16 @@ public final class PgnSource implements ImportSource {
             ZipInputStream zis = new ZipInputStream(stream);
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
-                if (entry.isDirectory() || !entry.getName().toLowerCase(java.util.Locale.ROOT).endsWith(".pgn")) {
+                if (entry.isDirectory()
+                        || !entry.getName().toLowerCase(java.util.Locale.ROOT).endsWith(".pgn")) {
                     continue;
                 }
                 // the reader is not closed, that would close the zip stream with the entries still
                 // to read
-                if (!readGames(new InputStreamReader(zis, StandardCharsets.UTF_8), entry.getName(), sink)) {
+                if (!readGames(
+                        new InputStreamReader(zis, StandardCharsets.UTF_8),
+                        entry.getName(),
+                        sink)) {
                     return;
                 }
             }
@@ -57,7 +61,8 @@ public final class PgnSource implements ImportSource {
     /**
      * @return false when the sink asked to stop
      */
-    private static boolean readGames(Reader reader, String sourceName, Sink sink) throws IOException {
+    private static boolean readGames(Reader reader, String sourceName, Sink sink)
+            throws IOException {
         PgnSplitter splitter = new PgnSplitter(reader);
         int position = 0;
         String game;

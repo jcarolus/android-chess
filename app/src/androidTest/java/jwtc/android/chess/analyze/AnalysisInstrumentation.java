@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.engine.EngineEvaluation;
 import jwtc.android.chess.engine.EngineSession;
-import jwtc.android.chess.engine.RustSearchRequest;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.GameTree.Node;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
 
@@ -202,11 +202,8 @@ public final class AnalysisInstrumentation {
                                             ready.countDown();
                                         });
                         owner.set(descriptions);
-                        descriptions.show(
-                                RustSearchRequest.Variant.STANDARD, "7k/8/8/8/8/8/8/K7 w - - 0 1");
-                        descriptions.show(
-                                RustSearchRequest.Variant.STANDARD,
-                                "7k/8/8/3p4/8/8/8/K7 w - - 0 1");
+                        descriptions.show(Variant.STANDARD, "7k/8/8/8/8/8/8/K7 w - - 0 1");
+                        descriptions.show(Variant.STANDARD, "7k/8/8/3p4/8/8/8/K7 w - - 0 1");
                         check(
                                 descriptions.attackersFor(e4, BoardConstants.BLACK).length == 0,
                                 "Square exposed attack details before delivery");

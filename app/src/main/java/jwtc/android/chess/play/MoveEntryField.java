@@ -87,8 +87,7 @@ final class MoveEntryField extends AppCompatEditText {
 
             @Override
             public boolean commitText(CharSequence text, int cursor, TextAttribute attribute) {
-                return isCurrent()
-                        && committed(text, super.commitText(text, cursor, attribute));
+                return isCurrent() && committed(text, super.commitText(text, cursor, attribute));
             }
 
             @Override

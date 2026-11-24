@@ -23,8 +23,14 @@ public final class GameSelectionPreferences {
                 new Date(prefs.getLong(prefix + "date_before", selection.before.getTime()));
         selection.useWhite = prefs.getBoolean(prefix + "switch_white", false);
         selection.useBlack = prefs.getBoolean(prefix + "switch_black", false);
-        selection.useEvent = prefs.getBoolean(prefix + "switch_event", STUDY.equals(prefix) && prefs.contains(prefix + "event"));
-        selection.useTopic = prefs.getBoolean(prefix + "switch_topic", STUDY.equals(prefix) && prefs.contains(prefix + "topic"));
+        selection.useEvent =
+                prefs.getBoolean(
+                        prefix + "switch_event",
+                        STUDY.equals(prefix) && prefs.contains(prefix + "event"));
+        selection.useTopic =
+                prefs.getBoolean(
+                        prefix + "switch_topic",
+                        STUDY.equals(prefix) && prefs.contains(prefix + "topic"));
         selection.useAfter = prefs.getBoolean(prefix + "switch_date_after", false);
         selection.useBefore = prefs.getBoolean(prefix + "switch_date_before", false);
         selection.useResult = prefs.getBoolean(prefix + "switch_result", false);

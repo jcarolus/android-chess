@@ -62,7 +62,9 @@ public final class MoveEntry {
         } else {
             ViewGroup boardBottom = activity.findViewById(R.id.play_board_bottom);
             boardBottom.addView(
-                    field, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    field,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }
 

@@ -1,6 +1,5 @@
 package jwtc.android.chess.engine;
 
-import java.util.Locale;
 import android.content.Context;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -10,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

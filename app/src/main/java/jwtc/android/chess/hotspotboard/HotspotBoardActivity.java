@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.engine.RustSearchRequest.Variant;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.Clipboard;
@@ -38,6 +37,7 @@ import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.chess.Move;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public class HotspotBoardActivity extends ChessBoardActivity {
@@ -632,11 +632,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         for (int i = 0; i < choices.size(); i++) {
             labels[i] = getString(variantLabel(choices.get(i)));
         }
-        newGameDialog = new ChessAlertDialogBuilder(this)
-                .setTitle(R.string.menu_new)
-                .setItems(labels, (dialog, which) -> newGame(choices.get(which)))
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+        newGameDialog =
+                new ChessAlertDialogBuilder(this)
+                        .setTitle(R.string.menu_new)
+                        .setItems(labels, (dialog, which) -> newGame(choices.get(which)))
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
     }
 
     private void dismissNewGameDialog() {

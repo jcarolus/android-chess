@@ -1,6 +1,5 @@
 package jwtc.android.chess.lichess;
 
-import java.util.Locale;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import jwtc.android.chess.constants.Piece;
@@ -34,6 +34,7 @@ import jwtc.android.chess.lichess.models.TeamPaginator;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public class LichessApi extends GameApi {
@@ -439,7 +440,8 @@ public class LichessApi extends GameApi {
             int to = Pos.fromString(uciMove.substring(2, 4));
             Integer promo =
                     uciMove.length() == 5
-                            ? Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase(Locale.getDefault()))
+                            ? Piece.fromUCIPromo(
+                                    uciMove.substring(4, 5).toLowerCase(Locale.getDefault()))
                             : null;
             if (applyServerMove(from, to, promo) != 0) {
                 return true;
@@ -1127,7 +1129,8 @@ public class LichessApi extends GameApi {
             if (replayedEntireSnapshot) {
                 int finalState = snapshot.finalState();
                 if (finalState != -1
-                        && (finalState != BoardConstants.DRAW_AGREEMENT || !isBoardDetectedDraw())) {
+                        && (finalState != BoardConstants.DRAW_AGREEMENT
+                                || !isBoardDetectedDraw())) {
                     setFinalState(finalState);
                 }
                 dispatchGameStateTransition(snapshot, transition);
@@ -1181,7 +1184,8 @@ public class LichessApi extends GameApi {
 
                     Integer promo =
                             sMove.length() == 5
-                                    ? Piece.fromUCIPromo(sMove.substring(4, 5).toLowerCase(Locale.getDefault()))
+                                    ? Piece.fromUCIPromo(
+                                            sMove.substring(4, 5).toLowerCase(Locale.getDefault()))
                                     : null;
 
                     if (applyServerMove(from, to, promo) == 0) {
@@ -1265,7 +1269,7 @@ public class LichessApi extends GameApi {
         pgnTags.put("Black", ongoingGameFull.black.name);
 
         if (ongoingGameFull.variant.key.equals("chess960")) {
-            pgnTags.put("Variant", "Chess960");
+            pgnTags.put("Variant", Variant.CHESS_960.pgnTag());
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", getFEN());
         }

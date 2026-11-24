@@ -1,6 +1,5 @@
 package jwtc.android.chess.practice;
 
-import java.util.Locale;
 import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 
 import android.content.Intent;
@@ -13,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import java.util.Locale;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -263,7 +263,12 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     @Override
     public void onScore(MateScore score) {
         textViewPercentage.setText(
-                String.format(Locale.getDefault(Locale.Category.FORMAT), "%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
+                String.format(
+                        Locale.getDefault(Locale.Category.FORMAT),
+                        "%d / %d = %.1f %%",
+                        score.solved,
+                        score.played,
+                        score.percentage()));
         percentBar.setProgressCompat((int) score.percentage(), /* animated= */ true);
     }
 
