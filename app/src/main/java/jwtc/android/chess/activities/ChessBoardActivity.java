@@ -877,6 +877,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void rebuildBoard() {
+        chessBoardView.setVariant(gameApi.variant());
         boolean reusePieces = reusesPieceViews();
         cancelMoveAnimation();
         if (!reusePieces) {

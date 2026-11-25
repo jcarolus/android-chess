@@ -1,17 +1,23 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public class ChessBoardView extends ViewGroup {
     public static final String TAG = "ChessBoardView";
 
     private boolean rotated = false;
+    private Variant variant = Variant.STANDARD;
+    private final Paint hillBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public ChessBoardView(Context context) {
         super(context);
@@ -92,6 +98,35 @@ public class ChessBoardView extends ViewGroup {
 
     public boolean isRotated() {
         return this.rotated;
+    }
+
+    public void setVariant(Variant variant) {
+        if (this.variant != variant) {
+            this.variant = variant;
+            invalidate();
+        }
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        if (variant != Variant.KING_OF_THE_HILL) {
+            return;
+        }
+
+        // The central four squares occupy the same area in either board orientation.
+        final int squareSize = Math.min(getWidth(), getHeight()) / 8;
+        final float density = getResources().getDisplayMetrics().density;
+        final float inset = 2 * density;
+        final float start = 3 * squareSize + inset;
+        final float end = 5 * squareSize - inset;
+        hillBorderPaint.setStyle(Paint.Style.STROKE);
+        hillBorderPaint.setColor(Color.BLACK);
+        hillBorderPaint.setStrokeWidth(4 * density);
+        canvas.drawRect(start, start, end, end, hillBorderPaint);
+        hillBorderPaint.setColor(0xFFFFD54F);
+        hillBorderPaint.setStrokeWidth(2 * density);
+        canvas.drawRect(start, start, end, end, hillBorderPaint);
     }
 
     public void invalidatePieces() {
