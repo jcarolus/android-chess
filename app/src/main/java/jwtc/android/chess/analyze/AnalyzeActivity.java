@@ -35,6 +35,7 @@ import jwtc.android.chess.links.LinkActivity;
 import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.play.MenuDialog;
 import jwtc.android.chess.play.SaveGameDialog;
+import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
@@ -71,7 +72,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private EngineEvaluationView evaluationView;
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
-    // The Move Classification of the current move, or why it is missing; null when not shown.
+    // The current move's opening name, Move Classification, or why it is missing.
     private String moveFeedback;
     private MaterialButton buttonEngineMove;
     private PositionMove displayedEngineMove;
@@ -81,6 +82,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private Node lastScrolledNode;
     private List<Node> navigationLine = new ArrayList<>();
     private Analysis analysis;
+    private EcoService ecoService;
     private final AnalysisBoardDescriptions boardDescriptions =
             new AnalysisBoardDescriptions(this::updateSelectedSquares);
     private View buttonBackToMain;
@@ -118,6 +120,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
 
         evaluationView = findViewById(R.id.engine_evaluation);
         gameApi = GameApi.forAnalysis();
+        ecoService = new EcoService(gameApi);
         analysis =
                 new Analysis(
                         this,
@@ -208,6 +211,15 @@ public class AnalyzeActivity extends ChessBoardActivity {
                     gameApi.goTo(gameApi.getRootNode());
                     return true;
                 });
+        ecoService.load(
+                getAssets(),
+                () ->
+                        runOnUiThread(
+                                () -> {
+                                    if (!isDestroyed() && sessionLoaded) {
+                                        updateMoveSummary();
+                                    }
+                                }));
         buttonNext.setOnClickListener(
                 v -> {
                     Node next = nextMove();
@@ -930,7 +942,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
         if (entry == null) {
             return;
         }
-        if (summary.feedback != null) {
+        String openingName = ecoService.getEcoNameByHash(gameApi.getHashKey());
+        if (openingName != null) {
+            moveFeedback = openingName;
+        } else if (summary.feedback != null) {
             moveFeedback = getString(feedbackText(summary.feedback));
         } else if (summary.unavailable) {
             moveFeedback = getString(R.string.analysis_move_unavailable);

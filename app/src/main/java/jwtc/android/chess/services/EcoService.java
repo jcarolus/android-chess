@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 public class EcoService {
     private static final String TAG = "EcoService";
-    private HMap hashMap = null;
+    private volatile HMap hashMap = null;
     private final GameApi gameApi;
 
     public EcoService(GameApi gameApi) {
@@ -22,6 +22,10 @@ public class EcoService {
     }
 
     public void load(final AssetManager assetManager) {
+        load(assetManager, null);
+    }
+
+    public void load(final AssetManager assetManager, final Runnable onLoaded) {
         if (hashMap == null) {
             (new Thread(
                             new Runnable() {
@@ -37,12 +41,17 @@ public class EcoService {
                                                         + hashMap.getSize()
                                                         + " load ms:"
                                                         + (System.currentTimeMillis() - start));
+                                        if (onLoaded != null) {
+                                            onLoaded.run();
+                                        }
                                     } catch (Exception e) {
                                         Log.d(TAG, "Could not read the opening database");
                                     }
                                 }
                             }))
                     .start();
+        } else if (onLoaded != null) {
+            onLoaded.run();
         }
     }
 
