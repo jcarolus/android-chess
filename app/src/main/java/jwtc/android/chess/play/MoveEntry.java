@@ -44,22 +44,14 @@ public final class MoveEntry {
         this.activity = activity;
         field = new MoveEntryField(activity, this::submitMoveEntry);
         field.setVisibility(View.GONE);
-        if (activity.getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-            LinearLayout controls = activity.findViewById(R.id.play_controls_content);
-            controls.addView(
-                    field,
-                    0,
-                    new LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT));
-        } else {
-            ViewGroup boardBottom = activity.findViewById(R.id.play_board_bottom);
-            boardBottom.addView(
-                    field,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
+        // First in the scrollable controls, so the board keeps its size and the focused field
+        // scrolls into view above the keyboard.
+        LinearLayout controls = activity.findViewById(R.id.play_controls_content);
+        controls.addView(
+                field,
+                0,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     /**

@@ -84,13 +84,15 @@ public class ActivityHelper {
                                             : Math.max(systemBars.left, cutout.getSafeInsetLeft());
                         }
                     }
+                    // Edge-to-edge windows no longer resize for the keyboard, so the root
+                    // makes room for it here and its text fields stay above it.
+                    int bottomInset =
+                            Math.max(
+                                    systemBars.bottom,
+                                    insets.getInsets(WindowInsetsCompat.Type.ime()).bottom);
                     Insets padding =
                             Insets.max(
-                                    Insets.of(
-                                            leftInset,
-                                            topInset,
-                                            systemBars.right,
-                                            systemBars.bottom),
+                                    Insets.of(leftInset, topInset, systemBars.right, bottomInset),
                                     tvSafeInsets(context));
                     v.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 
