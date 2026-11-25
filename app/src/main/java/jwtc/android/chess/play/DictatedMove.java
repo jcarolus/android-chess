@@ -124,21 +124,6 @@ final class DictatedMove {
         this.promotion = -1;
     }
 
-    boolean matchesSan(String legalSan) {
-        String expected = legalSan.toLowerCase(Locale.ROOT).replace("=", "");
-        if (san.equals("castle")) {
-            return expected.matches("o-o(?:-o)?[+#]?");
-        }
-        if (!san.contains("x")) {
-            expected = expected.replace("x", "");
-        }
-        return san.equals(expected) || san.equals(expected.replaceAll("[+#]$", ""));
-    }
-
-    boolean matchesSanWithoutPromotion(String legalSan) {
-        return legalSan.matches(".*=[QRBN][+#]?") && matchesSan(legalSan.replaceAll("=[QRBN]", ""));
-    }
-
     String describe() {
         if (san != null) {
             return san;

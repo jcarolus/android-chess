@@ -16,9 +16,10 @@ import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.moveintake.MoveCandidate;
 import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.services.GameApi;
-import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.chess.GameTree.Node;
+import jwtc.chess.LegalMove;
 import jwtc.chess.Move;
+import jwtc.chess.MoveResolver;
 import jwtc.chess.board.BoardConstants;
 
 /**
@@ -99,70 +100,68 @@ public final class MoveEntry {
             field.setError(activity.getString(R.string.move_entry_format));
             return;
         }
-        PositionMove move =
+        MoveResolver.Resolution resolution =
                 coordinates.san == null
-                        ? gameApi.resolveTextMove(
-                                coordinates.from, coordinates.to, coordinates.promotion)
-                        : gameApi.resolveSanMove(coordinates::matchesSan);
-        PositionMove promotion = null;
-        if (move == null) {
-            if (coordinates.san != null) {
-                promotion = gameApi.resolveSanPromotion(coordinates::matchesSanWithoutPromotion);
-            } else if (coordinates.promotion < 0) {
-                promotion =
-                        gameApi.resolveTextMove(
-                                coordinates.from, coordinates.to, BoardConstants.QUEEN);
-            }
+                        ? MoveResolver.coordinates(
+                                gameApi.legalMoves(),
+                                gameApi.variant(),
+                                coordinates.from,
+                                coordinates.to,
+                                coordinates.promotion)
+                        : MoveResolver.spokenSan(gameApi.legalMoves(), coordinates.san);
+        switch (resolution.kind) {
+            case MOVE:
+                confirmMoveEntry(coordinates, resolution.move);
+                break;
+            case NEEDS_PROMOTION:
+                askPromotion(coordinates, resolution.from, resolution.to);
+                break;
+            default:
+                field.setError(activity.getString(R.string.move_entry_illegal));
         }
-        if (promotion != null) {
-            int from = Move.getFrom(promotion.move);
-            int to = Move.getTo(promotion.move);
-            int revision = positionRevision;
-            int textRevision = field.textRevision();
-            field.setError(null);
-            reviewingMove = true;
-            boolean[] selectedPiece = {false};
-            activity.promotionDialog(
-                            piece -> {
-                                selectedPiece[0] = true;
-                                reviewingMove = false;
-                                field.resetConnection(false);
-                                if (revision == positionRevision
-                                        && canApplyMoveEntry()
-                                        && textRevision == field.textRevision()) {
-                                    PositionMove selected =
-                                            gameApi.resolveTextMove(from, to, piece);
-                                    if (selected != null
-                                            && (coordinates.san == null
-                                                    || coordinates.matchesSanWithoutPromotion(
-                                                            selected.san))) {
-                                        confirmMoveEntry(coordinates, selected);
-                                    } else {
-                                        field.setError(
-                                                activity.getString(R.string.move_entry_illegal));
-                                    }
-                                }
-                            })
-                    .setOnDismissListener(
-                            dialog -> {
-                                if (!selectedPiece[0]) {
-                                    reviewingMove = false;
-                                    field.resetConnection(false);
-                                }
-                            })
-                    .show();
-            return;
-        }
-        if (move == null) {
-            field.setError(activity.getString(R.string.move_entry_illegal));
-            return;
-        }
-        confirmMoveEntry(coordinates, move);
     }
 
-    private void confirmMoveEntry(DictatedMove coordinates, PositionMove move) {
+    private void askPromotion(DictatedMove coordinates, int from, int to) {
+        int revision = positionRevision;
+        int textRevision = field.textRevision();
         field.setError(null);
-        MoveCandidate candidate = MoveCandidate.resolved(move.move);
+        reviewingMove = true;
+        boolean[] selectedPiece = {false};
+        activity.promotionDialog(
+                        piece -> {
+                            selectedPiece[0] = true;
+                            reviewingMove = false;
+                            field.resetConnection(false);
+                            if (revision == positionRevision
+                                    && canApplyMoveEntry()
+                                    && textRevision == field.textRevision()) {
+                                MoveResolver.Resolution selected =
+                                        MoveResolver.coordinates(
+                                                gameApi.legalMoves(),
+                                                gameApi.variant(),
+                                                from,
+                                                to,
+                                                piece);
+                                if (selected.kind == MoveResolver.Resolution.Kind.MOVE) {
+                                    confirmMoveEntry(coordinates, selected.move);
+                                } else {
+                                    field.setError(activity.getString(R.string.move_entry_illegal));
+                                }
+                            }
+                        })
+                .setOnDismissListener(
+                        dialog -> {
+                            if (!selectedPiece[0]) {
+                                reviewingMove = false;
+                                field.resetConnection(false);
+                            }
+                        })
+                .show();
+    }
+
+    private void confirmMoveEntry(DictatedMove coordinates, LegalMove move) {
+        field.setError(null);
+        MoveCandidate candidate = MoveCandidate.resolved(move.packed);
         if (!activity.getPrefs().getBoolean(PREF_CONFIRM_MOVE_ENTRY, false)) {
             offer(candidate);
             return;
@@ -170,12 +169,12 @@ public final class MoveEntry {
         int revision = positionRevision;
         int textRevision = field.textRevision();
         String description = coordinates.san == null ? coordinates.describe() : move.san;
-        if (Move.isPromotionMove(move.move)) {
+        if (Move.isPromotionMove(move.packed)) {
             description +=
                     " "
                             + activity.getResources()
                                     .getStringArray(R.array.promotionpieces)[
-                                    BoardConstants.QUEEN - Move.getPromotionPiece(move.move)];
+                                    BoardConstants.QUEEN - Move.getPromotionPiece(move.packed)];
         }
         reviewingMove = true;
         new ChessAlertDialogBuilder(activity)

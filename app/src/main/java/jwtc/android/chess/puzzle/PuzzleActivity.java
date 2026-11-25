@@ -22,6 +22,7 @@ import jwtc.android.chess.matecollection.MateScore;
 import jwtc.android.chess.moveintake.MoveIntake;
 import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.play.MenuDialog;
+import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.tools.ImportActivity;
@@ -33,6 +34,7 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
     private MateCollection mateCollection;
     private MateCollectionDefaults collectionDefaults;
     private boolean emptyCollection;
+    private MoveEntry moveEntry;
     private TextView textViewPuzzleText, textViewSolution;
     private ImageView imageTurn;
     private MaterialButton butPrev, butNext, butRetry, butShow;
@@ -116,6 +118,7 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
         findViewById(R.id.ButtonMenu).setOnClickListener(openMenu);
         findViewById(R.id.EmptyCollectionMenu).setOnClickListener(openMenu);
 
+        moveEntry = new MoveEntry(this);
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -176,6 +179,7 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
     protected void onPause() {
         super.onPause();
 
+        moveEntry.reset();
         mateCollection.pause();
     }
 
@@ -198,11 +202,13 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
 
         textViewPuzzleText.setText("# " + (position + 1) + " - " + sWhite);
         textViewSolution.setText("");
+        updateMoveEntry();
     }
 
     @Override
     public void onEmptyCollection() {
         showCollection(false);
+        moveEntry.update(null, null);
         collectionDefaults.onEmptyCollection();
     }
 
@@ -292,6 +298,11 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
 
         updateSelectedSquares();
         updatePieces();
+        updateMoveEntry();
+    }
+
+    private void updateMoveEntry() {
+        moveEntry.update(gameApi, gameApi.getCurrentNode());
     }
 
     @Override

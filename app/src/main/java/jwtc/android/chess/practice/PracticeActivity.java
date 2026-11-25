@@ -24,6 +24,7 @@ import jwtc.android.chess.matecollection.MateScore;
 import jwtc.android.chess.moveintake.MoveIntake;
 import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.play.MenuDialog;
+import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
@@ -34,6 +35,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     private MateCollection mateCollection;
     private MateCollectionDefaults collectionDefaults;
     private boolean emptyCollection;
+    private MoveEntry moveEntry;
     private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
     private ImageView imageTurn, imgStatus;
@@ -114,6 +116,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
         findViewById(R.id.ButtonMenu).setOnClickListener(openMenu);
         findViewById(R.id.EmptyCollectionMenu).setOnClickListener(openMenu);
 
+        moveEntry = new MoveEntry(this);
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -186,6 +189,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     protected void onPause() {
         super.onPause();
 
+        moveEntry.reset();
         mateCollection.pause();
     }
 
@@ -194,6 +198,7 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
         showCollection(true);
         buttonRetry.setEnabled(false);
         textViewSolution.setText(R.string.practice_preparing_position);
+        moveEntry.update(null, null);
     }
 
     @Override
@@ -209,11 +214,13 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
                 usersColor == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
 
         imgStatus.setImageResource(R.drawable.ic_check_none);
+        updateMoveEntry();
     }
 
     @Override
     public void onEmptyCollection() {
         showCollection(false);
+        moveEntry.update(null, null);
         collectionDefaults.onEmptyCollection();
     }
 
@@ -308,5 +315,10 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
         super.onMoveApplied(move);
 
         updateSelectedSquares();
+        updateMoveEntry();
+    }
+
+    private void updateMoveEntry() {
+        moveEntry.update(gameApi, gameApi.getCurrentNode());
     }
 }

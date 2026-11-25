@@ -3,6 +3,7 @@ package jwtc.android.chess.engine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import jwtc.chess.LegalMove;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.Variant;
@@ -89,17 +90,6 @@ public final class RustBoard {
             this.pending = pending;
             this.position = new BoardPosition(fen);
             this.duckPosition = position.duck();
-        }
-    }
-
-    public static final class LegalMove {
-        public final int packed;
-        public final String coordinate, san;
-
-        LegalMove(int packed, String coordinate, String san) {
-            this.packed = packed;
-            this.coordinate = coordinate;
-            this.san = san;
         }
     }
 

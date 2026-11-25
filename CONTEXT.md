@@ -37,6 +37,9 @@ _Avoid_: using "Mode" for engine behaviour (see Search Purpose)
 The rules a Mode applies to decide whether the user's move is played, queued, needs a choice or confirmation, or is rejected. Every input (board, castle choice, text, dictation, premove) goes through it.
 _Avoid_: requestMove (the name of one input path, not the concept)
 
+**Move resolver**:
+Turns a move written as text into one of the Position's legal moves: a PGN SAN token (import, replay, Lichess), SAN the user typed or dictated, or typed coordinates. Text that matches no legal move, or more than one, resolves to nothing. `jwtc.chess.MoveResolver` in code. What it resolves is then offered to the Move intake.
+
 **Setup**:
 The Mode where the user builds a Starting Position by hand.
 

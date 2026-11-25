@@ -7,8 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import javax.xml.parsers.DocumentBuilderFactory;
+import jwtc.chess.LegalMove;
+import jwtc.chess.Move;
+import jwtc.chess.MoveResolver;
+import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -37,25 +42,26 @@ public class DictatedMoveTest {
         for (String[] example : examples) {
             String language = example[0];
             DictatedMove generic = parse(example[1], language);
-            assertTrue(language, generic.matchesSan("O-O+"));
-            assertTrue(language, generic.matchesSan("O-O-O"));
-            assertFalse(language, generic.matchesSan("Ke2"));
+            assertTrue(language, matchesSan(generic, "O-O+"));
+            assertTrue(language, matchesSan(generic, "O-O-O"));
+            assertFalse(language, matchesSan(generic, "Ke2"));
             DictatedMove shortCastle = parse(example[2], language);
-            assertTrue(language, shortCastle.matchesSan("O-O"));
-            assertFalse(language, shortCastle.matchesSan("O-O-O"));
+            assertTrue(language, matchesSan(shortCastle, "O-O"));
+            assertFalse(language, matchesSan(shortCastle, "O-O-O"));
             DictatedMove longCastle = parse(example[3], language);
-            assertTrue(language, longCastle.matchesSan("O-O-O#"));
-            assertFalse(language, longCastle.matchesSan("O-O"));
+            assertTrue(language, matchesSan(longCastle, "O-O-O#"));
+            assertFalse(language, matchesSan(longCastle, "O-O"));
             for (String notation : new String[] {"oo", "00", "ooo", "000"}) {
                 assertTrue(
                         language,
-                        parse(notation, language)
-                                .matchesSan(notation.length() == 2 ? "O-O" : "O-O-O"));
+                        matchesSan(
+                                parse(notation, language),
+                                notation.length() == 2 ? "O-O" : "O-O-O"));
             }
         }
-        assertTrue(parse("rokeren", "nl").matchesSan("O-O"));
-        assertTrue(parse("roquer", "fr").matchesSan("O-O-O"));
-        assertTrue(parse("易位", "zh-TW").matchesSan("O-O"));
+        assertTrue(matchesSan(parse("rokeren", "nl"), "O-O"));
+        assertTrue(matchesSan(parse("roquer", "fr"), "O-O-O"));
+        assertTrue(matchesSan(parse("易位", "zh-TW"), "O-O"));
         assertNull(parse("korte rokade", "en"));
         assertNull(parse("grand roque court", "fr"));
     }
@@ -65,9 +71,9 @@ public class DictatedMoveTest {
         for (String text :
                 new String[] {"castle short", "oo", "00", "O-O", "0-0", " Castle   SHORT "}) {
             DictatedMove move = parse(text, "en");
-            assertTrue(text, move.matchesSan("O-O"));
-            assertTrue(text, move.matchesSan("O-O+"));
-            assertFalse(text, move.matchesSan("O-O-O"));
+            assertTrue(text, matchesSan(move, "O-O"));
+            assertTrue(text, matchesSan(move, "O-O+"));
+            assertFalse(text, matchesSan(move, "O-O-O"));
             assertEquals("o-o", move.san);
         }
     }
@@ -76,25 +82,25 @@ public class DictatedMoveTest {
     public void acceptsLongCastlingAliases() {
         for (String text : new String[] {"castle long", "ooo", "000", "O-O-O", "0-0-0"}) {
             DictatedMove move = parse(text, "en");
-            assertTrue(text, move.matchesSan("O-O-O"));
-            assertTrue(text, move.matchesSan("O-O-O#"));
-            assertFalse(text, move.matchesSan("O-O"));
+            assertTrue(text, matchesSan(move, "O-O-O"));
+            assertTrue(text, matchesSan(move, "O-O-O#"));
+            assertFalse(text, matchesSan(move, "O-O"));
             assertEquals("o-o-o", move.san);
         }
-        assertTrue(parse("ooo+", "en").matchesSan("O-O-O+"));
-        assertFalse(parse("ooo+", "en").matchesSan("O-O-O"));
-        assertTrue(parse("00#", "en").matchesSan("O-O#"));
+        assertTrue(matchesSan(parse("ooo+", "en"), "O-O-O+"));
+        assertFalse(matchesSan(parse("ooo+", "en"), "O-O-O"));
+        assertTrue(matchesSan(parse("00#", "en"), "O-O#"));
     }
 
     @Test
     public void unspecifiedCastlingMatchesBothSidesForLegalMoveResolution() {
         DictatedMove move = parse("castle", "en");
-        assertTrue(move.matchesSan("O-O"));
-        assertTrue(move.matchesSan("O-O-O"));
-        assertTrue(move.matchesSan("O-O+"));
-        assertTrue(move.matchesSan("O-O-O#"));
-        assertFalse(move.matchesSan("Ke2"));
-        assertFalse(move.matchesSanWithoutPromotion("e8=Q"));
+        assertTrue(matchesSan(move, "O-O"));
+        assertTrue(matchesSan(move, "O-O-O"));
+        assertTrue(matchesSan(move, "O-O+"));
+        assertTrue(matchesSan(move, "O-O-O#"));
+        assertFalse(matchesSan(move, "Ke2"));
+        assertFalse(matchesSanWithoutPromotion(move, "e8=Q"));
     }
 
     @Test
@@ -119,14 +125,14 @@ public class DictatedMoveTest {
     public void acceptsOmittedSanPromotionWithoutIgnoringExplicitPieces() {
         for (String text : new String[] {"e8", "pawn e8"}) {
             for (String piece : new String[] {"Q", "R", "B", "N"}) {
-                assertTrue(parse(text, "en").matchesSanWithoutPromotion("e8=" + piece));
+                assertTrue(matchesSanWithoutPromotion(parse(text, "en"), "e8=" + piece));
             }
         }
-        assertTrue(parse("e takes d8", "en").matchesSanWithoutPromotion("exd8=N+"));
-        assertTrue(parse("e8+", "en").matchesSanWithoutPromotion("e8=Q+"));
-        assertFalse(parse("e8+", "en").matchesSanWithoutPromotion("e8=N"));
-        assertFalse(parse("e8Q", "en").matchesSanWithoutPromotion("e8=N"));
-        assertFalse(parse("e8", "en").matchesSanWithoutPromotion("e8"));
+        assertTrue(matchesSanWithoutPromotion(parse("e takes d8", "en"), "exd8=N+"));
+        assertTrue(matchesSanWithoutPromotion(parse("e8+", "en"), "e8=Q+"));
+        assertFalse(matchesSanWithoutPromotion(parse("e8+", "en"), "e8=N"));
+        assertFalse(matchesSanWithoutPromotion(parse("e8Q", "en"), "e8=N"));
+        assertFalse(matchesSanWithoutPromotion(parse("e8", "en"), "e8"));
         assertEquals(-1, parse("e7e8", "en").promotion);
     }
 
@@ -139,50 +145,50 @@ public class DictatedMoveTest {
 
     @Test
     public void acceptsSanWithOptionalCheckAndPromotionEquals() {
-        assertTrue(parse("Nf6", "en").matchesSan("Nf6+"));
-        assertTrue(parse("Nf6+", "en").matchesSan("Nf6+"));
-        assertFalse(parse("Nf6+", "en").matchesSan("Nf6"));
-        assertTrue(parse("e8Q", "en").matchesSan("e8=Q+"));
-        assertTrue(parse("e8=Q", "en").matchesSan("e8=Q"));
-        assertTrue(parse("O-O", "en").matchesSan("O-O+"));
-        assertTrue(parse("R1e2", "en").matchesSan("R1e2"));
-        assertFalse(parse("Re2", "en").matchesSan("R1e2"));
+        assertTrue(matchesSan(parse("Nf6", "en"), "Nf6+"));
+        assertTrue(matchesSan(parse("Nf6+", "en"), "Nf6+"));
+        assertFalse(matchesSan(parse("Nf6+", "en"), "Nf6"));
+        assertTrue(matchesSan(parse("e8Q", "en"), "e8=Q+"));
+        assertTrue(matchesSan(parse("e8=Q", "en"), "e8=Q"));
+        assertTrue(matchesSan(parse("O-O", "en"), "O-O+"));
+        assertTrue(matchesSan(parse("R1e2", "en"), "R1e2"));
+        assertFalse(matchesSan(parse("Re2", "en"), "R1e2"));
     }
 
     @Test
     public void acceptsSpokenPiecesCapturesAndPromotion() {
-        assertTrue(parse("Knight f3", "en").matchesSan("Nf3"));
-        assertTrue(parse("pawn e8 queen", "en").matchesSan("e8=Q"));
-        assertTrue(parse("Knight takes f3", "en").matchesSan("Nxf3"));
-        assertTrue(parse("bishop captures g7", "en").matchesSan("Bxg7+"));
-        assertTrue(parse("pawn e captures d8 queen", "en").matchesSan("exd8=Q+"));
-        assertFalse(parse("Knight takes f3", "en").matchesSan("Nf3"));
-        assertTrue(parse("Nxf3", "en").matchesSan("Nxf3"));
+        assertTrue(matchesSan(parse("Knight f3", "en"), "Nf3"));
+        assertTrue(matchesSan(parse("pawn e8 queen", "en"), "e8=Q"));
+        assertTrue(matchesSan(parse("Knight takes f3", "en"), "Nxf3"));
+        assertTrue(matchesSan(parse("bishop captures g7", "en"), "Bxg7+"));
+        assertTrue(matchesSan(parse("pawn e captures d8 queen", "en"), "exd8=Q+"));
+        assertFalse(matchesSan(parse("Knight takes f3", "en"), "Nf3"));
+        assertTrue(matchesSan(parse("Nxf3", "en"), "Nxf3"));
     }
 
     @Test
     public void acceptsOmittedCaptureMarkers() {
         for (String text : new String[] {"bf3", "Bf3", "bishop f3"}) {
-            assertTrue(text, parse(text, "en").matchesSan("Bxf3"));
-            assertTrue(text, parse(text, "en").matchesSan("Bxf3+"));
+            assertTrue(text, matchesSan(parse(text, "en"), "Bxf3"));
+            assertTrue(text, matchesSan(parse(text, "en"), "Bxf3+"));
         }
-        assertTrue(parse("loper f3", "nl").matchesSan("Bxf3"));
-        assertTrue(parse("ef3", "en").matchesSan("exf3"));
-        assertTrue(parse("pawn e d8 queen", "en").matchesSan("exd8=Q+"));
-        assertTrue(parse("ed8", "en").matchesSanWithoutPromotion("exd8=N+"));
+        assertTrue(matchesSan(parse("loper f3", "nl"), "Bxf3"));
+        assertTrue(matchesSan(parse("ef3", "en"), "exf3"));
+        assertTrue(matchesSan(parse("pawn e d8 queen", "en"), "exd8=Q+"));
+        assertTrue(matchesSanWithoutPromotion(parse("ed8", "en"), "exd8=N+"));
     }
 
     @Test
     public void omittedCaptureMarkersPreserveOtherSanRequirements() {
-        assertFalse(parse("Bf3+", "en").matchesSan("Bxf3"));
-        assertFalse(parse("Rf3", "en").matchesSan("Rbxf3"));
-        assertFalse(parse("Rf3", "en").matchesSan("Rfxf3"));
-        assertTrue(parse("Rbf3", "en").matchesSan("Rbxf3"));
-        assertFalse(parse("Rbf3", "en").matchesSan("Rfxf3"));
-        assertFalse(parse("f3", "en").matchesSan("exf3"));
-        assertFalse(parse("Bxf3", "en").matchesSan("Bf3"));
-        assertFalse(parse("bishop captures f3", "en").matchesSan("Bf3"));
-        assertFalse(parse("ed8Q", "en").matchesSan("exd8=N"));
+        assertFalse(matchesSan(parse("Bf3+", "en"), "Bxf3"));
+        assertFalse(matchesSan(parse("Rf3", "en"), "Rbxf3"));
+        assertFalse(matchesSan(parse("Rf3", "en"), "Rfxf3"));
+        assertTrue(matchesSan(parse("Rbf3", "en"), "Rbxf3"));
+        assertFalse(matchesSan(parse("Rbf3", "en"), "Rfxf3"));
+        assertFalse(matchesSan(parse("f3", "en"), "exf3"));
+        assertFalse(matchesSan(parse("Bxf3", "en"), "Bf3"));
+        assertFalse(matchesSan(parse("bishop captures f3", "en"), "Bf3"));
+        assertFalse(matchesSan(parse("ed8Q", "en"), "exd8=N"));
     }
 
     @Test
@@ -197,13 +203,13 @@ public class DictatedMoveTest {
             String language = example[0];
             String alias = example[1];
             String piece = example[2];
-            assertTrue(parse(alias + " f3", language).matchesSan(piece + "f3"));
-            assertTrue(parse("e8 " + alias, language).matchesSan("e8=" + piece));
+            assertTrue(matchesSan(parse(alias + " f3", language), piece + "f3"));
+            assertTrue(matchesSan(parse("e8 " + alias, language), "e8=" + piece));
             assertEquals(
                     piece.equals("N") ? BoardConstants.KNIGHT : BoardConstants.QUEEN,
                     parse("e7 e8 " + alias, language).promotion);
         }
-        assertTrue(parse("Night takes f3", "en-US").matchesSan("Nxf3+"));
+        assertTrue(matchesSan(parse("Night takes f3", "en-US"), "Nxf3+"));
         assertNull(parse("night f3", "nl"));
         assertNull(parse("paart f3", "en"));
         assertNull(parse("renne f3", "en"));
@@ -218,11 +224,11 @@ public class DictatedMoveTest {
                     "zh-TW"
                 }) {
             DictatedMove.Vocabulary vocabulary = vocabulary(language);
-            assertTrue(DictatedMove.parse("Nf3", vocabulary).matchesSan("Nf3+"));
+            assertTrue(matchesSan(DictatedMove.parse("Nf3", vocabulary), "Nf3+"));
         }
-        assertTrue(parse("paard slaat f3", "nl").matchesSan("Nxf3"));
-        assertTrue(parse("pion e8 dame", "nl").matchesSan("e8=Q"));
-        assertTrue(parse("Springer schlägt f3", "de").matchesSan("Nxf3"));
+        assertTrue(matchesSan(parse("paard slaat f3", "nl"), "Nxf3"));
+        assertTrue(matchesSan(parse("pion e8 dame", "nl"), "e8=Q"));
+        assertTrue(matchesSan(parse("Springer schlägt f3", "de"), "Nxf3"));
     }
 
     @Test
@@ -383,6 +389,25 @@ public class DictatedMoveTest {
         assertNull(parse("e9 e4", "en"));
         assertNull(parse("e2 e", "en"));
         assertNull(parse("e7 e8 king", "en"));
+    }
+
+    private static boolean matchesSanWithoutPromotion(DictatedMove move, String legalSan) {
+        int promotion =
+                Move.makeMovePromotion(
+                        Pos.fromColAndRow(4, 1),
+                        Pos.fromColAndRow(4, 0),
+                        BoardConstants.QUEEN,
+                        false);
+        return move.san != null
+                && MoveResolver.spokenSan(List.of(new LegalMove(promotion, "", legalSan)), move.san)
+                                .kind
+                        == MoveResolver.Resolution.Kind.NEEDS_PROMOTION;
+    }
+
+    private static boolean matchesSan(DictatedMove move, String legalSan) {
+        return move.san != null
+                && MoveResolver.spokenSan(List.of(new LegalMove(0, "", legalSan)), move.san).kind
+                        == MoveResolver.Resolution.Kind.MOVE;
     }
 
     private static DictatedMove parse(String text, String languageTag) {

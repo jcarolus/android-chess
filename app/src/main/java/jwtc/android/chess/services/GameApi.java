@@ -11,14 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.regex.Matcher;
 import jwtc.android.chess.engine.PgnReplay;
 import jwtc.android.chess.engine.RustBoard;
-import jwtc.android.chess.engine.RustSearchRequest;
 import jwtc.chess.GameRecord;
 import jwtc.chess.GameTree;
 import jwtc.chess.GameTree.Node;
+import jwtc.chess.LegalMove;
 import jwtc.chess.Move;
+import jwtc.chess.MoveResolver;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pgn;
 import jwtc.chess.PgnDate;
@@ -207,7 +207,7 @@ public class GameApi {
 
         public final String san;
 
-        private PositionMove(RustBoard.LegalMove move) {
+        private PositionMove(LegalMove move) {
             this(move.packed, move.san, move.coordinate, -1);
         }
 
@@ -227,9 +227,9 @@ public class GameApi {
         }
     }
 
-    private static List<PositionMove> positionMoves(List<RustBoard.LegalMove> legalMoves) {
+    private static List<PositionMove> positionMoves(List<LegalMove> legalMoves) {
         List<PositionMove> moves = new ArrayList<>();
-        for (RustBoard.LegalMove move : legalMoves) {
+        for (LegalMove move : legalMoves) {
             moves.add(new PositionMove(move));
         }
         return moves;
@@ -237,7 +237,7 @@ public class GameApi {
 
     /** Resolves the selected promotion and castling gesture through Rust's legal moves. */
     private PositionMove resolveLegalMove(int from, int to) {
-        RustBoard.LegalMove resolved = board.resolveMove(from, to, promotionPiece);
+        LegalMove resolved = board.resolveMove(from, to, promotionPiece);
         return resolved == null ? null : new PositionMove(resolved);
     }
 
@@ -400,7 +400,7 @@ public class GameApi {
      * to}, or null when there is none. Chess 960 castling is written king to rook square.
      */
     public String castleCoordinate(int from, int to) {
-        for (RustBoard.LegalMove move : board.legalMoves()) {
+        for (LegalMove move : board.legalMoves()) {
             if ((Move.isOO(move.packed) || Move.isOOO(move.packed))
                     && Move.getFrom(move.packed) == from
                     && Move.getTo(move.packed) == to) {
@@ -410,57 +410,9 @@ public class GameApi {
         return null;
     }
 
-    /** Resolves a coordinate entry with explicit promotion and king-to-rook castling. */
-    public PositionMove resolveTextMove(int from, int to, int promotion) {
-        for (RustBoard.LegalMove move : board.legalMoves()) {
-            if (Move.getFrom(move.packed) != from
-                    || Move.isPromotionMove(move.packed) != (promotion >= 0)
-                    || (promotion >= 0 && Move.getPromotionPiece(move.packed) != promotion)) {
-                continue;
-            }
-            int destination = Move.getTo(move.packed);
-            if (Move.isOO(move.packed) || Move.isOOO(move.packed)) {
-                if (variant() == Variant.CHESS_960) {
-                    if (move.coordinate.equals(Pos.toString(from) + Pos.toString(to))) {
-                        return new PositionMove(move);
-                    }
-                    continue;
-                }
-                destination = Pos.fromColAndRow(Move.isOO(move.packed) ? 7 : 0, Pos.row(from));
-            }
-            if (destination == to) {
-                return new PositionMove(move);
-            }
-        }
-        return null;
-    }
-
-    /** Resolves SAN against legal moves without changing the position. */
-    public PositionMove resolveSanMove(java.util.function.Predicate<String> matches) {
-        PositionMove result = null;
-        for (RustBoard.LegalMove move : board.legalMoves()) {
-            if (matches.test(move.san)) {
-                if (result != null) {
-                    return null;
-                }
-                result = new PositionMove(move);
-            }
-        }
-        return result;
-    }
-
-    /** Resolves an omitted SAN promotion only when all choices move the same pawn. */
-    public PositionMove resolveSanPromotion(java.util.function.Predicate<String> matches) {
-        PositionMove result = null;
-        for (RustBoard.LegalMove move : board.legalMoves()) {
-            if (Move.isPromotionMove(move.packed) && matches.test(move.san)) {
-                if (result != null && !Move.equalPositions(result.move, move.packed)) {
-                    return null;
-                }
-                result = new PositionMove(move);
-            }
-        }
-        return result;
+    /** The legal moves of the current position, for {@link MoveResolver}. */
+    public List<LegalMove> legalMoves() {
+        return board.legalMoves();
     }
 
     public boolean requestMove(int from, int to) {
@@ -535,7 +487,7 @@ public class GameApi {
         if (pendingDuckMove != null || isEnded()) {
             return false;
         }
-        for (RustBoard.LegalMove move : board.legalMoves()) {
+        for (LegalMove move : board.legalMoves()) {
             if (Move.getFrom(move.packed) == from
                     && Move.getTo(move.packed) == to
                     && Move.isPromotionMove(move.packed)) {
@@ -1151,10 +1103,6 @@ public class GameApi {
         return true;
     }
 
-    public static Matcher getMoveMatcher(String sMove) {
-        return Pgn.MOVE.matcher(sMove);
-    }
-
     public boolean requestMove(String sMove) {
         if (isEnded() || !applyPGNMove(sMove)) {
             return false;
@@ -1163,17 +1111,27 @@ public class GameApi {
         return true;
     }
 
-    /** Apply a complete SAN move without dispatching, for import/replay batches. */
-    public boolean applyPGNMove(String sMove) {
-        if (sMove == null || pendingDuckMove != null) {
+    /**
+     * Apply a complete SAN move without dispatching, for import/replay batches. In Duck chess the
+     * token must place the Duck unless the move ends the Game.
+     */
+    public synchronized boolean applyPGNMove(String sMove) {
+        if (pendingDuckMove != null) {
             return false;
         }
-        Matcher match = getMoveMatcher(sMove.trim());
-        if (match.matches()) {
-            return requestMove(match, null, "");
+        MoveResolver.SanMove resolved = MoveResolver.san(board.legalMoves(), sMove);
+        if (resolved == null || board.move(resolved.move.packed) == 0) {
+            return false;
         }
-        match = Pgn.CASTLING.matcher(sMove.trim().replace('0', 'O'));
-        return match.matches() && requestMove(match, match.group(1), "");
+        String san = board.getMySan();
+        if (resolved.duckSquare != -1
+                ? board.requestDuckMove(resolved.duckSquare) == 0
+                : board.variant() == Variant.DUCK && board.isEnded() == 0) {
+            board.undo();
+            return false;
+        }
+        addPGNEntry(board.getNumBoard(), san, "", board.getMyMove(), resolved.duckSquare);
+        return true;
     }
 
     public void resetForfeitTime() {
@@ -1290,131 +1248,6 @@ public class GameApi {
         pendingDuckMove = null;
         entry.duckMove = duckMove;
         recordEntry(entry);
-        return true;
-    }
-
-    private static int promotionPieceFromSuffix(String suffix) {
-        return "=Q".equals(suffix)
-                ? BoardConstants.QUEEN
-                : "=R".equals(suffix)
-                        ? BoardConstants.ROOK
-                        : "=B".equals(suffix) ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
-    }
-
-    private static int promotionPieceFromLetter(char letter) {
-        return letter == 'q'
-                ? BoardConstants.QUEEN
-                : letter == 'r'
-                        ? BoardConstants.ROOK
-                        : letter == 'b' ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
-    }
-
-    /**
-     * The square of the single legal move's piece matching a SAN move token's piece letter,
-     * destination, capture flag, promotion and disambiguating file/rank - or -1 when zero or more
-     * than one legal move matches. Sourced from the board's cached legal moves.
-     */
-    private int resolveDisambiguatedFrom(Matcher match, int destination) {
-        String pieceName = match.group(1);
-        char piece = pieceName == null ? 'P' : pieceName.charAt(0);
-        boolean capture = match.group(4) != null;
-        String promotion = match.group(7);
-        Integer promoted = promotion == null ? null : promotionPieceFromSuffix(promotion);
-        int candidate = -1, matches = 0;
-        for (RustBoard.LegalMove move : board.legalMoves()) {
-            String pieceMove = move.coordinate;
-            // Castling has its own SAN, so a king move never resolves to it.
-            if (pieceMove.length() < 4 || move.san.startsWith("O-O")) {
-                continue;
-            }
-            int from, to;
-            try {
-                from = Pos.fromString(pieceMove.substring(0, 2));
-                to = Pos.fromString(pieceMove.substring(2, 4));
-            } catch (Exception ex) {
-                continue;
-            }
-            if (to != destination) {
-                continue;
-            }
-            boolean isPromotion = pieceMove.length() > 4;
-            if ((promoted != null) != isPromotion) {
-                continue;
-            }
-            if (promoted != null && promotionPieceFromLetter(pieceMove.charAt(4)) != promoted) {
-                continue;
-            }
-            if (sanPiece(move.san) != piece) {
-                continue;
-            }
-            if (move.san.indexOf('x') >= 0 != capture) {
-                continue;
-            }
-            if (match.group(2) != null && !match.group(2).equals(Pos.colToString(from))) {
-                continue;
-            }
-            if (match.group(3) != null && !match.group(3).equals(Pos.rowToString(from))) {
-                continue;
-            }
-            candidate = from;
-            matches++;
-        }
-        return matches == 1 ? candidate : -1;
-    }
-
-    /** The moving piece's letter in a legal move's SAN: pawn moves have none. */
-    private static char sanPiece(String san) {
-        char first = san.charAt(0);
-        return Character.isUpperCase(first) ? first : 'P';
-    }
-
-    private synchronized boolean requestMove(Matcher match, String castle, String annotation) {
-        String duck = match.group(castle == null ? 8 : 2);
-        final int destination, duckSquare;
-        try {
-            destination = castle == null ? Pos.fromString(match.group(5) + match.group(6)) : -1;
-            duckSquare = duck == null ? -1 : Pos.fromString(duck.substring(1));
-        } catch (Exception ex) {
-            return false;
-        }
-        String fen = board.toFEN();
-        boolean whiteToMove = fen.trim().split("\\s+")[1].equals("w");
-        Variant variant = variant();
-        int from, to;
-        Integer promotionPiece = null;
-        if (castle != null) {
-            int[] files = RustSearchRequest.chess960Files(fen, whiteToMove);
-            if (files[0] < 0) {
-                return false;
-            }
-            from = Pos.fromColAndRow(files[0], whiteToMove ? 7 : 0);
-            to = Pos.fromColAndRow("O-O".equals(castle) ? 6 : 2, whiteToMove ? 7 : 0);
-        } else {
-            from = resolveDisambiguatedFrom(match, destination);
-            if (from < 0) {
-                return false;
-            }
-            to = destination;
-            String promotion = match.group(7);
-            if (promotion != null) {
-                promotionPiece = promotionPieceFromSuffix(promotion);
-            }
-        }
-        if (promotionPiece != null) {
-            board.setPromo(promotionPiece);
-        }
-        // A SAN token is a complete half-move. Reject missing/invalid duck placements atomically
-        // below.
-        if ((castle == null ? board.requestMove(from, to) : board.doCastleMove(from, to)) == 0) {
-            return false;
-        }
-        String san = board.getMySan();
-        if (duck != null && board.requestDuckMove(duckSquare) == 0
-                || duck == null && board.variant() == Variant.DUCK && board.isEnded() == 0) {
-            board.undo();
-            return false;
-        }
-        addPGNEntry(board.getNumBoard(), san, annotation, board.getMyMove(), duckSquare);
         return true;
     }
 

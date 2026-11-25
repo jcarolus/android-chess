@@ -51,6 +51,7 @@ import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameRecord;
+import jwtc.chess.MoveResolver;
 import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import org.json.JSONArray;
@@ -121,10 +122,6 @@ public class PlayActivity extends ChessBoardActivity
     }
 
     /** Opening lines may write castling with zeros and leave out check marks. */
-    private static String normalizedSan(String san) {
-        return san.trim().replace('0', 'O').replaceAll("[+#]+$", "");
-    }
-
     /** Asks before the Engine plays from earlier in the Game and replaces the moves that follow. */
     private void confirmOverwrite(Runnable action) {
         if (gameApi.hasContinuationToOverwrite()) {
@@ -927,11 +924,9 @@ public class PlayActivity extends ChessBoardActivity
 
             case REQUEST_ECO:
                 item = data.getString("item");
-                final String openingMove = normalizedSan(item);
-                GameApi.PositionMove move =
-                        gameApi.resolveSanMove(san -> normalizedSan(san).equals(openingMove));
+                MoveResolver.SanMove move = MoveResolver.san(gameApi.legalMoves(), item);
                 if (move != null) {
-                    offerMove(MoveCandidate.resolved(move.move));
+                    offerMove(MoveCandidate.resolved(move.move.packed));
                 }
                 break;
         }

@@ -16,6 +16,8 @@ import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportApi;
 import jwtc.chess.GameRecord;
+import jwtc.chess.LegalMove;
+import jwtc.chess.MoveResolver;
 import jwtc.chess.Pgn;
 import jwtc.chess.Pos;
 import jwtc.chess.Variant;
@@ -145,13 +147,15 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     check(
                             game.initFEN("4k3/8/8/8/8/8/8/1R2KR2 w KQ - 0 1", true),
                             "Text Chess960 castling setup failed");
-                    check(game.resolveTextMove(60, 63, -1) == null, "Empty rook square accepted");
-                    GameApi.PositionMove textCastle = game.resolveTextMove(60, 61, -1);
+                    check(
+                            text(game, 60, 63, -1).kind != MoveResolver.Resolution.Kind.MOVE,
+                            "Empty rook square accepted");
+                    LegalMove textCastle = text(game, 60, 61, -1).move;
                     check(textCastle != null, "Text Chess960 king-to-rook castle rejected");
                     check(
-                            "e1f1".equals(textCastle.boardCoordinate),
+                            "e1f1".equals(textCastle.coordinate),
                             "Chess960 UCI must target the rook");
-                    game.move(textCastle.move, -1);
+                    game.move(textCastle.packed, -1);
                     check(game.getCurrentPly() == 1, "Text Chess960 castle was not recorded");
 
                     GameApi standard = new GameApi();
@@ -159,37 +163,40 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             standard.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true),
                             "Text standard castling setup failed");
                     check(
-                            standard.resolveTextMove(60, 62, -1) == null,
+                            text(standard, 60, 62, -1).kind != MoveResolver.Resolution.Kind.MOVE,
                             "King destination accepted");
-                    GameApi.PositionMove standardCastle = standard.resolveTextMove(60, 63, -1);
+                    LegalMove standardCastle = text(standard, 60, 63, -1).move;
                     check(standardCastle != null, "Rook destination rejected");
                     check(
-                            "e1g1".equals(standardCastle.boardCoordinate),
+                            "e1g1".equals(standardCastle.coordinate),
                             "Standard UCI must target the king destination");
                     GameApi promotion = new GameApi();
                     check(
                             promotion.initFEN("8/P6k/8/8/8/8/7K/8 w - - 0 1", true),
                             "Text promotion setup failed");
                     check(
-                            promotion.resolveTextMove(8, 0, -1) == null,
+                            text(promotion, 8, 0, -1).kind != MoveResolver.Resolution.Kind.MOVE,
                             "Missing promotion accepted");
-                    GameApi.PositionMove knight =
-                            promotion.resolveTextMove(8, 0, BoardConstants.KNIGHT);
-                    check(knight != null && knight.uci.equals("a7a8n"), "Explicit knight rejected");
+                    LegalMove knight = text(promotion, 8, 0, BoardConstants.KNIGHT).move;
                     check(
-                            "a7a8n".equals(knight.boardCoordinate),
-                            "Knight promotion UCI is invalid");
+                            knight != null && knight.coordinate.equals("a7a8n"),
+                            "Explicit knight rejected");
+                    check("a7a8n".equals(knight.coordinate), "Knight promotion UCI is invalid");
                     GameApi enPassant = new GameApi();
                     check(
                             enPassant.initFEN("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", true),
                             "Text en passant setup failed");
-                    GameApi.PositionMove capture = enPassant.resolveTextMove(28, 19, -1);
+                    LegalMove capture = text(enPassant, 28, 19, -1).move;
                     check(capture != null, "Text en passant rejected");
-                    enPassant.move(capture.move, -1);
+                    enPassant.move(capture.packed, -1);
                     check(
                             enPassant.getFEN().startsWith("4k3/8/3P4/8/"),
                             "En passant did not remove the pawn");
                 });
+    }
+
+    private static MoveResolver.Resolution text(GameApi game, int from, int to, int promotion) {
+        return MoveResolver.coordinates(game.legalMoves(), game.variant(), from, to, promotion);
     }
 
     private void kingOfTheHillPersistence() throws Exception {
@@ -1412,8 +1419,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
     }
 
     /**
-     * {@code GameApi.requestMove(String)}'s SAN-token disambiguation is Rust-board-backed: a pinned
-     * piece sharing a destination with another of the same kind must not count as a second
+     * {@code GameApi.requestMove(String)} resolves SAN tokens against the Rust board's legal moves:
+     * a pinned piece sharing a destination with another of the same kind must not count as a second
      * candidate, and Chess 960 castling SAN must still resolve and apply.
      */
     private void gameApiSanDisambiguationUsesRustBoardApi() {
