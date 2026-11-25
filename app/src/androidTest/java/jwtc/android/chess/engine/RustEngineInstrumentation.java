@@ -33,6 +33,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
     private boolean ownershipOnly;
     private boolean textMoveOnly;
     private boolean hotspotOnly;
+    private boolean startingPositionOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -43,6 +44,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
         ownershipOnly = arguments != null && "ownership".equals(arguments.getString("suite"));
         textMoveOnly = arguments != null && "text-move".equals(arguments.getString("suite"));
         hotspotOnly = arguments != null && "hotspot".equals(arguments.getString("suite"));
+        startingPositionOnly =
+                arguments != null && "starting-position".equals(arguments.getString("suite"));
         start();
     }
 
@@ -50,6 +53,12 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (startingPositionOnly) {
+                jwtc.android.chess.analyze.AnalysisInstrumentation.verifyStartingPosition();
+                report.putString("stream", "Starting Position and retained continuations passed\n");
+                finish(-1, report);
+                return;
+            }
             if (hotspotOnly) {
                 HotspotVariantInstrumentation.verify();
                 report.putString("stream", "Hotspot variant compatibility passed\n");

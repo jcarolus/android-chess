@@ -664,4 +664,7 @@
     <string name="practice_preparing_position">正在準備練習局面…</string>
     <string name="import_duplicates_skipped">已略過重複項目</string>
     <string name="website_open_failed">沒有可用來開啟網站的應用程式。</string>
+    <string name="menu_use_position_as_start">將目前局面設為起始局面</string>
+    <string name="use_position_as_start_confirm">將此局面設為起始局面？先前的著法、相關註解以及更早分出的變例將被刪除。從此局面開始的後續著法將保留。此變更會自動儲存，且無法復原。</string>
+    <string name="use_position_as_start_failed">無法變更起始局面。</string>
 </resources>

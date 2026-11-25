@@ -649,4 +649,7 @@
     <string name="hotspot_result_fifty_moves">Партия закончилась вничью по правилу 50 ходов.</string>
     <string name="hotspot_result_insufficient_material">Партия закончилась вничью из-за недостаточного материала.</string>
     <string name="website_open_failed">Нет доступного приложения для открытия сайта.</string>
+    <string name="menu_use_position_as_start">Начать с текущей позиции</string>
+    <string name="use_position_as_start_confirm">Использовать эту позицию как начальную? Предыдущие ходы, комментарии к ним и варианты, начинающиеся раньше, будут удалены. Продолжения из этой позиции сохранятся. Изменение сохраняется автоматически, его нельзя отменить.</string>
+    <string name="use_position_as_start_failed">Не удалось изменить начальную позицию.</string>
 </resources>

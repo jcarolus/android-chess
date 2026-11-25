@@ -649,4 +649,7 @@
     <string name="hotspot_result_fifty_moves">Oyun 50 hamle kuralı nedeniyle berabere bitti.</string>
     <string name="hotspot_result_insufficient_material">Oyun yetersiz materyal nedeniyle berabere bitti.</string>
     <string name="website_open_failed">Web sitesini açabilecek bir uygulama yok.</string>
+    <string name="menu_use_position_as_start">Geçerli konumu başlangıç olarak kullan</string>
+    <string name="use_position_as_start_confirm">Bu konum başlangıç olarak kullanılsın mı? Önceki hamleler, yorumları ve daha önce ayrılan varyantlar kaldırılacak. Bu konumdan sonraki devam yolları korunacak. Bu değişiklik otomatik kaydedilir ve geri alınamaz.</string>
+    <string name="use_position_as_start_failed">Başlangıç konumu değiştirilemedi.</string>
 </resources>

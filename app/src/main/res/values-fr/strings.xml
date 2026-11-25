@@ -649,4 +649,7 @@
     <string name="hotspot_result_fifty_moves">La partie est nulle selon la règle des 50 coups.</string>
     <string name="hotspot_result_insufficient_material">La partie est nulle par insuffisance de matériel.</string>
     <string name="website_open_failed">Aucune application disponible pour ouvrir le site Web.</string>
+    <string name="menu_use_position_as_start">Utiliser la position actuelle comme départ</string>
+    <string name="use_position_as_start_confirm">Utiliser cette position comme départ ? Les coups précédents, leurs commentaires et les variantes qui commencent plus tôt seront supprimés. Les suites à partir de cette position seront conservées. Cette modification est enregistrée automatiquement et ne peut pas être annulée.</string>
+    <string name="use_position_as_start_failed">Impossible de modifier la position de départ.</string>
 </resources>

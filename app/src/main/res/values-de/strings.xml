@@ -656,4 +656,7 @@
     <string name="hotspot_result_fifty_moves">Die Partie endet durch die 50-Züge-Regel remis.</string>
     <string name="hotspot_result_insufficient_material">Die Partie endet wegen unzureichenden Materials remis.</string>
     <string name="website_open_failed">Keine App zum Öffnen der Website verfügbar.</string>
+    <string name="menu_use_position_as_start">Aktuelle Stellung als Anfang verwenden</string>
+    <string name="use_position_as_start_confirm">Diese Stellung als Anfang verwenden? Frühere Züge, ihre Kommentare und früher abzweigende Varianten werden entfernt. Fortsetzungen ab dieser Stellung bleiben erhalten. Diese Änderung wird automatisch gespeichert und kann nicht rückgängig gemacht werden.</string>
+    <string name="use_position_as_start_failed">Die Anfangsstellung konnte nicht geändert werden.</string>
 </resources>

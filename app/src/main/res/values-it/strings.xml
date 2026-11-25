@@ -649,4 +649,7 @@
     <string name="hotspot_result_fifty_moves">La partita è patta per la regola delle 50 mosse.</string>
     <string name="hotspot_result_insufficient_material">La partita è patta per materiale insufficiente.</string>
     <string name="website_open_failed">Nessuna app disponibile per aprire il sito web.</string>
+    <string name="menu_use_position_as_start">Usa la posizione attuale come inizio</string>
+    <string name="use_position_as_start_confirm">Usare questa posizione come inizio? Le mosse precedenti, i loro commenti e le varianti che iniziano prima saranno rimossi. Le continuazioni da questa posizione saranno mantenute. Questa modifica viene salvata automaticamente e non può essere annullata.</string>
+    <string name="use_position_as_start_failed">Impossibile modificare la posizione iniziale.</string>
 </resources>

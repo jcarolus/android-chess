@@ -115,6 +115,63 @@ public class GameTreeTest {
     }
 
     @Test
+    public void exportsFromPositionWithAllRemainingVariationsAndAnnotations() {
+        tree.setRootComment("old introduction");
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        add(tree.getRoot(), "d4", 2);
+        tree.setAnnotation(e4, "new introduction");
+        tree.addNag(e4, 1);
+        Node e5 = add(e4, "e5", 3);
+        Node c5 = add(e4, "c5", 4);
+        tree.setLeadingComment(c5, "Sicilian");
+        tree.addNag(c5, 5);
+        tree.setAnnotation(c5, "counterplay");
+        add(e5, "Nf3", 5);
+        Node nf3 = add(c5, "Nf3", 6);
+        add(c5, "Nc3", 7);
+        add(nf3, "d6", 8);
+
+        assertEquals(
+                "{new introduction} 1... e5 ( {Sicilian} 1... c5 $5 {counterplay} "
+                        + "2. Nf3 ( 2. Nc3 ) d6 ) 2. Nf3",
+                tree.exportMovesFrom(e4));
+        assertEquals(8, tree.countMoves(tree.getRoot()));
+    }
+
+    @Test
+    public void exportsFromVariationWithoutEarlierBranches() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        add(e4, "e5", 2);
+        Node c5 = add(e4, "c5", 3);
+        tree.setLeadingComment(c5, "comment on removed move");
+        add(c5, "Nf3", 4);
+        assertEquals("2. Nf3", tree.exportMovesFrom(c5));
+    }
+
+    @Test
+    public void exportsBlackStartWithOriginalNumberEvenWithoutComment() {
+        tree = new GameTree("8/8/8/8/8/8/8/K6k w - - 0 23", 0, 0);
+        Node ka2 = add(tree.getRoot(), "Ka2", 1);
+        add(ka2, "Kg1", 2);
+        assertEquals("23... Kg1", tree.exportMovesFrom(ka2));
+    }
+
+    @Test
+    public void exportsEndpointAsPositionOnlyWithItsComment() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        assertEquals("", tree.exportMovesFrom(e4));
+        tree.setAnnotation(e4, "study this position");
+        assertEquals("{study this position}", tree.exportMovesFrom(e4));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsExportFromDetachedPosition() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        tree.removeContinuation(e4);
+        tree.exportMovesFrom(e4);
+    }
+
+    @Test
     public void moveNumbersFollowTheStartingPosition() {
         GameTree black = new GameTree("8/8/8/8/8/8/8/K6k b - - 0 7", 0, 1);
         Node first = black.append(black.getRoot(), new PGNEntry("Kg1", "", 1, -1), 0, 0, false);

@@ -656,4 +656,7 @@
     <string name="hotspot_result_fifty_moves">La partida termina en tablas por la regla de las 50 jugadas.</string>
     <string name="hotspot_result_insufficient_material">La partida termina en tablas por material insuficiente.</string>
     <string name="website_open_failed">No hay ninguna aplicación disponible para abrir el sitio web.</string>
+    <string name="menu_use_position_as_start">Usar la posición actual como inicio</string>
+    <string name="use_position_as_start_confirm">¿Usar esta posición como inicio? Se eliminarán las jugadas anteriores, sus comentarios y las variantes que comiencen antes. Se conservarán las continuaciones desde esta posición. Este cambio se guarda automáticamente y no se puede deshacer.</string>
+    <string name="use_position_as_start_failed">No se pudo cambiar la posición inicial.</string>
 </resources>

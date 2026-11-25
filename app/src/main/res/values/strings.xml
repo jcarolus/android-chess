@@ -574,6 +574,9 @@
     <string name="pgn_promote_variation">Make preferred continuation</string>
     <string name="pgn_delete_variation">Delete variation</string>
     <string name="menu_truncate_line">Delete moves from here</string>
+    <string name="menu_use_position_as_start">Use current position as start</string>
+    <string name="use_position_as_start_confirm">Use this position as the start? Earlier moves, their comments, and variations that branch off earlier will be removed. Continuations from this position will be kept. This edit is saved automatically and cannot be undone.</string>
+    <string name="use_position_as_start_failed">Could not change the starting position.</string>
     <string name="truncate_line_confirm">Delete %1$s and every move after it? Moves: %2$d</string>
     <string name="truncate_line_confirm_variations">Delete %1$s and every move after it, including variations? Moves: %2$d</string>
     <string name="engine_evaluation_score">Engine evaluation: %1$+.1f pawns (positive favors White)</string>

@@ -649,4 +649,7 @@
     <string name="hotspot_result_fifty_moves">A partida terminou empatada pela regra dos 50 lances.</string>
     <string name="hotspot_result_insufficient_material">A partida terminou empatada por material insuficiente.</string>
     <string name="website_open_failed">Nenhuma aplicação disponível para abrir o site.</string>
+    <string name="menu_use_position_as_start">Usar a posição atual como início</string>
+    <string name="use_position_as_start_confirm">Usar esta posição como início? Os lances anteriores, os seus comentários e as variantes que começam antes serão removidos. As continuações a partir desta posição serão mantidas. Esta alteração é guardada automaticamente e não pode ser desfeita.</string>
+    <string name="use_position_as_start_failed">Não foi possível alterar a posição inicial.</string>
 </resources>

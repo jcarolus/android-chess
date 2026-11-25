@@ -649,4 +649,7 @@
     <string name="hotspot_result_fifty_moves">Partida este remiză conform regulii celor 50 de mutări.</string>
     <string name="hotspot_result_insufficient_material">Partida este remiză din cauza materialului insuficient.</string>
     <string name="website_open_failed">Nu există nicio aplicație disponibilă pentru a deschide site-ul.</string>
+    <string name="menu_use_position_as_start">Folosește poziția curentă ca început</string>
+    <string name="use_position_as_start_confirm">Folosești această poziție ca început? Mutările anterioare, comentariile lor și variantele care încep mai devreme vor fi eliminate. Continuările din această poziție vor fi păstrate. Modificarea se salvează automat și nu poate fi anulată.</string>
+    <string name="use_position_as_start_failed">Poziția inițială nu a putut fi schimbată.</string>
 </resources>

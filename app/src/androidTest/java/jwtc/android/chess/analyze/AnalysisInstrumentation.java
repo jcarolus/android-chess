@@ -26,6 +26,7 @@ public final class AnalysisInstrumentation {
     public static void verify(Instrumentation instrumentation) throws Exception {
         verifyBoardDescriptions(instrumentation);
         verifyRecordedPositions();
+        verifyStartingPosition();
         verifyStandard(instrumentation);
         verifyReportState();
         verifyReport(instrumentation);
@@ -34,6 +35,94 @@ public final class AnalysisInstrumentation {
                 instrumentation,
                 "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*",
                 false);
+    }
+
+    public static void verifyStartingPosition() {
+        for (boolean recorded : new boolean[] {false, true}) {
+            GameApi game = recorded ? GameApi.forAnalysis() : new GameApi();
+            check(
+                    game.loadPGN(
+                            "[Event \"Study\"]\n[White \"Player\"]\n\n"
+                                    + "{old intro} 1. e4 $1 {new intro} (1. d4 d5) "
+                                    + "e5 ( {Sicilian} 1... c5 $5 {counterplay} 2. Nf3 "
+                                    + "(2. Nc3) d6) 2. Nf3 Nc6 1-0"),
+                    "Cannot load starting-position study");
+            String original = game.exportFullPGN();
+            Node selected = game.getMainLineNodes().get(0);
+            check(game.goTo(selected), "Cannot select new start");
+            String fen = game.getFEN();
+            check(game.useCurrentPositionAsStart(), "Cannot change starting Position");
+            check(game.getCurrentNode() == game.getRootNode(), "Did not stay at new start");
+            check(game.getFEN().equals(fen), "Starting Position lost FEN state");
+            check("1".equals(game.pgnTags.get("SetUp")), "Missing standard SetUp tag");
+            check(!game.pgnTags.containsKey("Setup"), "Retained obsolete Setup spelling");
+            check("Study".equals(game.pgnTags.get("Event")), "Lost study title");
+            check("Player".equals(game.pgnTags.get("White")), "Lost game metadata");
+            check(game.getRootComment().equals("new intro"), "Lost Position comment");
+            check(game.getContinuations(game.getRootNode()).size() == 2, "Lost root variations");
+            check(game.exportFullPGN().contains("[Result \"1-0\"]"), "Lost main-line result");
+            check(
+                    game.exportMovesPGN()
+                            .equals(
+                                    "{new intro} 1... e5 ( {Sicilian} 1... c5 $5 {counterplay} "
+                                            + "2. Nf3 ( 2. Nc3 ) d6 ) 2. Nf3 Nc6"),
+                    "Retained tree lost moves or annotations");
+            check(
+                    game.getPositionSnapshot(game.getRootNode())
+                            .positionCommand
+                            .equals("position fen " + fen),
+                    "New start retained earlier engine history");
+            for (Node node : game.getMainLineNodes()) {
+                check(game.goTo(node), "Cannot navigate rebuilt main line");
+                check(game.getPositionSnapshot(node) != null, "Missing rebuilt Position");
+            }
+            check(game.goTo(game.getRootNode()), "Cannot navigate to new root");
+            String trimmed = game.exportFullPGN();
+            check(!game.useCurrentPositionAsStart(), "Allowed trimming existing start");
+            check(trimmed.equals(game.exportFullPGN()), "Rejected trim changed Game");
+
+            check(game.loadPGN(original), "Cannot reload original study");
+            Node variation = game.getMainLineNodes().get(0).getChildren().get(1);
+            check(game.goTo(variation), "Cannot select variation start");
+            check(game.useCurrentPositionAsStart(), "Cannot start inside variation");
+            check(game.exportFullPGN().contains("[Result \"*\"]"), "Kept unrelated result");
+            check(
+                    game.exportMovesPGN().equals("{counterplay} 2. Nf3 ( 2. Nc3 ) d6"),
+                    "Variation start retained earlier branches");
+            check(game.goTo(game.getMainLineNodes().get(1)), "Cannot select endpoint");
+            check(game.useCurrentPositionAsStart(), "Cannot make position-only study");
+            check(game.getMainLineNodes().isEmpty(), "Position-only study retained moves");
+            check(game.loadPGN(game.exportFullPGN()), "Position-only PGN cannot round trip");
+        }
+
+        for (String pgn :
+                new String[] {
+                    "[Variant \"Duck\"]\n\n1. e4@d5 e5@d4 2. Nf3@c6 *",
+                    "[Variant \"King of the Hill\"]\n\n1. e4 e5 2. Nf3 *",
+                    "[Variant \"Chess960\"]\n"
+                            + "[FEN \"4k3/8/8/8/8/8/8/5K1R w K - 0 23\"]\n\n23. O-O Kd7 *"
+                }) {
+            GameApi game = GameApi.forAnalysis();
+            check(game.loadPGN(pgn), "Cannot load Variant study");
+            Variant variant = game.variant();
+            check(game.goTo(game.getMainLineNodes().get(0)), "Cannot select Variant start");
+            String fen = game.getFEN();
+            check(game.useCurrentPositionAsStart(), "Cannot trim Variant study");
+            check(game.variant() == variant, "Starting Position changed Variant");
+            check(game.getFEN().equals(fen), "Starting Position changed Variant FEN");
+            check(game.loadPGN(game.exportFullPGN()), "Variant PGN cannot round trip");
+            check(game.variant() == variant, "Variant tag did not survive round trip");
+        }
+
+        GameApi repetition = GameApi.forAnalysis();
+        check(
+                repetition.loadPGN("1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *"),
+                "Cannot load repetition study");
+        check(repetition.getState() == BoardConstants.DRAW_REPEAT, "Missing original repetition");
+        check(repetition.useCurrentPositionAsStart(), "Cannot trim repetition study");
+        check(
+                repetition.getState() != BoardConstants.DRAW_REPEAT,
+                "New Starting Position retained discarded repetition history");
     }
 
     private static void verifyReportState() {

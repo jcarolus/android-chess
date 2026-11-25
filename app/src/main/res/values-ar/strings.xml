@@ -656,4 +656,7 @@
     <string name="hotspot_result_fifty_moves">انتهت المباراة بالتعادل وفقًا لقاعدة الخمسين نقلة.</string>
     <string name="hotspot_result_insufficient_material">انتهت المباراة بالتعادل بسبب عدم كفاية القطع.</string>
     <string name="website_open_failed">لا يوجد تطبيق متاح لفتح الموقع الإلكتروني.</string>
+    <string name="menu_use_position_as_start">استخدام الوضع الحالي كبداية</string>
+    <string name="use_position_as_start_confirm">هل تريد استخدام هذا الوضع كبداية؟ ستُحذف النقلات السابقة وتعليقاتها والتفرعات التي تبدأ قبل هذا الوضع. ستُحفظ التتمات من هذا الوضع. يُحفظ هذا التغيير تلقائيًا ولا يمكن التراجع عنه.</string>
+    <string name="use_position_as_start_failed">تعذر تغيير وضع البداية.</string>
 </resources>

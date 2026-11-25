@@ -649,4 +649,7 @@
     <string name="hotspot_result_fifty_moves">棋局根据五十步规则判为和棋。</string>
     <string name="hotspot_result_insufficient_material">棋局因子力不足而和棋。</string>
     <string name="website_open_failed">没有可用于打开网站的应用。</string>
+    <string name="menu_use_position_as_start">将当前局面设为起始局面</string>
+    <string name="use_position_as_start_confirm">将此局面设为起始局面？此前的着法、相关注释以及更早分出的变例将被删除。从此局面开始的后续着法将保留。此更改会自动保存，且无法撤销。</string>
+    <string name="use_position_as_start_failed">无法更改起始局面。</string>
 </resources>

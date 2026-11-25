@@ -697,4 +697,7 @@
     <string name="practice_preparing_position">Oefenstelling voorbereiden…</string>
     <string name="import_duplicates_skipped">Duplicaten overgeslagen</string>
     <string name="website_open_failed">Geen app beschikbaar om de website te openen.</string>
+    <string name="menu_use_position_as_start">Huidige positie als begin gebruiken</string>
+    <string name="use_position_as_start_confirm">Deze positie als begin gebruiken? Eerdere zetten, hun opmerkingen en varianten die eerder aftakken worden verwijderd. Voortzettingen vanaf deze positie blijven behouden. Deze wijziging wordt automatisch opgeslagen en kan niet ongedaan worden gemaakt.</string>
+    <string name="use_position_as_start_failed">De beginpositie kon niet worden gewijzigd.</string>
 </resources>

@@ -330,10 +330,21 @@ public final class GameTree {
 
     /** Iterative traversal also handles very long lines without consuming the Java call stack. */
     public String exportMoves() {
+        return exportMoves(root, rootComment, false);
+    }
+
+    /** Exports only continuations of this Position, with its comment as the new introduction. */
+    public String exportMovesFrom(Node position) {
+        requireMember(position);
+        return exportMoves(
+                position, position == root ? rootComment : position.entry.sAnnotation, true);
+    }
+
+    private String exportMoves(Node position, String comment, boolean includeFirstMoveNumber) {
         StringBuilder out = new StringBuilder();
-        boolean followsComment = appendComment(out, rootComment);
+        boolean followsComment = appendComment(out, comment) || includeFirstMoveNumber;
         Deque<Object> work = new ArrayDeque<>();
-        pushContinuations(work, root);
+        pushContinuations(work, position);
         while (!work.isEmpty()) {
             Object item = work.pop();
             if (item instanceof String) {

@@ -742,6 +742,28 @@ public class GameApi {
         return gameTree.countMoves(node);
     }
 
+    /** Replays the retained subtree from a new Starting Position, discarding earlier history. */
+    public boolean useCurrentPositionAsStart() {
+        if (pendingDuckMove != null || currentNode == gameTree.getRoot()) {
+            return false;
+        }
+        HashMap<String, String> tags = new HashMap<>(pgnTags);
+        tags.remove("Setup");
+        tags.put("SetUp", "1");
+        tags.put("FEN", board.toFEN());
+        if (gameVariant.pgnTag() != null) {
+            tags.put("Variant", gameVariant.pgnTag());
+        }
+        String result = gameTree.isMainLine(currentNode) ? gameResult() : "*";
+        tags.put("Result", result);
+        String moves = gameTree.exportMovesFrom(currentNode);
+        if (!loadPGN(Pgn.writeTags(tags) + '\n' + moves + ' ' + result + '\n')) {
+            return false;
+        }
+        pgnTags.put("PlyCount", Integer.toString(getPGNSize()));
+        return goTo(gameTree.getRoot());
+    }
+
     public boolean hasVariationsFrom(Node node) {
         return gameTree.hasVariationsFrom(node);
     }

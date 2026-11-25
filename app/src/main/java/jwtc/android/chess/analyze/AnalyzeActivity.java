@@ -250,6 +250,10 @@ public class AnalyzeActivity extends ChessBoardActivity {
                             if (gameApi.hasPendingDuckMove() || nextMove() == null) {
                                 items.remove(getString(R.string.menu_truncate_line));
                             }
+                            if (gameApi.hasPendingDuckMove()
+                                    || gameApi.getCurrentNode() == gameApi.getRootNode()) {
+                                items.remove(getString(R.string.menu_use_position_as_start));
+                            }
                             new MenuDialog(
                                             this,
                                             this::onMenuSelected,
@@ -283,7 +287,36 @@ public class AnalyzeActivity extends ChessBoardActivity {
             copyGameToClipboard();
         } else if (getString(R.string.menu_truncate_line).equals(item)) {
             confirmTruncateLine();
+        } else if (getString(R.string.menu_use_position_as_start).equals(item)) {
+            confirmUsePositionAsStart();
         }
+    }
+
+    private void confirmUsePositionAsStart() {
+        if (gameApi.hasPendingDuckMove() || gameApi.getCurrentNode() == gameApi.getRootNode()) {
+            return;
+        }
+        openConfirmDialog(
+                getString(R.string.use_position_as_start_confirm),
+                getString(R.string.button_ok),
+                getString(R.string.button_cancel),
+                this::usePositionAsStart,
+                null);
+    }
+
+    private void usePositionAsStart() {
+        dismissReport();
+        analysis.reset();
+        navigationLine = new ArrayList<>();
+        lastScrolledNode = null;
+        evaluationView.clearEvaluation();
+        if (!gameApi.useCurrentPositionAsStart()) {
+            doToast(getString(R.string.use_position_as_start_failed));
+        }
+        if (engineEnabled) {
+            startEngine(null);
+        }
+        rebuildBoard();
     }
 
     /** Asks before deleting the selected line's next move and everything after it. */

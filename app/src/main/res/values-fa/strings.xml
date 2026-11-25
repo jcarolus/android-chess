@@ -659,4 +659,7 @@
     <string name="hotspot_result_fifty_moves">بازی بر اساس قانون ۵۰ حرکت مساوی شد.</string>
     <string name="hotspot_result_insufficient_material">بازی به دلیل کافی نبودن مهره‌ها مساوی شد.</string>
     <string name="website_open_failed">برنامه‌ای برای باز کردن وب‌سایت در دسترس نیست.</string>
+    <string name="menu_use_position_as_start">استفاده از وضعیت فعلی به‌عنوان شروع</string>
+    <string name="use_position_as_start_confirm">از این وضعیت به‌عنوان شروع استفاده شود؟ حرکت‌های قبلی، توضیحات آن‌ها و شاخه‌هایی که زودتر جدا شده‌اند حذف می‌شوند. ادامه‌ها از این وضعیت حفظ می‌شوند. این تغییر به‌طور خودکار ذخیره می‌شود و قابل بازگردانی نیست.</string>
+    <string name="use_position_as_start_failed">تغییر وضعیت شروع ممکن نشد.</string>
 </resources>
