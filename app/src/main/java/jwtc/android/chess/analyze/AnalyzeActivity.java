@@ -247,6 +247,9 @@ public class AnalyzeActivity extends ChessBoardActivity {
                             if (!isStudy() && lGameID <= 0) {
                                 items.remove(getString(R.string.title_delete_game));
                             }
+                            if (gameApi.hasPendingDuckMove() || nextMove() == null) {
+                                items.remove(getString(R.string.menu_truncate_line));
+                            }
                             new MenuDialog(
                                             this,
                                             this::onMenuSelected,
@@ -278,6 +281,44 @@ public class AnalyzeActivity extends ChessBoardActivity {
             startSaveGameToFile();
         } else if (getString(R.string.menu_clip_pgn).equals(item)) {
             copyGameToClipboard();
+        } else if (getString(R.string.menu_truncate_line).equals(item)) {
+            confirmTruncateLine();
+        }
+    }
+
+    /** Asks before deleting the selected line's next move and everything after it. */
+    private void confirmTruncateLine() {
+        Node continuation = nextMove();
+        if (continuation == null || gameApi.hasPendingDuckMove()) {
+            return;
+        }
+        PGNEntry entry = continuation.getEntry();
+        String move =
+                gameApi.getMoveNumber(continuation)
+                        + " "
+                        + getMoveDescription(false, entry.sMove, entry.move);
+        int moves = gameApi.countMoves(continuation);
+        String message =
+                gameApi.hasVariationsFrom(continuation)
+                        ? getString(R.string.truncate_line_confirm_variations, move, moves)
+                        : getString(R.string.truncate_line_confirm, move, moves);
+        openConfirmDialog(
+                message,
+                getString(R.string.button_ok),
+                getString(R.string.button_cancel),
+                () -> truncateLine(continuation),
+                null);
+    }
+
+    private void truncateLine(Node continuation) {
+        boolean mainLine = gameApi.isMainLine(continuation);
+        dismissReport();
+        navigationLine = new ArrayList<>();
+        if (!gameApi.truncateAfter(continuation)) {
+            return;
+        }
+        if (mainLine) {
+            analysis.trimReportToMainLine();
         }
     }
 

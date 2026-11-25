@@ -543,6 +543,9 @@
     <string name="pgn_return_main_line">العودة إلى الخط الرئيسي</string>
     <string name="pgn_promote_variation">تعيين كاستمرار مفضل</string>
     <string name="pgn_delete_variation">حذف التفرع</string>
+    <string name="menu_truncate_line">حذف النقلات من هنا</string>
+    <string name="truncate_line_confirm">حذف %1$s وكل النقلات التالية؟ النقلات: %2$d</string>
+    <string name="truncate_line_confirm_variations">حذف %1$s وكل النقلات التالية بما فيها التفرعات؟ النقلات: %2$d</string>
     <string name="engine_evaluation_score">تقييم المحرك: %1$+.1f بيدق (القيم الموجبة لصالح الأبيض)</string>
     <string name="engine_evaluation_pending">تقييم المحرك غير متاح</string>
     <string name="analysis_settings">إعدادات التحليل</string>

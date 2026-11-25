@@ -263,12 +263,46 @@ public final class GameTree {
         return node.parent.children.remove(node);
     }
 
-    /** Explicit truncation for rejected online/puzzle moves, not ordinary history navigation. */
+    /**
+     * Removes the node and every move after it, including nested variations. When the node was the
+     * main continuation, the next variation from its parent becomes the main continuation.
+     */
     public boolean removeContinuation(Node node) {
         if (!contains(node) || node == root) {
             return false;
         }
         return node.parent.children.remove(node);
+    }
+
+    /**
+     * Number of moves in the node's subtree, the node itself and all nested variations included.
+     */
+    public int countMoves(Node node) {
+        requireMember(node);
+        int count = 0;
+        Deque<Node> pending = new ArrayDeque<>();
+        pending.push(node);
+        while (!pending.isEmpty()) {
+            Node next = pending.pop();
+            if (next.entry != null) {
+                count++;
+            }
+            for (Node child : next.children) {
+                pending.push(child);
+            }
+        }
+        return count;
+    }
+
+    /** Whether the subtree below the node holds moves other than its main continuations. */
+    public boolean hasVariationsFrom(Node node) {
+        requireMember(node);
+        for (Node next = node; next != null; next = next.getNext()) {
+            if (next.children.size() > 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean promoteVariation(Node node) {

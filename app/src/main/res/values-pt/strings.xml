@@ -536,6 +536,9 @@
     <string name="pgn_return_main_line">Voltar à linha principal</string>
     <string name="pgn_promote_variation">Definir como continuação preferida</string>
     <string name="pgn_delete_variation">Excluir variante</string>
+    <string name="menu_truncate_line">Excluir lances a partir daqui</string>
+    <string name="truncate_line_confirm">Excluir %1$s e todos os lances seguintes? Lances: %2$d</string>
+    <string name="truncate_line_confirm_variations">Excluir %1$s e todos os lances seguintes, incluindo variantes? Lances: %2$d</string>
     <string name="engine_evaluation_score">Avaliação do mecanismo: %1$+.1f peões (valores positivos favorecem as brancas)</string>
     <string name="engine_evaluation_pending">Avaliação do mecanismo indisponível</string>
     <string name="analysis_settings">Configurações de análise</string>

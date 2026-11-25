@@ -201,6 +201,47 @@ public class GameTreeTest {
     }
 
     @Test
+    public void removingTheMainContinuationPromotesTheNextVariation() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node e5 = add(e4, "e5", 2);
+        Node c5 = add(e4, "c5", 3);
+        add(e5, "Nf3", 4);
+
+        assertTrue(tree.removeContinuation(e5));
+
+        assertSame(c5, e4.getNext());
+        assertFalse(tree.contains(e5));
+        assertEquals("1. e4 c5", tree.exportMoves());
+    }
+
+    @Test
+    public void countsMovesInSubtreeIncludingVariations() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node e5 = add(e4, "e5", 2);
+        add(e4, "c5", 3);
+        Node nf3 = add(e5, "Nf3", 4);
+        add(add(e5, "Bc4", 5), "Nf6", 6);
+        add(nf3, "Nc6", 7);
+
+        assertEquals(7, tree.countMoves(tree.getRoot()));
+        assertEquals(5, tree.countMoves(e5));
+        assertEquals(2, tree.countMoves(nf3));
+    }
+
+    @Test
+    public void detectsVariationsAlongTheLine() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node e5 = add(e4, "e5", 2);
+        Node nf3 = add(e5, "Nf3", 3);
+        add(nf3, "Nc6", 4);
+        assertFalse(tree.hasVariationsFrom(e5));
+
+        add(nf3, "d6", 5);
+        assertTrue(tree.hasVariationsFrom(e5));
+        assertFalse(tree.hasVariationsFrom(nf3.getNext()));
+    }
+
+    @Test
     public void anEmptyGameCanHaveATerminalResult() {
         assertTrue(tree.setFinalState(tree.getRoot(), BoardConstants.WHITE_FORFEIT_TIME));
         assertEquals(BoardConstants.WHITE_FORFEIT_TIME, tree.getRoot().getFinalState());

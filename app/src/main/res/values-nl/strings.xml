@@ -563,6 +563,9 @@
     <string name="pgn_return_main_line">Terug naar de hoofdvariant</string>
     <string name="pgn_promote_variation">Als voorkeursvervolg instellen</string>
     <string name="pgn_delete_variation">Variant verwijderen</string>
+    <string name="menu_truncate_line">Zetten vanaf hier verwijderen</string>
+    <string name="truncate_line_confirm">%1$s en alle volgende zetten verwijderen? Zetten: %2$d</string>
+    <string name="truncate_line_confirm_variations">%1$s en alle volgende zetten, inclusief varianten, verwijderen? Zetten: %2$d</string>
     <string name="engine_evaluation_score">Enginebeoordeling: %1$+.1f pionnen (positief betekent voordeel voor wit)</string>
     <string name="engine_evaluation_pending">Enginebeoordeling niet beschikbaar</string>
     <string name="analysis_settings">Analyse-instellingen</string>

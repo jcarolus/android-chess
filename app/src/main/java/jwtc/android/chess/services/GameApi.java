@@ -764,6 +764,40 @@ public class GameApi {
         return true;
     }
 
+    /**
+     * Deletes the continuation and every move after it, including nested variations, and returns to
+     * its parent position. A cut in the main line also drops an imported game result.
+     */
+    public boolean truncateAfter(Node continuation) {
+        if (pendingDuckMove != null
+                || !gameTree.contains(continuation)
+                || continuation.getParent() == null) {
+            return false;
+        }
+        boolean mainLine = gameTree.isMainLine(continuation);
+        if (!navigateTo(continuation.getParent()) || !gameTree.removeContinuation(continuation)) {
+            return false;
+        }
+        if (mainLine) {
+            importedResult = null;
+        }
+        treeChanged = true;
+        dispatchNavigation();
+        return true;
+    }
+
+    public int countMoves(Node node) {
+        return gameTree.countMoves(node);
+    }
+
+    public boolean hasVariationsFrom(Node node) {
+        return gameTree.hasVariationsFrom(node);
+    }
+
+    public boolean isMainLine(Node node) {
+        return gameTree.isMainLine(node);
+    }
+
     public boolean promoteVariation(Node variationRoot) {
         if (pendingDuckMove != null || !gameTree.promoteVariation(variationRoot)) {
             return false;

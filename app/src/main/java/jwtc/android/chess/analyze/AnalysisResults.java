@@ -239,6 +239,12 @@ final class AnalysisResults {
         }
     }
 
+    /** Narrows the report's history to the given positions, forgetting results outside it. */
+    void narrowRetained(Set<String> histories) {
+        retained.retainAll(histories);
+        reportEntries.keySet().retainAll(histories);
+    }
+
     void retryUnavailable() {
         reportEntries.values().removeIf(result -> result.evaluation == null);
     }

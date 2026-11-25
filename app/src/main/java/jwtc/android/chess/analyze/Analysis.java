@@ -217,6 +217,27 @@ final class Analysis implements EngineListener {
         return true;
     }
 
+    /**
+     * Stops a running report and keeps report results only for positions still on the main line,
+     * after moves have been deleted from it.
+     */
+    void trimReportToMainLine() {
+        cancelReport();
+        reportNodes = Collections.emptyList();
+        List<Node> line = new ArrayList<>();
+        line.add(gameApi.getRootNode());
+        line.addAll(gameApi.getMainLineNodes());
+        Set<String> histories = new HashSet<>();
+        for (Node node : line) {
+            rememberPosition(node);
+            PositionSnapshot position = position(node);
+            if (position != null) {
+                histories.add(position.positionCommand);
+            }
+        }
+        results.narrowRetained(histories);
+    }
+
     boolean isReporting() {
         return reporting;
     }

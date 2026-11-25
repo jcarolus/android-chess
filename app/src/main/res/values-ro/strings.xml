@@ -536,6 +536,9 @@
     <string name="pgn_return_main_line">Revino la linia principală</string>
     <string name="pgn_promote_variation">Setează drept continuare preferată</string>
     <string name="pgn_delete_variation">Șterge varianta</string>
+    <string name="menu_truncate_line">Șterge mutările de aici</string>
+    <string name="truncate_line_confirm">Ștergi %1$s și toate mutările următoare? Mutări: %2$d</string>
+    <string name="truncate_line_confirm_variations">Ștergi %1$s și toate mutările următoare, inclusiv variantele? Mutări: %2$d</string>
     <string name="engine_evaluation_score">Evaluarea motorului: %1$+.1f pioni (valorile pozitive favorizează albul)</string>
     <string name="engine_evaluation_pending">Evaluarea motorului nu este disponibilă</string>
     <string name="analysis_settings">Setări de analiză</string>

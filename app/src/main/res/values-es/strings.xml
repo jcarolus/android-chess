@@ -543,6 +543,9 @@
     <string name="pgn_return_main_line">Volver a la línea principal</string>
     <string name="pgn_promote_variation">Establecer como continuación preferida</string>
     <string name="pgn_delete_variation">Eliminar variante</string>
+    <string name="menu_truncate_line">Eliminar jugadas desde aquí</string>
+    <string name="truncate_line_confirm">¿Eliminar %1$s y todas las jugadas siguientes? Jugadas: %2$d</string>
+    <string name="truncate_line_confirm_variations">¿Eliminar %1$s y todas las jugadas siguientes, incluidas las variantes? Jugadas: %2$d</string>
     <string name="engine_evaluation_score">Evaluación del motor: %1$+.1f peones (los valores positivos favorecen a las blancas)</string>
     <string name="engine_evaluation_pending">Evaluación del motor no disponible</string>
     <string name="analysis_settings">Ajustes de análisis</string>

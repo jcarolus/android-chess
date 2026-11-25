@@ -557,6 +557,9 @@
     <string name="pgn_return_main_line">返回主線</string>
     <string name="pgn_promote_variation">設為首選變化</string>
     <string name="pgn_delete_variation">刪除變化</string>
+    <string name="menu_truncate_line">從此處刪除著法</string>
+    <string name="truncate_line_confirm">刪除 %1$s 及其後的所有著法？著法數：%2$d</string>
+    <string name="truncate_line_confirm_variations">刪除 %1$s 及其後的所有著法（包括變化）？著法數：%2$d</string>
     <string name="engine_evaluation_score">引擎評估：%1$+.1f（以兵為單位，正值對白方有利）</string>
     <string name="engine_evaluation_pending">無法取得引擎評估</string>
     <string name="analysis_settings">分析設定</string>

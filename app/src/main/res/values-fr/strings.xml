@@ -536,6 +536,9 @@
     <string name="pgn_return_main_line">Revenir à la ligne principale</string>
     <string name="pgn_promote_variation">Définir comme suite préférée</string>
     <string name="pgn_delete_variation">Supprimer la variante</string>
+    <string name="menu_truncate_line">Supprimer les coups à partir d’ici</string>
+    <string name="truncate_line_confirm">Supprimer %1$s et tous les coups suivants ? Coups : %2$d</string>
+    <string name="truncate_line_confirm_variations">Supprimer %1$s et tous les coups suivants, variantes comprises ? Coups : %2$d</string>
     <string name="engine_evaluation_score">Évaluation du moteur : %1$+.1f pions (les valeurs positives favorisent les Blancs)</string>
     <string name="engine_evaluation_pending">Évaluation du moteur indisponible</string>
     <string name="analysis_settings">Paramètres d\'analyse</string>

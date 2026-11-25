@@ -546,6 +546,9 @@
     <string name="pgn_return_main_line">بازگشت به خط اصلی</string>
     <string name="pgn_promote_variation">تعیین به‌عنوان ادامهٔ ترجیحی</string>
     <string name="pgn_delete_variation">حذف شاخه</string>
+    <string name="menu_truncate_line">حذف حرکت‌ها از اینجا</string>
+    <string name="truncate_line_confirm">%1$s و همه حرکت‌های بعدی حذف شوند؟ حرکت‌ها: %2$d</string>
+    <string name="truncate_line_confirm_variations">%1$s و همه حرکت‌های بعدی، همراه با شاخه‌ها، حذف شوند؟ حرکت‌ها: %2$d</string>
     <string name="engine_evaluation_score">ارزیابی موتور: %1$+.1f پیاده (مقادیر مثبت به سود سفید است)</string>
     <string name="engine_evaluation_pending">ارزیابی موتور در دسترس نیست</string>
     <string name="analysis_settings">تنظیمات تحلیل</string>

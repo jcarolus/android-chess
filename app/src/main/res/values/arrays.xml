@@ -38,6 +38,7 @@
         <item>@string/title_delete_game</item>
         <item>@string/menu_save_game_to_file</item>
         <item>@string/menu_clip_pgn</item>
+        <item>@string/menu_truncate_line</item>
     </string-array>
     <string-array name="levels_ply">
         <item>1 ply</item>
