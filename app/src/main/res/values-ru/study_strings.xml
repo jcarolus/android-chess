@@ -4,6 +4,12 @@
     <string name="study_topic">Тема</string>
     <string name="study_surprise">Удивите меня</string>
     <string name="study_variations">Варианты</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">Доступен %1$d вариант</item>
+        <item quantity="few">Доступно %1$d варианта</item>
+        <item quantity="many">Доступно %1$d вариантов</item>
+        <item quantity="other">Доступно %1$d варианта</item>
+    </plurals>
     <string name="study_before_move">Перед ходом: %1$s</string>
     <string name="study_after_move">После хода: %1$s</string>
     <string name="study_pgn_evaluation">Оценка в этюде: %1$s</string>

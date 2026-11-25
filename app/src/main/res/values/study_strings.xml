@@ -5,6 +5,11 @@
     <string name="study_load_failed">Could not load studies.</string>
     <string name="study_surprise">Surprise me</string>
     <string name="study_variations">Variations</string>
+    <string name="study_variations_count" translatable="false">%1$s (%2$d)</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">%1$d variation available</item>
+        <item quantity="other">%1$d variations available</item>
+    </plurals>
     <string name="study_before_move">Before the move: %1$s</string>
     <string name="study_after_move">After the move: %1$s</string>
     <string name="study_pgn_evaluation">Study evaluation: %1$s</string>

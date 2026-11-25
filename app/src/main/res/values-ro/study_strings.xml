@@ -4,6 +4,11 @@
     <string name="study_topic">Subiect</string>
     <string name="study_surprise">Surprinde-mă</string>
     <string name="study_variations">Variante</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">%1$d variantă disponibilă</item>
+        <item quantity="few">%1$d variante disponibile</item>
+        <item quantity="other">%1$d de variante disponibile</item>
+    </plurals>
     <string name="study_before_move">Înainte de mutare: %1$s</string>
     <string name="study_after_move">După mutare: %1$s</string>
     <string name="study_pgn_evaluation">Evaluarea studiului: %1$s</string>

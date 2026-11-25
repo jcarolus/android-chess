@@ -4,6 +4,10 @@
     <string name="study_topic">Onderwerp</string>
     <string name="study_surprise">Verras me</string>
     <string name="study_variations">Varianten</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">%1$d variant beschikbaar</item>
+        <item quantity="other">%1$d varianten beschikbaar</item>
+    </plurals>
     <string name="study_before_move">Voor de zet: %1$s</string>
     <string name="study_after_move">Na de zet: %1$s</string>
     <string name="study_pgn_evaluation">Studie-evaluatie: %1$s</string>

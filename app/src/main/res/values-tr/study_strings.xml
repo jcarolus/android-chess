@@ -4,6 +4,10 @@
     <string name="study_topic">Konu</string>
     <string name="study_surprise">Beni şaşırt</string>
     <string name="study_variations">Varyantlar</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">%1$d varyant mevcut</item>
+        <item quantity="other">%1$d varyant mevcut</item>
+    </plurals>
     <string name="study_before_move">Hamleden önce: %1$s</string>
     <string name="study_after_move">Hamleden sonra: %1$s</string>
     <string name="study_pgn_evaluation">Çalışma değerlendirmesi: %1$s</string>

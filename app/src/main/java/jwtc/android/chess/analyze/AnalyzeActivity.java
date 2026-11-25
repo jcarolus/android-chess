@@ -86,7 +86,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
     private final AnalysisBoardDescriptions boardDescriptions =
             new AnalysisBoardDescriptions(this::updateSelectedSquares);
     private View buttonBackToMain;
-    private View buttonVariations;
+    private MaterialButton buttonVariations;
     private TextView textViewComment;
     private SwitchMaterial switchEngine;
     // Studies start without the engine so its evaluation does not give away the answers.
@@ -545,7 +545,16 @@ public class AnalyzeActivity extends ChessBoardActivity {
         boolean changed = analysis.selectPosition();
         updateNavigation();
         updateMoveSummary();
-        buttonVariations.setEnabled(gameApi.getContinuations(gameApi.getCurrentNode()).size() > 1);
+        int variationCount =
+                Math.max(0, gameApi.getContinuations(gameApi.getCurrentNode()).size() - 1);
+        buttonVariations.setEnabled(variationCount > 0);
+        buttonVariations.setText(
+                variationCount > 0
+                        ? getString(
+                                R.string.study_variations_count,
+                                getString(R.string.study_variations),
+                                variationCount)
+                        : getString(R.string.study_variations));
         updateComment();
         if (changed && analysis.isActive()) {
             evaluationView.clearEvaluation();
@@ -994,6 +1003,16 @@ public class AnalyzeActivity extends ChessBoardActivity {
                             + " "
                             + getMoveDescription(
                                     false, displayedEngineMove.san, displayedEngineMove.move);
+        }
+        int variationCount = Math.max(0, gameApi.getContinuations(current).size() - 1);
+        if (variationCount > 0) {
+            moveMessage +=
+                    ". "
+                            + getResources()
+                                    .getQuantityString(
+                                            R.plurals.study_variations_available,
+                                            variationCount,
+                                            variationCount);
         }
         updateTextViewOrSpeech(textViewLastMove, moveMessage, protectLastMoveSpeech);
     }

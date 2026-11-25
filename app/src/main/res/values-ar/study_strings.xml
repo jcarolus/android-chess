@@ -4,6 +4,14 @@
     <string name="study_topic">الموضوع</string>
     <string name="study_surprise">فاجئني</string>
     <string name="study_variations">التفرعات</string>
+    <plurals name="study_variations_available">
+        <item quantity="zero">%1$d تفرعات متاحة</item>
+        <item quantity="one">تفرع واحد متاح (%1$d)</item>
+        <item quantity="two">تفرعان متاحان (%1$d)</item>
+        <item quantity="few">%1$d تفرعات متاحة</item>
+        <item quantity="many">%1$d تفرعًا متاحًا</item>
+        <item quantity="other">%1$d تفرع متاح</item>
+    </plurals>
     <string name="study_before_move">قبل النقلة: %1$s</string>
     <string name="study_after_move">بعد النقلة: %1$s</string>
     <string name="study_pgn_evaluation">تقييم الدراسة: %1$s</string>

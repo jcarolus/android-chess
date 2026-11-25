@@ -4,6 +4,11 @@
     <string name="study_topic">Thème</string>
     <string name="study_surprise">Surprenez-moi</string>
     <string name="study_variations">Variantes</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">%1$d variante disponible</item>
+        <item quantity="many">%1$d variantes disponibles</item>
+        <item quantity="other">%1$d variantes disponibles</item>
+    </plurals>
     <string name="study_before_move">Avant le coup : %1$s</string>
     <string name="study_after_move">Après le coup : %1$s</string>
     <string name="study_pgn_evaluation">Évaluation de l’étude : %1$s</string>

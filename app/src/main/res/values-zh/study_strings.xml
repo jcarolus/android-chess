@@ -4,6 +4,9 @@
     <string name="study_topic">主题</string>
     <string name="study_surprise">随机选取</string>
     <string name="study_variations">变着</string>
+    <plurals name="study_variations_available">
+        <item quantity="other">有 %1$d 个变着</item>
+    </plurals>
     <string name="study_before_move">走棋前：%1$s</string>
     <string name="study_after_move">走棋后：%1$s</string>
     <string name="study_pgn_evaluation">研习评估：%1$s</string>
