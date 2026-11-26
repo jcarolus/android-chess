@@ -25,12 +25,6 @@
         <item>@string/menu_fromclip</item>
         <item>@string/menu_clip_pgn</item>
     </string-array>
-    <string-array name="gameslist_menu">
-        <item>@string/pgntool_import_explanation</item>
-        <item>@string/pgntool_export_explanation</item>
-        <item>@string/menu_delete_game_database</item>
-        <item>@string/gameslist_delete_matching</item>
-    </string-array>
     <string-array name="analyze_menu">
         <item>@string/analysis_settings</item>
         <item>@string/share_chess_link</item>

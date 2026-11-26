@@ -47,6 +47,9 @@ import jwtc.android.chess.play.MoveItemAdapter;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.tools.ExportActivity;
+import jwtc.android.chess.tools.ImportActivity;
+import jwtc.android.chess.tools.ImportService;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
@@ -89,6 +92,8 @@ public class GamesListActivity extends ChessBoardActivity {
     private boolean queryPending;
     private final Set<Long> checkedGameIds = new HashSet<>();
     private MaterialButton buttonBulkGames;
+    private CheckBox checkBoxCurrentGame;
+    private ActivityResultLauncher<String[]> pickImportFile;
     private BulkGameEditModel bulkEditModel;
     private AlertDialog bulkDialog;
     private String appliedFilterKey;
@@ -181,6 +186,18 @@ public class GamesListActivity extends ChessBoardActivity {
         buttonDelete = findViewById(R.id.ButtonDelete);
         buttonDelete.setOnClickListener(v -> deleteGame());
 
+        checkBoxCurrentGame = findViewById(R.id.CheckBoxCurrentGame);
+        checkBoxCurrentGame.setOnClickListener(
+                v -> {
+                    if (checkBoxCurrentGame.isChecked()) {
+                        checkedGameIds.add(currentGameId);
+                    } else {
+                        checkedGameIds.remove(currentGameId);
+                    }
+                    adapterGames.notifyDataSetChanged();
+                    updateSelectionControls();
+                });
+
         textViewDate = findViewById(R.id.TextViewDate);
         textViewEvent = findViewById(R.id.TextViewEvent);
 
@@ -207,6 +224,22 @@ public class GamesListActivity extends ChessBoardActivity {
                                         .putExtra(
                                                 GameSelectionActivity.EXTRA_RETURN_SELECTION, true)
                                         .putExtra(GameSelection.EXTRA, selection)));
+
+        pickImportFile =
+                registerForActivityResult(
+                        new ActivityResultContracts.OpenDocument(),
+                        uri -> {
+                            if (uri != null) {
+                                startActivity(
+                                        new Intent(this, ImportActivity.class)
+                                                .setData(uri)
+                                                .addFlags(
+                                                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                                                | Intent
+                                                                        .FLAG_GRANT_WRITE_URI_PERMISSION)
+                                                .putExtra("mode", ImportService.IMPORT_GAMES));
+                            }
+                        });
 
         buttonBulkGames = findViewById(R.id.ButtonBulkGames);
         buttonBulkGames.setOnClickListener(v -> showSelectionMenu());
@@ -575,6 +608,9 @@ public class GamesListActivity extends ChessBoardActivity {
         buttonAnalyze.setEnabled(false);
         buttonEdit.setEnabled(false);
         buttonDelete.setEnabled(false);
+        checkBoxCurrentGame.setChecked(false);
+        checkBoxCurrentGame.setEnabled(false);
+        checkBoxCurrentGame.setContentDescription(getString(R.string.gameslist_selection_actions));
     }
 
     private Long selectedGameId() {
@@ -724,8 +760,20 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void updateSelectionControls() {
         boolean busy = bulkEditModel.isRunning() || queryPending;
+        boolean hasGame =
+                cursor != null && !cursor.isClosed() && cursor.getCount() > 0 && currentGameId > 0;
+        checkBoxCurrentGame.setEnabled(!busy && hasGame);
+        checkBoxCurrentGame.setChecked(hasGame && checkedGameIds.contains(currentGameId));
+        checkBoxCurrentGame.setContentDescription(
+                hasGame
+                        ? getString(
+                                R.string.gameslist_check_game,
+                                textViewPlayerWhite.getText(),
+                                textViewPlayerBlack.getText(),
+                                currentGameId)
+                        : getString(R.string.gameslist_selection_actions));
         buttonBulkGames.setContentDescription(
-                getString(R.string.gameslist_selection_actions)
+                getString(R.string.button_menu_description)
                         + ". "
                         + selectedTitle(checkedGameIds.size()));
         buttonBulkGames.setEnabled(!busy);
@@ -791,7 +839,81 @@ public class GamesListActivity extends ChessBoardActivity {
                             updateSelectionControls();
                             return true;
                         });
+        menu.getMenu()
+                .add(R.string.pgntool_import_explanation)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            pickImportFile.launch(new String[] {"*/*"});
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.pgntool_export_explanation)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            chooseExportScope();
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.menu_delete_game_database)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            confirmDeleteDatabase();
+                            return true;
+                        });
         menu.show();
+    }
+
+    private void chooseExportScope() {
+        GameSelection exportSelection = selection;
+        int checked = exportSelection.filter().isEmpty() ? 0 : 1;
+        int[] scope = {checked};
+        new ChessAlertDialogBuilder(this)
+                .setTitle(R.string.pgntool_export_explanation)
+                .setSingleChoiceItems(
+                        new String[] {
+                            getString(R.string.export_all), getString(R.string.export_matching)
+                        },
+                        checked,
+                        (dialog, which) -> scope[0] = which)
+                .setNegativeButton(R.string.button_cancel, null)
+                .setPositiveButton(
+                        R.string.button_ok,
+                        (dialog, which) -> {
+                            GameSelection export =
+                                    scope[0] == 0
+                                            ? exportSelection.withoutFilters()
+                                            : exportSelection;
+                            ExportActivity.exportDatabase(this, export);
+                        })
+                .show();
+    }
+
+    private void confirmDeleteDatabase() {
+        GameStore store = new GameStore(getContentResolver());
+        openConfirmDialog(
+                getString(R.string.pgntool_confirm_delete_games)
+                        + "\n\n"
+                        + getString(R.string.pgntool_delete_item_count, store.count()),
+                getString(R.string.choice_delete),
+                getString(R.string.button_cancel),
+                () -> {
+                    try {
+                        store.deleteAll();
+                        checkedGameIds.clear();
+                        currentGameId = 0;
+                        getPrefs()
+                                .edit()
+                                .putLong("game_id", 0)
+                                .putLong("gameslist_current_game_id", 0)
+                                .apply();
+                        doFilterSort();
+                        doToast(getString(R.string.pgntool_games_deleted));
+                    } catch (Exception failure) {
+                        Log.e(TAG, "Could not delete Game Database", failure);
+                        doToast(getString(R.string.gameslist_delete_failed));
+                    }
+                },
+                null);
     }
 
     private String selectedTitle(int count) {

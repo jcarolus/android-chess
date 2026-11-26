@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
 import jwtc.chess.PGNColumns;
@@ -116,25 +115,6 @@ public final class GameStore {
 
     public int deleteAll() {
         return resolver.delete(MyPGNProvider.CONTENT_URI, "1=1", null);
-    }
-
-    public int deleteMatching(GameFilter filter, int expectedCount) {
-        String match = filter.selection() == null ? "1=1" : filter.selection();
-        String[] args = filter.selectionArgs();
-        List<String> values = new ArrayList<>();
-        if (args != null) {
-            java.util.Collections.addAll(values, args);
-            java.util.Collections.addAll(values, args);
-        }
-        values.add(Integer.toString(expectedCount));
-        return resolver.delete(
-                MyPGNProvider.CONTENT_URI,
-                "("
-                        + match
-                        + ") AND (SELECT COUNT(*) FROM games WHERE "
-                        + match
-                        + ") = CAST(? AS INTEGER)",
-                values.toArray(new String[0]));
     }
 
     public int count() {

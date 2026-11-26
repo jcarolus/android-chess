@@ -1,15 +1,12 @@
 package jwtc.android.chess.gamedatabase;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,12 +14,7 @@ import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.GameStore;
-import jwtc.android.chess.play.MenuDialog;
-import jwtc.android.chess.tools.ExportActivity;
-import jwtc.android.chess.tools.ImportActivity;
-import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.GameSelection;
 
 /** Selection screen shared by the Game Database and Study entry points. */
@@ -143,7 +135,7 @@ public class GameSelectionActivity extends BaseActivity {
                                         return;
                                     }
                                     matchingCount = matches;
-                                    ready = matches > 0;
+                                    ready = !isStudySelection() || matches > 0;
                                     count.setText(
                                             getString(R.string.gameslist_result_count, matches));
                                     open.setEnabled(canSubmit());
@@ -181,148 +173,7 @@ public class GameSelectionActivity extends BaseActivity {
     }
 
     protected void configureMenu() {
-        ActivityResultLauncher<String[]> pickFile =
-                registerForActivityResult(
-                        new ActivityResultContracts.OpenDocument(),
-                        uri -> {
-                            if (uri != null) {
-                                transfer(uri, ImportService.IMPORT_GAMES);
-                            }
-                        });
-        findViewById(R.id.ButtonMenu)
-                .setOnClickListener(
-                        v ->
-                                new MenuDialog(
-                                                this,
-                                                (request, data) -> {
-                                                    String item = data.getString("item");
-                                                    if (getString(
-                                                                    R.string
-                                                                            .pgntool_import_explanation)
-                                                            .equals(item)) {
-                                                        pickFile.launch(new String[] {"*/*"});
-                                                    } else if (getString(
-                                                                    R.string
-                                                                            .pgntool_export_explanation)
-                                                            .equals(item)) {
-                                                        chooseExportScope();
-                                                    } else if (getString(
-                                                                    R.string
-                                                                            .menu_delete_game_database)
-                                                            .equals(item)) {
-                                                        confirmDeleteDatabase();
-                                                    } else if (getString(
-                                                                            R.string
-                                                                                    .gameslist_delete_matching)
-                                                                    .equals(item)
-                                                            && canSubmit()) {
-                                                        confirmDeleteMatching();
-                                                    }
-                                                },
-                                                0,
-                                                R.array.gameslist_menu)
-                                        .show());
-    }
-
-    private void chooseExportScope() {
-        GameSelection selection = currentSelection();
-        int checked = selection.filter().isEmpty() ? 0 : 1;
-        int[] scope = {checked};
-        new ChessAlertDialogBuilder(this)
-                .setTitle(R.string.pgntool_export_explanation)
-                .setSingleChoiceItems(
-                        new String[] {
-                            getString(R.string.export_all), getString(R.string.export_matching)
-                        },
-                        checked,
-                        (dialog, which) -> scope[0] = which)
-                .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(
-                        R.string.button_ok,
-                        (dialog, which) -> {
-                            GameSelection export =
-                                    scope[0] == 0 ? selection.withoutFilters() : selection;
-                            if (!export.hasValidDates()) {
-                                doToast(getString(R.string.gameslist_invalid_dates));
-                                return;
-                            }
-                            ExportActivity.exportDatabase(this, export);
-                        })
-                .show();
-    }
-
-    private void transfer(Uri uri, int mode) {
-        startActivity(
-                new Intent(this, ImportActivity.class)
-                        .setData(uri)
-                        .addFlags(
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                        .putExtra("mode", mode));
-    }
-
-    private void confirmDeleteMatching() {
-        GameSelection selection = currentSelection();
-        int count = matchingCount;
-        new ChessAlertDialogBuilder(this)
-                .setTitle(R.string.gameslist_delete_matching)
-                .setMessage(
-                        getString(R.string.gameslist_delete_matching_confirmation)
-                                + "\n\n"
-                                + getString(R.string.pgntool_delete_item_count, count))
-                .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(
-                        R.string.choice_delete, (dialog, which) -> deleteMatching(selection, count))
-                .show();
-    }
-
-    private void deleteMatching(GameSelection selection, int count) {
-        setBusy(true);
-        executor.execute(
-                () -> {
-                    try {
-                        int deleted =
-                                new GameStore(getContentResolver())
-                                        .deleteMatching(selection.filter(), count);
-                        handler.post(() -> finishDeleteMatching(deleted == count));
-                    } catch (Exception failure) {
-                        Log.w("GameSelection", "Could not delete matching games", failure);
-                        handler.post(() -> finishDeleteMatching(false));
-                    }
-                });
-    }
-
-    private void finishDeleteMatching(boolean success) {
-        if (isDestroyed() || isFinishing()) {
-            return;
-        }
-        doToast(
-                getString(
-                        success
-                                ? R.string.pgntool_games_deleted
-                                : R.string.gameslist_delete_failed));
-        setBusy(false);
-    }
-
-    private void confirmDeleteDatabase() {
-        GameStore store = new GameStore(getContentResolver());
-        openConfirmDialog(
-                getString(R.string.pgntool_confirm_delete_games)
-                        + "\n\n"
-                        + getString(R.string.pgntool_delete_item_count, store.count()),
-                getString(R.string.choice_delete),
-                getString(R.string.button_cancel),
-                () -> {
-                    store.deleteAll();
-                    getPrefs()
-                            .edit()
-                            .putLong("game_id", 0)
-                            .putLong("gameslist_current_game_id", 0)
-                            .apply();
-                    refreshCount();
-                    doToast(getString(R.string.pgntool_games_deleted));
-                },
-                null);
+        findViewById(R.id.ButtonMenu).setVisibility(View.GONE);
     }
 
     @Override
