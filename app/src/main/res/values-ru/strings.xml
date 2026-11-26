@@ -264,7 +264,7 @@
     <string name="pgntool_create_db_explanation">Создать базу дебютов</string>
     <string name="pgntool_delete_games">Удалить все партии из базы</string>
     <string name="pgntool_games_deleted">Все партии удалены</string>
-    <string name="pgntool_export_explanation">Экспорт базы партий</string>
+    <string name="pgntool_export_explanation">Экспортировать все партии</string>
     <string name="pgntool_import_explanation">Импорт партий в базу</string>
     <string name="importing_games">Импорт партий…</string>
     <string name="importing_puzzles">Импорт задач…</string>

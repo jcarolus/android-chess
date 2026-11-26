@@ -264,7 +264,7 @@
     <string name="pgntool_create_db_explanation">Creează baza de deschideri</string>
     <string name="pgntool_delete_games">Șterge toate partidele din baza de date</string>
     <string name="pgntool_games_deleted">Toate partidele au fost șterse</string>
-    <string name="pgntool_export_explanation">Exportă baza de date cu partide</string>
+    <string name="pgntool_export_explanation">Exportă toate partidele</string>
     <string name="pgntool_import_explanation">Importă partide în baza de date</string>
     <string name="importing_games">Se importă partidele…</string>
     <string name="importing_puzzles">Se importă problemele…</string>

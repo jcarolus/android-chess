@@ -264,7 +264,7 @@
     <string name="pgntool_create_db_explanation">Criar banco de aberturas</string>
     <string name="pgntool_delete_games">Excluir todas as partidas do banco</string>
     <string name="pgntool_games_deleted">Todas as partidas foram excluídas</string>
-    <string name="pgntool_export_explanation">Exportar banco de dados de partidas</string>
+    <string name="pgntool_export_explanation">Exportar todas as partidas</string>
     <string name="pgntool_import_explanation">Importar partidas para o banco</string>
     <string name="importing_games">A importar partidas…</string>
     <string name="importing_puzzles">A importar problemas…</string>

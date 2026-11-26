@@ -19,4 +19,5 @@
     <plurals name="gameslist_delete_count">
         <item quantity="other">永久删除 %d 个所选棋局？</item>
     </plurals>
+    <string name="gameslist_export_selected">导出所选棋局</string>
 </resources>

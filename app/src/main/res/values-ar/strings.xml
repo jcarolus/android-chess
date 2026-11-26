@@ -276,7 +276,7 @@
     <string name="pgntool_create_db_explanation">إنشاء قاعدة بيانات الافتتاحيات</string>
     <string name="pgntool_delete_games">حذف جميع الألعاب في قاعدة بيانات الألعاب</string>
     <string name="pgntool_games_deleted">تم حذف جميع الألعاب</string>
-    <string name="pgntool_export_explanation">تصدير قاعدة بيانات الألعاب</string>
+    <string name="pgntool_export_explanation">تصدير جميع المباريات</string>
     <string name="pgntool_import_explanation">استيراد الألعاب إلى قاعدة بيانات الألعاب</string>
     <string name="importing_games">جارٍ استيراد الألعاب…</string>
     <string name="importing_puzzles">جارٍ استيراد الألغاز…</string>

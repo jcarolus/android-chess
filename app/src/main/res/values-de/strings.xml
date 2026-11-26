@@ -271,7 +271,7 @@
     <string name="pgntool_create_db_explanation">Eröffnungsdatenbank erstellen</string>
     <string name="pgntool_delete_games">Alle Partien in der Datenbank löschen</string>
     <string name="pgntool_games_deleted">Alle Partien gelöscht</string>
-    <string name="pgntool_export_explanation">Partiendatenbank exportieren</string>
+    <string name="pgntool_export_explanation">Alle Partien exportieren</string>
     <string name="pgntool_import_explanation">Partien in die Datenbank importieren</string>
     <string name="importing_games">Partien werden importiert…</string>
     <string name="importing_puzzles">Rätsel werden importiert…</string>

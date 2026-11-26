@@ -276,7 +276,7 @@
     <string name="pgntool_games_deleted">已刪除所有棋譜</string>
     <string name="pgntool_practice_deleted">已刪除所有練習局面</string>
     <string name="pgntool_puzzles_deleted">已刪除所有棋題局面</string>
-    <string name="pgntool_export_explanation">匯出棋譜資料庫</string>
+    <string name="pgntool_export_explanation">匯出所有棋局</string>
     <string name="pgntool_import_busy">已有匯入作業正在進行</string>
     <string name="pgntool_import_explanation">將棋譜匯入棋譜資料庫</string>
     <string name="importing_games">正在匯入棋譜…</string>

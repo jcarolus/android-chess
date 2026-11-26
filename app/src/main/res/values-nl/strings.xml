@@ -300,7 +300,7 @@
     <string name="pgntool_games_deleted">Alle partijen zijn verwijderd</string>
     <string name="pgntool_practice_deleted">Alle oefenstellingen zijn verwijderd</string>
     <string name="pgntool_puzzles_deleted">Alle puzzelstellingen zijn verwijderd</string>
-    <string name="pgntool_export_explanation">Partijdatabase exporteren</string>
+    <string name="pgntool_export_explanation">Alle partijen exporteren</string>
     <string name="pgntool_import_busy">Er loopt al een import</string>
     <string name="importing_games">Partijen importeren…</string>
     <string name="importing_puzzles">Puzzels importeren…</string>

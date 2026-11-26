@@ -271,7 +271,7 @@
     <string name="pgntool_create_db_explanation">Crear base de datos de aperturas</string>
     <string name="pgntool_delete_games">Eliminar todas las partidas de la base de datos</string>
     <string name="pgntool_games_deleted">Todas las partidas eliminadas</string>
-    <string name="pgntool_export_explanation">Exportar base de datos de partidas</string>
+    <string name="pgntool_export_explanation">Exportar todas las partidas</string>
     <string name="pgntool_import_explanation">Importar partidas a la base de datos</string>
     <string name="importing_games">Importando partidas…</string>
     <string name="importing_puzzles">Importando problemas…</string>

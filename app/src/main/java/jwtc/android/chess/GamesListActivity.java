@@ -30,6 +30,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -746,7 +747,7 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private Set<Long> matchingIds() {
-        Set<Long> ids = new HashSet<>();
+        Set<Long> ids = new LinkedHashSet<>();
         if (cursor != null && !cursor.isClosed()) {
             int position = cursor.getPosition();
             cursor.moveToPosition(-1);
@@ -805,7 +806,7 @@ public class GamesListActivity extends ChessBoardActivity {
                 .setEnabled(hasSelection)
                 .setOnMenuItemClickListener(
                         item -> {
-                            showBulkEditDialog();
+                            editSelectedTopic();
                             return true;
                         });
         menu.getMenu()
@@ -850,9 +851,30 @@ public class GamesListActivity extends ChessBoardActivity {
                 .add(R.string.pgntool_export_explanation)
                 .setOnMenuItemClickListener(
                         item -> {
-                            chooseExportScope();
+                            ExportActivity.exportDatabase(this, selection.withoutFilters());
                             return true;
                         });
+        menu.getMenu()
+                .add(R.string.gameslist_export_selected)
+                .setEnabled(hasSelection)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            long[] ids =
+                                    matchingIds().stream()
+                                            .filter(checkedGameIds::contains)
+                                            .mapToLong(Long::longValue)
+                                            .toArray();
+                            ExportActivity.exportSelectedGames(this, ids);
+                            return true;
+                        });
+        menu.getMenu()
+            .add(R.string.gameslist_delete_selected)
+            .setEnabled(hasSelection)
+            .setOnMenuItemClickListener(
+                item -> {
+                    confirmBulkDelete();
+                    return true;
+                });
         menu.getMenu()
                 .add(R.string.menu_delete_game_database)
                 .setOnMenuItemClickListener(
@@ -861,31 +883,6 @@ public class GamesListActivity extends ChessBoardActivity {
                             return true;
                         });
         menu.show();
-    }
-
-    private void chooseExportScope() {
-        GameSelection exportSelection = selection;
-        int checked = exportSelection.filter().isEmpty() ? 0 : 1;
-        int[] scope = {checked};
-        new ChessAlertDialogBuilder(this)
-                .setTitle(R.string.pgntool_export_explanation)
-                .setSingleChoiceItems(
-                        new String[] {
-                            getString(R.string.export_all), getString(R.string.export_matching)
-                        },
-                        checked,
-                        (dialog, which) -> scope[0] = which)
-                .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(
-                        R.string.button_ok,
-                        (dialog, which) -> {
-                            GameSelection export =
-                                    scope[0] == 0
-                                            ? exportSelection.withoutFilters()
-                                            : exportSelection;
-                            ExportActivity.exportDatabase(this, export);
-                        })
-                .show();
     }
 
     private void confirmDeleteDatabase() {
@@ -920,32 +917,11 @@ public class GamesListActivity extends ChessBoardActivity {
         return getResources().getQuantityString(R.plurals.gameslist_selected_count, count, count);
     }
 
-    private void showBulkEditDialog() {
+    private void confirmBulkDelete() {
         long[] ids = checkedIds();
         if (ids.length == 0 || bulkEditModel.isRunning() || queryPending) {
             return;
         }
-        bulkDialog =
-                new ChessAlertDialogBuilder(this)
-                        .setTitle(selectedTitle(ids.length))
-                        .setItems(
-                                new String[] {
-                                    getString(R.string.gameslist_delete_selected),
-                                    getString(R.string.gameslist_edit_topic)
-                                },
-                                (dialog, which) -> {
-                                    if (which == 0) {
-                                        confirmBulkDelete(ids);
-                                    } else {
-                                        editSelectedTopic(ids);
-                                    }
-                                })
-                        .setNegativeButton(R.string.button_cancel, null)
-                        .create();
-        bulkDialog.show();
-    }
-
-    private void confirmBulkDelete(long[] ids) {
         bulkDialog =
                 new ChessAlertDialogBuilder(this)
                         .setTitle(R.string.gameslist_delete_selected)
@@ -966,7 +942,11 @@ public class GamesListActivity extends ChessBoardActivity {
         bulkDialog.show();
     }
 
-    private void editSelectedTopic(long[] ids) {
+    private void editSelectedTopic() {
+        long[] ids = checkedIds();
+        if (ids.length == 0 || bulkEditModel.isRunning() || queryPending) {
+            return;
+        }
         EditText input = new EditText(this);
         input.setSingleLine(true);
         input.setHint(R.string.gameslist_topic_hint);

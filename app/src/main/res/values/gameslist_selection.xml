@@ -4,7 +4,7 @@
     <string name="gameslist_check_game">Select game %3$d: %1$s vs %2$s</string>
     <string name="gameslist_select_all">Select all</string>
     <string name="gameslist_clear_selection">Clear selection</string>
-    <string name="gameslist_invert_checked">Invert checked games</string>
+    <string name="gameslist_invert_checked">Invert selection</string>
     <string name="gameslist_multi_edit">Multi edit</string>
     <string name="gameslist_delete_selected">Delete selected games</string>
     <string name="gameslist_edit_topic">Edit topic</string>
@@ -21,4 +21,5 @@
         <item quantity="one">Permanently delete %d selected game?</item>
         <item quantity="other">Permanently delete %d selected games?</item>
     </plurals>
+    <string name="gameslist_export_selected">Export selected games</string>
 </resources>

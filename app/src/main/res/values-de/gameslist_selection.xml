@@ -21,4 +21,5 @@
         <item quantity="one">%d ausgewählte Partie endgültig löschen?</item>
         <item quantity="other">%d ausgewählte Partien endgültig löschen?</item>
     </plurals>
+    <string name="gameslist_export_selected">Ausgewählte Partien exportieren</string>
 </resources>

@@ -175,6 +175,18 @@ public final class GameStore {
         return count;
     }
 
+    /** Streams only these Games in the supplied order, failing if a Game is unavailable. */
+    public int exportSelectedAsPgn(long[] ids, OutputStream output) throws IOException {
+        for (long id : ids) {
+            GameRecord record = load(id);
+            if (record == null || record.pgn == null) {
+                throw new IOException("Game no longer available: " + id);
+            }
+            PgnExport.writeGame(output, record.pgn);
+        }
+        return ids.length;
+    }
+
     /** The Game the cursor is on. */
     public static GameRecord fromCursor(Cursor cursor) {
         int dateIndex = cursor.getColumnIndex(PGNColumns.DATE);

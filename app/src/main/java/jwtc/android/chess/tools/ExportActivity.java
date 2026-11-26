@@ -38,6 +38,7 @@ import jwtc.chess.PgnExport;
 
 /** Owns a PGN snapshot and destination selection independently of the board's lifecycle. */
 public class ExportActivity extends BaseActivity {
+    private static final String SELECTED_IDS = "exportSelectedIds";
     private static final String SNAPSHOT = "exportSnapshot";
     private static final String STATUS = "exportStatus";
     private static final String MODE = "exportMode";
@@ -82,6 +83,11 @@ public class ExportActivity extends BaseActivity {
                 new Intent(context, ExportActivity.class).putExtra(GameSelection.EXTRA, selection));
     }
 
+    public static void exportSelectedGames(Context context, long[] ids) {
+        context.startActivity(
+                new Intent(context, ExportActivity.class).putExtra(SELECTED_IDS, ids.clone()));
+    }
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -121,7 +127,10 @@ public class ExportActivity extends BaseActivity {
         try {
             if (mode == CREATE) {
                 createFile.launch(
-                        getIntent().hasExtra(GameSelection.EXTRA) ? "chess.pgn" : "game.pgn");
+                        getIntent().hasExtra(GameSelection.EXTRA)
+                                        || getIntent().hasExtra(SELECTED_IDS)
+                                ? "chess.pgn"
+                                : "game.pgn");
             } else {
                 openFile.launch(new String[] {"*/*"});
             }
@@ -265,11 +274,12 @@ public class ExportActivity extends BaseActivity {
             status.setValue(PREPARING);
             GameSelection selection =
                     (GameSelection) intent.getSerializableExtra(GameSelection.EXTRA);
+            long[] ids = intent.getLongArrayExtra(SELECTED_IDS);
             executor.execute(
                     () -> {
                         File prepared = null;
                         try {
-                            if (selection == null || !selection.hasValidDates()) {
+                            if (ids == null && (selection == null || !selection.hasValidDates())) {
                                 throw new IOException("Invalid export selection");
                             }
                             prepared =
@@ -279,9 +289,12 @@ public class ExportActivity extends BaseActivity {
                                             getApplication().getNoBackupFilesDir());
                             int games;
                             try (OutputStream output = new FileOutputStream(prepared)) {
+                                GameStore store =
+                                        new GameStore(getApplication().getContentResolver());
                                 games =
-                                        new GameStore(getApplication().getContentResolver())
-                                                .exportAsPgn(selection.filter(), output);
+                                        ids == null
+                                                ? store.exportAsPgn(selection.filter(), output)
+                                                : store.exportSelectedAsPgn(ids, output);
                             }
                             snapshot = prepared;
                             status.postValue(games == 0 ? EMPTY : CHOOSE);

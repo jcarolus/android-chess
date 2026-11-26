@@ -29,4 +29,5 @@
         <item quantity="many">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
         <item quantity="other">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
     </plurals>
+    <string name="gameslist_export_selected">تصدير المباريات المحددة</string>
 </resources>

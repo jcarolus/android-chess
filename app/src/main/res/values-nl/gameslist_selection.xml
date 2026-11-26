@@ -21,4 +21,5 @@
         <item quantity="one">%d geselecteerde partij definitief verwijderen?</item>
         <item quantity="other">%d geselecteerde partijen definitief verwijderen?</item>
     </plurals>
+    <string name="gameslist_export_selected">Geselecteerde partijen exporteren</string>
 </resources>

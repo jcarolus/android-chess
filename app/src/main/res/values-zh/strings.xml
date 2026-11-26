@@ -264,7 +264,7 @@
     <string name="pgntool_create_db_explanation">创建开局数据库</string>
     <string name="pgntool_delete_games">删除数据库中所有对局</string>
     <string name="pgntool_games_deleted">所有对局已删除</string>
-    <string name="pgntool_export_explanation">导出对局数据库</string>
+    <string name="pgntool_export_explanation">导出所有棋局</string>
     <string name="pgntool_import_explanation">导入对局到数据库</string>
     <string name="importing_games">正在导入对局…</string>
     <string name="importing_puzzles">正在导入习题…</string>

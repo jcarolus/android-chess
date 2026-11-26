@@ -23,4 +23,5 @@
         <item quantity="many">Eliminare definitivamente %d partite selezionate?</item>
         <item quantity="other">Eliminare definitivamente %d partite selezionate?</item>
     </plurals>
+    <string name="gameslist_export_selected">Esporta partite selezionate</string>
 </resources>

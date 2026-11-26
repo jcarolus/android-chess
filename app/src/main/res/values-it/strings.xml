@@ -264,7 +264,7 @@
     <string name="pgntool_create_db_explanation">Crea database aperture</string>
     <string name="pgntool_delete_games">Elimina tutte le partite nel database</string>
     <string name="pgntool_games_deleted">Tutte le partite eliminate</string>
-    <string name="pgntool_export_explanation">Esporta database delle partite</string>
+    <string name="pgntool_export_explanation">Esporta tutte le partite</string>
     <string name="pgntool_import_explanation">Importa partite nel database</string>
     <string name="importing_games">Importazione delle partite…</string>
     <string name="importing_puzzles">Importazione dei problemi…</string>

@@ -4,6 +4,8 @@ import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.MyPGNProvider;
@@ -45,6 +47,26 @@ public final class BulkGameEditInstrumentation {
                     hasSecond |= id == second;
                 }
                 check(hasFirst && hasSecond, "Topic index was not updated");
+            }
+
+            String secondPgn = Pgn.withTag(pgn, "Topic", "Second export topic");
+            store.setSelectedTopic(new long[] {second}, "Second export topic");
+            ByteArrayOutputStream exported = new ByteArrayOutputStream();
+            check(
+                    store.exportSelectedAsPgn(new long[] {second, first}, exported) == 2,
+                    "Wrong export count");
+            check(
+                    exported.toString("UTF-8")
+                            .equals(secondPgn + "\n\n" + store.load(first).pgn + "\n\n"),
+                    "Selected export changed PGN content, included other games or changed order");
+            check(
+                    store.exportSelectedAsPgn(new long[0], new ByteArrayOutputStream()) == 0,
+                    "Empty selection exported games");
+            try {
+                store.exportSelectedAsPgn(new long[] {Long.MAX_VALUE}, new ByteArrayOutputStream());
+                throw new AssertionError("Missing game export succeeded");
+            } catch (IOException expected) {
+                // An incomplete selection must not become a successful export.
             }
 
             String edited = store.load(first).pgn;

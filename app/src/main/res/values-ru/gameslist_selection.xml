@@ -25,4 +25,5 @@
         <item quantity="many">Удалить %d выбранных партий безвозвратно?</item>
         <item quantity="other">Удалить %d выбранной партии безвозвратно?</item>
     </plurals>
+    <string name="gameslist_export_selected">Экспортировать выбранные партии</string>
 </resources>

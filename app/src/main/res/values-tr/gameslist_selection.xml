@@ -21,4 +21,5 @@
         <item quantity="one">Seçili %d oyun kalıcı olarak silinsin mi?</item>
         <item quantity="other">Seçili %d oyun kalıcı olarak silinsin mi?</item>
     </plurals>
+    <string name="gameslist_export_selected">Seçili oyunları dışa aktar</string>
 </resources>

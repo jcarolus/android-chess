@@ -23,4 +23,5 @@
         <item quantity="few">Ștergi definitiv %d partide selectate?</item>
         <item quantity="other">Ștergi definitiv %d de partide selectate?</item>
     </plurals>
+    <string name="gameslist_export_selected">Exportă partidele selectate</string>
 </resources>

@@ -21,4 +21,5 @@
         <item quantity="one">%d بازی انتخاب‌شده برای همیشه حذف شود؟</item>
         <item quantity="other">%d بازی انتخاب‌شده برای همیشه حذف شود؟</item>
     </plurals>
+    <string name="gameslist_export_selected">خروجی گرفتن از بازی‌های انتخاب‌شده</string>
 </resources>

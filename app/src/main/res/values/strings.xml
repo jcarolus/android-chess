@@ -299,7 +299,7 @@
     <string name="pgntool_games_deleted">All games deleted</string>
     <string name="pgntool_practice_deleted">All practice positions deleted</string>
     <string name="pgntool_puzzles_deleted">All puzzle positions deleted</string>
-    <string name="pgntool_export_explanation">Export game database</string>
+    <string name="pgntool_export_explanation">Export all games</string>
     <string name="pgntool_import_busy">An import is already running</string>
     <string name="importing_games">Importing games…</string>
     <string name="importing_puzzles">Importing puzzles…</string>
