@@ -287,6 +287,42 @@ public final class Pgn {
         return text.substring(0, start) + tag + text.substring(end);
     }
 
+    /** Replaces or removes a header tag without rewriting other tags or movetext. */
+    public static String withTag(String text, String name, String value) {
+        Matcher matcher = TAG.matcher(text);
+        StringBuilder out = new StringBuilder();
+        StringBuilder replacement = new StringBuilder();
+        appendTag(replacement, name, value);
+        if (replacement.length() > 0) {
+            replacement.setLength(replacement.length() - 1);
+        }
+        int pos = 0;
+        int copied = 0;
+        boolean found = false;
+        while (pos < text.length()) {
+            if (Character.isWhitespace(text.charAt(pos)) || text.charAt(pos) == '\uFEFF') {
+                pos++;
+            } else if (matcher.region(pos, text.length()).lookingAt()) {
+                if (name.equals(matcher.group(1))) {
+                    out.append(text, copied, pos);
+                    if (!found) {
+                        out.append(replacement);
+                    }
+                    found = true;
+                    copied = matcher.end();
+                }
+                pos = matcher.end();
+            } else {
+                break;
+            }
+        }
+        if (!found && value != null) {
+            int start = text.startsWith("\uFEFF") ? 1 : 0;
+            return text.substring(0, start) + replacement + "\n" + text.substring(start);
+        }
+        return out.append(text, copied, text.length()).toString();
+    }
+
     /**
      * The tag block: the seven roster tags first (missing ones as "?"), then the others by name.
      */

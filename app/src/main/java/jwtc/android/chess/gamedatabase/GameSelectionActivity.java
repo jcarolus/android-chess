@@ -27,6 +27,7 @@ import jwtc.chess.GameSelection;
 
 /** Selection screen shared by the Game Database and Study entry points. */
 public class GameSelectionActivity extends BaseActivity {
+    public static final String EXTRA_RETURN_SELECTION = "returnGameSelection";
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable countQuery = this::queryCount;
@@ -66,6 +67,9 @@ public class GameSelectionActivity extends BaseActivity {
         surprise.setEnabled(false);
         GameSelection selection =
                 state == null ? null : (GameSelection) state.getSerializable(GameSelection.EXTRA);
+        if (selection == null) {
+            selection = (GameSelection) getIntent().getSerializableExtra(GameSelection.EXTRA);
+        }
         if (selection == null) {
             selection = GameSelectionPreferences.load(getPrefs(), preferencePrefix());
         }
@@ -167,6 +171,11 @@ public class GameSelectionActivity extends BaseActivity {
     }
 
     protected void openSelection(GameSelection selection, boolean random) {
+        if (getIntent().getBooleanExtra(EXTRA_RETURN_SELECTION, false)) {
+            setResult(RESULT_OK, new Intent().putExtra(GameSelection.EXTRA, selection));
+            finish();
+            return;
+        }
         startActivity(
                 new Intent(this, GamesListActivity.class).putExtra(GameSelection.EXTRA, selection));
     }

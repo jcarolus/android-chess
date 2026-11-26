@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Ações para as partidas selecionadas</string>
+    <string name="gameslist_check_game">Selecionar partida %3$d: %1$s contra %2$s</string>
+    <string name="gameslist_select_all">Selecionar tudo</string>
+    <string name="gameslist_clear_selection">Limpar seleção</string>
+    <string name="gameslist_invert_checked">Inverter seleção</string>
+    <string name="gameslist_multi_edit">Edição múltipla</string>
+    <string name="gameslist_delete_selected">Eliminar partidas selecionadas</string>
+    <string name="gameslist_edit_topic">Editar tema</string>
+    <string name="gameslist_topic_hint">Tema</string>
+    <string name="gameslist_topic_explanation">Substituir o tema de todas as partidas selecionadas. Deixar vazio para limpar os temas.</string>
+    <string name="gameslist_clear_topic">Limpar tema</string>
+    <string name="gameslist_set_topic">Definir tema</string>
+    <string name="gameslist_bulk_failed">Não foi possível editar as partidas selecionadas. Nenhuma partida foi alterada. Tente novamente.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d partida selecionada</item>
+        <item quantity="many">%d partidas selecionadas</item>
+        <item quantity="other">%d partidas selecionadas</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">Eliminar permanentemente %d partida selecionada?</item>
+        <item quantity="many">Eliminar permanentemente %d partidas selecionadas?</item>
+        <item quantity="other">Eliminar permanentemente %d partidas selecionadas?</item>
+    </plurals>
+</resources>

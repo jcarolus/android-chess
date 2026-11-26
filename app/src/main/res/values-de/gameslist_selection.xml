@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Aktionen für ausgewählte Partien</string>
+    <string name="gameslist_check_game">Partie %3$d auswählen: %1$s gegen %2$s</string>
+    <string name="gameslist_select_all">Alle auswählen</string>
+    <string name="gameslist_clear_selection">Auswahl aufheben</string>
+    <string name="gameslist_invert_checked">Auswahl umkehren</string>
+    <string name="gameslist_multi_edit">Mehrere bearbeiten</string>
+    <string name="gameslist_delete_selected">Ausgewählte Partien löschen</string>
+    <string name="gameslist_edit_topic">Thema bearbeiten</string>
+    <string name="gameslist_topic_hint">Thema</string>
+    <string name="gameslist_topic_explanation">Das Thema aller ausgewählten Partien ersetzen. Leer lassen, um die Themen zu entfernen.</string>
+    <string name="gameslist_clear_topic">Thema entfernen</string>
+    <string name="gameslist_set_topic">Thema festlegen</string>
+    <string name="gameslist_bulk_failed">Die ausgewählten Partien konnten nicht bearbeitet werden. Nichts wurde geändert. Bitte erneut versuchen.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d Partie ausgewählt</item>
+        <item quantity="other">%d Partien ausgewählt</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">%d ausgewählte Partie endgültig löschen?</item>
+        <item quantity="other">%d ausgewählte Partien endgültig löschen?</item>
+    </plurals>
+</resources>

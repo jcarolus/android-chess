@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">عملیات بازی‌های انتخاب‌شده</string>
+    <string name="gameslist_check_game">انتخاب بازی %3$d: %1$s در برابر %2$s</string>
+    <string name="gameslist_select_all">انتخاب همه</string>
+    <string name="gameslist_clear_selection">لغو انتخاب</string>
+    <string name="gameslist_invert_checked">معکوس کردن انتخاب</string>
+    <string name="gameslist_multi_edit">ویرایش گروهی</string>
+    <string name="gameslist_delete_selected">حذف بازی‌های انتخاب‌شده</string>
+    <string name="gameslist_edit_topic">ویرایش موضوع</string>
+    <string name="gameslist_topic_hint">موضوع</string>
+    <string name="gameslist_topic_explanation">موضوع همه بازی‌های انتخاب‌شده را جایگزین کنید. برای پاک کردن موضوع‌ها، خالی بگذارید.</string>
+    <string name="gameslist_clear_topic">پاک کردن موضوع</string>
+    <string name="gameslist_set_topic">تعیین موضوع</string>
+    <string name="gameslist_bulk_failed">ویرایش بازی‌های انتخاب‌شده ممکن نشد. هیچ بازی تغییر نکرد. دوباره تلاش کنید.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d بازی انتخاب‌شده</item>
+        <item quantity="other">%d بازی انتخاب‌شده</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">%d بازی انتخاب‌شده برای همیشه حذف شود؟</item>
+        <item quantity="other">%d بازی انتخاب‌شده برای همیشه حذف شود؟</item>
+    </plurals>
+</resources>

@@ -1,10 +1,13 @@
 package jwtc.android.chess.helpers;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.util.Log;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,6 +18,7 @@ import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNProvider;
+import jwtc.chess.Pgn;
 import jwtc.chess.PgnExport;
 
 /** The Game Database: saved Games in the PGN content provider. */
@@ -81,6 +85,33 @@ public final class GameStore {
 
     public boolean delete(long id) {
         return resolver.delete(uriOf(id), null, null) > 0;
+    }
+
+    public void deleteSelected(long[] ids) throws RemoteException, OperationApplicationException {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        for (long id : ids) {
+            operations.add(
+                    ContentProviderOperation.newDelete(uriOf(id)).withExpectedCount(1).build());
+        }
+        resolver.applyBatch(MyPGNProvider.AUTHORITY, operations);
+    }
+
+    public void setSelectedTopic(long[] ids, String topic)
+            throws RemoteException, OperationApplicationException {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        for (long id : ids) {
+            GameRecord record = load(id);
+            if (record == null || record.pgn == null) {
+                throw new OperationApplicationException("Game no longer available: " + id);
+            }
+            operations.add(
+                    ContentProviderOperation.newUpdate(uriOf(id))
+                            .withValue(PGNColumns.PGN, Pgn.withTag(record.pgn, "Topic", topic))
+                            .withSelection(PGNColumns.PGN + " = ?", new String[] {record.pgn})
+                            .withExpectedCount(1)
+                            .build());
+        }
+        resolver.applyBatch(MyPGNProvider.AUTHORITY, operations);
     }
 
     public int deleteAll() {

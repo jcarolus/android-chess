@@ -28,6 +28,7 @@ import jwtc.chess.board.BoardPosition;
 public final class RustEngineInstrumentation extends Instrumentation {
     private static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     private boolean ecoOnly;
+    private boolean bulkEditOnly;
     private boolean analysisOnly;
     private boolean importOnly;
     private boolean ownershipOnly;
@@ -38,6 +39,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
     @Override
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
+        bulkEditOnly = arguments != null && "bulk-edit".equals(arguments.getString("suite"));
         ecoOnly = arguments != null && "eco".equals(arguments.getString("suite"));
         analysisOnly = arguments != null && "analysis".equals(arguments.getString("suite"));
         importOnly = arguments != null && "import".equals(arguments.getString("suite"));
@@ -53,6 +55,12 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (bulkEditOnly) {
+                jwtc.chess.BulkGameEditInstrumentation.verify(getTargetContext());
+                report.putString("stream", "Bulk Game edits and transaction rollback passed\n");
+                finish(-1, report);
+                return;
+            }
             if (startingPositionOnly) {
                 jwtc.android.chess.analyze.AnalysisInstrumentation.verifyStartingPosition();
                 report.putString("stream", "Starting Position and retained continuations passed\n");

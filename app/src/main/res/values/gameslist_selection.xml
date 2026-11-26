@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Selected game actions</string>
+    <string name="gameslist_check_game">Select game %3$d: %1$s vs %2$s</string>
+    <string name="gameslist_select_all">Select all</string>
+    <string name="gameslist_clear_selection">Clear selection</string>
+    <string name="gameslist_invert_checked">Invert checked games</string>
+    <string name="gameslist_multi_edit">Multi edit</string>
+    <string name="gameslist_delete_selected">Delete selected games</string>
+    <string name="gameslist_edit_topic">Edit topic</string>
+    <string name="gameslist_topic_hint">Topic</string>
+    <string name="gameslist_topic_explanation">Replace the topic for all selected games. Leave empty to clear their topics.</string>
+    <string name="gameslist_clear_topic">Clear topic</string>
+    <string name="gameslist_set_topic">Set topic</string>
+    <string name="gameslist_bulk_failed">Could not edit selected games. No games were changed. Please try again.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d game selected</item>
+        <item quantity="other">%d games selected</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">Permanently delete %d selected game?</item>
+        <item quantity="other">Permanently delete %d selected games?</item>
+    </plurals>
+</resources>

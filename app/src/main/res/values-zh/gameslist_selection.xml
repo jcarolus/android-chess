@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">所选棋局操作</string>
+    <string name="gameslist_check_game">选择棋局 %3$d：%1$s 对 %2$s</string>
+    <string name="gameslist_select_all">全选</string>
+    <string name="gameslist_clear_selection">清除选择</string>
+    <string name="gameslist_invert_checked">反向选择</string>
+    <string name="gameslist_multi_edit">批量编辑</string>
+    <string name="gameslist_delete_selected">删除所选棋局</string>
+    <string name="gameslist_edit_topic">编辑主题</string>
+    <string name="gameslist_topic_hint">主题</string>
+    <string name="gameslist_topic_explanation">替换所有所选棋局的主题。留空可清除主题。</string>
+    <string name="gameslist_clear_topic">清除主题</string>
+    <string name="gameslist_set_topic">设置主题</string>
+    <string name="gameslist_bulk_failed">无法编辑所选棋局。未更改任何棋局。请重试。</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="other">已选择 %d 个棋局</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="other">永久删除 %d 个所选棋局？</item>
+    </plurals>
+</resources>

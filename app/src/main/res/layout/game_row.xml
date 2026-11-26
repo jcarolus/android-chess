@@ -39,30 +39,22 @@
         app:layout_constraintStart_toEndOf="@id/text_date"
         app:layout_constraintWidth_percent="0.4" />
 
-    <RelativeLayout
-        android:id="@+id/rating_container"
+    <CheckBox
+        android:id="@+id/CheckBoxGame"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:minWidth="48dp"
+        android:focusable="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/text_event"
-        app:layout_constraintWidth_percent="0.2">
-
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:isIndicator="true"
-            android:max="5"
-            android:numStars="5"
-            android:id="@+id/rating"
-            style="?android:attr/ratingBarStyleSmall" />
-    </RelativeLayout>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/bottomBarrier"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="text_id,text_date,text_event,rating_container" />
+        app:constraint_referenced_ids="text_id,text_date,text_event,CheckBoxGame" />
 
     <TextView
         android:id="@+id/text_result"
