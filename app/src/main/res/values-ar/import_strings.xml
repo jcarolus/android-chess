@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">تم العثور على نحو %1$d من المباريات</string>
+    <string name="import_all">استيراد الكل</string>
+    <string name="import_subsection">تحديد نطاق</string>
+    <string name="import_games_from">المباريات من</string>
+    <string name="import_games_until">المباريات حتى</string>
+    <string name="import_continue">متابعة</string>
+    <string name="import_back">رجوع</string>
+    <string name="import_no_games">لم يتم العثور على مباريات</string>
+    <string name="import_range_bounds">أدخل عددًا صحيحًا من 1 إلى %1$d</string>
+    <string name="import_range_order">يجب ألا يقل رقم النهاية عن رقم البداية</string>
+</resources>

@@ -1,11 +1,15 @@
 package jwtc.android.chess.tools;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import jwtc.chess.Pgn;
+import jwtc.chess.PgnSplitter;
 
-/** Collects per-file Topic defaults before delivering any games to the import handler. */
+/** Selects and imports each PGN file in order, applying missing Topic and Event defaults. */
 final class TopicImport implements ImportSource {
     interface OpenSource {
         PgnSource open() throws IOException;
@@ -15,6 +19,23 @@ final class TopicImport implements ImportSource {
         boolean ask(String filename, DefaultTopic defaults) throws Exception;
     }
 
+    interface SelectionPrompt {
+        Range ask(String filename, int count) throws Exception;
+    }
+
+    static final class Range {
+        final int from;
+        final int until;
+
+        Range(int from, int until) {
+            if (from < 1 || until < from) {
+                throw new IllegalArgumentException("Invalid game range");
+            }
+            this.from = from;
+            this.until = until;
+        }
+    }
+
     static final class DefaultTopic {
         String value;
     }
@@ -22,55 +43,119 @@ final class TopicImport implements ImportSource {
     private final String filename;
     private final OpenSource source;
     private final Prompt prompt;
+    private final SelectionPrompt selection;
+    private final File directory;
     private final boolean studies;
     private volatile boolean cancelled;
 
-    TopicImport(String filename, OpenSource source, Prompt prompt, boolean studies) {
+    TopicImport(
+            String filename,
+            OpenSource source,
+            Prompt prompt,
+            SelectionPrompt selection,
+            File directory,
+            boolean studies) {
         this.filename = filename;
         this.source = source;
         this.prompt = prompt;
+        this.selection = selection;
+        this.directory = directory;
         this.studies = studies;
     }
 
     @Override
     public void forEach(Sink sink) throws Exception {
-        Map<String, DefaultTopic> defaults = new LinkedHashMap<>();
+        boolean[] found = {false};
         try (PgnSource input = source.open()) {
-            input.forEach(
-                    item -> {
-                        if (Pgn.optionalTagValue(Pgn.readHeaderTags(item.pgn).get("Topic"))
-                                == null) {
-                            defaults.computeIfAbsent(item.sourceName, key -> new DefaultTopic());
+            input.forEachFile(
+                    directory,
+                    () -> cancelled,
+                    (file, sourceName) -> {
+                        int count = 0;
+                        try (Reader reader = reader(file)) {
+                            PgnSplitter splitter = new PgnSplitter(reader);
+                            while (!cancelled && splitter.next() != null) {
+                                count++;
+                            }
                         }
-                        return !cancelled;
+                        if (cancelled) {
+                            return false;
+                        }
+                        if (count == 0) {
+                            return true;
+                        }
+                        found[0] = true;
+                        Range range = selection.ask(filename(sourceName), count);
+                        if (cancelled || range == null) {
+                            return false;
+                        }
+                        if (range.until > count) {
+                            throw new IllegalArgumentException("Game range exceeds file count");
+                        }
+                        DefaultTopic topic = new DefaultTopic();
+                        boolean[] missingTopic = {false};
+                        readSelection(
+                                file,
+                                sourceName,
+                                range,
+                                item -> {
+                                    if (Pgn.optionalTagValue(
+                                                    Pgn.readHeaderTags(item.pgn).get("Topic"))
+                                            == null) {
+                                        missingTopic[0] = true;
+                                        return false;
+                                    }
+                                    return true;
+                                });
+                        if (cancelled
+                                || (missingTopic[0] && !prompt.ask(filename(sourceName), topic))) {
+                            return false;
+                        }
+                        return readSelection(
+                                file,
+                                sourceName,
+                                range,
+                                item -> {
+                                    String pgn = Pgn.withDefaultTag(item.pgn, "Topic", topic.value);
+                                    if (studies) {
+                                        pgn =
+                                                Pgn.withDefaultTag(
+                                                        pgn, "Event", filename(sourceName));
+                                    }
+                                    return sink.accept(
+                                            new ImportItem(
+                                                    pgn,
+                                                    item.name,
+                                                    sourceName,
+                                                    item.sourcePosition));
+                                });
                     });
         }
-        for (Map.Entry<String, DefaultTopic> entry : defaults.entrySet()) {
-            if (cancelled || !prompt.ask(filename(entry.getKey()), entry.getValue())) {
-                return;
+        if (!cancelled && !found[0]) {
+            selection.ask(filename, 0);
+        }
+    }
+
+    private boolean readSelection(File file, String sourceName, Range range, Sink sink)
+            throws IOException {
+        try (Reader reader = reader(file)) {
+            PgnSplitter splitter = new PgnSplitter(reader);
+            for (int position = 1; !cancelled && position <= range.until; position++) {
+                String game = splitter.next();
+                if (game == null) {
+                    break;
+                }
+                if (position >= range.from
+                        && !sink.accept(new ImportItem(game, null, sourceName, position))) {
+                    return false;
+                }
             }
         }
-        if (!cancelled) {
-            try (PgnSource input = source.open()) {
-                input.forEach(
-                        item -> {
-                            if (cancelled) {
-                                return false;
-                            }
-                            DefaultTopic topic = defaults.get(item.sourceName);
-                            String pgn =
-                                    topic == null
-                                            ? item.pgn
-                                            : Pgn.withDefaultTag(item.pgn, "Topic", topic.value);
-                            if (studies) {
-                                pgn = Pgn.withDefaultTag(pgn, "Event", filename(item.sourceName));
-                            }
-                            return sink.accept(
-                                    new ImportItem(
-                                            pgn, item.name, item.sourceName, item.sourcePosition));
-                        });
-            }
-        }
+        return !cancelled;
+    }
+
+    private static Reader reader(File file) throws IOException {
+        return new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
     }
 
     private String filename(String sourceName) {

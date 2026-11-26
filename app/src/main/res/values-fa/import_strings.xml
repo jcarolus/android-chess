@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">حدود %1$d بازی پیدا شد</string>
+    <string name="import_all">وارد کردن همه</string>
+    <string name="import_subsection">تعیین بازه</string>
+    <string name="import_games_from">بازی‌ها از</string>
+    <string name="import_games_until">بازی‌ها تا</string>
+    <string name="import_continue">ادامه</string>
+    <string name="import_back">بازگشت</string>
+    <string name="import_no_games">بازی پیدا نشد</string>
+    <string name="import_range_bounds">یک عدد صحیح از 1 تا %1$d وارد کنید</string>
+    <string name="import_range_order">شماره پایان باید بزرگ‌تر یا مساوی شماره شروع باشد</string>
+</resources>

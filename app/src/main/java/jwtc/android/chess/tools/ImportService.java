@@ -92,6 +92,19 @@ public class ImportService extends Service {
 
     private final Handler importDelivery = new Handler(Looper.getMainLooper());
     private TopicPrompt topicPrompt;
+    private SelectionPrompt selectionPrompt;
+
+    public static final class SelectionPrompt {
+        final String filename;
+        final int count;
+        private final CompletableFuture<TopicImport.Range> answer = new CompletableFuture<>();
+
+        SelectionPrompt(String filename, int count) {
+            this.filename = filename;
+            this.count = count;
+        }
+    }
+
     private volatile boolean destroyed;
 
     public static final class TopicPrompt {
@@ -156,6 +169,9 @@ public class ImportService extends Service {
             pipeline.replay(listener);
             if (topicPrompt != null) {
                 listener.onTopicRequired(topicPrompt);
+            }
+            if (selectionPrompt != null) {
+                listener.onSelectionRequired(selectionPrompt);
             }
         } else if (jobRunning) {
             listener.OnImportStarted(jobMode);
@@ -399,9 +415,37 @@ public class ImportService extends Service {
         }
     }
 
+    private TopicImport.Range askImportSelection(String filename, int count) throws Exception {
+        SelectionPrompt prompt = new SelectionPrompt(filename, count);
+        importDelivery.post(
+                () -> {
+                    if (destroyed) {
+                        prompt.answer.complete(null);
+                        return;
+                    }
+                    selectionPrompt = prompt;
+                    for (ImportListener listener : new ArrayList<>(listeners)) {
+                        listener.onSelectionRequired(prompt);
+                    }
+                });
+        return prompt.answer.get();
+    }
+
+    void answerSelectionPrompt(SelectionPrompt prompt, TopicImport.Range range) {
+        if (selectionPrompt == prompt) {
+            selectionPrompt = null;
+            prompt.answer.complete(range);
+        }
+    }
+
     private TopicImport topicImport(Uri uri, boolean studies) {
         return new TopicImport(
-                getUriDisplayName(uri), () -> openPgnSource(uri), this::askImportTopic, studies);
+                getUriDisplayName(uri),
+                () -> openPgnSource(uri),
+                this::askImportTopic,
+                this::askImportSelection,
+                getCacheDir(),
+                studies);
     }
 
     private PgnSource bundledPgn(String assetName) throws IOException {
@@ -415,6 +459,9 @@ public class ImportService extends Service {
         pipeline.cancel();
         if (topicPrompt != null) {
             answerTopicPrompt(topicPrompt, null, false);
+        }
+        if (selectionPrompt != null) {
+            answerSelectionPrompt(selectionPrompt, null);
         }
         super.onDestroy();
     }

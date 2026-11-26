@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">Games found (approximately): %1$d</string>
+    <string name="import_all">Import all</string>
+    <string name="import_subsection">Define a sub section</string>
+    <string name="import_games_from">Games from</string>
+    <string name="import_games_until">Games until</string>
+    <string name="import_continue">Continue</string>
+    <string name="import_back">Back</string>
+    <string name="import_no_games">No games found</string>
+    <string name="import_range_bounds">Enter a whole number from 1 to %1$d</string>
+    <string name="import_range_order">Games until must be at least Games from</string>
+</resources>

@@ -1,10 +1,13 @@
 package jwtc.android.chess.tools;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.function.BooleanSupplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import jwtc.chess.PgnSplitter;
@@ -55,6 +58,53 @@ public final class PgnSource implements ImportSource {
                     return;
                 }
             }
+        }
+    }
+
+    interface FileSink {
+        boolean accept(File file, String sourceName) throws Exception;
+    }
+
+    /**
+     * Spools one entry at a time so it can be scanned and reread without retaining it in memory.
+     */
+    void forEachFile(File directory, BooleanSupplier cancelled, FileSink sink) throws Exception {
+        try (InputStream stream = in) {
+            if (!zip) {
+                visitFile(stream, directory, null, cancelled, sink);
+                return;
+            }
+            ZipInputStream zis = new ZipInputStream(stream);
+            ZipEntry entry;
+            while (!cancelled.getAsBoolean() && (entry = zis.getNextEntry()) != null) {
+                if (!entry.isDirectory()
+                        && entry.getName().toLowerCase(java.util.Locale.ROOT).endsWith(".pgn")
+                        && !visitFile(zis, directory, entry.getName(), cancelled, sink)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    private static boolean visitFile(
+            InputStream input,
+            File directory,
+            String sourceName,
+            BooleanSupplier cancelled,
+            FileSink sink)
+            throws Exception {
+        File file = File.createTempFile("pgn-import-", ".pgn", directory);
+        try {
+            try (FileOutputStream output = new FileOutputStream(file)) {
+                byte[] buffer = new byte[8192];
+                int length;
+                while (!cancelled.getAsBoolean() && (length = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, length);
+                }
+            }
+            return !cancelled.getAsBoolean() && sink.accept(file, sourceName);
+        } finally {
+            file.delete();
         }
     }
 

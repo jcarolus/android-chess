@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">找到约 %1$d 局棋谱</string>
+    <string name="import_all">全部导入</string>
+    <string name="import_subsection">指定范围</string>
+    <string name="import_games_from">起始局数</string>
+    <string name="import_games_until">结束局数</string>
+    <string name="import_continue">继续</string>
+    <string name="import_back">返回</string>
+    <string name="import_no_games">未找到棋谱</string>
+    <string name="import_range_bounds">请输入 1 到 %1$d 之间的整数</string>
+    <string name="import_range_order">结束序号不能小于起始序号</string>
+</resources>
