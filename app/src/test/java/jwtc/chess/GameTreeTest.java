@@ -2,6 +2,7 @@ package jwtc.chess;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -22,6 +23,60 @@ public class GameTreeTest {
 
     private Node add(Node parent, String san, int move) {
         return tree.append(parent, new PGNEntry(san, "", move, -1), 0, 0, false);
+    }
+
+    @Test
+    public void clockMetadataSurvivesImportCommentEditsAndExportOnEveryBranch() {
+        PgnDocument doc =
+                Pgn.parse(
+                        "[TimeControl \"30+0\"]\n[Result \"0-1\"]\n"
+                                + "1. e4 {[%clk 0:00:30.123456] Good move.} "
+                                + "e5 {[%clk 0:00:29]} (1... c5 {[%clk 0:00:28.5]}) "
+                                + "2. Nf3 {[%clk broken] [%other data]} 0-1");
+        PgnDocument.Move first = doc.mainLine.get(0);
+        PgnDocument.Move second = doc.mainLine.get(1);
+        PgnDocument.Move alternative = second.variations.get(0).get(0);
+        PgnDocument.Move third = doc.mainLine.get(2);
+        Node e4 =
+                tree.append(
+                        tree.getRoot(), new PGNEntry(first.san, first.comment, 1, -1), 0, 0, false);
+        Node e5 = tree.append(e4, new PGNEntry(second.san, second.comment, 2, -1), 0, 0, false);
+        Node c5 =
+                tree.append(
+                        e4, new PGNEntry(alternative.san, alternative.comment, 3, -1), 0, 0, false);
+        Node nf3 = tree.append(e5, new PGNEntry(third.san, third.comment, 4, -1), 0, 0, false);
+        tree.setRootComment("[%clk 0:00:30]");
+        assertNull(tree.getRoot().getClockMillis());
+        assertEquals(Long.valueOf(30123), e4.getClockMillis());
+        assertEquals(Long.valueOf(28500), c5.getClockMillis());
+        assertNull(nf3.getClockMillis());
+        tree.setAnnotation(e4, PgnComment.withText(e4.getEntry().sAnnotation, "Revised."));
+
+        PgnDocument back = Pgn.parse(Pgn.writeTags(doc.tags) + "\n" + tree.exportMoves() + " 0-1");
+        assertEquals("30+0", back.tags.get("TimeControl"));
+        assertEquals(30000, back.getTimeControl().periods.get(0).baseMillis);
+        assertEquals("[%clk 0:00:30.123456] Revised.", back.mainLine.get(0).comment);
+        assertEquals(first.getClockMillis(), back.mainLine.get(0).getClockMillis());
+        assertEquals(second.comment, back.mainLine.get(1).comment);
+        assertEquals(alternative.comment, back.mainLine.get(1).variations.get(0).get(0).comment);
+        assertEquals(
+                alternative.getClockMillis(),
+                back.mainLine.get(1).variations.get(0).get(0).getClockMillis());
+        assertEquals(third.comment, back.mainLine.get(2).comment);
+        assertNull(back.mainLine.get(2).getClockMillis());
+    }
+
+    @Test
+    public void derivedClocksFollowAnnotationChangesAndDefensiveCopies() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        assertNull(e4.getClockMillis());
+        tree.setAnnotation(e4, "[%clk 0:00:30]");
+        PGNEntry snapshot = e4.getEntry();
+        tree.setAnnotation(e4, "[%clk 0:00:20]");
+        assertEquals(Long.valueOf(30000), snapshot.getClockMillis());
+        assertEquals(Long.valueOf(20000), e4.getClockMillis());
+        tree.setAnnotation(e4, "No clock");
+        assertNull(e4.getClockMillis());
     }
 
     @Test

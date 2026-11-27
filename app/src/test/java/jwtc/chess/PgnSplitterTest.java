@@ -91,6 +91,20 @@ public class PgnSplitterTest {
     }
 
     @Test
+    public void trailingMessageTextDoesNotRejectAFileOrHideLaterGames() throws IOException {
+        String suffix = "Sent at 05:14, Seen\nViewed 1 time\n\n";
+        for (String second : List.of(GAME_2, "1. d4 d5 0-1\n\n")) {
+            List<String> games = split(GAME_1 + suffix + second);
+            assertEquals(2, games.size());
+            GameRecord first = GameRecord.fromPgn(games.get(0));
+            assertEquals("1-0", first.result);
+            assertEquals(PgnFingerprint.of(GAME_1), PgnFingerprint.of(first.pgn));
+            assertEquals(second, games.get(1));
+            assertEquals("0-1", GameRecord.fromPgn(games.get(1)).result);
+        }
+    }
+
+    @Test
     public void theLastGameIsReturnedWithoutATrailingNewline() throws IOException {
         List<String> games = split(GAME_1 + GAME_3);
         assertEquals(GAME_3, games.get(1));

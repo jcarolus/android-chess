@@ -24,6 +24,7 @@ import jwtc.chess.Pgn;
 import jwtc.chess.PgnDate;
 import jwtc.chess.PgnDocument;
 import jwtc.chess.PgnSyntaxError;
+import jwtc.chess.PgnTimeControl;
 import jwtc.chess.Pos;
 import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
@@ -1441,6 +1442,11 @@ public class GameApi {
 
     public String getPGNHeadProperty(String sProp) {
         return pgnTags.get(sProp);
+    }
+
+    /** Structured TimeControl metadata, independent of the running clocks. */
+    public PgnTimeControl getTimeControl() {
+        return PgnTimeControl.parse(pgnTags.get("TimeControl"));
     }
 
     public int getTurn() {

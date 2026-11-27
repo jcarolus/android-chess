@@ -75,9 +75,9 @@ public final class Pgn {
     }
 
     /**
-     * Strict parse of one game. Throws {@link PgnSyntaxError} for anything not well formed: bad
-     * tags, unbalanced or misplaced variations, annotations without a move, tokens after the
-     * result, disagreeing results.
+     * Reads one game, ignoring non-PGN text after a completed game's result. Valid comments after
+     * the result are retained. Throws {@link PgnSyntaxError} for malformed game content or
+     * disagreeing results. Unfinished games still require well-formed text throughout.
      */
     public static PgnDocument parse(String text) {
         PGNTokenizer lexer = new PGNTokenizer(text);
@@ -99,8 +99,13 @@ public final class Pgn {
         String result = null;
         boolean ended = false;
 
-        for (; token.kind != PGNTokenizer.Kind.END; token = lexer.next()) {
+        for (;
+                token.kind != PGNTokenizer.Kind.END;
+                token = nextToken(lexer, ended && !"*".equals(result))) {
             if (ended && token.kind != PGNTokenizer.Kind.COMMENT) {
+                if (!"*".equals(result)) {
+                    break;
+                }
                 throw new PgnSyntaxError("Unexpected token after result", token.offset);
             }
             switch (token.kind) {
@@ -202,6 +207,17 @@ public final class Pgn {
                 rootComment,
                 freeze(mainLine),
                 result != null ? result : headerResult);
+    }
+
+    private static PGNTokenizer.Token nextToken(PGNTokenizer lexer, boolean tolerateSuffix) {
+        try {
+            return lexer.next();
+        } catch (PgnSyntaxError ex) {
+            if (!tolerateSuffix) {
+                throw ex;
+            }
+            return new PGNTokenizer.Token(PGNTokenizer.Kind.END, "", ex.getOffset());
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package jwtc.chess;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -14,6 +15,53 @@ import java.util.Map;
 import org.junit.Test;
 
 public class PgnTest {
+    @Test
+    public void missingAndMalformedTimeControlsRemainRawAndDoNotRejectTheGame() {
+        assertNull(Pgn.parse("1. e4 *").getTimeControl());
+        PgnDocument malformed =
+                Pgn.parse("[TimeControl \"unusual control\"]\n[Result \"*\"]\n1. e4 *");
+        assertNull(malformed.getTimeControl());
+        assertEquals("unusual control", malformed.tags.get("TimeControl"));
+        assertEquals(
+                "unusual control",
+                Pgn.parse(Pgn.writeTags(malformed.tags) + "*").tags.get("TimeControl"));
+    }
+
+    @Test
+    public void completedGameIgnoresMessageSuffix() {
+        for (String result : Arrays.asList("1-0", "0-1", "1/2-1/2")) {
+            String pgn = "[Result \"" + result + "\"]\n1. e4 {[%clk 0:00:30]} c6 " + result;
+            for (String suffix :
+                    Arrays.asList(
+                            "\nSent at 05:14, Seen\nViewed 1 time",
+                            " {unclosed",
+                            " [broken tag",
+                            " ) e5")) {
+                PgnDocument doc = Pgn.parse(pgn + suffix);
+                assertEquals(result, doc.result);
+                assertEquals(Arrays.asList("e4", "c6"), sans(doc.mainLine));
+                assertEquals(Long.valueOf(30000), doc.mainLine.get(0).getClockMillis());
+            }
+        }
+    }
+
+    @Test
+    public void retainsValidTrailingCommentsAndStillValidatesTheGame() {
+        assertEquals(
+                "resigned",
+                Pgn.parse("1. e4 1-0 {resigned} Sent").mainLine.get(0).comment);
+        for (String invalid :
+                Arrays.asList(
+                        "1. e4 * Sent",
+                        "1. e4 Sent 0-1",
+                        "1. e4 Sent",
+                        "1. e4 (1. d4 1-0) Sent",
+                        "[Result \"1-0\"]\n1. e4 0-1 Sent",
+                        "[Result \"0-1\"]\n1. e4 Sent")) {
+            assertThrows(invalid, PgnSyntaxError.class, () -> Pgn.parse(invalid));
+        }
+    }
+
     private static List<String> sans(List<PgnDocument.Move> line) {
         List<String> out = new ArrayList<>();
         for (PgnDocument.Move move : line) {
@@ -156,7 +204,7 @@ public class PgnTest {
             syntaxError(symbol + " 1. e4 *");
             syntaxError("1. e4 (" + symbol + " 1. d4) *");
             assertTrue(
-                    syntaxError("1. e4 1-0 " + symbol)
+                    syntaxError("1. e4 * " + symbol)
                             .getMessage()
                             .startsWith("Unexpected token after result"));
         }
@@ -246,7 +294,7 @@ public class PgnTest {
         assertTrue(syntaxError("1. e4 $256").getMessage().startsWith("Invalid NAG"));
         assertTrue(syntaxError("1. e4 $").getMessage().startsWith("Invalid NAG"));
         assertTrue(
-                syntaxError("1. e4 1-0 e5")
+                syntaxError("1. e4 * e5")
                         .getMessage()
                         .startsWith("Unexpected token after result"));
         assertTrue(

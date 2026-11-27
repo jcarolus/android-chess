@@ -55,6 +55,11 @@ public final class GameTree {
             return copy(entry);
         }
 
+        /** Recorded remaining time after this move; the root has no move clock. */
+        public Long getClockMillis() {
+            return entry == null ? null : entry.getClockMillis();
+        }
+
         public List<Node> getChildren() {
             return Collections.unmodifiableList(children);
         }
