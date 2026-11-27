@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">Ongeveer %1$d partijen gevonden</string>
+    <string name="import_all">Alles importeren</string>
+    <string name="import_subsection">Een deel selecteren</string>
+    <string name="import_games_from">Partijen vanaf</string>
+    <string name="import_games_until">Partijen tot en met</string>
+    <string name="import_continue">Doorgaan</string>
+    <string name="import_back">Terug</string>
+    <string name="import_no_games">Geen partijen gevonden</string>
+    <string name="import_range_bounds">Voer een geheel getal van 1 tot en met %1$d in</string>
+    <string name="import_range_order">Het eindnummer moet minstens gelijk zijn aan het beginnummer</string>
+</resources>

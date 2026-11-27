@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">تقرير</string>
+    <string name="analysis_report_title">تقرير الخط الرئيسي</string>
+    <string name="analysis_report_progress">تحليل الوضعيات: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">الدقة\nالأبيض: %1$s · الأسود: %2$s</string>
+    <string name="analysis_report_graph">رسم التقييم</string>
+    <string name="analysis_report_graph_hint">المساحة البيضاء: فرص فوز الأبيض. اضغط على الرسم للانتقال إلى وضعية.</string>
+    <string name="analysis_report_go_to_move">الانتقال إلى الوضعية المحددة</string>
+    <string name="analysis_report_key_moments">اللحظات الحاسمة</string>
+    <string name="analysis_report_no_moments">لم يتم العثور على أخطاء أو أخطاء فادحة.</string>
+    <string name="analysis_report_partial">تعذر تقييم بعض الوضعيات. أعد فتح التقرير للمحاولة مجددًا. تتوفر الدقة بعد تقييم جميع الوضعيات.</string>
+    <string name="analysis_report_unavailable">التقرير غير متاح. أكمل النقلة الحالية وتأكد من أن المباراة تحتوي على نقلات للتحليل.</string>
+    <string name="analysis_report_start">الوضعية الابتدائية</string>
+    <string name="analysis_report_position">%1$s · التقييم: %2$s</string>
+    <string name="analysis_report_unknown">غير متاح</string>
+</resources>

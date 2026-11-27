@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">Export PGN</string>
+    <string name="export_create">Create new file</string>
+    <string name="export_append">Append to file</string>
+    <string name="export_replace">Replace file</string>
+    <string name="export_choose_action">Choose how to export the games.</string>
+    <string name="export_all">All games</string>
+    <string name="export_matching">Games matching current filters</string>
+    <string name="export_replace_confirm">Replace all contents of “%1$s”? This cannot be undone.</string>
+    <string name="export_preparing">Preparing games for export…</string>
+    <string name="export_writing">Exporting games…</string>
+    <string name="export_done">Export complete.</string>
+    <string name="export_no_games">No games to export.</string>
+    <string name="export_failed">Export failed. Choose another destination or close and try again.</string>
+    <string name="export_partial">Export failed. The destination file may be partially written. Check its contents before trying again to avoid duplicate or incomplete games. You can choose another destination.</string>
+</resources>

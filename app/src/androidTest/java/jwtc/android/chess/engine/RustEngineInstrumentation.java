@@ -10,12 +10,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.hotspotboard.HotspotBoardApi;
+import jwtc.android.chess.hotspotboard.HotspotVariantInstrumentation;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportApi;
 import jwtc.chess.GameRecord;
+import jwtc.chess.LegalMove;
+import jwtc.chess.MoveResolver;
+import jwtc.chess.Pgn;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
 
@@ -23,17 +28,26 @@ import jwtc.chess.board.BoardPosition;
 public final class RustEngineInstrumentation extends Instrumentation {
     private static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     private boolean ecoOnly;
+    private boolean bulkEditOnly;
     private boolean analysisOnly;
     private boolean importOnly;
     private boolean ownershipOnly;
+    private boolean textMoveOnly;
+    private boolean hotspotOnly;
+    private boolean startingPositionOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
+        bulkEditOnly = arguments != null && "bulk-edit".equals(arguments.getString("suite"));
         ecoOnly = arguments != null && "eco".equals(arguments.getString("suite"));
         analysisOnly = arguments != null && "analysis".equals(arguments.getString("suite"));
         importOnly = arguments != null && "import".equals(arguments.getString("suite"));
         ownershipOnly = arguments != null && "ownership".equals(arguments.getString("suite"));
+        textMoveOnly = arguments != null && "text-move".equals(arguments.getString("suite"));
+        hotspotOnly = arguments != null && "hotspot".equals(arguments.getString("suite"));
+        startingPositionOnly =
+                arguments != null && "starting-position".equals(arguments.getString("suite"));
         start();
     }
 
@@ -41,6 +55,30 @@ public final class RustEngineInstrumentation extends Instrumentation {
     public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (bulkEditOnly) {
+                jwtc.chess.BulkGameEditInstrumentation.verify(getTargetContext());
+                report.putString("stream", "Bulk Game edits and transaction rollback passed\n");
+                finish(-1, report);
+                return;
+            }
+            if (startingPositionOnly) {
+                jwtc.android.chess.analyze.AnalysisInstrumentation.verifyStartingPosition();
+                report.putString("stream", "Starting Position and retained continuations passed\n");
+                finish(-1, report);
+                return;
+            }
+            if (hotspotOnly) {
+                HotspotVariantInstrumentation.verify();
+                report.putString("stream", "Hotspot variant compatibility passed\n");
+                finish(-1, report);
+                return;
+            }
+            if (textMoveOnly) {
+                textMoveEntry();
+                report.putString("stream", "Text move resolution and execution passed\n");
+                finish(-1, report);
+                return;
+            }
             if (ownershipOnly) {
                 boardOwnership();
                 report.putString(
@@ -50,8 +88,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
             }
             if (importOnly) {
                 jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
-                jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
+                jwtc.android.chess.matecollection.PracticePositionSelectionInstrumentation.verify(
+                        this);
+                jwtc.chess.ImportFingerprintInstrumentation.verify(getTargetContext());
                 importedGamesValidateOnOpening();
+                explicitRookFileCastling();
                 pgnReplayPreservesBranchesAndRollback();
                 report.putString(
                         "stream",
@@ -74,10 +115,13 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 return;
             }
             jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
-            jwtc.android.chess.tools.PracticePositionSelectionInstrumentation.verify();
+            jwtc.android.chess.matecollection.PracticePositionSelectionInstrumentation.verify(this);
+            jwtc.chess.ImportFingerprintInstrumentation.verify(getTargetContext());
             boardSnapshots();
             boardOwnership();
+            HotspotVariantInstrumentation.verify();
             importedGamesValidateOnOpening();
+            explicitRookFileCastling();
             pgnReplayPreservesBranchesAndRollback();
             kingOfTheHillPersistence();
             nativeContract();
@@ -99,6 +143,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionDuckTurns(true);
             sessionDuckPendingAndStale();
             duckPositionIdentity();
+            textMoveEntry();
             gameApiSanDisambiguationUsesRustBoardApi();
             gameApiPromotionRequiresLegalMove();
             ecoLookupPreservesLivePosition();
@@ -112,17 +157,77 @@ public final class RustEngineInstrumentation extends Instrumentation {
         }
     }
 
+    private void textMoveEntry() {
+        runOnMainSync(
+                () -> {
+                    GameApi game = new GameApi();
+                    check(
+                            game.initFEN("4k3/8/8/8/8/8/8/1R2KR2 w KQ - 0 1", true),
+                            "Text Chess960 castling setup failed");
+                    check(
+                            text(game, 60, 63, -1).kind != MoveResolver.Resolution.Kind.MOVE,
+                            "Empty rook square accepted");
+                    LegalMove textCastle = text(game, 60, 61, -1).move;
+                    check(textCastle != null, "Text Chess960 king-to-rook castle rejected");
+                    check(
+                            "e1f1".equals(textCastle.coordinate),
+                            "Chess960 UCI must target the rook");
+                    game.move(textCastle.packed, -1);
+                    check(game.getCurrentPly() == 1, "Text Chess960 castle was not recorded");
+
+                    GameApi standard = new GameApi();
+                    check(
+                            standard.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true),
+                            "Text standard castling setup failed");
+                    check(
+                            text(standard, 60, 62, -1).kind != MoveResolver.Resolution.Kind.MOVE,
+                            "King destination accepted");
+                    LegalMove standardCastle = text(standard, 60, 63, -1).move;
+                    check(standardCastle != null, "Rook destination rejected");
+                    check(
+                            "e1g1".equals(standardCastle.coordinate),
+                            "Standard UCI must target the king destination");
+                    GameApi promotion = new GameApi();
+                    check(
+                            promotion.initFEN("8/P6k/8/8/8/8/7K/8 w - - 0 1", true),
+                            "Text promotion setup failed");
+                    check(
+                            text(promotion, 8, 0, -1).kind != MoveResolver.Resolution.Kind.MOVE,
+                            "Missing promotion accepted");
+                    LegalMove knight = text(promotion, 8, 0, BoardConstants.KNIGHT).move;
+                    check(
+                            knight != null && knight.coordinate.equals("a7a8n"),
+                            "Explicit knight rejected");
+                    check("a7a8n".equals(knight.coordinate), "Knight promotion UCI is invalid");
+                    GameApi enPassant = new GameApi();
+                    check(
+                            enPassant.initFEN("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", true),
+                            "Text en passant setup failed");
+                    LegalMove capture = text(enPassant, 28, 19, -1).move;
+                    check(capture != null, "Text en passant rejected");
+                    enPassant.move(capture.packed, -1);
+                    check(
+                            enPassant.getFEN().startsWith("4k3/8/3P4/8/"),
+                            "En passant did not remove the pawn");
+                });
+    }
+
+    private static MoveResolver.Resolution text(GameApi game, int from, int to, int promotion) {
+        return MoveResolver.coordinates(game.legalMoves(), game.variant(), from, to, promotion);
+    }
+
     private void kingOfTheHillPersistence() throws Exception {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
+                    game.newGame(Variant.KING_OF_THE_HILL);
                     check(
-                            game.isKingOfTheHillVariant() && game.requiresBuiltinEngine(),
+                            game.variant() == Variant.KING_OF_THE_HILL
+                                    && !game.variant().supportsOexEngine(),
                             "Hill variant not selected");
                     EngineSession session =
                             EngineSession.forPlay(getTargetContext(), game, new Listener());
-                    session.selectForPlay(true, null, game.requiresBuiltinEngine(), true);
+                    session.selectForPlay(true, null, !game.variant().supportsOexEngine(), true);
                     check(session.isBuiltin(), "Hill game selected an OEX engine");
                     session.close();
                     check(game.requestMove("e4") && game.requestMove("e5"), "Hill opening failed");
@@ -130,9 +235,9 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     check(saved.contains("[Variant \"King of the Hill\"]"), "Missing variant tag");
                     game.newGame();
                     check(
-                            game.loadPGN(saved) && game.isKingOfTheHillVariant(),
+                            game.loadPGN(saved) && game.variant() == Variant.KING_OF_THE_HILL,
                             "Hill PGN reload failed");
-                    check(game.isKingOfTheHillVariant(), "PGN reload lost hill rules");
+                    check(game.variant() == Variant.KING_OF_THE_HILL, "PGN reload lost hill rules");
                     check(
                             game.loadPGN(
                                     "[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*"),
@@ -144,7 +249,9 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     saved = game.exportFullPGN();
                     check(saved.contains("[Result \"1-0\"]"), "Hill winner not exported");
                     check(
-                            game.stepBack() && !game.isEnded() && game.isKingOfTheHillVariant(),
+                            game.stepBack()
+                                    && !game.isEnded()
+                                    && game.variant() == Variant.KING_OF_THE_HILL,
                             "Hill undo failed");
                     check(
                             game.stepForward() && game.getState() == BoardConstants.HILL_WIN,
@@ -193,7 +300,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         assertSnapshot(board);
         board.initRandomFisher(42);
         assertSnapshot(board);
-        board.newGame(BoardConstants.VARIANT_DUCK);
+        board.newGame(Variant.DUCK);
         String duckStart = board.toFEN();
         assertSnapshot(board);
         check(board.requestMove(52, 36) != 0, "Snapshot Duck preview failed");
@@ -204,7 +311,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         board.undo();
         check(duckStart.equals(board.toFEN()), "Duck undo mutated earlier snapshot");
         assertSnapshot(board);
-        board.setVariant(BoardConstants.VARIANT_DEFAULT);
+        board.setVariant(Variant.STANDARD);
         check(board.getDuckPos() == -1, "Variant change retained duck");
         assertSnapshot(board);
         check(board.initFEN(START), "Snapshot load failed");
@@ -221,16 +328,16 @@ public final class RustEngineInstrumentation extends Instrumentation {
         check(board.getDuckPos() == expected.duck(), "Snapshot duck mismatch");
         check(board.getEnpassantPosition() == expected.ep, "Snapshot en passant mismatch");
         check(
-                board.getWhiteCanCastleLong() == (expected.castling.contains("Q") ? 1 : 0),
+                board.getWhiteCanCastleLong() == (expected.canCastle(true, false) ? 1 : 0),
                 "Snapshot white long castle mismatch");
         check(
-                board.getWhiteCanCastleShort() == (expected.castling.contains("K") ? 1 : 0),
+                board.getWhiteCanCastleShort() == (expected.canCastle(true, true) ? 1 : 0),
                 "Snapshot white short castle mismatch");
         check(
-                board.getBlackCanCastleLong() == (expected.castling.contains("q") ? 1 : 0),
+                board.getBlackCanCastleLong() == (expected.canCastle(false, false) ? 1 : 0),
                 "Snapshot black long castle mismatch");
         check(
-                board.getBlackCanCastleShort() == (expected.castling.contains("k") ? 1 : 0),
+                board.getBlackCanCastleShort() == (expected.canCastle(false, true) ? 1 : 0),
                 "Snapshot black short castle mismatch");
         for (int square = 0; square < 64; square++) {
             for (int colour : new int[] {BoardConstants.WHITE, BoardConstants.BLACK}) {
@@ -287,20 +394,26 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             fen.equals(game.getFEN()) && pgn.equals(game.exportFullPGN()),
                             "Failed import changed game");
                     game.newGameRandomFischer(518);
-                    check(game.isChess960Variant(), "Chess960 seed 518 lost its variant");
+                    check(
+                            game.variant() == Variant.CHESS_960,
+                            "Chess960 seed 518 lost its variant");
                     observer.newGame();
-                    check(game.isChess960Variant(), "Second Game changed Chess960 variant");
+                    check(
+                            game.variant() == Variant.CHESS_960,
+                            "Second Game changed Chess960 variant");
                     DisplayedPosition.publish(game);
                     check(
-                            new HotspotBoardApi().isChess960Variant(),
+                            new HotspotBoardApi().variant() == Variant.CHESS_960,
                             "Hotspot lost displayed Chess960 variant");
                     check(
                             game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
                             "Chess960 setup failed");
                     check(
-                            game.requestMove("O-O") && game.isChess960Variant(),
+                            game.requestMove("O-O") && game.variant() == Variant.CHESS_960,
                             "Castling lost Chess960 variant");
-                    check(game.isChess960Variant(), "Castled Position lost Chess960 variant");
+                    check(
+                            game.variant() == Variant.CHESS_960,
+                            "Castled Position lost Chess960 variant");
                     check(
                             game.initFEN("4k3/8/8/8/8/8/8/R5KR w KQ - 0 1", true),
                             "Stationary king setup failed");
@@ -311,10 +424,10 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true),
                             "King-to-rook setup failed");
                     check(game.requestMove(60, 63), "King-to-rook castle request failed");
-                    game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
+                    game.newGame(Variant.KING_OF_THE_HILL);
                     DisplayedPosition.publish(game);
                     check(
-                            new HotspotBoardApi().isKingOfTheHillVariant(),
+                            new HotspotBoardApi().variant() == Variant.KING_OF_THE_HILL,
                             "Hotspot lost displayed Hill variant");
                     game.reset();
                     check(
@@ -324,7 +437,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     game.putPiece(4, BoardConstants.KING, BoardConstants.BLACK);
                     game.commitBoard();
                     check(game.isLegalPosition() == 1, "Valid edited board rejected");
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     check(
                             game.getMyDuckPos() == game.getDuckPos(),
                             "Starting Duck position appears unfinished");
@@ -350,6 +463,61 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 });
     }
 
+    private void explicitRookFileCastling() {
+        for (String[] example :
+                new String[][] {
+                    {"8/4k3/8/8/8/8/8/4KR1R w F - 0 1", "O-O", "5RKR", "7"},
+                    {"8/4k3/8/8/8/8/8/RR2K3 w B - 0 1", "O-O-O", "R1KR4", "7"},
+                    {"4kr1r/8/8/8/8/8/4K3/8 b f - 0 1", "O-O", "5rkr", "0"},
+                    {"rr2k3/8/8/8/8/8/4K3/8 b b - 0 1", "O-O-O", "r1kr4", "0"}
+                }) {
+            GameApi game = new GameApi();
+            check(game.loadPGN("[FEN \"" + example[0] + "\"]\n*"), "Rook-file PGN rejected");
+            check(game.variant() == Variant.CHESS_960, "Rook-file rights did not select Chess 960");
+            check(
+                    "Chess960".equals(game.getPGNHeadProperty("Variant")),
+                    "Imported Variant tag missing");
+            GameApi.PositionSnapshot start = game.getPositionSnapshot(game.getRootNode());
+            check(game.requestMove(example[1]), "Explicit-rook castle rejected");
+            check(
+                    game.getFEN()
+                            .split(" ")[0]
+                            .split("/")[Integer.parseInt(example[3])]
+                            .equals(example[2]),
+                    "Wrong rook moved during castling");
+            RustSearchRequest request =
+                    RustSearchRequest.fromSnapshot(
+                            1,
+                            game.getPositionSnapshot(game.getCurrentNode()),
+                            1,
+                            0,
+                            true,
+                            Variant.CHESS_960);
+            check(
+                    request.getHistory()[0].endsWith(
+                            example[0].contains(" F ")
+                                    ? "f1"
+                                    : example[0].contains(" B ")
+                                            ? "b1"
+                                            : example[0].contains(" f ") ? "f8" : "b8"),
+                    "Engine history lost explicit rook");
+            check(game.stepBack() && game.getFEN().equals(start.fen), "Undo lost explicit rights");
+            check(game.stepForward(), "Castling replay failed");
+            String pgn = game.exportFullPGN();
+            GameApi restored = new GameApi();
+            check(
+                    restored.loadPGN(pgn)
+                            && restored.variant() == Variant.CHESS_960
+                            && restored.getFEN().equals(game.getFEN()),
+                    "Export lost castling position or variant");
+        }
+        GameApi orthodox = new GameApi();
+        check(
+                orthodox.initFEN("4k3/8/8/8/8/8/8/R3K2R w HA - 0 1", true)
+                        && orthodox.variant() == Variant.CHESS_960,
+                "Orthodox file-letter rights did not select Chess 960");
+    }
+
     private void importedGamesValidateOnOpening() {
         GameApi game = new ImportApi();
         GameRecord record =
@@ -372,10 +540,19 @@ public final class RustEngineInstrumentation extends Instrumentation {
 
     private void pgnReplayPreservesBranchesAndRollback() {
         GameApi game = new ImportApi();
+        String illegalBranch = "1. e4 e5 (1... c5 2. Ke4) *";
+        try {
+            PgnReplay.validate(Pgn.parse(illegalBranch));
+            throw new AssertionError("SAN batch accepted an illegal branch");
+        } catch (IllegalArgumentException expected) {
+            check(
+                    expected.getMessage().contains("SAN token"),
+                    "SAN batch omitted the failing move");
+        }
         for (String pgn :
                 new String[] {
                     "[Event \"Branches\"]\n\n{root} 1. e4 $1 {main} e5 (1... c5 {Sicilian} 2. Nf3 (2. Nc3) d6) (1... e6 2. d4) 2. Nf3 Nc6 *",
-                    "1. Nf3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
+                    "1. Ng1f3 Nf6 2. Ng1 Ng8 3. Nf3 Nf6 4. Ng1 Ng8 *",
                     "[Variant \"Fischerandom\"]\n[FEN \"4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1\"]\n\n1. O-O (1. O-O-O) *",
                     "[Variant \"Duck\"]\n\n1. e4@d5 (1. d4@e5 d5@e4) e5@d4 2. Nf3@c6 *",
                     "[Variant \"Duck\"]\n[FEN \"4k3/8/8/8/8/8/4R3/4K3 w - - 0 1\"]\n\n1. Rxe8 *",
@@ -384,10 +561,19 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     "[FEN \"4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1\"]\n\n1. exd6 *"
                 }) {
             check(game.loadPGN(pgn), "Replay rejected " + pgn);
+            RustBoardResult batch = PgnReplay.validate(Pgn.parse(pgn));
+            check(
+                    batch.fen.equals(game.getFEN())
+                            && batch.hashKey == game.getHashKey()
+                            && batch.boardState() == game.getEngineState(),
+                    "SAN batch differed from Java replay: " + pgn);
             String saved = game.exportFullPGN();
             String fen = game.getFEN();
             int state = game.getEngineState();
-            check(!game.loadPGN("1. e4 e5 (1... c5 2. Ke4) *"), "Illegal branch accepted");
+            if (game.variant() == Variant.CHESS_960) {
+                check(saved.contains("[Variant \"Chess960\"]"), "Exported Variant is not Chess960");
+            }
+            check(!game.loadPGN(illegalBranch), "Illegal branch accepted");
             check(
                     saved.equals(game.exportFullPGN()) && fen.equals(game.getFEN()),
                     "Failed replay changed game");
@@ -424,7 +610,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     248,
-                                    RustSearchRequest.Variant.STANDARD,
+                                    Variant.STANDARD,
                                     START,
                                     new String[] {"e2e4", "e7e5"},
                                     2,
@@ -441,13 +627,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 RustNative.search(
                         handle,
                         new RustSearchRequest(
-                                249,
-                                RustSearchRequest.Variant.STANDARD,
-                                START,
-                                new String[] {"e2e5"},
-                                1,
-                                0,
-                                true));
+                                249, Variant.STANDARD, START, new String[] {"e2e5"}, 1, 0, true));
             } catch (IllegalArgumentException expected) {
                 failed = true;
             }
@@ -457,7 +637,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     250,
-                                    RustSearchRequest.Variant.DUCK,
+                                    Variant.DUCK,
                                     START,
                                     new String[] {"e2e4@d5", "e7e5"},
                                     1,
@@ -468,7 +648,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     250,
-                                    RustSearchRequest.Variant.DUCK,
+                                    Variant.DUCK,
                                     START,
                                     new String[] {"e2e4@d5"},
                                     1,
@@ -485,7 +665,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                         handle,
                         new RustSearchRequest(
                                 250,
-                                RustSearchRequest.Variant.DUCK,
+                                Variant.DUCK,
                                 START,
                                 new String[] {"e2e4", "e7e5@d5"},
                                 1,
@@ -500,7 +680,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             handle,
                             new RustSearchRequest(
                                     251,
-                                    RustSearchRequest.Variant.CHESS_960,
+                                    Variant.CHESS_960,
                                     "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1",
                                     new String[0],
                                     2,
@@ -520,8 +700,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
      * Round-trips a snapshot through every RustBoardNative entry point, without touching GameApi.
      */
     private void nativeBoardContract() {
-        RustBoardResult query =
-                RustBoardNative.query(RustSearchRequest.Variant.STANDARD, START, new String[0]);
+        RustBoardResult query = RustBoardNative.query(Variant.STANDARD, START, new String[0]);
         check(
                 query.turnWhite
                         && query.gameState == 0
@@ -538,9 +717,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             check(count == 0, "Opening position reported a capture");
         }
 
-        RustBoardResult legal =
-                RustBoardNative.legalMoves(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0]);
+        RustBoardResult legal = RustBoardNative.legalMoves(Variant.STANDARD, START, new String[0]);
         String[] moves = RustBoardResult.words(legal.moves);
         check(
                 moves.length == 20,
@@ -553,14 +730,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
         }
         check(hasE4, "Legal moves omitted e2e4");
 
-        RustBoardResult san =
-                RustBoardNative.san(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e2e4");
+        RustBoardResult san = RustBoardNative.san(Variant.STANDARD, START, new String[0], "e2e4");
         check(san.san.equals("e4"), "Wrong SAN for e2e4: " + san.san);
 
         RustBoardResult applied =
-                RustBoardNative.applyMove(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e2e4");
+                RustBoardNative.applyMove(Variant.STANDARD, START, new String[0], "e2e4");
         check(
                 !applied.turnWhite
                         && applied.gameState == 0
@@ -569,22 +743,16 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 "Move application did not advance the position: " + applied.fen);
 
         RustBoardResult king =
-                RustBoardNative.pieceAt(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e1");
+                RustBoardNative.pieceAt(Variant.STANDARD, START, new String[0], "e1");
         check(king.piece == 'K', "Expected a White king on e1");
         RustBoardResult empty =
-                RustBoardNative.pieceAt(
-                        RustSearchRequest.Variant.STANDARD, START, new String[0], "e4");
+                RustBoardNative.pieceAt(Variant.STANDARD, START, new String[0], "e4");
         check(empty.piece == 0, "Expected e4 to be empty on the starting position");
 
         String attackersFen = "4k3/8/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1";
         RustBoardResult attackers =
                 RustBoardNative.attackers(
-                        RustSearchRequest.Variant.STANDARD,
-                        attackersFen,
-                        new String[0],
-                        true,
-                        "d3");
+                        Variant.STANDARD, attackersFen, new String[0], true, "d3");
         String[] attackerSquares = RustBoardResult.words(attackers.attackers);
         check(
                 attackerSquares.length == 2,
@@ -592,7 +760,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
 
         boolean failed = false;
         try {
-            RustBoardNative.query(RustSearchRequest.Variant.STANDARD, "not a fen", new String[0]);
+            RustBoardNative.query(Variant.STANDARD, "not a fen", new String[0]);
         } catch (IllegalArgumentException expected) {
             failed = true;
         }
@@ -694,13 +862,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     RustNative.search(
                             progressHandle,
                             new RustSearchRequest(
-                                    300,
-                                    RustSearchRequest.Variant.STANDARD,
-                                    START,
-                                    new String[0],
-                                    0,
-                                    60_000,
-                                    false),
+                                    300, Variant.STANDARD, START, new String[0], 0, 60_000, false),
                             event -> {
                                 check(
                                         Looper.myLooper() != Looper.getMainLooper(),
@@ -729,13 +891,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     RustNative.search(
                             handle,
                             new RustSearchRequest(
-                                    301,
-                                    RustSearchRequest.Variant.STANDARD,
-                                    START,
-                                    new String[0],
-                                    10,
-                                    0,
-                                    true));
+                                    301, Variant.STANDARD, START, new String[0], 10, 0, true));
             check(
                     result.interrupted && !result.hasEvaluation && result.bestMove.isEmpty(),
                     "Pre-depth interruption fabricated a result");
@@ -969,8 +1125,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
                                                         Looper.myLooper() == Looper.getMainLooper(),
                                                         "Analysis off main thread");
                                                 check(
-                                                        best.isEmpty() && evaluation == null,
-                                                        "Terminal mate invented a distance");
+                                                        best.isEmpty()
+                                                                && evaluation != null
+                                                                && evaluation.mate
+                                                                && evaluation.value == 0,
+                                                        "Terminal mate is not mate 0");
                                                 check(
                                                         completed.incrementAndGet() == 1,
                                                         "Duplicate completion");
@@ -1074,7 +1233,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     check(game.requestMove("e4@d5"), "Duck recorded turn");
                     String original = game.getFEN();
                     check(!game.isStandardVariant(), "Duck game was reported as Standard");
@@ -1136,7 +1295,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
                             "Could not load a Chess 960-shaped FEN");
                     check(
-                            game.isChess960Variant(),
+                            game.variant() == Variant.CHESS_960,
                             "Off-square castling rights were not reported as Chess 960");
                     session[0] =
                             EngineSession.forAnalysis(
@@ -1277,8 +1436,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
     }
 
     /**
-     * {@code GameApi.requestMove(String)}'s SAN-token disambiguation is Rust-board-backed: a pinned
-     * piece sharing a destination with another of the same kind must not count as a second
+     * {@code GameApi.requestMove(String)} resolves SAN tokens against the Rust board's legal moves:
+     * a pinned piece sharing a destination with another of the same kind must not count as a second
      * candidate, and Chess 960 castling SAN must still resolve and apply.
      */
     private void gameApiSanDisambiguationUsesRustBoardApi() {
@@ -1318,7 +1477,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             castle960.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true),
                             "Could not load a Chess 960-shaped FEN");
                     check(
-                            castle960.isChess960Variant(),
+                            castle960.variant() == Variant.CHESS_960,
                             "Off-square castling rights were not reported as Chess 960");
                     check(
                             castle960.requestMove("O-O"),
@@ -1406,7 +1565,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game[0].initFEN(START.replace("0 1", "100 1"), true),
                             "Could not load drawn position");
                     assertEcoProbePreservesPosition(game[0], eco[0]);
-                    game[0].newGame(BoardConstants.VARIANT_DUCK);
+                    game[0].newGame(Variant.DUCK);
                     assertEcoProbePreservesPosition(game[0], eco[0]);
                     check(game[0].requestMove("e4@d5"), "Could not play Duck turn");
                     assertEcoProbePreservesPosition(game[0], eco[0]);
@@ -1451,7 +1610,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     check(
                             game.requestMove("e4@d5") && game.requestMove("e5@e2"),
                             "First Duck path");
@@ -1474,7 +1633,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     if (terminal) {
                         check(
                                 game.initFEN("4k3/4R3/8/3$4/8/8/8/4K3 w - - 0 1", true),
@@ -1507,7 +1666,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                                                                 1,
                                                                 0,
                                                                 false,
-                                                                RustSearchRequest.Variant.DUCK);
+                                                                Variant.DUCK);
                                                 check(
                                                         request.getHistory().length == 1,
                                                         "Duck history length");
@@ -1557,7 +1716,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    game.newGame(BoardConstants.VARIANT_DUCK);
+                    game.newGame(Variant.DUCK);
                     GameApi.PositionSnapshot root = game.getPositionSnapshot(game.getCurrentNode());
                     session[0] =
                             EngineSession.forAnalysis(

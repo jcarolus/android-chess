@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import java.util.List;
 import jwtc.android.chess.R;
 import jwtc.android.chess.services.MoveSpeech;
+import jwtc.chess.PgnComment;
 
 public class MoveItemAdapter extends BaseAdapter {
     private Context context;
@@ -60,7 +61,7 @@ public class MoveItemAdapter extends BaseAdapter {
         textMove.setText(move.sMove);
         textMove.setContentDescription(
                 MoveSpeech.describe(context.getResources(), move.sMove, move.move, false));
-        textAnnotation.setText(move.annotation);
+        textAnnotation.setText(PgnComment.text(move.annotation));
 
         return convertView;
     }

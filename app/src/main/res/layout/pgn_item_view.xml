@@ -10,7 +10,7 @@
 
         <TextView
             android:id="@+id/TextViewNumMove"
-            android:text="1."
+            android:text="@string/placeholder_move_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

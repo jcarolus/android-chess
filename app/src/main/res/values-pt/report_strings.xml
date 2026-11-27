@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Relatório</string>
+    <string name="analysis_report_title">Relatório da linha principal</string>
+    <string name="analysis_report_progress">Analisando posições: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Precisão\nBrancas: %1$s · Pretas: %2$s</string>
+    <string name="analysis_report_graph">Gráfico de avaliação</string>
+    <string name="analysis_report_graph_hint">Área branca: chances de vitória das brancas. Toque no gráfico para ir a uma posição.</string>
+    <string name="analysis_report_go_to_move">Ir para a posição selecionada</string>
+    <string name="analysis_report_key_moments">Momentos importantes</string>
+    <string name="analysis_report_no_moments">Nenhum erro ou erro grave encontrado.</string>
+    <string name="analysis_report_partial">Não foi possível avaliar algumas posições. Abra o relatório novamente para tentar de novo. A precisão estará disponível após a avaliação de todas as posições.</string>
+    <string name="analysis_report_unavailable">Relatório indisponível. Conclua o lance atual e verifique se a partida contém lances para analisar.</string>
+    <string name="analysis_report_start">Posição inicial</string>
+    <string name="analysis_report_position">%1$s · Avaliação: %2$s</string>
+    <string name="analysis_report_unknown">Indisponível</string>
+</resources>

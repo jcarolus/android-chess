@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Actions sur les parties sélectionnées</string>
+    <string name="gameslist_check_game">Sélectionner la partie %3$d : %1$s contre %2$s</string>
+    <string name="gameslist_select_all">Tout sélectionner</string>
+    <string name="gameslist_clear_selection">Effacer la sélection</string>
+    <string name="gameslist_invert_checked">Inverser la sélection</string>
+    <string name="gameslist_multi_edit">Modification groupée</string>
+    <string name="gameslist_delete_selected">Supprimer les parties sélectionnées</string>
+    <string name="gameslist_edit_topic">Modifier le thème</string>
+    <string name="gameslist_topic_hint">Thème</string>
+    <string name="gameslist_topic_explanation">Remplacer le thème de toutes les parties sélectionnées. Laisser vide pour effacer leurs thèmes.</string>
+    <string name="gameslist_clear_topic">Effacer le thème</string>
+    <string name="gameslist_set_topic">Définir le thème</string>
+    <string name="gameslist_bulk_failed">Impossible de modifier les parties sélectionnées. Aucune partie modifiée. Veuillez réessayer.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d partie sélectionnée</item>
+        <item quantity="many">%d parties sélectionnées</item>
+        <item quantity="other">%d parties sélectionnées</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">Supprimer définitivement %d partie sélectionnée ?</item>
+        <item quantity="many">Supprimer définitivement %d parties sélectionnées ?</item>
+        <item quantity="other">Supprimer définitivement %d parties sélectionnées ?</item>
+    </plurals>
+    <string name="gameslist_export_selected">Exporter les parties sélectionnées</string>
+</resources>

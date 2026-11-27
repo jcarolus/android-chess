@@ -2,6 +2,7 @@ package jwtc.android.chess.play;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.RatingBar;
 import androidx.annotation.NonNull;
 import com.google.android.material.button.MaterialButton;
@@ -13,12 +14,16 @@ import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.GameRecord;
+import jwtc.chess.Pgn;
 import jwtc.chess.PgnDate;
 
 public class SaveGameDialog extends Dialog {
 
+    private static final String PREF_LAST_SAVE_GAME_TOPIC = "lastSaveGameTopic";
+
+    private final SharedPreferences prefs;
     private GameApi gameApi;
-    private TextInputEditText editTextWhite, editTextBlack, editTextEvent;
+    private TextInputEditText editTextWhite, editTextBlack, editTextEvent, editTextTopic;
     private RatingBar ratingBarRating;
     private PGNDateView dateView;
     private SaveGameResult result;
@@ -32,6 +37,7 @@ public class SaveGameDialog extends Dialog {
                         ? R.style.ChessDialogThemeEink
                         : R.style.ChessDialogTheme);
 
+        prefs = context.getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
         this.gameApi = gameApi;
         result = new SaveGameResult();
 
@@ -48,6 +54,7 @@ public class SaveGameDialog extends Dialog {
         ratingBarRating = findViewById(R.id.RatingBarSave);
 
         editTextEvent = findViewById(R.id.EditTextSaveEvent);
+        editTextTopic = findViewById(R.id.EditTextSaveTopic);
         editTextWhite = findViewById(R.id.EditTextSaveWhite);
         editTextBlack = findViewById(R.id.EditTextSaveBlack);
 
@@ -72,6 +79,9 @@ public class SaveGameDialog extends Dialog {
 
         ratingBarRating.setRating(3.0F);
         editTextEvent.setText(gameApi.pgnTags.get("Event"));
+        String topic = Pgn.optionalTagValue(gameApi.pgnTags.get("Topic"));
+        editTextTopic.setText(
+                topic == null ? prefs.getString(PREF_LAST_SAVE_GAME_TOPIC, null) : topic);
         editTextWhite.setText(gameApi.pgnTags.get("White"));
         editTextBlack.setText(gameApi.pgnTags.get("Black"));
 
@@ -82,6 +92,13 @@ public class SaveGameDialog extends Dialog {
 
     protected void save(boolean bCopy) {
         gameApi.pgnTags.put("Event", Utils.getTrimmedOrDefault(editTextEvent.getText(), "Event?"));
+        String topic = Pgn.optionalTagValue(editTextTopic.getText().toString());
+        prefs.edit().putString(PREF_LAST_SAVE_GAME_TOPIC, topic).apply();
+        if (topic == null) {
+            gameApi.pgnTags.remove("Topic");
+        } else {
+            gameApi.pgnTags.put("Topic", topic);
+        }
         gameApi.pgnTags.put("White", Utils.getTrimmedOrDefault(editTextWhite.getText(), "White?"));
         gameApi.pgnTags.put("Black", Utils.getTrimmedOrDefault(editTextBlack.getText(), "Black?"));
         gameApi.pgnTags.put("Date", PgnDate.format(dateView.getDate()));

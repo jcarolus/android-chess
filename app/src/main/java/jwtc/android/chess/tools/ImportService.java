@@ -1,7 +1,6 @@
 package jwtc.android.chess.tools;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,10 +15,10 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.GameStore;
-import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.services.HMap;
@@ -31,6 +30,7 @@ public class ImportService extends Service {
     public static final int IMPORT_GAMES = 2;
     public static final int IMPORT_PRACTICE = 3;
     public static final int IMPORT_OPENINGS = 4;
+    public static final int IMPORT_STUDIES = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
     public static final int PICK_BINARY = 12;
@@ -62,11 +62,12 @@ public class ImportService extends Service {
                 }
 
                 @Override
-                public void OnImportProgress(int mode, int succeeded, int failed) {
+                public void OnImportProgress(
+                        int mode, int succeeded, int failed, int duplicates, int updated) {
                     jobSucceeded = succeeded;
                     jobFailed = failed;
                     for (ImportListener listener : listeners) {
-                        listener.OnImportProgress(mode, succeeded, failed);
+                        listener.OnImportProgress(mode, succeeded, failed, duplicates, updated);
                     }
                 }
 
@@ -90,6 +91,33 @@ public class ImportService extends Service {
             };
 
     private final Handler importDelivery = new Handler(Looper.getMainLooper());
+    private TopicPrompt topicPrompt;
+    private SelectionPrompt selectionPrompt;
+
+    public static final class SelectionPrompt {
+        final String filename;
+        final int count;
+        private final CompletableFuture<TopicImport.Range> answer = new CompletableFuture<>();
+
+        SelectionPrompt(String filename, int count) {
+            this.filename = filename;
+            this.count = count;
+        }
+    }
+
+    private volatile boolean destroyed;
+
+    public static final class TopicPrompt {
+        final String filename;
+        final TopicImport.DefaultTopic defaults;
+        private final CompletableFuture<Boolean> answer = new CompletableFuture<>();
+
+        TopicPrompt(String filename, TopicImport.DefaultTopic defaults) {
+            this.filename = filename;
+            this.defaults = defaults;
+        }
+    }
+
     private final ImportPipeline pipeline =
             new ImportPipeline(
                     command -> new Thread(command, "ImportPipeline").start(),
@@ -104,9 +132,11 @@ public class ImportService extends Service {
                         }
 
                         @Override
-                        public void OnImportProgress(int mode, int succeeded, int failed) {
+                        public void OnImportProgress(
+                                int mode, int succeeded, int failed, int duplicates, int updated) {
                             for (ImportListener listener : new ArrayList<>(listeners)) {
-                                listener.OnImportProgress(mode, succeeded, failed);
+                                listener.OnImportProgress(
+                                        mode, succeeded, failed, duplicates, updated);
                             }
                         }
 
@@ -137,9 +167,15 @@ public class ImportService extends Service {
         this.listeners.add(listener);
         if (latestIsImport) {
             pipeline.replay(listener);
+            if (topicPrompt != null) {
+                listener.onTopicRequired(topicPrompt);
+            }
+            if (selectionPrompt != null) {
+                listener.onSelectionRequired(selectionPrompt);
+            }
         } else if (jobRunning) {
             listener.OnImportStarted(jobMode);
-            listener.OnImportProgress(jobMode, jobSucceeded, jobFailed);
+            listener.OnImportProgress(jobMode, jobSucceeded, jobFailed, 0, 0);
         } else if (jobOutcome != null) {
             if (jobOutcome) {
                 listener.OnImportFinished(jobMode);
@@ -175,7 +211,8 @@ public class ImportService extends Service {
         if (mode != IMPORT_GAMES
                 && mode != IMPORT_PUZZLES
                 && mode != IMPORT_PRACTICE
-                && mode != IMPORT_OPENINGS) {
+                && mode != IMPORT_OPENINGS
+                && mode != IMPORT_STUDIES) {
             latestIsImport = false;
             jobMode = mode;
             jobOutcome = null;
@@ -189,40 +226,42 @@ public class ImportService extends Service {
                             importApi = new ImportApi();
                             return new ImportJob(
                                     mode,
-                                    PgnSource.file(openInput(uri, "puzzles.pgn")),
+                                    uri == null ? bundledPgn("puzzles.pgn") : openPgnSource(uri),
                                     new PuzzleImportHandler(importApi, getContentResolver()));
                         });
+                break;
+            case IMPORT_STUDIES:
+                if (uri != null) {
+                    pipeline.start(
+                            mode,
+                            () ->
+                                    new ImportJob(
+                                            mode,
+                                            topicImport(uri, true),
+                                            new GameImportHandler(getContentResolver())));
+                }
                 break;
             case IMPORT_GAMES:
                 if (uri != null) {
                     pipeline.start(
                             mode,
-                            () -> {
-                                InputStream in =
-                                        new BufferedInputStream(
-                                                getContentResolver().openInputStream(uri));
-                                try {
-                                    return new ImportJob(
+                            () ->
+                                    new ImportJob(
                                             mode,
-                                            isZip(in) ? PgnSource.zip(in) : PgnSource.file(in),
-                                            new GameImportHandler(getContentResolver()));
-                                } catch (Exception error) {
-                                    in.close();
-                                    throw error;
-                                }
-                            });
+                                            topicImport(uri, false),
+                                            new GameImportHandler(getContentResolver())));
                 }
                 break;
             case IMPORT_PRACTICE:
                 pipeline.start(
                         mode,
-                        () -> {
-                            importApi = new ImportApi();
-                            return new ImportJob(
-                                    mode,
-                                    PgnSource.file(openInput(uri, "practice.pgn")),
-                                    new PracticeImportHandler(importApi, getContentResolver()));
-                        });
+                        () ->
+                                new ImportJob(
+                                        mode,
+                                        uri == null
+                                                ? bundledPgn("practice.pgn")
+                                                : openPgnSource(uri),
+                                        new PracticeImportHandler(getContentResolver())));
                 break;
             case IMPORT_OPENINGS:
                 if (uri != null) {
@@ -337,17 +376,94 @@ public class ImportService extends Service {
                 && header[3] == 4;
     }
 
-    /** The file the user picked, or the bundled asset when none was picked. */
-    private InputStream openInput(@Nullable Uri uri, String assetName) throws java.io.IOException {
-        return uri == null
-                ? getAssets().open(assetName)
-                : getContentResolver().openInputStream(uri);
+    private PgnSource openPgnSource(Uri uri) throws IOException {
+        InputStream stream = getContentResolver().openInputStream(uri);
+        if (stream == null) {
+            throw new IOException("Could not open PGN source");
+        }
+        InputStream input = new BufferedInputStream(stream);
+        try {
+            return isZip(input) ? PgnSource.zip(input) : PgnSource.file(input);
+        } catch (IOException error) {
+            input.close();
+            throw error;
+        }
+    }
+
+    private boolean askImportTopic(String filename, TopicImport.DefaultTopic defaults)
+            throws Exception {
+        TopicPrompt prompt = new TopicPrompt(filename, defaults);
+        importDelivery.post(
+                () -> {
+                    if (destroyed) {
+                        prompt.answer.complete(false);
+                        return;
+                    }
+                    topicPrompt = prompt;
+                    for (ImportListener listener : new ArrayList<>(listeners)) {
+                        listener.onTopicRequired(prompt);
+                    }
+                });
+        return prompt.answer.get();
+    }
+
+    void answerTopicPrompt(TopicPrompt prompt, String topic, boolean accepted) {
+        if (topicPrompt == prompt) {
+            topicPrompt = null;
+            prompt.defaults.value = topic;
+            prompt.answer.complete(accepted);
+        }
+    }
+
+    private TopicImport.Range askImportSelection(String filename, int count) throws Exception {
+        SelectionPrompt prompt = new SelectionPrompt(filename, count);
+        importDelivery.post(
+                () -> {
+                    if (destroyed) {
+                        prompt.answer.complete(null);
+                        return;
+                    }
+                    selectionPrompt = prompt;
+                    for (ImportListener listener : new ArrayList<>(listeners)) {
+                        listener.onSelectionRequired(prompt);
+                    }
+                });
+        return prompt.answer.get();
+    }
+
+    void answerSelectionPrompt(SelectionPrompt prompt, TopicImport.Range range) {
+        if (selectionPrompt == prompt) {
+            selectionPrompt = null;
+            prompt.answer.complete(range);
+        }
+    }
+
+    private TopicImport topicImport(Uri uri, boolean studies) {
+        return new TopicImport(
+                getUriDisplayName(uri),
+                () -> openPgnSource(uri),
+                this::askImportTopic,
+                this::askImportSelection,
+                getCacheDir(),
+                studies);
+    }
+
+    private PgnSource bundledPgn(String assetName) throws IOException {
+        return PgnSource.file(getAssets().open(assetName));
     }
 
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
+        destroyed = true;
         pipeline.cancel();
+        if (topicPrompt != null) {
+            answerTopicPrompt(topicPrompt, null, false);
+        }
+        if (selectionPrompt != null) {
+            answerSelectionPrompt(selectionPrompt, null);
+        }
+        super.onDestroy();
     }
 
     public class LocalBinder extends Binder {
@@ -356,24 +472,26 @@ public class ImportService extends Service {
         }
     }
 
-    protected String getUriDisplayName(Context context, Uri uri) throws URISyntaxException {
-        Log.d(TAG, "getUriDisplayName " + uri.getScheme());
-
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            Cursor cursor = null;
-            try {
-                cursor = context.getContentResolver().query(uri, null, null, null, null);
-                if (cursor.moveToFirst()) {
-                    return Utils.getColumnString(cursor, OpenableColumns.DISPLAY_NAME);
+    private String getUriDisplayName(Uri uri) {
+        try (Cursor cursor =
+                getContentResolver()
+                        .query(
+                                uri,
+                                new String[] {OpenableColumns.DISPLAY_NAME},
+                                null,
+                                null,
+                                null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                String name = cursor.getString(0);
+                if (name != null && !name.trim().isEmpty()) {
+                    return name;
                 }
-            } catch (Exception e) {
-                Log.d(TAG, e.getMessage());
             }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getLastPathSegment();
+        } catch (RuntimeException error) {
+            Log.w(TAG, "Could not read the import filename", error);
         }
-
-        return null;
+        String name = uri.getLastPathSegment();
+        return name == null || name.trim().isEmpty() ? getString(R.string.studies) : name;
     }
 
     protected String collectGameDatabaseAsPGN() {

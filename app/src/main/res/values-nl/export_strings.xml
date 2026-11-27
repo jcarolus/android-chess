@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">PGN exporteren</string>
+    <string name="export_create">Nieuw bestand maken</string>
+    <string name="export_append">Toevoegen aan bestand</string>
+    <string name="export_replace">Bestand vervangen</string>
+    <string name="export_choose_action">Kies hoe u de partijen wilt exporteren.</string>
+    <string name="export_all">Alle partijen</string>
+    <string name="export_matching">Partijen die aan de huidige filters voldoen</string>
+    <string name="export_replace_confirm">Alle inhoud van “%1$s” vervangen? Dit kan niet ongedaan worden gemaakt.</string>
+    <string name="export_preparing">Partijen voorbereiden voor export…</string>
+    <string name="export_writing">Partijen exporteren…</string>
+    <string name="export_done">Export voltooid.</string>
+    <string name="export_no_games">Geen partijen om te exporteren.</string>
+    <string name="export_failed">Export mislukt. Kies een andere bestemming of sluit en probeer opnieuw.</string>
+    <string name="export_partial">Export mislukt. Het bestand kan gedeeltelijk zijn geschreven. Controleer de inhoud voordat u het opnieuw probeert om dubbele of onvolledige partijen te voorkomen. U kunt een andere bestemming kiezen.</string>
+</resources>

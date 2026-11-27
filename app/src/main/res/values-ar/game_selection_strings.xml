@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">عرض الألعاب</string>
+    <string name="gameslist_loading">جارٍ تحميل الألعاب…</string>
+    <string name="game_selection_load_failed">تعذّر تحميل الألعاب.</string>
+    <string name="gameslist_invalid_dates">أدخل تواريخ صحيحة بحيث يكون تاريخ البدء قبل تاريخ الانتهاء أو مساويًا له.</string>
+    <string name="study_title">دراسة</string>
+    <string name="study_delete_filtered_confirmation">هل تريد حذف جميع الألعاب المطابقة لعوامل التصفية المفعّلة من قاعدة بيانات الألعاب؟</string>
+    <string name="gameslist_delete_matching">حذف الألعاب المطابقة</string>
+    <string name="gameslist_delete_matching_confirmation">هل تريد حذف جميع الألعاب المطابقة لعوامل التصفية المفعّلة من قاعدة بيانات الألعاب؟</string>
+    <string name="gameslist_delete_failed">تعذّر حذف العناصر المحددة.</string>
+</resources>

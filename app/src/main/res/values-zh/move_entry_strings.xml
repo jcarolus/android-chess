@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">文本输入走法</string>
+    <string name="pref_confirm_move_entry">走棋前检查文本输入的走法</string>
+    <string name="move_entry_hint">走法，例如 e2 e4</string>
+    <string name="move_entry_format">请输入走法，例如 e2e4、Nf3 或 马 f3。</string>
+    <string name="move_entry_illegal">此走法在当前局面中不合法。</string>
+    <string name="move_entry_wrong_turn">请在进行中的棋局里等待轮到你走棋。</string>
+    <string name="move_entry_promotion">请指定升变棋子：后、车、象或马。</string>
+    <string name="move_entry_review">是否走 %1$s（%2$s）？</string>
+</resources>

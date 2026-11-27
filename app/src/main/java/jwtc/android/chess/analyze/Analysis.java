@@ -3,8 +3,13 @@ package jwtc.android.chess.analyze;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.WeakHashMap;
 import jwtc.android.chess.analyze.AnalysisResults.Result;
 import jwtc.android.chess.analyze.AnalysisResults.Saved;
@@ -17,6 +22,7 @@ import jwtc.android.chess.services.GameApi.PositionSnapshot;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 /** Owns screen-scoped Analysis work and completed results, keyed by full move history. */
@@ -49,7 +55,10 @@ final class Analysis implements EngineListener {
             };
     private final Map<Node, PositionSnapshot> positions = new WeakHashMap<>();
     private Node displayedNode;
+    private boolean pendingDuckMove;
     private PositionSnapshot requestedPosition;
+    private List<Node> reportNodes = Collections.emptyList();
+    private boolean reporting;
 
     Analysis(Context context, GameApi gameApi, Listener listener) {
         this.context = context;
@@ -58,6 +67,7 @@ final class Analysis implements EngineListener {
     }
 
     void resume(String engine, int millis, Saved saved) {
+        engine = effectiveEngine(engine);
         results.configure(engine, millis, saved);
         configuredEngine = engine;
         configuredMillis = millis;
@@ -70,6 +80,7 @@ final class Analysis implements EngineListener {
     }
 
     boolean configure(String engine, int millis) {
+        engine = effectiveEngine(engine);
         if (!analysisActive
                 || Objects.equals(engine, configuredEngine) && millis == configuredMillis) {
             return false;
@@ -79,7 +90,14 @@ final class Analysis implements EngineListener {
         return true;
     }
 
+    private String effectiveEngine(String preferredEngine) {
+        return gameApi.variant().supportsOexEngine()
+                ? preferredEngine
+                : EngineSession.LOCAL_ENGINE_ID;
+    }
+
     void pause() {
+        reporting = false;
         analysisActive = false;
         analysisGeneration++;
         analysisHandler.removeCallbacks(resumeAnalysis);
@@ -94,6 +112,7 @@ final class Analysis implements EngineListener {
         pause();
         results.clear();
         positions.clear();
+        reportNodes = Collections.emptyList();
     }
 
     Saved save() {
@@ -120,18 +139,12 @@ final class Analysis implements EngineListener {
         final boolean ready;
         final boolean unavailable;
         final MoveClassifier.Feedback feedback;
-        final Node branchPoint;
         final PositionMove recommendation;
 
-        Summary(
-                boolean ready,
-                MoveClassifier.Feedback feedback,
-                Node branchPoint,
-                PositionMove recommendation) {
+        Summary(boolean ready, MoveClassifier.Feedback feedback, PositionMove recommendation) {
             this.ready = ready;
             this.unavailable = ready && feedback == null;
             this.feedback = feedback;
-            this.branchPoint = branchPoint;
             this.recommendation = recommendation;
         }
     }
@@ -142,10 +155,6 @@ final class Analysis implements EngineListener {
         Result before = result(parent);
         Result after = result(position);
         boolean ready = after != null && (current.getParent() == null || before != null);
-        boolean continuation =
-                gameApi.getContinuations(current).isEmpty()
-                        && after != null
-                        && after.preferredMove != null;
         PGNEntry entry = current.getEntry();
         PositionMove preferred = before == null ? null : before.preferredMove;
         boolean matches =
@@ -155,7 +164,12 @@ final class Analysis implements EngineListener {
                         && Move.isPromotionMove(entry.move) == Move.isPromotionMove(preferred.move)
                         && (!Move.isPromotionMove(entry.move)
                                 || Move.getPromotionPiece(entry.move)
-                                        == Move.getPromotionPiece(preferred.move));
+                                        == Move.getPromotionPiece(preferred.move))
+                        && entry.duckMove == preferred.duckMove;
+        int winner = AnalysisResults.terminalWinner(position);
+        // Duck snapshots list piece moves, so their count cannot identify a forced turn.
+        int legalMoveCount =
+                parent == null || gameApi.variant() == Variant.DUCK ? 0 : parent.moves.size();
         MoveClassifier.Feedback feedback =
                 entry == null || parent == null || position == null
                         ? null
@@ -164,20 +178,126 @@ final class Analysis implements EngineListener {
                                 after == null ? null : after.evaluation,
                                 parent.turn == BoardConstants.WHITE,
                                 matches,
-                                parent.moves.size(),
-                                position.state == BoardConstants.MATE,
+                                legalMoveCount,
+                                winner == parent.turn,
                                 AnalysisResults.isDraw(position.state));
-        return new Summary(
-                ready,
-                feedback,
-                continuation ? current : current.getParent(),
-                continuation ? after.preferredMove : entry == null || matches ? null : preferred);
+        return new Summary(ready, feedback, after == null ? null : after.preferredMove);
+    }
+
+    boolean startReport() {
+        if (!analysisActive
+                || engineSession == null
+                || !engineSession.supportsAnalysis()
+                || gameApi.hasPendingDuckMove()) {
+            return false;
+        }
+        List<Node> line = new ArrayList<>();
+        line.add(gameApi.getRootNode());
+        line.addAll(gameApi.getMainLineNodes());
+        if (line.size() < 2) {
+            return false;
+        }
+        Set<String> histories = new HashSet<>();
+        for (Node node : line) {
+            rememberPosition(node);
+            PositionSnapshot position = position(node);
+            if (position == null) {
+                return false;
+            }
+            histories.add(position.positionCommand);
+        }
+        reportNodes = line;
+        results.retain(histories);
+        results.retryUnavailable();
+        reporting = true;
+        analysisHandler.removeCallbacks(resumeAnalysis);
+        analysisDebouncing = false;
+        listener.onChanged();
+        startNextAnalysis();
+        return true;
+    }
+
+    /**
+     * Stops a running report and keeps report results only for positions still on the main line,
+     * after moves have been deleted from it.
+     */
+    void trimReportToMainLine() {
+        cancelReport();
+        reportNodes = Collections.emptyList();
+        List<Node> line = new ArrayList<>();
+        line.add(gameApi.getRootNode());
+        line.addAll(gameApi.getMainLineNodes());
+        Set<String> histories = new HashSet<>();
+        for (Node node : line) {
+            rememberPosition(node);
+            PositionSnapshot position = position(node);
+            if (position != null) {
+                histories.add(position.positionCommand);
+            }
+        }
+        results.narrowRetained(histories);
+    }
+
+    boolean isReporting() {
+        return reporting;
+    }
+
+    List<Node> reportNodes() {
+        return Collections.unmodifiableList(reportNodes);
+    }
+
+    int reportCompleted() {
+        int completed = 0;
+        for (Node node : reportNodes) {
+            if (result(position(node)) != null) {
+                completed++;
+            }
+        }
+        return completed;
+    }
+
+    AnalysisReport report() {
+        List<AnalysisReport.Position> scores = new ArrayList<>();
+        for (Node node : reportNodes) {
+            PositionSnapshot position = position(node);
+            Result result = result(position);
+            scores.add(
+                    new AnalysisReport.Position(
+                            result == null ? null : result.evaluation,
+                            position.turn == BoardConstants.WHITE,
+                            node.getParent() == null ? null : summary(node).feedback));
+        }
+        return new AnalysisReport(scores);
+    }
+
+    void cancelReport() {
+        if (!reporting) {
+            return;
+        }
+        reporting = false;
+        if (analysisFen != null && engineSession != null) {
+            analysisFen = null;
+            requestedPosition = null;
+            analysisSwitchPending = true;
+            int generation = ++analysisGeneration;
+            engineSession.abort(
+                    () -> {
+                        if (analysisActive && generation == analysisGeneration) {
+                            analysisSwitchPending = false;
+                            startNextAnalysis();
+                        }
+                    });
+        } else {
+            analysisHandler.post(this::startNextAnalysis);
+        }
     }
 
     boolean selectPosition() {
-        boolean changed = displayedNode != gameApi.getCurrentNode();
+        boolean pending = gameApi.hasPendingDuckMove();
+        boolean changed = displayedNode != gameApi.getCurrentNode() || pending != pendingDuckMove;
         displayedNode = gameApi.getCurrentNode();
-        if (!gameApi.isDuckVariant()) {
+        pendingDuckMove = pending;
+        if (!pending) {
             rememberPosition(displayedNode);
             if (displayedNode.getParent() != null) {
                 rememberPosition(displayedNode.getParent());
@@ -186,7 +306,7 @@ final class Analysis implements EngineListener {
         if (!analysisActive || engineSession == null || !engineSession.supportsAnalysis()) {
             return changed;
         }
-        if (changed) {
+        if (changed && !reporting) {
             analysisHandler.removeCallbacks(resumeAnalysis);
             analysisDebouncing = true;
             analysisHandler.postDelayed(resumeAnalysis, ANALYSIS_DEBOUNCE_MILLIS);
@@ -235,8 +355,20 @@ final class Analysis implements EngineListener {
                 || analysisFen != null
                 || engineSession == null
                 || !engineSession.supportsAnalysis()
+                || gameApi.hasPendingDuckMove()
                 || displayedNode != gameApi.getCurrentNode()) {
             return;
+        }
+        if (reporting) {
+            for (Node node : reportNodes) {
+                PositionSnapshot position = position(node);
+                if (result(position) == null) {
+                    analyze(position);
+                    return;
+                }
+            }
+            reporting = false;
+            listener.onChanged();
         }
         PositionSnapshot current = positions.get(displayedNode);
         if (current == null) {
@@ -252,10 +384,14 @@ final class Analysis implements EngineListener {
             listener.onChanged();
             return;
         }
-        requestedPosition = next;
-        analysisFen = next.fen;
-        analysisTurn = next.turn;
-        engineSession.analyze(next, configuredMillis);
+        analyze(next);
+    }
+
+    private void analyze(PositionSnapshot position) {
+        requestedPosition = position;
+        analysisFen = position.fen;
+        analysisTurn = position.turn;
+        engineSession.analyze(position, configuredMillis);
     }
 
     public void OnEngineInfo(String message, float value) {

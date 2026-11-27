@@ -24,6 +24,8 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -32,8 +34,11 @@ import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.links.AppLink;
 import jwtc.android.chess.links.LinkActivity;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.chess.Move;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public class HotspotBoardActivity extends ChessBoardActivity {
@@ -43,6 +48,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private MaterialButtonToggleGroup colorToggleGroup;
     private MaterialButton buttonConnect, buttonDisconnect, buttonCopyIp, buttonShareInvitation;
     private AlertDialog connectionDialog;
+    private AlertDialog newGameDialog;
     private LinearLayout layoutConnect;
     private LinearLayout layoutSessionSummary;
     private boolean isHost = true, isPlayAsWhite = true;
@@ -50,6 +56,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean isObserving = false;
     private boolean isListening = false;
     private boolean hasReceivedGameUpdate = false;
+    private EnumSet<Variant> peerVariants = EnumSet.of(Variant.STANDARD);
     private int connectionMode = HotspotBoardService.CONNECTION_MODE_HOTSPOT;
     private MaterialButton buttonResign, buttonDraw, buttonNew;
     private LinearLayout layoutGameButtons, layoutNewGameButtons;
@@ -65,6 +72,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean restoringState;
     private String configuredName = "";
     private String configuredHostIp = "";
+    private MoveEntry moveEntry;
 
     private ServiceConnection connection =
             new ServiceConnection() {
@@ -89,56 +97,53 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     Log.d(TAG, "onServiceDisconnected");
                     messengerFromService = null;
                     isServiceBound = false;
+                    updateMoveEntry();
                 }
             };
 
     @Override
     public void onMoveApplied(int move) {
         super.onMoveApplied(move);
-
-        Log.d(TAG, "OnMove " + move);
-
-        String lastMovePgn = getLastMoveDescription(false);
-        updateLastMove(lastMovePgn);
-
-        Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
-        Bundle bundle = new Bundle();
-        try {
-            GameMessage message =
-                    new GameMessage(
-                            gameApi.getFEN(),
-                            ((HotspotBoardApi) gameApi).getWhite(),
-                            ((HotspotBoardApi) gameApi).getBlack(),
-                            move,
-                            lastMovePgn);
-            bundle.putString("data", message.toJsonString());
-            msg.setData(bundle);
-
-            messengerFromService.send(msg);
-        } catch (Exception e) {
-            Log.d(TAG, "Could net send game message");
-            e.printStackTrace();
+        if (!gameApi.hasPendingDuckMove()) {
+            sendCompletedMove(move);
         }
     }
 
     @Override
-    public boolean requestMove(final int from, final int to) {
-        Log.d(TAG, "requestMove");
-        if (!isConnected || overrideGameState != 0 || isObserving || isShareMode) {
-            rebuildBoard();
-            Log.d(TAG, "requestMove unavailable");
-            return false;
+    public void onDuckMoveApplied(int duckMove) {
+        super.onDuckMoveApplied(duckMove);
+        sendCompletedMove(gameApi.getMyMove());
+    }
+
+    private void sendCompletedMove(int move) {
+        String description = getLastMoveDescription(false);
+        updateLastMove(description);
+        sendGameMessage(GameMessage.TYPE_MOVE, move, description);
+    }
+
+    @Override
+    protected MoveIntake moveIntake() {
+        HotspotBoardApi game = (HotspotBoardApi) gameApi;
+        return new HotspotMoveIntake(
+                game,
+                canPlayMoves() && messengerFromService != null,
+                game.isPlayingAsWhite() ? BoardConstants.WHITE : BoardConstants.BLACK);
+    }
+
+    private boolean canPlayMoves() {
+        return isConnected
+                && hasReceivedGameUpdate
+                && overrideGameState == 0
+                && !isObserving
+                && !isShareMode;
+    }
+
+    private void updateMoveEntry() {
+        if (isObserving || isShareMode) {
+            moveEntry.update(null, null);
+            return;
         }
-        if (((HotspotBoardApi) gameApi).isMyTurn()) {
-            boolean res = super.requestMove(from, to);
-            if (!res) {
-                rebuildBoard();
-            }
-            return res;
-        }
-        rebuildBoard();
-        Log.d(TAG, "requestMove not my turn");
-        return false;
+        moveEntry.update(gameApi, gameApi.getCurrentNode());
     }
 
     public void startSession() {
@@ -147,6 +152,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         hasActiveSession = true;
         isConnected = false;
         hasReceivedGameUpdate = false;
+        peerVariants = EnumSet.of(Variant.STANDARD);
         isListening = isHost;
         updateConnectedState(false);
         updateStatus(
@@ -183,7 +189,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void sendGameMessage(int type, int lastMove, String lastMovePgn) {
+        if (messengerFromService == null) {
+            return;
+        }
         try {
+            Variant variant = gameApi.variant();
             GameMessage message =
                     new GameMessage(
                             type,
@@ -191,7 +201,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                             ((HotspotBoardApi) gameApi).getWhite(),
                             ((HotspotBoardApi) gameApi).getBlack(),
                             lastMove,
-                            lastMovePgn);
+                            lastMovePgn,
+                            variant == Variant.STANDARD ? null : variant);
             Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
             Bundle bundle = new Bundle();
             bundle.putString("data", message.toJsonString());
@@ -212,6 +223,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             if (msg.what == HotspotBoardService.MSG_SESSION_STATE) {
                 restoreSessionState(msg.getData());
                 showLinkedConnection();
+            } else if (msg.what == HotspotBoardService.MSG_PEER_VARIANTS) {
+                updatePeerVariants(msg.getData());
+                if (newGameDialog != null && newGameDialog.isShowing()) {
+                    newGameDialog.dismiss();
+                    showNewGameDialog();
+                }
             } else if (msg.what == HotspotBoardService.MSG_RECEIVED_GAME_UPDATE) {
                 String data = msg.getData().getString("data");
                 Log.d(TAG, "Received from service: " + data);
@@ -265,19 +282,22 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                     overrideGameState = BoardConstants.WHITE_RESIGNED;
                                 }
                                 showGameResult(
-                                        "Victory!",
-                                        ((HotspotBoardApi) gameApi).getOpponentName()
-                                                + " has resigned.");
+                                        getString(R.string.hotspot_result_victory),
+                                        getString(
+                                                R.string.hotspot_result_opponent_resigned,
+                                                ((HotspotBoardApi) gameApi).getOpponentName()));
                                 break;
                             case GameMessage.TYPE_DRAW_OFFER:
                                 openConfirmDialog(
-                                        "Draw Offer",
-                                        "Accept",
-                                        "Decline",
+                                        getString(R.string.title_offers_draw),
+                                        getString(R.string.lichess_challenge_dialog_button_accept),
+                                        getString(R.string.lichess_challenge_dialog_button_decline),
                                         () -> {
                                             overrideGameState = BoardConstants.DRAW_AGREEMENT;
                                             sendGameMessage(GameMessage.TYPE_DRAW_ACCEPT, 0, "");
-                                            showGameResult("Game Over", "The game is a draw.");
+                                            showGameResult(
+                                                    getString(R.string.hotspot_result_game_over),
+                                                    getString(R.string.hotspot_result_draw));
                                         },
                                         () -> {
                                             sendGameMessage(GameMessage.TYPE_DRAW_DECLINE, 0, "");
@@ -285,7 +305,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 break;
                             case GameMessage.TYPE_DRAW_ACCEPT:
                                 overrideGameState = BoardConstants.DRAW_AGREEMENT;
-                                showGameResult("Game Over", "The game is a draw.");
+                                showGameResult(
+                                        getString(R.string.hotspot_result_game_over),
+                                        getString(R.string.hotspot_result_draw));
                                 break;
                             case GameMessage.TYPE_DRAW_DECLINE:
                                 updateStatus(getString(R.string.hotspot_status_draw_declined));
@@ -297,9 +319,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     }
                 }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_LISTENING) {
+                dismissNewGameDialog();
                 hasActiveSession = true;
                 isConnected = false;
                 isListening = true;
+                hasReceivedGameUpdate = false;
+                peerVariants = EnumSet.of(Variant.STANDARD);
                 updateConnectedState(false);
                 updateStatus(
                         getString(
@@ -320,11 +345,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                                 : R.string.hotspot_status_opponent_connected_host)
                                         : R.string.hotspot_status_opponent_connected_client));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
+                dismissNewGameDialog();
                 hasActiveSession = false;
                 isConnected = false;
                 isListening = false;
                 isObserving = false;
                 hasReceivedGameUpdate = false;
+                peerVariants = EnumSet.of(Variant.STANDARD);
                 updateObservingState(false);
                 updateConnectedState(false);
 
@@ -409,6 +436,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
 
         afterCreate();
+        moveEntry = new MoveEntry(this);
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
@@ -417,8 +445,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 findViewById(R.id.root_layout),
                 boardAreaLayout,
                 findViewById(R.id.play_controls),
-                null,
-                null);
+                findViewById(R.id.board_top),
+                findViewById(R.id.play_board_bottom));
 
         colorToggleGroup = findViewById(R.id.colorToggleGroup);
 
@@ -469,7 +497,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         imageTurnWhite = imageBottomTurn;
         imageTurnBlack = imageTopTurn;
 
-        buttonNew.setOnClickListener(v -> newGame());
+        buttonNew.setOnClickListener(v -> showNewGameDialog());
 
         buttonConnect = findViewById(R.id.ButtonConnect);
         buttonConnect.setOnClickListener(arg0 -> showConnectionDialog());
@@ -479,9 +507,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonResign.setOnClickListener(
                 v -> {
                     openConfirmDialog(
-                            "Are you sure you want to resign?",
-                            "Yes",
-                            "No",
+                            getString(R.string.lichess_confirm_resign),
+                            getString(R.string.alert_yes),
+                            getString(R.string.alert_no),
                             () -> {
                                 sendGameMessage(GameMessage.TYPE_RESIGN, 0, "");
                                 if (((HotspotBoardApi) gameApi).isPlayingAsWhite()) {
@@ -489,7 +517,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 } else {
                                     overrideGameState = BoardConstants.BLACK_RESIGNED;
                                 }
-                                showGameResult("Defeat", "You resigned.");
+                                showGameResult(
+                                        getString(R.string.hotspot_result_defeat),
+                                        getString(R.string.hotspot_result_you_resigned));
                             },
                             null);
                 });
@@ -512,6 +542,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 LinkActivity.EXTRA_HOST, getIntent().getStringExtra(LinkActivity.EXTRA_HOST));
         outState.putString("hotspotLastMove", textViewLastMove.getText().toString());
         outState.putString("hotspotPosition", gameApi.getFEN());
+        outState.putString("hotspotVariant", gameApi.variant().name());
         HotspotBoardApi api = (HotspotBoardApi) gameApi;
         outState.putString("opponent", api.getOpponentName());
         outState.putBoolean("playingWhite", api.isPlayingAsWhite());
@@ -537,6 +568,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     @Override
     protected void onPause() {
+        moveEntry.reset();
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         editor.putString("hotspotboardName", configuredName);
@@ -550,13 +582,61 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.onPause();
     }
 
-    private void newGame() {
+    private void updatePeerVariants(Bundle state) {
+        peerVariants = EnumSet.of(Variant.STANDARD);
+        ArrayList<String> variants =
+                state.getStringArrayList(HotspotBoardService.KEY_PEER_VARIANTS);
+        if (variants != null) {
+            for (String variant : variants) {
+                peerVariants.add(Variant.valueOf(variant));
+            }
+        }
+    }
+
+    private void showNewGameDialog() {
+        ArrayList<Variant> choices = new ArrayList<>(peerVariants);
+        CharSequence[] labels = new CharSequence[choices.size()];
+        for (int i = 0; i < choices.size(); i++) {
+            labels[i] = getString(variantLabel(choices.get(i)));
+        }
+        newGameDialog =
+                new ChessAlertDialogBuilder(this)
+                        .setTitle(R.string.menu_new)
+                        .setItems(labels, (dialog, which) -> newGame(choices.get(which)))
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
+    }
+
+    private void dismissNewGameDialog() {
+        if (newGameDialog != null) {
+            newGameDialog.dismiss();
+            newGameDialog = null;
+        }
+    }
+
+    private static int variantLabel(Variant variant) {
+        switch (variant) {
+            case CHESS_960:
+                return R.string.new_game_variant_chess960;
+            case DUCK:
+                return R.string.new_game_variant_duck;
+            case KING_OF_THE_HILL:
+                return R.string.new_game_variant_king_of_the_hill;
+            default:
+                return R.string.new_game_variant_standard;
+        }
+    }
+
+    private void newGame(Variant variant) {
+        if (!isConnected || !isHost || isShareMode || !peerVariants.contains(variant)) {
+            return;
+        }
         clearLastMove();
-        gameApi.newGame();
         hasReceivedGameUpdate = true;
         overrideGameState = 0;
         ((HotspotBoardApi) gameApi).setPlayingAsWhite(isPlayAsWhite);
-        sendGameMessage(GameMessage.TYPE_MOVE, 0, ""); // send initial state
+        gameApi.newGame(variant);
+        sendGameMessage(GameMessage.TYPE_MOVE, 0, "");
 
         rebuildBoard();
         updateNewGameButtonVisibility(false);
@@ -609,6 +689,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void updateConnectedState(boolean isConnected) {
+        updateMoveEntry();
         boolean effectiveListening = isListeningSessionRestored();
         boolean effectiveConnected =
                 isConnected
@@ -620,10 +701,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         layoutSessionSummary.setVisibility(showSessionSummary ? View.VISIBLE : View.GONE);
         updateSessionSummary(showSessionSummary);
 
-        updateNewGameButtonVisibility(effectiveConnected);
+        updateNewGameButtonVisibility(
+                effectiveConnected
+                        && (!hasReceivedGameUpdate || overrideGameState != 0 || gameApi.isEnded()));
 
         if (!effectiveConnected) {
-            textOpponent.setText("Opponent");
+            textOpponent.setText(R.string.lichess_create_challenge_player);
             updateGameButtonsVisibility(false);
         }
     }
@@ -898,6 +981,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void updateObservingState(boolean observing) {
+        updateMoveEntry();
         boolean effectiveObserving = observing || isObservingSessionRestored();
         if (effectiveObserving) {
             statusHandler.removeCallbacksAndMessages(null);
@@ -923,6 +1007,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void restoreSessionState(Bundle state) {
+        updatePeerVariants(state);
         isConnected = state.getBoolean("connected");
         isListening = state.getBoolean("listening");
         hasActiveSession = isConnected || isListening;
@@ -964,7 +1049,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             if (fen != null) {
                 restoringState = true;
                 try {
-                    gameApi.initFEN(fen, true);
+                    String variant = pendingSavedState.getString("hotspotVariant");
+                    api.restorePosition(fen, variant == null ? null : Variant.valueOf(variant));
                 } finally {
                     restoringState = false;
                 }
@@ -1057,6 +1143,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void showGameResult(String title, String message) {
+        updateMoveEntry();
         if (isFinishing() || isDestroyed()) {
             return;
         }
@@ -1078,6 +1165,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public void rebuildBoard() {
         super.rebuildBoard();
+        updateMoveEntry();
 
         final int state = gameApi.getState();
         int turn = gameApi.getTurn();
@@ -1095,27 +1183,49 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
 
         if (!isObserving && !isShareMode && hasReceivedGameUpdate) {
-            if (!restoringState && state == BoardConstants.MATE) {
-                // if it's white's turn, white is mated (and loses)
-                if ((turn == BoardConstants.WHITE && amIWhite)
-                        || (turn == BoardConstants.BLACK && !amIWhite)) {
-                    showGameResult("Defeat", "You lost by checkmate.");
-                } else {
-                    showGameResult("Victory!", "You won by checkmate.");
+            if (!restoringState
+                    && !gameApi.hasPendingDuckMove()
+                    && (state == BoardConstants.MATE
+                            || state == BoardConstants.HILL_WIN
+                            || state == BoardConstants.DUCK_STALEMATE_WIN)) {
+                boolean won = (turn == BoardConstants.WHITE) == amIWhite;
+                if (state != BoardConstants.DUCK_STALEMATE_WIN) {
+                    won = !won;
                 }
+                int reason =
+                        state == BoardConstants.MATE && gameApi.variant() != Variant.DUCK
+                                ? (won
+                                        ? R.string.hotspot_result_mate_won
+                                        : R.string.hotspot_result_mate_lost)
+                                : chessStateToR(state);
+                showGameResult(
+                        getString(
+                                won
+                                        ? R.string.hotspot_result_victory
+                                        : R.string.hotspot_result_defeat),
+                        getString(reason));
             } else if (!restoringState && state == BoardConstants.STALEMATE) {
-                showGameResult("Game Over", "The game is a draw by stalemate.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_stalemate));
             } else if (!restoringState && state == BoardConstants.DRAW_REPEAT) {
-                showGameResult("Game Over", "The game is a draw by 3-fold repetition.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_repetition));
             } else if (!restoringState && state == BoardConstants.DRAW_50) {
-                showGameResult("Game Over", "The game is a draw by the 50-move rule.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_fifty_moves));
             } else if (!restoringState && state == BoardConstants.DRAW_MATERIAL) {
-                showGameResult("Game Over", "The game is a draw by insufficient material.");
+                showGameResult(
+                        getString(R.string.hotspot_result_game_over),
+                        getString(R.string.hotspot_result_insufficient_material));
             }
 
             updateGameButtonsVisibility(
                     isConnected
                             && overrideGameState == 0
+                            && !gameApi.hasPendingDuckMove()
                             && (state == BoardConstants.PLAY || state == BoardConstants.CHECK));
         } else {
             updateGameButtonsVisibility(false);

@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Avancé</h3>
-        <p>Créez ou importez ici votre propre contenu.</p>
-
-        <h4>Exporter la base de données de parties vers la carte SD</h4>
-        <p>Toutes les parties de la base de données peuvent être exportées dans un seul fichier PGN sur la carte SD. Ce fichier sera nommé chess.pgn et tout fichier existant sera écrasé.</p>
-
-        <h4>Importer des parties dans la base de données</h4>
-        <p>Utilisez cette option pour ajouter des parties à la base de données. Elle vous permet de parcourir jusqu’à un fichier PGN. Sélectionnez-le et choisissez d’importer.</p>
-
-        <h4>Supprimer toutes les parties de la base de données</h4>
-        <p>Utilisez cette option si vous souhaitez nettoyer la base de données. Assurez-vous d’abord de faire une sauvegarde sur la carte SD ; cette action est irréversible.</p>
-
-        <h4>Créer un ensemble d’entraînement</h4>
-        <p>Crée des positions d’entraînement à partir des parties se terminant par un échec et mat. Parcourez jusqu’au fichier à traiter. Les entrées échouées proviennent généralement de parties qui ne se terminent pas par un échec et mat ou de doublons.</p>
-
-        <h4>Réinitialiser l’ensemble d’entraînement</h4>
-        <p>Vous voulez recommencer l’entraînement ? Cela réinitialisera également votre compteur de temps moyen.</p>
-
-        ]]></string>
     <string name="alert_no">Non</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Oui</string>
     <string name="app_name">Échecs</string>
     <string name="app_name_help">Aide</string>
     <string name="app_name_import">Importer</string>
-    <string name="app_name_pgntools">Avancé</string>
     <string name="app_name_play">Jouer</string>
     <string name="app_name_playonline">Jouer en ligne</string>
     <string name="app_name_save_games">Parties sauvegardées</string>
@@ -279,13 +258,13 @@
     <string name="options_play_white">Blancs</string>
     <string name="options_quiescent_off">Recherche de quiétude désactivée</string>
     <string name="options_quiescent_on">Recherche de quiétude activée</string>
-    <string name="pgntool_confirm_delete_games">Êtes-vous sûr ?</string>
+    <string name="pgntool_delete_item_count">Éléments à supprimer : %1$d</string>
+    <string name="pgntool_confirm_delete_games">Supprimer toutes les parties de la base de données, y compris les études ?</string>
     <string name="pgntool_confirm_practice_reset">Voulez-vous vraiment réinitialiser ?</string>
     <string name="pgntool_create_db_explanation">Créer une base d’ouvertures</string>
     <string name="pgntool_delete_games">Supprimer toutes les parties de la base</string>
     <string name="pgntool_games_deleted">Toutes les parties supprimées</string>
-    <string name="pgntool_export_explanation">Exporter la base de données</string>
-    <string name="pgntool_help">Aide</string>
+    <string name="pgntool_export_explanation">Exporter toutes les parties</string>
     <string name="pgntool_import_explanation">Importer des parties dans la base</string>
     <string name="importing_games">Importation des parties…</string>
     <string name="importing_puzzles">Importation des problèmes…</string>
@@ -357,6 +336,7 @@
     <string name="pref_speech">Voix</string>
     <string name="pref_user_long_move_descriptions">Utiliser la description complète du coup</string>
     <string name="tts_locale_not_supported">La synthèse vocale ne prend pas en charge vos paramètres régionaux</string>
+    <string name="tts_language_differs_from_app">La synthèse vocale utilise une autre langue que celle de l’application</string>
     <string name="tts_not_loaded">Impossible de charger la synthèse vocale</string>
     <string name="tts_example_move">Fou prend en G7, échec</string>
     <string name="tts_selected">Sélectionné</string>
@@ -413,7 +393,6 @@
     <string name="start_wifiboard">Plateau Wi‑Fi</string>
     <string name="start_ics">Jouer en ligne</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Avancé</string>
     <string name="start_play">Jouer</string>
     <string name="start_practice">Entraînement</string>
     <string name="start_puzzles">Problèmes</string>
@@ -447,6 +426,7 @@
     <string name="title_challenge">Défi</string>
     <string name="title_overwrite_main_line">Remplacer la ligne principale à partir de cette position ?</string>
     <string name="title_delete_game">Supprimer la partie</string>
+    <string name="game_delete_failed">Impossible de supprimer la partie. Veuillez réessayer.</string>
     <string name="title_edit_command">Modifier la commande</string>
     <string name="title_edit_or_delete">Modifier ou supprimer ?</string>
     <string name="title_error">Erreur</string>
@@ -548,7 +528,6 @@
     <string name="analysis_move_mistake">Erreur</string>
     <string name="analysis_move_blunder">Erreur grave</string>
     <string name="analysis_move_forced">Forcé</string>
-    <string name="analysis_move_pending">Analyse du coup…</string>
     <string name="analysis_move_unavailable">Analyse indisponible</string>
     <string name="analysis_white_to_move">Trait aux Blancs</string>
     <string name="analysis_black_to_move">Trait aux Noirs</string>
@@ -557,6 +536,9 @@
     <string name="pgn_return_main_line">Revenir à la ligne principale</string>
     <string name="pgn_promote_variation">Définir comme suite préférée</string>
     <string name="pgn_delete_variation">Supprimer la variante</string>
+    <string name="menu_truncate_line">Supprimer les coups à partir d’ici</string>
+    <string name="truncate_line_confirm">Supprimer %1$s et tous les coups suivants ? Coups : %2$d</string>
+    <string name="truncate_line_confirm_variations">Supprimer %1$s et tous les coups suivants, variantes comprises ? Coups : %2$d</string>
     <string name="engine_evaluation_score">Évaluation du moteur : %1$+.1f pions (les valeurs positives favorisent les Blancs)</string>
     <string name="engine_evaluation_pending">Évaluation du moteur indisponible</string>
     <string name="analysis_settings">Paramètres d\'analyse</string>
@@ -566,7 +548,6 @@
     <string name="analysis_builtin_warning">Pour une meilleure analyse, installez un moteur d’échecs compatible avec OEX.</string>
     <string name="analysis_dont_show_again">Ne plus afficher</string>
     <string name="analysis_continue">Continuer</string>
-    <string name="analysis_duck_unsupported">L’analyse des échecs canard n’est pas prise en charge.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Roi de la colline</string>
@@ -583,6 +564,92 @@
     <string name="share_lichess_profile">Partager mon profil Lichess</string>
     <string name="app_link_invalid">Ce lien Chess est invalide ou non pris en charge.</string>
     <string name="app_link_too_large">Cette partie est trop longue pour un lien. Partagez plutôt la partie complète au format PGN.</string>
-    <string name="app_link_no_engine">Aucune analyse par moteur pour cette variante. Vous pouvez parcourir les positions et les coups.</string>
     <string name="share_failed">Impossible de partager la partie. Veuillez réessayer.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>un|une</item>
+        <item>deux</item>
+        <item>trois</item>
+        <item>quatre</item>
+        <item>cinq</item>
+        <item>six</item>
+        <item>sept</item>
+        <item>huit</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cavalier</item>
+        <item>fou</item>
+        <item>tour</item>
+        <item>dame|reine|renne|rêne</item>
+    </string-array>
+    <string name="move_input_castle">roque|roquer</string>
+    <string name="move_input_captures">prend|capture</string>
+    <string name="menu_delete_game_database">Supprimer toutes les parties, y compris les études</string>
+    <string name="practice_delete_confirmation">Supprimer toutes les positions d’entraînement et la progression ?</string>
+    <string name="puzzle_delete_confirmation">Supprimer toutes les positions des problèmes et la progression ?</string>
+    <string name="collection_restore_prompt">Vous avez supprimé toutes les positions. Voulez-vous restaurer les positions par défaut ?</string>
+    <string name="collection_restore_defaults">Restaurer les positions par défaut</string>
+    <string name="collection_empty">Aucune position. Utilisez le menu pour importer ou restaurer des positions.</string>
+    <string name="collection_delete_failed">Impossible de supprimer les positions. Veuillez réessayer.</string>
+    <string name="lichess_create_challenge_player_invalid">Ce nom d’utilisateur Lichess n’est pas valide.</string>
+    <string name="pgntool_confirm_delete_practice">Supprimer toutes les positions d’entraînement ?</string>
+    <string name="pgntool_confirm_delete_puzzles">Supprimer toutes les positions des problèmes ?</string>
+    <string name="pgntool_delete_practice">Supprimer toutes les positions d’entraînement</string>
+    <string name="pgntool_delete_puzzles">Supprimer toutes les positions des problèmes</string>
+    <string name="pgntool_practice_deleted">Toutes les positions d’entraînement ont été supprimées</string>
+    <string name="pgntool_puzzles_deleted">Toutes les positions des problèmes ont été supprimées</string>
+    <string name="pgntool_import_busy">Une importation est déjà en cours</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes par flugsio (CC BY-SA 4.0) ; Firi par James Faure et Kiwen-suwi par neverRare (CC BY 4.0) ; Celtic et Spatial par Maurizio Monge (MIT). Illustrations adaptées pour Android ; Firi recoloré. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">Impossible de charger cette partie.</string>
+    <string name="lichess_puzzle_move_failed">Impossible de jouer un coup du problème. Vous pouvez passer au problème suivant.</string>
+    <string name="analysis_edit_comment">Modifier le commentaire</string>
+    <string name="analysis_comment_hint">Appuyez pour ajouter un commentaire</string>
+    <string name="analysis_comment_title">Commentaire après le coup</string>
+    <string name="analysis_start_comment_title">Commentaire avant le premier coup</string>
+    <string name="analysis_engine">Moteur</string>
+    <string name="menu_analyse_game">Analyser la partie</string>
+    <string name="menu_new_king_of_the_hill">Nouvelle partie Roi de la colline</string>
+    <string name="state_hill_win">Le roi a atteint la colline</string>
+    <string name="state_duck_stalemate_win">Aucun coup possible, ce qui donne la victoire aux échecs avec canard</string>
+    <string name="options_engine_oex_variant_disabled">Cette variante utilise le moteur intégré.</string>
+    <string name="practice_finished_position">Position terminée</string>
+    <string name="practice_preparing_position">Préparation de la position d’entraînement…</string>
+    <string name="practice_completed_collection">Vous avez terminé tous les problèmes !</string>
+    <string name="import_start_failed">Impossible de démarrer l’importation</string>
+    <string name="import_failed">Échec de l’importation</string>
+    <string name="import_duplicates_skipped">Doublons ignorés</string>
+    <string name="engine_uninstalled">Moteur %1$s désinstallé</string>
+    <string name="engine_not_installed">Aucun moteur installé</string>
+    <string name="opening_database_uninstalled">Base de données %1$s désinstallée</string>
+    <string name="opening_database_not_installed">Aucune base de données installée</string>
+    <string name="setup_use_illegal_position">Utiliser une position illégale ?</string>
+    <string name="clock_minutes_hint">Minutes</string>
+    <string name="clock_increment_hint">Incrément en secondes</string>
+    <string name="import_added">Ajoutés</string>
+    <string name="import_ignored">Ignorés</string>
+    <string name="pgn_date_hint">Date PGN</string>
+    <string name="eco_openings_description">Ouvertures ECO</string>
+    <string name="hotspot_result_game_over">Partie terminée</string>
+    <string name="hotspot_result_defeat">Défaite</string>
+    <string name="hotspot_result_victory">Victoire !</string>
+    <string name="hotspot_result_opponent_resigned">%1$s a abandonné.</string>
+    <string name="hotspot_result_you_resigned">Vous avez abandonné.</string>
+    <string name="hotspot_result_mate_lost">Vous avez perdu par échec et mat.</string>
+    <string name="hotspot_result_mate_won">Vous avez gagné par échec et mat.</string>
+    <string name="hotspot_result_draw">La partie est nulle.</string>
+    <string name="hotspot_result_stalemate">La partie est nulle par pat.</string>
+    <string name="hotspot_result_repetition">La partie est nulle par triple répétition.</string>
+    <string name="hotspot_result_fifty_moves">La partie est nulle selon la règle des 50 coups.</string>
+    <string name="hotspot_result_insufficient_material">La partie est nulle par insuffisance de matériel.</string>
+    <string name="website_open_failed">Aucune application disponible pour ouvrir le site Web.</string>
+    <string name="menu_use_position_as_start">Utiliser la position actuelle comme départ</string>
+    <string name="use_position_as_start_confirm">Utiliser cette position comme départ ? Les coups précédents, leurs commentaires et les variantes qui commencent plus tôt seront supprimés. Les suites à partir de cette position seront conservées. Cette modification est enregistrée automatiquement et ne peut pas être annulée.</string>
+    <string name="use_position_as_start_failed">Impossible de modifier la position de départ.</string>
 </resources>

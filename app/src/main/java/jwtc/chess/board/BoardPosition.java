@@ -7,6 +7,10 @@ import jwtc.chess.Pos;
  * Editable FEN data, including incomplete positions in the setup screen. No move rules live here.
  */
 public final class BoardPosition {
+    public static final String START_FEN =
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String DUCK_START_FEN = START_FEN.replace("8/8/8/8", "8/7$/8/8");
+
     public final char[] squares = new char[64];
     public boolean white;
     public String castling;
@@ -53,12 +57,9 @@ public final class BoardPosition {
         }
     }
 
-    /**
-     * Castling rights in {@code KQkq} order. Shredder/X-FEN rook files ({@code HAha}) count as
-     * kingside when the file lies beyond that side's king, else queenside.
-     */
+    /** Castling rights in kingside/queenside order per colour, preserving explicit rook files. */
     private String normalizeCastling(String rights) {
-        boolean[] present = new boolean[4];
+        char[] present = new char[4];
         for (char c : rights.toCharArray()) {
             boolean white = Character.isUpperCase(c);
             char lower = Character.toLowerCase(c);
@@ -70,12 +71,16 @@ public final class BoardPosition {
             } else {
                 throw new IllegalArgumentException("Invalid castling rights");
             }
-            present[(white ? 0 : 2) + (kingside ? 0 : 1)] = true;
+            int index = (white ? 0 : 2) + (kingside ? 0 : 1);
+            if (present[index] != 0 && present[index] != c) {
+                throw new IllegalArgumentException("Multiple castling rooks on one side");
+            }
+            present[index] = c;
         }
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < 4; i++) {
-            if (present[i]) {
-                out.append("KQkq".charAt(i));
+            if (present[i] != 0) {
+                out.append(present[i]);
             }
         }
         return out.toString();
@@ -194,6 +199,11 @@ public final class BoardPosition {
     }
 
     public boolean chess960() {
+        for (char c : castling.toCharArray()) {
+            if ("KQkq".indexOf(c) < 0) {
+                return true;
+            }
+        }
         for (boolean side : new boolean[] {false, true}) {
             int base = side ? 56 : 0;
             char king = side ? 'K' : 'k', rook = side ? 'R' : 'r';
@@ -207,6 +217,55 @@ public final class BoardPosition {
             }
         }
         return false;
+    }
+
+    public boolean canCastle(boolean white, boolean kingside) {
+        for (char c : castling.toCharArray()) {
+            char lower = Character.toLowerCase(c);
+            if (Character.isUpperCase(c) == white
+                    && (lower == 'k' || lower != 'q' && lower - 'a' > kingFile(white))
+                            == kingside) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The king and castling rook files; explicit rights override the outermost-rook default. */
+    public int[] chess960Files(boolean white) {
+        int base = white ? 56 : 0;
+        char king = white ? 'K' : 'k', rook = white ? 'R' : 'r';
+        int kingFile = -1;
+        for (int file = 0; file < 8; file++) {
+            if (squares[base + file] == king) {
+                kingFile = file;
+                break;
+            }
+        }
+        int queenside = -1;
+        for (int file = kingFile - 1; file >= 0; file--) {
+            if (squares[base + file] == rook) {
+                queenside = file;
+            }
+        }
+        int kingside = -1;
+        for (int file = kingFile + 1; file < 8; file++) {
+            if (squares[base + file] == rook) {
+                kingside = file;
+            }
+        }
+        for (char c : castling.toCharArray()) {
+            char lower = Character.toLowerCase(c);
+            if (Character.isUpperCase(c) == white && lower >= 'a' && lower <= 'h') {
+                int file = lower - 'a';
+                if (file > kingFile) {
+                    kingside = file;
+                } else {
+                    queenside = file;
+                }
+            }
+        }
+        return new int[] {kingFile, queenside, kingside};
     }
 
     public static String chess960Fen(int seed) {

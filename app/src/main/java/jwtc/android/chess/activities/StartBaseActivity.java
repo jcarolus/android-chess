@@ -1,5 +1,6 @@
 package jwtc.android.chess.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,14 +13,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
-import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.gamedatabase.GameSelectionActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.StartItem;
@@ -32,7 +34,7 @@ import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
-import jwtc.android.chess.tools.AdvancedActivity;
+import jwtc.android.chess.study.StudiesActivity;
 
 public class StartBaseActivity extends AppCompatActivity {
     public static final String TAG = "StartBaseActivity";
@@ -106,7 +108,10 @@ public class StartBaseActivity extends AppCompatActivity {
 
         setContentView(layoutResource);
         // The launcher action bar sits outside the activity's content layout.
-        ActivityHelper.padTvContent(findViewById(androidx.appcompat.R.id.decor_content_parent));
+        ActivityHelper.padTvContent(
+                getWindow()
+                        .getDecorView()
+                        .findViewById(androidx.appcompat.R.id.decor_content_parent));
 
         List<StartItem> startItemList =
                 List.of(
@@ -128,9 +133,11 @@ public class StartBaseActivity extends AppCompatActivity {
                                 R.string.start_wifiboard,
                                 HotspotBoardActivity.class),
                         new StartItem(
+                                R.drawable.start_studies, R.string.studies, StudiesActivity.class),
+                        new StartItem(
                                 R.drawable.database,
                                 R.string.start_database,
-                                GamesListActivity.class),
+                                GameSelectionActivity.class),
                         new StartItem(
                                 R.drawable.sliders,
                                 R.string.start_boardpreferences,
@@ -139,7 +146,6 @@ public class StartBaseActivity extends AppCompatActivity {
                                 R.drawable.eye,
                                 R.string.start_accessibility_preferences,
                                 AccessibilityPreferences.class),
-                        new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class),
                         new StartItem(R.drawable.link, R.string.start_website, null));
         startItemAdapter =
                 new StartItemAdapter(
@@ -151,10 +157,18 @@ public class StartBaseActivity extends AppCompatActivity {
                                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(i);
                             } else {
-                                startActivity(
-                                        new Intent(
-                                                Intent.ACTION_VIEW,
-                                                Uri.parse("https://www.jwtc.nl/")));
+                                try {
+                                    startActivity(
+                                            new Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse("https://www.jwtc.nl/")));
+                                } catch (ActivityNotFoundException e) {
+                                    Toast.makeText(
+                                                    StartBaseActivity.this,
+                                                    R.string.website_open_failed,
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+                                }
                             }
                         });
 

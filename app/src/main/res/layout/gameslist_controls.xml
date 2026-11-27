@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/panel_padding">
 
         <TableLayout
             android:layout_width="match_parent"
@@ -99,6 +100,14 @@
                 android:text="@string/choice_delete"
                 android:layout_width="wrap_content"
                 style="?attr/chessButtonStyle" />
+            <CheckBox
+                android:id="@+id/CheckBoxCurrentGame"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:minWidth="48dp"
+                android:enabled="false"
+                android:saveEnabled="false"
+                android:contentDescription="@string/gameslist_selection_actions" />
         </com.google.android.flexbox.FlexboxLayout>
 
         <TextView

@@ -3,16 +3,11 @@ package jwtc.android.chess.engine;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
+import jwtc.chess.board.BoardPosition;
 
 /** Immutable coordinate-based input. Packed moves never cross the Rust boundary. */
 public final class RustSearchRequest {
-    public enum Variant {
-        STANDARD,
-        CHESS_960,
-        DUCK,
-        KING_OF_THE_HILL
-    }
-
     public final long searchId;
     public final Variant variant;
     public final String startingPosition;
@@ -133,42 +128,10 @@ public final class RustSearchRequest {
 
     /**
      * The king file and the queen-side/king-side rook files (each -1 if absent) for one colour,
-     * read from a FEN's piece-placement field. The outermost rook on each side of the king is the
-     * one Chess 960 castling tracks.
+     * read from a FEN. Explicit rook-file rights select the tracked rook; otherwise the outermost
+     * rook on each side of the king is used.
      */
     public static int[] chess960Files(String fen, boolean white) {
-        String[] ranks = fen.split("\\s+")[0].split("/");
-        String rank = expandRank(white ? ranks[7] : ranks[0]);
-        char king = white ? 'K' : 'k';
-        char rook = white ? 'R' : 'r';
-        int kingFile = rank.indexOf(king);
-        int queenside = -1;
-        for (int file = kingFile - 1; file >= 0; file--) {
-            if (rank.charAt(file) == rook) {
-                queenside = file;
-            }
-        }
-        int kingside = -1;
-        for (int file = kingFile + 1; file < 8; file++) {
-            if (rank.charAt(file) == rook) {
-                kingside = file;
-            }
-        }
-        return new int[] {kingFile, queenside, kingside};
-    }
-
-    private static String expandRank(String rank) {
-        StringBuilder expanded = new StringBuilder();
-        for (int i = 0; i < rank.length(); i++) {
-            char c = rank.charAt(i);
-            if (Character.isDigit(c)) {
-                for (int n = 0; n < c - '0'; n++) {
-                    expanded.append('.');
-                }
-            } else {
-                expanded.append(c);
-            }
-        }
-        return expanded.toString();
+        return new BoardPosition(fen).chess960Files(white);
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Acțiuni pentru partidele selectate</string>
+    <string name="gameslist_check_game">Selectează partida %3$d: %1$s contra %2$s</string>
+    <string name="gameslist_select_all">Selectează tot</string>
+    <string name="gameslist_clear_selection">Șterge selecția</string>
+    <string name="gameslist_invert_checked">Inversează selecția</string>
+    <string name="gameslist_multi_edit">Editare multiplă</string>
+    <string name="gameslist_delete_selected">Șterge partidele selectate</string>
+    <string name="gameslist_edit_topic">Editează tema</string>
+    <string name="gameslist_topic_hint">Temă</string>
+    <string name="gameslist_topic_explanation">Înlocuiește tema tuturor partidelor selectate. Lasă câmpul gol pentru a șterge temele.</string>
+    <string name="gameslist_clear_topic">Șterge tema</string>
+    <string name="gameslist_set_topic">Setează tema</string>
+    <string name="gameslist_bulk_failed">Partidele selectate nu au putut fi editate. Nicio partidă nu a fost modificată. Încearcă din nou.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d partidă selectată</item>
+        <item quantity="few">%d partide selectate</item>
+        <item quantity="other">%d de partide selectate</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">Ștergi definitiv %d partidă selectată?</item>
+        <item quantity="few">Ștergi definitiv %d partide selectate?</item>
+        <item quantity="other">Ștergi definitiv %d de partide selectate?</item>
+    </plurals>
+    <string name="gameslist_export_selected">Exportă partidele selectate</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Report</string>
+    <string name="analysis_report_title">Main-line report</string>
+    <string name="analysis_report_progress">Analyzing positions: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Accuracy\nWhite: %1$s · Black: %2$s</string>
+    <string name="analysis_report_graph">Evaluation graph</string>
+    <string name="analysis_report_graph_hint">White area: White’s winning chances. Tap the graph to go to a position.</string>
+    <string name="analysis_report_go_to_move">Go to selected position</string>
+    <string name="analysis_report_key_moments">Key moments</string>
+    <string name="analysis_report_no_moments">No mistakes or blunders found.</string>
+    <string name="analysis_report_partial">Some positions could not be evaluated. Reopen Report to retry. Accuracy is unavailable until every position is evaluated.</string>
+    <string name="analysis_report_unavailable">Report unavailable. Finish the current move and ensure the game has moves to analyze.</string>
+    <string name="analysis_report_start">Starting position</string>
+    <string name="analysis_report_position">%1$s · Evaluation: %2$s</string>
+    <string name="analysis_report_moment" translatable="false">%1$s · %2$s\n%3$s · %4$s → %5$s</string>
+    <string name="analysis_report_unknown">Unavailable</string>
+</resources>

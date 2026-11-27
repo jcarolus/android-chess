@@ -26,6 +26,7 @@ import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.chess.Pos;
 import jwtc.chess.Valuation;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public class SetupActivity extends ChessBoardActivity {
@@ -178,6 +179,14 @@ public class SetupActivity extends ChessBoardActivity {
         gameApi.setTurn(turn);
 
         int iEP = getEpSquare(turn);
+        if (iEP >= 0) {
+            int pawnSquare = turn == BoardConstants.WHITE ? iEP + 8 : iEP - 8;
+            if (gameApi.hasAnyPieceOnPosition(iEP)
+                    || gameApi.pieceAt(turn ^ 1, pawnSquare) != BoardConstants.PAWN) {
+                iEP = -1;
+                setEpPosition(iEP);
+            }
+        }
 
         gameApi.setCastlingsEPAnd50(
                 checkWhiteCastleLong.isChecked() ? 1 : 0,
@@ -190,7 +199,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         if (gameApi.isLegalPosition() == 0) {
             openConfirmDialog(
-                    "Use illegal position?",
+                    getString(R.string.setup_use_illegal_position),
                     getString(R.string.alert_yes),
                     getString(R.string.alert_no),
                     onReady,
@@ -522,8 +531,8 @@ public class SetupActivity extends ChessBoardActivity {
     public void addPiece(final int pos, final int piece, final int turn) {
         Log.d(TAG, "addPiece " + pos + " " + piece + " " + turn);
         if (piece == BoardConstants.DUCK) {
-            gameApi.setVariant(BoardConstants.VARIANT_DEFAULT); // resets duck
-            gameApi.setVariant(BoardConstants.VARIANT_DUCK);
+            gameApi.setVariant(Variant.STANDARD); // resets duck
+            gameApi.setVariant(Variant.DUCK);
             gameApi.placeDuck(pos);
         } else {
             gameApi.putPiece(pos, piece, turn);
@@ -533,8 +542,7 @@ public class SetupActivity extends ChessBoardActivity {
     public void removePiece(final int pos) {
         Log.d(TAG, "removePiece " + pos);
         if (gameApi.getDuckPos() == pos) {
-            Log.d(TAG, "set VARIANT_DEFAULT");
-            gameApi.setVariant(BoardConstants.VARIANT_DEFAULT);
+            gameApi.setVariant(Variant.STANDARD);
         } else {
             final int whitePiece = gameApi.pieceAt(BoardConstants.WHITE, pos);
             if (whitePiece != BoardConstants.FIELD) {

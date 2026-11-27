@@ -1,35 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>Erweitert</h3>
-        <p>Erstellen oder importieren Sie hier Ihre eigenen Inhalte.</p>
-
-        <h4>Spieldatenbank auf SD-Karte exportieren</h4>
-        <p>Alle Partien in der Spieldatenbank können in eine einzige PGN-Datei auf die SD-Karte exportiert werden. Diese Datei heißt chess.pgn; eine vorhandene Datei wird überschrieben.</p>
-
-        <h4>Partien in die Spieldatenbank importieren</h4>
-        <p>Verwenden Sie diese Option, um Partien zur Spieldatenbank hinzuzufügen. Sie können zu einer PGN-Datei navigieren, sie auswählen und importieren.</p>
-
-        <h4>Alle Partien in der Spieldatenbank löschen</h4>
-        <p>Verwenden Sie diese Option, wenn Sie die Spieldatenbank bereinigen möchten. Erstellen Sie vorher unbedingt ein Backup auf die SD-Karte; dieser Vorgang kann nicht rückgängig gemacht werden.</p>
-
-        <h4>Übungssatz erstellen</h4>
-        <p>Erstellt Übungsstellungen aus Partien, die mit Schachmatt enden. Navigieren Sie zur zu verarbeitenden Datei. Fehlgeschlagene Einträge sind normalerweise Partien, die nicht mit Schachmatt endeten oder Duplikate sind.</p>
-
-        <h4>Übungssatz zurücksetzen</h4>
-        <p>Möchten Sie das Üben von vorne beginnen? Dadurch wird auch Ihr durchschnittlicher Zeitmesser zurückgesetzt.</p>
-
-
-                ]]>
-            </string>
     <string name="alert_no">Nein</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Ja</string>
     <string name="app_name">Schach</string>
     <string name="app_name_help">Hilfe</string>
     <string name="app_name_import">Importieren</string>
-    <string name="app_name_pgntools">Erweitert</string>
     <string name="app_name_play">Spielen</string>
     <string name="app_name_playonline">Online spielen</string>
     <string name="app_name_save_games">Gespeicherte Partien</string>
@@ -289,13 +265,13 @@
     <string name="options_play_white">Weiß</string>
     <string name="options_quiescent_off">Quieszenz-Suche aus</string>
     <string name="options_quiescent_on">Quieszenz-Suche an</string>
-    <string name="pgntool_confirm_delete_games">Bist du sicher?</string>
+    <string name="pgntool_delete_item_count">Anzahl der zu löschenden Einträge: %1$d</string>
+    <string name="pgntool_confirm_delete_games">Alle Partien einschließlich Studien aus der Datenbank löschen?</string>
     <string name="pgntool_confirm_practice_reset">Bist du sicher, dass du zurücksetzen willst?</string>
     <string name="pgntool_create_db_explanation">Eröffnungsdatenbank erstellen</string>
     <string name="pgntool_delete_games">Alle Partien in der Datenbank löschen</string>
     <string name="pgntool_games_deleted">Alle Partien gelöscht</string>
-    <string name="pgntool_export_explanation">Partiendatenbank exportieren</string>
-    <string name="pgntool_help">Hilfe</string>
+    <string name="pgntool_export_explanation">Alle Partien exportieren</string>
     <string name="pgntool_import_explanation">Partien in die Datenbank importieren</string>
     <string name="importing_games">Partien werden importiert…</string>
     <string name="importing_puzzles">Rätsel werden importiert…</string>
@@ -367,6 +343,7 @@
     <string name="pref_speech">Sprachausgabe</string>
     <string name="pref_user_long_move_descriptions">Vollständige Zugbeschreibung verwenden</string>
     <string name="tts_locale_not_supported">Die Sprachausgabe unterstützt Ihr Gebietsschema nicht</string>
+    <string name="tts_language_differs_from_app">Die Sprachausgabe verwendet eine andere Sprache als die App</string>
     <string name="tts_not_loaded">Sprachausgabe konnte nicht geladen werden</string>
     <string name="tts_example_move">Läufer schlägt G7, Schach</string>
     <string name="tts_selected">Ausgewählt</string>
@@ -423,7 +400,6 @@
     <string name="start_wifiboard">WLAN-Brett</string>
     <string name="start_ics">Online spielen</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Erweitert</string>
     <string name="start_play">Spielen</string>
     <string name="start_practice">Üben</string>
     <string name="start_puzzles">Rätsel</string>
@@ -457,6 +433,7 @@
     <string name="title_challenge">Herausforderung</string>
     <string name="title_overwrite_main_line">Hauptvariante ab dieser Stellung überschreiben?</string>
     <string name="title_delete_game">Partie löschen</string>
+    <string name="game_delete_failed">Die Partie konnte nicht gelöscht werden. Bitte versuche es erneut.</string>
     <string name="title_edit_command">Befehl bearbeiten</string>
     <string name="title_edit_or_delete">Bearbeiten oder löschen?</string>
     <string name="title_error">Fehler</string>
@@ -558,7 +535,6 @@
     <string name="analysis_move_mistake">Fehler</string>
     <string name="analysis_move_blunder">Grober Fehler</string>
     <string name="analysis_move_forced">Erzwungen</string>
-    <string name="analysis_move_pending">Zug wird analysiert…</string>
     <string name="analysis_move_unavailable">Analyse nicht verfügbar</string>
     <string name="analysis_white_to_move">Weiß am Zug</string>
     <string name="analysis_black_to_move">Schwarz am Zug</string>
@@ -567,6 +543,9 @@
     <string name="pgn_return_main_line">Zur Hauptvariante zurückkehren</string>
     <string name="pgn_promote_variation">Als bevorzugte Fortsetzung festlegen</string>
     <string name="pgn_delete_variation">Variante löschen</string>
+    <string name="menu_truncate_line">Züge ab hier löschen</string>
+    <string name="truncate_line_confirm">%1$s und alle folgenden Züge löschen? Züge: %2$d</string>
+    <string name="truncate_line_confirm_variations">%1$s und alle folgenden Züge einschließlich Varianten löschen? Züge: %2$d</string>
     <string name="engine_evaluation_score">Engine-Bewertung: %1$+.1f Bauern (positive Werte bedeuten Vorteil für Weiß)</string>
     <string name="engine_evaluation_pending">Engine-Bewertung nicht verfügbar</string>
     <string name="analysis_settings">Analyseeinstellungen</string>
@@ -576,7 +555,6 @@
     <string name="analysis_builtin_warning">Installiere für eine bessere Analyse eine OEX-kompatible Schachengine.</string>
     <string name="analysis_dont_show_again">Nicht mehr anzeigen</string>
     <string name="analysis_continue">Weiter</string>
-    <string name="analysis_duck_unsupported">Die Analyse von Entenschach wird nicht unterstützt.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">König des Hügels</string>
@@ -593,6 +571,92 @@
     <string name="share_lichess_profile">Mein Lichess-Profil teilen</string>
     <string name="app_link_invalid">Dieser Chess-Link ist ungültig oder wird nicht unterstützt.</string>
     <string name="app_link_too_large">Diese Partie ist zu groß für einen Link. Teile die vollständige Partie stattdessen als PGN.</string>
-    <string name="app_link_no_engine">Für diese Variante ist keine Engine-Analyse verfügbar. Du kannst das Brett und die Züge ansehen.</string>
     <string name="share_failed">Die Partie konnte nicht geteilt werden. Bitte versuche es erneut.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>eins|ein</item>
+        <item>zwei</item>
+        <item>drei</item>
+        <item>vier</item>
+        <item>fünf</item>
+        <item>sechs</item>
+        <item>sieben</item>
+        <item>acht</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>springer</item>
+        <item>läufer</item>
+        <item>turm</item>
+        <item>dame|königin</item>
+    </string-array>
+    <string name="move_input_castle">Rochade|rochieren</string>
+    <string name="move_input_captures">schlägt|nimmt</string>
+    <string name="menu_delete_game_database">Alle Partien einschließlich Studien löschen</string>
+    <string name="practice_delete_confirmation">Alle Übungsstellungen und den Fortschritt löschen?</string>
+    <string name="puzzle_delete_confirmation">Alle Rätselstellungen und den Fortschritt löschen?</string>
+    <string name="collection_restore_prompt">Du hast alle Stellungen gelöscht. Möchtest du die Standardstellungen wiederherstellen?</string>
+    <string name="collection_restore_defaults">Standardstellungen wiederherstellen</string>
+    <string name="collection_empty">Keine Stellungen vorhanden. Über das Menü kannst du Stellungen importieren oder wiederherstellen.</string>
+    <string name="collection_delete_failed">Stellungen konnten nicht gelöscht werden. Bitte versuche es erneut.</string>
+    <string name="lichess_create_challenge_player_invalid">Das ist kein gültiger Lichess-Benutzername.</string>
+    <string name="pgntool_confirm_delete_practice">Alle Übungsstellungen löschen?</string>
+    <string name="pgntool_confirm_delete_puzzles">Alle Rätselstellungen löschen?</string>
+    <string name="pgntool_delete_practice">Alle Übungsstellungen löschen</string>
+    <string name="pgntool_delete_puzzles">Alle Rätselstellungen löschen</string>
+    <string name="pgntool_practice_deleted">Alle Übungsstellungen gelöscht</string>
+    <string name="pgntool_puzzles_deleted">Alle Rätselstellungen gelöscht</string>
+    <string name="pgntool_import_busy">Es läuft bereits ein Import</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes von flugsio (CC BY-SA 4.0); Firi von James Faure und Kiwen-suwi von neverRare (CC BY 4.0); Celtic und Spatial von Maurizio Monge (MIT). Grafiken für Android angepasst; Firi neu eingefärbt. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">Diese Partie konnte nicht geladen werden.</string>
+    <string name="lichess_puzzle_move_failed">Ein Rätselzug konnte nicht ausgeführt werden. Du kannst zum nächsten Rätsel wechseln.</string>
+    <string name="analysis_edit_comment">Kommentar bearbeiten</string>
+    <string name="analysis_comment_hint">Tippen, um einen Kommentar hinzuzufügen</string>
+    <string name="analysis_comment_title">Kommentar nach dem Zug</string>
+    <string name="analysis_start_comment_title">Kommentar vor dem ersten Zug</string>
+    <string name="analysis_engine">Engine</string>
+    <string name="menu_analyse_game">Partie analysieren</string>
+    <string name="menu_new_king_of_the_hill">Neue Partie „König des Hügels“</string>
+    <string name="state_hill_win">König hat den Hügel erreicht</string>
+    <string name="state_duck_stalemate_win">Keine Züge mehr möglich; das gewinnt im Entenschach</string>
+    <string name="options_engine_oex_variant_disabled">Diese Variante verwendet die integrierte Engine.</string>
+    <string name="practice_finished_position">Stellung abgeschlossen</string>
+    <string name="practice_preparing_position">Übungsstellung wird vorbereitet…</string>
+    <string name="practice_completed_collection">Du hast alle Rätsel abgeschlossen!</string>
+    <string name="import_start_failed">Import konnte nicht gestartet werden</string>
+    <string name="import_failed">Import fehlgeschlagen</string>
+    <string name="import_duplicates_skipped">Duplikate übersprungen</string>
+    <string name="engine_uninstalled">Engine %1$s deinstalliert</string>
+    <string name="engine_not_installed">Keine Engine installiert</string>
+    <string name="opening_database_uninstalled">Datenbank %1$s deinstalliert</string>
+    <string name="opening_database_not_installed">Keine Datenbank installiert</string>
+    <string name="setup_use_illegal_position">Ungültige Stellung verwenden?</string>
+    <string name="clock_minutes_hint">Minuten</string>
+    <string name="clock_increment_hint">Inkrement in Sekunden</string>
+    <string name="import_added">Hinzugefügt</string>
+    <string name="import_ignored">Ignoriert</string>
+    <string name="pgn_date_hint">PGN-Datum</string>
+    <string name="eco_openings_description">ECO-Eröffnungen</string>
+    <string name="hotspot_result_game_over">Partie beendet</string>
+    <string name="hotspot_result_defeat">Niederlage</string>
+    <string name="hotspot_result_victory">Sieg!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s hat aufgegeben.</string>
+    <string name="hotspot_result_you_resigned">Du hast aufgegeben.</string>
+    <string name="hotspot_result_mate_lost">Du hast durch Schachmatt verloren.</string>
+    <string name="hotspot_result_mate_won">Du hast durch Schachmatt gewonnen.</string>
+    <string name="hotspot_result_draw">Die Partie endet remis.</string>
+    <string name="hotspot_result_stalemate">Die Partie endet durch Patt remis.</string>
+    <string name="hotspot_result_repetition">Die Partie endet durch dreifache Stellungswiederholung remis.</string>
+    <string name="hotspot_result_fifty_moves">Die Partie endet durch die 50-Züge-Regel remis.</string>
+    <string name="hotspot_result_insufficient_material">Die Partie endet wegen unzureichenden Materials remis.</string>
+    <string name="website_open_failed">Keine App zum Öffnen der Website verfügbar.</string>
+    <string name="menu_use_position_as_start">Aktuelle Stellung als Anfang verwenden</string>
+    <string name="use_position_as_start_confirm">Diese Stellung als Anfang verwenden? Frühere Züge, ihre Kommentare und früher abzweigende Varianten werden entfernt. Fortsetzungen ab dieser Stellung bleiben erhalten. Diese Änderung wird automatisch gespeichert und kann nicht rückgängig gemacht werden.</string>
+    <string name="use_position_as_start_failed">Die Anfangsstellung konnte nicht geändert werden.</string>
 </resources>

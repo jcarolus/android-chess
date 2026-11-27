@@ -16,10 +16,15 @@ public final class PgnDocument {
         /** Character position of the move token, for error reporting. */
         public final int offset;
 
-        /** Annotation glyph first (!, ?, ...), then explicit $n codes in order. */
+        /** Symbolic annotations and explicit $n codes, in the order they appear. */
         public final List<Integer> nags;
 
         public final String comment;
+
+        /** Recorded remaining time after this move, or null when unavailable. */
+        public Long getClockMillis() {
+            return PgnComment.clockMillis(comment);
+        }
 
         /** Comment between the opening parenthesis and the first move of a variation. */
         public final String leadingComment;
@@ -44,6 +49,11 @@ public final class PgnDocument {
 
     /** Insertion-ordered, unescaped tag values. */
     public final Map<String, String> tags;
+
+    /** Structured TimeControl tag, or null when missing or unrecognizable. */
+    public PgnTimeControl getTimeControl() {
+        return PgnTimeControl.parse(tags.get("TimeControl"));
+    }
 
     /** Comment before the first move. */
     public final String rootComment;

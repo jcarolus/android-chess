@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">Foram encontradas aproximadamente %1$d partidas</string>
+    <string name="import_all">Importar todas</string>
+    <string name="import_subsection">Definir um intervalo</string>
+    <string name="import_games_from">Partidas de</string>
+    <string name="import_games_until">Partidas até</string>
+    <string name="import_continue">Continuar</string>
+    <string name="import_back">Voltar</string>
+    <string name="import_no_games">Nenhuma partida encontrada</string>
+    <string name="import_range_bounds">Introduza um número inteiro de 1 a %1$d</string>
+    <string name="import_range_order">O número final deve ser maior ou igual ao inicial</string>
+</resources>

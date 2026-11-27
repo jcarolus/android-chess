@@ -8,7 +8,7 @@ public class Game {
     public String lastMove;
     public String source;
     public Status status;
-    public Variant variant;
+    public LichessVariant variant;
     public String speed;
     public String perf;
     public boolean rated;

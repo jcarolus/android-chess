@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_move_entry">Introdução de lances por texto</string>
+    <string name="pref_confirm_move_entry">Rever os lances de texto antes de jogar</string>
+    <string name="move_entry_hint">Lance, por exemplo e2 e4</string>
+    <string name="move_entry_format">Introduza um lance, por exemplo e2e4, Nf3 ou Cavalo f3.</string>
+    <string name="move_entry_illegal">Esse lance é ilegal nesta posição.</string>
+    <string name="move_entry_wrong_turn">Aguarde a sua vez numa partida em curso.</string>
+    <string name="move_entry_promotion">Indique uma peça de promoção: rainha, torre, bispo ou cavalo.</string>
+    <string name="move_entry_review">Jogar %1$s (%2$s)?</string>
+</resources>

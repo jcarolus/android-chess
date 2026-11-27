@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -558,7 +559,7 @@ public class OexEngine extends EngineApi {
         if (promotion == null || promotion.isEmpty()) {
             return -1;
         }
-        switch (promotion.toLowerCase()) {
+        switch (promotion.toLowerCase(Locale.getDefault())) {
             case "q":
                 return BoardConstants.QUEEN;
             case "r":

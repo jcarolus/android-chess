@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Raport</string>
+    <string name="analysis_report_title">Raportul liniei principale</string>
+    <string name="analysis_report_progress">Se analizează pozițiile: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Precizie\nAlb: %1$s · Negru: %2$s</string>
+    <string name="analysis_report_graph">Grafic de evaluare</string>
+    <string name="analysis_report_graph_hint">Zona albă: șansele de câștig ale albului. Atinge graficul pentru a merge la o poziție.</string>
+    <string name="analysis_report_go_to_move">Mergi la poziția selectată</string>
+    <string name="analysis_report_key_moments">Momente cheie</string>
+    <string name="analysis_report_no_moments">Nu s-au găsit greșeli sau gafe.</string>
+    <string name="analysis_report_partial">Unele poziții nu au putut fi evaluate. Redeschide raportul pentru a reîncerca. Precizia este disponibilă după evaluarea tuturor pozițiilor.</string>
+    <string name="analysis_report_unavailable">Raport indisponibil. Finalizează mutarea curentă și verifică dacă partida conține mutări de analizat.</string>
+    <string name="analysis_report_start">Poziția inițială</string>
+    <string name="analysis_report_position">%1$s · Evaluare: %2$s</string>
+    <string name="analysis_report_unknown">Indisponibil</string>
+</resources>

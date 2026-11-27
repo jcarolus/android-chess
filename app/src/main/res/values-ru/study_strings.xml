@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Этюды</string>
+    <string name="study_topic">Тема</string>
+    <string name="study_surprise">Удивите меня</string>
+    <string name="study_variations">Варианты</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">Доступен %1$d вариант</item>
+        <item quantity="few">Доступно %1$d варианта</item>
+        <item quantity="many">Доступно %1$d вариантов</item>
+        <item quantity="other">Доступно %1$d варианта</item>
+    </plurals>
+    <string name="study_before_move">Перед ходом: %1$s</string>
+    <string name="study_after_move">После хода: %1$s</string>
+    <string name="study_pgn_evaluation">Оценка в этюде: %1$s</string>
+    <string name="study_loading">Загрузка этюдов…</string>
+    <string name="study_position">%1$d из %2$d</string>
+    <string name="study_previous">Предыдущий этюд</string>
+    <string name="study_next">Следующий этюд</string>
+    <string name="study_import_topic">Тема по умолчанию</string>
+    <string name="import_optional_topic">Тема по умолчанию (необязательно)</string>
+    <string name="study_delete_matching">Удалить подходящие этюды</string>
+    <string name="study_delete_failed">Не удалось удалить выбранные этюды.</string>
+    <string name="study_delete_confirmation">Удалить из партий этюды с темой «%1$s» и событием «%2$s»?</string>
+    <string name="study_load_failed">Не удалось загрузить этюды.</string>
+    <string name="study_library_empty">Нет импортированных этюдов.</string>
+    <string name="study_download_collections">Скачать коллекции</string>
+    <string name="study_import">Импортировать PGN или ZIP</string>
+    <string name="study_import_value_required">Введите значение</string>
+    <string name="importing_studies">Импорт этюдов…</string>
+</resources>

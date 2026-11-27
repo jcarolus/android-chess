@@ -8,7 +8,7 @@
         android:id="@+id/TextViewRefresh"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        style="@style/MySmallTextStyle" />
+        style="@style/MyPaneTextStyle" />
 
     <ListView
         android:id="@+id/ICSChallenges"

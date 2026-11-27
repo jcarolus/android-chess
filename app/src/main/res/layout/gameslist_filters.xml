@@ -1,174 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/GameSelectionFilters"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:shrinkColumns="1">
+        <TableRow>
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchFilterWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/gameslist_filter_switch_white_description" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="220dp"
+                android:hint="@string/savegame_white">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditTextFilterWhite"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchFilterBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/gameslist_filter_switch_black_description" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="220dp"
+                android:hint="@string/savegame_black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditTextFilterBlack"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchFilterEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/gameslist_filter_switch_event_description" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="220dp"
+                android:hint="@string/savegame_event">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditTextFilterEvent"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchFilterTopic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/study_topic" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="220dp"
+                android:hint="@string/study_topic">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditTextFilterTopic"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchFilterDateAfter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/gameslist_filter_switch_date_after_description" />
+
+            <jwtc.android.chess.views.PGNDateView
+                android:id="@+id/PGNDateAfter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/gameslist_filter_date_after"
+                android:minWidth="220dp" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchFilterDateBefore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/gameslist_filter_switch_date_before_description" />
+
+            <jwtc.android.chess.views.PGNDateView
+                android:id="@+id/PGNDateBefore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/gameslist_filter_date_before"
+                android:minWidth="220dp" />
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchFilterResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/gameslist_filter_switch_result_description" />
+
+            <jwtc.android.chess.views.FixedDropdownView
+                android:id="@+id/DropdownResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/gameslist_filter_result"
+                android:minWidth="220dp" />
+        </TableRow>
+    </TableLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:padding="@dimen/panel_padding">
+        android:orientation="horizontal">
 
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TableRow>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchFilterWhite"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/gameslist_filter_switch_white_description" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minWidth="220dp"
-                    android:hint="@string/savegame_white">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/EditTextFilterWhite"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
-                        android:inputType="text" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </TableRow>
-
-            <TableRow>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchFilterBlack"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/gameslist_filter_switch_black_description" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minWidth="220dp"
-                    android:hint="@string/savegame_black">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/EditTextFilterBlack"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
-                        android:inputType="text" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </TableRow>
-
-            <TableRow>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchFilterEvent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/gameslist_filter_switch_event_description" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minWidth="220dp"
-                    android:hint="@string/savegame_event">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/EditTextFilterEvent"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
-                        android:inputType="text" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </TableRow>
-
-            <TableRow>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchFilterDateAfter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/gameslist_filter_switch_date_after_description" />
-
-                <jwtc.android.chess.views.PGNDateView
-                    android:id="@+id/PGNDateAfter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/gameslist_filter_date_after"
-                    android:minWidth="220dp" />
-
-            </TableRow>
-
-            <TableRow>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchFilterDateBefore"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/gameslist_filter_switch_date_before_description" />
-
-                <jwtc.android.chess.views.PGNDateView
-                    android:id="@+id/PGNDateBefore"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/gameslist_filter_date_before"
-                    android:minWidth="220dp" />
-            </TableRow>
-
-            <TableRow>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchFilterResult"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/gameslist_filter_switch_result_description" />
-
-                <jwtc.android.chess.views.FixedDropdownView
-                    android:id="@+id/DropdownResult"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/gameslist_filter_result"
-                    android:minWidth="220dp" />
-            </TableRow>
-        </TableLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownOrderBy"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:hint="@string/gameslist_filter_order_by" />
 
-            <jwtc.android.chess.views.FixedDropdownView
-                android:id="@+id/DropdownOrderBy"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="@dimen/control_gap"
-                android:hint="@string/gameslist_filter_order_by" />
-
-            <jwtc.android.chess.views.FixedDropdownView
-                android:id="@+id/DropdownOrderDirection"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/gameslist_filter_order_direction" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownOrderDirection"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="end">
-
-            <TextView
-                android:id="@+id/TextViewFilterInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/section_gap"
-                android:text="0" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonFilterClose"
-                android:text="@string/button_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+            android:layout_weight="1"
+            android:hint="@string/gameslist_filter_order_direction" />
     </LinearLayout>
-</ScrollView>
+
+</LinearLayout>

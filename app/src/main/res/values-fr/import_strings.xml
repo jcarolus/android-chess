@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">Environ %1$d parties trouvées</string>
+    <string name="import_all">Tout importer</string>
+    <string name="import_subsection">Définir une plage</string>
+    <string name="import_games_from">Parties de</string>
+    <string name="import_games_until">Parties à</string>
+    <string name="import_continue">Continuer</string>
+    <string name="import_back">Retour</string>
+    <string name="import_no_games">Aucune partie trouvée</string>
+    <string name="import_range_bounds">Saisissez un entier de 1 à %1$d</string>
+    <string name="import_range_order">Le numéro de fin doit être supérieur ou égal au numéro de début</string>
+</resources>

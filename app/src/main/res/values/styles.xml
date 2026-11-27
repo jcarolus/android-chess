@@ -140,11 +140,7 @@
         <item name="android:layout_margin">@dimen/compact_control_gap</item>
     </style>
 
-    <style name="ChessTextAppearance" parent="@android:style/TextAppearance">
-        <item name="android:typeface">sans</item>
-    </style>
-
-    <style name="MyTextStyle" parent="ChessTextAppearance">
+    <style name="MyTextStyle" parent="@android:style/TextAppearance">
         <item name="android:paddingTop">@dimen/text_padding_vertical</item>
         <item name="android:paddingBottom">@dimen/text_padding_vertical</item>
         <item name="android:paddingLeft">@dimen/text_padding_horizontal</item>
@@ -188,13 +184,15 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="MySmallTextStyle">
-        <item name="android:padding">@dimen/compact_control_padding</item>
-        <item name="android:textSize">12sp</item>
+    <style name="MyDescriptionTextStyle">
+        <item name="android:textSize">@dimen/body_text_size</item>
+        <item name="android:layout_marginRight">@dimen/control_gap</item>
+        <item name="android:layout_marginLeft">@dimen/preference_control_inset</item>
+        <item name="android:layout_marginBottom">@dimen/control_gap</item>
     </style>
 
-    <style name="MyPaneTextStyle" parent="@style/MySmallTextStyle">
-        <item name="android:padding">@dimen/control_padding</item>
+    <style name="MyPaneTextStyle">
+        <item name="android:textSize">12sp</item>
         <item name="android:scrollHorizontally">false</item>
     </style>
 

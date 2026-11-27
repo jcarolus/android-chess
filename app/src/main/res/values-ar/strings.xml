@@ -1,34 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help">
-                 <![CDATA[
-        <h3>خيارات متقدمة</h3>
-            <p>أنشئ أو استورد محتوياتك الخاصة هنا.</p>
-
-            <h4>تصدير قاعدة بيانات الألعاب إلى بطاقة SD</h4>
-            <p>يمكن تصدير جميع الألعاب في قاعدة بيانات الألعاب إلى ملف PGN واحد على بطاقة SD. سيتم تسمية هذا الملف chess.pgn وسيتم استبدال أي ملف موجود.</p>
-
-            <h4>استيراد الألعاب إلى قاعدة بيانات الألعاب</h4>
-            <p>استخدم هذا الخيار لإضافة ألعاب إلى قاعدة بيانات الألعاب. يتيح لك التصفح إلى ملف PGN. حدده واختر استيراده.</p>
-
-            <h4>حذف جميع الألعاب في قاعدة بيانات الألعاب</h4>
-            <p>استخدم هذا الخيار إذا كنت تريد تنظيف قاعدة بيانات الألعاب. تأكد من عمل نسخة احتياطية على بطاقة SD أولاً، لأن هذا الإجراء لا يمكن التراجع عنه.</p>
-
-            <h4>إنشاء مجموعة تمارين</h4>
-            <p>ينشئ أوضاع تمرين من الألعاب التي تنتهي بكش مات. تصفح إلى الملف المراد معالجته. الإدخالات الفاشلة عادة ما تكون ألعابًا لم تنتهِ بكش مات أو مكررة.</p>
-
-            <h4>إعادة تعيين مجموعة التمارين</h4>
-            <p>هل تريد بدء التمرين من جديد؟ سيؤدي هذا أيضًا إلى إعادة تعيين عداد متوسط الوقت الخاص بك.</p>
-
-                ]]>
-            </string>
     <string name="alert_no">لا</string>
     <string name="alert_ok">موافق</string>
     <string name="alert_yes">نعم</string>
     <string name="app_name">شطرنج</string>
     <string name="app_name_help">مساعدة</string>
     <string name="app_name_import">استيراد</string>
-    <string name="app_name_pgntools">خيارات متقدمة</string>
     <string name="app_name_play">لعب</string>
     <string name="app_name_playonline">لعب عبر الإنترنت</string>
     <string name="app_name_save_games">الألعاب المحفوظة</string>
@@ -293,13 +270,13 @@
     <string name="options_play_white">أبيض</string>
     <string name="options_quiescent_off">إيقاف بحث الاستقرار</string>
     <string name="options_quiescent_on">تشغيل بحث الاستقرار</string>
-    <string name="pgntool_confirm_delete_games">هل أنت متأكد؟</string>
+    <string name="pgntool_delete_item_count">عدد العناصر المراد حذفها: %1$d</string>
+    <string name="pgntool_confirm_delete_games">هل تريد حذف كل المباريات، بما فيها الدراسات، من قاعدة بيانات المباريات؟</string>
     <string name="pgntool_confirm_practice_reset">هل أنت متأكد من رغبتك في إعادة التعيين؟</string>
     <string name="pgntool_create_db_explanation">إنشاء قاعدة بيانات الافتتاحيات</string>
     <string name="pgntool_delete_games">حذف جميع الألعاب في قاعدة بيانات الألعاب</string>
     <string name="pgntool_games_deleted">تم حذف جميع الألعاب</string>
-    <string name="pgntool_export_explanation">تصدير قاعدة بيانات الألعاب</string>
-    <string name="pgntool_help">مساعدة</string>
+    <string name="pgntool_export_explanation">تصدير جميع المباريات</string>
     <string name="pgntool_import_explanation">استيراد الألعاب إلى قاعدة بيانات الألعاب</string>
     <string name="importing_games">جارٍ استيراد الألعاب…</string>
     <string name="importing_puzzles">جارٍ استيراد الألغاز…</string>
@@ -371,6 +348,7 @@
     <string name="pref_speech">كلام</string>
     <string name="pref_user_long_move_descriptions">استخدام وصف النقلة الكامل</string>
     <string name="tts_locale_not_supported">تحويل النص إلى كلام لا يدعم لغتك المحلية</string>
+    <string name="tts_language_differs_from_app">تستخدم ميزة تحويل النص إلى كلام لغة مختلفة عن لغة التطبيق</string>
     <string name="tts_not_loaded">تعذر تحميل محرك تحويل النص إلى كلام</string>
     <string name="tts_example_move">فيل يأخذ G7 كش</string>
     <string name="tts_selected">تم التحديد</string>
@@ -430,7 +408,6 @@
     <string name="start_wifiboard">رقعة WiFi</string>
     <string name="start_ics">Freechess</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">خيارات متقدمة</string>
     <string name="start_play">لعب</string>
     <string name="start_practice">تمرين</string>
     <string name="start_puzzles">ألغاز</string>
@@ -465,6 +442,7 @@
     <string name="title_challenge">تحدي</string>
     <string name="title_overwrite_main_line">هل تريد استبدال الخط الرئيسي من هذا الوضع؟</string>
     <string name="title_delete_game">حذف اللعبة</string>
+    <string name="game_delete_failed">تعذر حذف اللعبة. يرجى المحاولة مرة أخرى.</string>
     <string name="title_edit_command">تعديل الأمر</string>
     <string name="title_edit_or_delete">تعديل أو حذف؟</string>
     <string name="title_error">خطأ</string>
@@ -557,7 +535,6 @@
     <string name="analysis_move_mistake">خطأ</string>
     <string name="analysis_move_blunder">خطأ فادح</string>
     <string name="analysis_move_forced">إجبارية</string>
-    <string name="analysis_move_pending">جارٍ تحليل النقلة…</string>
     <string name="analysis_move_unavailable">التحليل غير متاح</string>
     <string name="analysis_white_to_move">دور الأبيض</string>
     <string name="analysis_black_to_move">دور الأسود</string>
@@ -566,6 +543,9 @@
     <string name="pgn_return_main_line">العودة إلى الخط الرئيسي</string>
     <string name="pgn_promote_variation">تعيين كاستمرار مفضل</string>
     <string name="pgn_delete_variation">حذف التفرع</string>
+    <string name="menu_truncate_line">حذف النقلات من هنا</string>
+    <string name="truncate_line_confirm">حذف %1$s وكل النقلات التالية؟ النقلات: %2$d</string>
+    <string name="truncate_line_confirm_variations">حذف %1$s وكل النقلات التالية بما فيها التفرعات؟ النقلات: %2$d</string>
     <string name="engine_evaluation_score">تقييم المحرك: %1$+.1f بيدق (القيم الموجبة لصالح الأبيض)</string>
     <string name="engine_evaluation_pending">تقييم المحرك غير متاح</string>
     <string name="analysis_settings">إعدادات التحليل</string>
@@ -575,7 +555,6 @@
     <string name="analysis_builtin_warning">لتحليل أفضل، ثبّت محرك شطرنج متوافقًا مع OEX.</string>
     <string name="analysis_dont_show_again">عدم الإظهار مجددًا</string>
     <string name="analysis_continue">متابعة</string>
-    <string name="analysis_duck_unsupported">تحليل شطرنج البطة غير مدعوم.</string>
     <string name="new_game_variant_standard">قياسي</string>
     <string name="new_game_variant_duck">البطة</string>
     <string name="new_game_variant_king_of_the_hill">ملك التل</string>
@@ -592,6 +571,92 @@
     <string name="share_lichess_profile">مشاركة ملفي على Lichess</string>
     <string name="app_link_invalid">رابط Chess هذا غير صالح أو غير مدعوم.</string>
     <string name="app_link_too_large">هذه المباراة أكبر من أن تتم مشاركتها كرابط. شارك المباراة كاملة بصيغة PGN بدلاً من ذلك.</string>
-    <string name="app_link_no_engine">تحليل المحرك غير متاح لهذا النوع. يمكنك استعراض الرقعة والنقلات.</string>
     <string name="share_failed">تعذرت مشاركة المباراة. يرجى المحاولة مجددًا.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>واحد</item>
+        <item>اثنان|اثنين</item>
+        <item>ثلاثة</item>
+        <item>أربعة</item>
+        <item>خمسة</item>
+        <item>ستة</item>
+        <item>سبعة</item>
+        <item>ثمانية</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>حصان</item>
+        <item>فيل</item>
+        <item>رخ</item>
+        <item>وزير|ملكة</item>
+    </string-array>
+    <string name="move_input_castle">تبييت</string>
+    <string name="move_input_captures">يأخذ</string>
+    <string name="menu_delete_game_database">حذف جميع المباريات، بما فيها الدراسات</string>
+    <string name="practice_delete_confirmation">هل تريد حذف جميع وضعيات التدريب والتقدم؟</string>
+    <string name="puzzle_delete_confirmation">هل تريد حذف جميع وضعيات الألغاز والتقدم؟</string>
+    <string name="collection_restore_prompt">لقد حذفت جميع الوضعيات، هل تريد استعادة الوضعيات الافتراضية؟</string>
+    <string name="collection_restore_defaults">استعادة الوضعيات الافتراضية</string>
+    <string name="collection_empty">لا توجد وضعيات. استخدم القائمة لاستيراد الوضعيات أو استعادتها.</string>
+    <string name="collection_delete_failed">تعذر حذف الوضعيات. يرجى المحاولة مرة أخرى.</string>
+    <string name="lichess_create_challenge_player_invalid">اسم مستخدم Lichess هذا غير صالح.</string>
+    <string name="pgntool_confirm_delete_practice">هل تريد حذف جميع أوضاع التدريب؟</string>
+    <string name="pgntool_confirm_delete_puzzles">هل تريد حذف جميع أوضاع الألغاز؟</string>
+    <string name="pgntool_delete_practice">حذف جميع أوضاع التدريب</string>
+    <string name="pgntool_delete_puzzles">حذف جميع أوضاع الألغاز</string>
+    <string name="pgntool_practice_deleted">تم حذف جميع أوضاع التدريب</string>
+    <string name="pgntool_puzzles_deleted">تم حذف جميع أوضاع الألغاز</string>
+    <string name="pgntool_import_busy">توجد عملية استيراد قيد التنفيذ بالفعل</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes من تصميم flugsio (CC BY-SA 4.0)؛ Firi من تصميم James Faure وKiwen-suwi من تصميم neverRare (CC BY 4.0)؛ Celtic وSpatial من تصميم Maurizio Monge (MIT). عُدلت الرسومات لتناسب Android؛ وأُعيد تلوين Firi. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">تعذّر تحميل هذه المباراة.</string>
+    <string name="lichess_puzzle_move_failed">تعذّر تنفيذ نقلة في اللغز. يمكنك الانتقال إلى اللغز التالي.</string>
+    <string name="analysis_edit_comment">تعديل التعليق</string>
+    <string name="analysis_comment_hint">انقر لإضافة تعليق</string>
+    <string name="analysis_comment_title">تعليق بعد النقلة</string>
+    <string name="analysis_start_comment_title">تعليق قبل النقلة الأولى</string>
+    <string name="analysis_engine">المحرك</string>
+    <string name="menu_analyse_game">تحليل المباراة</string>
+    <string name="menu_new_king_of_the_hill">مباراة جديدة بنمط ملك التل</string>
+    <string name="state_hill_win">وصل الملك إلى التل</string>
+    <string name="state_duck_stalemate_win">لم تعد هناك نقلات متاحة، وهذا يحقق الفوز في شطرنج البطة</string>
+    <string name="options_engine_oex_variant_disabled">يستخدم هذا النمط المحرك المدمج.</string>
+    <string name="practice_finished_position">وضع مكتمل</string>
+    <string name="practice_preparing_position">جارٍ إعداد وضع التدريب…</string>
+    <string name="practice_completed_collection">لقد أكملت جميع الألغاز!</string>
+    <string name="import_start_failed">تعذّر بدء الاستيراد</string>
+    <string name="import_failed">فشل الاستيراد</string>
+    <string name="import_duplicates_skipped">تم تخطي العناصر المكررة</string>
+    <string name="engine_uninstalled">تم إلغاء تثبيت المحرك %1$s</string>
+    <string name="engine_not_installed">لا يوجد محرك مثبت</string>
+    <string name="opening_database_uninstalled">تم إلغاء تثبيت قاعدة البيانات %1$s</string>
+    <string name="opening_database_not_installed">لا توجد قاعدة بيانات مثبتة</string>
+    <string name="setup_use_illegal_position">هل تريد استخدام وضع غير قانوني؟</string>
+    <string name="clock_minutes_hint">الدقائق</string>
+    <string name="clock_increment_hint">الزيادة بالثواني</string>
+    <string name="import_added">تمت الإضافة</string>
+    <string name="import_ignored">تم التجاهل</string>
+    <string name="pgn_date_hint">تاريخ PGN</string>
+    <string name="eco_openings_description">افتتاحيات ECO</string>
+    <string name="hotspot_result_game_over">انتهت المباراة</string>
+    <string name="hotspot_result_defeat">هزيمة</string>
+    <string name="hotspot_result_victory">فوز!</string>
+    <string name="hotspot_result_opponent_resigned">استسلم %1$s.</string>
+    <string name="hotspot_result_you_resigned">لقد استسلمت.</string>
+    <string name="hotspot_result_mate_lost">خسرت بكش مات.</string>
+    <string name="hotspot_result_mate_won">فزت بكش مات.</string>
+    <string name="hotspot_result_draw">انتهت المباراة بالتعادل.</string>
+    <string name="hotspot_result_stalemate">انتهت المباراة بالتعادل بسبب الجمود.</string>
+    <string name="hotspot_result_repetition">انتهت المباراة بالتعادل بسبب تكرار الوضع ثلاث مرات.</string>
+    <string name="hotspot_result_fifty_moves">انتهت المباراة بالتعادل وفقًا لقاعدة الخمسين نقلة.</string>
+    <string name="hotspot_result_insufficient_material">انتهت المباراة بالتعادل بسبب عدم كفاية القطع.</string>
+    <string name="website_open_failed">لا يوجد تطبيق متاح لفتح الموقع الإلكتروني.</string>
+    <string name="menu_use_position_as_start">استخدام الوضع الحالي كبداية</string>
+    <string name="use_position_as_start_confirm">هل تريد استخدام هذا الوضع كبداية؟ ستُحذف النقلات السابقة وتعليقاتها والتفرعات التي تبدأ قبل هذا الوضع. ستُحفظ التتمات من هذا الوضع. يُحفظ هذا التغيير تلقائيًا ولا يمكن التراجع عنه.</string>
+    <string name="use_position_as_start_failed">تعذر تغيير وضع البداية.</string>
 </resources>

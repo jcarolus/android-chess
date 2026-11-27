@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">تصدير PGN</string>
+    <string name="export_create">إنشاء ملف جديد</string>
+    <string name="export_append">إلحاق بملف</string>
+    <string name="export_replace">استبدال ملف</string>
+    <string name="export_choose_action">اختر طريقة تصدير المباريات.</string>
+    <string name="export_all">كل المباريات</string>
+    <string name="export_matching">المباريات المطابقة لعوامل التصفية الحالية</string>
+    <string name="export_replace_confirm">هل تريد استبدال كل محتويات «%1$s»؟ لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="export_preparing">جارٍ تحضير المباريات للتصدير…</string>
+    <string name="export_writing">جارٍ تصدير المباريات…</string>
+    <string name="export_done">اكتمل التصدير.</string>
+    <string name="export_no_games">لا توجد مباريات لتصديرها.</string>
+    <string name="export_failed">فشل التصدير. اختر وجهة أخرى أو أغلق وحاول مجددًا.</string>
+    <string name="export_partial">فشل التصدير. ربما تمت كتابة الملف جزئيًا. تحقق من محتوياته قبل المحاولة مجددًا لتجنب المباريات المكررة أو غير المكتملة. يمكنك اختيار وجهة أخرى.</string>
+</resources>

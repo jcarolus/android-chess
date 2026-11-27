@@ -3,6 +3,7 @@ package jwtc.chess;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -14,6 +15,53 @@ import java.util.Map;
 import org.junit.Test;
 
 public class PgnTest {
+    @Test
+    public void missingAndMalformedTimeControlsRemainRawAndDoNotRejectTheGame() {
+        assertNull(Pgn.parse("1. e4 *").getTimeControl());
+        PgnDocument malformed =
+                Pgn.parse("[TimeControl \"unusual control\"]\n[Result \"*\"]\n1. e4 *");
+        assertNull(malformed.getTimeControl());
+        assertEquals("unusual control", malformed.tags.get("TimeControl"));
+        assertEquals(
+                "unusual control",
+                Pgn.parse(Pgn.writeTags(malformed.tags) + "*").tags.get("TimeControl"));
+    }
+
+    @Test
+    public void completedGameIgnoresMessageSuffix() {
+        for (String result : Arrays.asList("1-0", "0-1", "1/2-1/2")) {
+            String pgn = "[Result \"" + result + "\"]\n1. e4 {[%clk 0:00:30]} c6 " + result;
+            for (String suffix :
+                    Arrays.asList(
+                            "\nSent at 05:14, Seen\nViewed 1 time",
+                            " {unclosed",
+                            " [broken tag",
+                            " ) e5")) {
+                PgnDocument doc = Pgn.parse(pgn + suffix);
+                assertEquals(result, doc.result);
+                assertEquals(Arrays.asList("e4", "c6"), sans(doc.mainLine));
+                assertEquals(Long.valueOf(30000), doc.mainLine.get(0).getClockMillis());
+            }
+        }
+    }
+
+    @Test
+    public void retainsValidTrailingCommentsAndStillValidatesTheGame() {
+        assertEquals(
+                "resigned",
+                Pgn.parse("1. e4 1-0 {resigned} Sent").mainLine.get(0).comment);
+        for (String invalid :
+                Arrays.asList(
+                        "1. e4 * Sent",
+                        "1. e4 Sent 0-1",
+                        "1. e4 Sent",
+                        "1. e4 (1. d4 1-0) Sent",
+                        "[Result \"1-0\"]\n1. e4 0-1 Sent",
+                        "[Result \"0-1\"]\n1. e4 Sent")) {
+            assertThrows(invalid, PgnSyntaxError.class, () -> Pgn.parse(invalid));
+        }
+    }
+
     private static List<String> sans(List<PgnDocument.Move> line) {
         List<String> out = new ArrayList<>();
         for (PgnDocument.Move move : line) {
@@ -114,6 +162,57 @@ public class PgnTest {
     }
 
     @Test
+    public void separatedAnnotationsBecomeNags() {
+        String[] symbols = {"!", "?", "!!", "??", "!?", "?!", "+-", "-+"};
+        int[] nags = {1, 2, 3, 4, 5, 6, 18, 19};
+        for (int i = 0; i < symbols.length; i++) {
+            for (String space : Arrays.asList(" ", "\n", "\r\n", "\t")) {
+                PgnDocument doc = Pgn.parse("1. e4" + space + symbols[i] + " e5 *");
+                assertEquals(Arrays.asList("e4", "e5"), sans(doc.mainLine));
+                assertEquals(Arrays.asList(nags[i]), doc.mainLine.get(0).nags);
+                assertTrue(doc.mainLine.get(1).nags.isEmpty());
+            }
+        }
+    }
+
+    @Test
+    public void separatedAnnotationsStayOnTheirVariationAndKeepOrder() {
+        PgnDocument doc = Pgn.parse("1. e4! {best} ? $14 e5 (1... c5 ! (1... e6 -+) ?!) +- $10 *");
+        PgnDocument.Move e4 = doc.mainLine.get(0);
+        PgnDocument.Move e5 = doc.mainLine.get(1);
+        PgnDocument.Move c5 = e5.variations.get(0).get(0);
+        assertEquals(Arrays.asList(1, 2, 14), e4.nags);
+        assertEquals("best", e4.comment);
+        assertEquals(Arrays.asList(18, 10), e5.nags);
+        assertEquals(Arrays.asList(1, 6), c5.nags);
+        assertEquals(Arrays.asList(19), c5.variations.get(0).get(0).nags);
+    }
+
+    @Test
+    public void annotationSymbolsInTagsAndCommentsStayLiteral() {
+        PgnDocument doc = Pgn.parse("[Event \"! ? +- -+\"]\n1. e4 {! ? +- -+} e5 ;! ? +- -+\n*");
+        assertEquals("! ? +- -+", doc.tags.get("Event"));
+        for (PgnDocument.Move move : doc.mainLine) {
+            assertEquals("! ? +- -+", move.comment);
+            assertTrue(move.nags.isEmpty());
+        }
+    }
+
+    @Test
+    public void rejectsSeparatedAnnotationsWithoutAMoveOrAfterResult() {
+        for (String symbol : Arrays.asList("!", "?", "!!", "??", "!?", "?!", "+-", "-+")) {
+            syntaxError(symbol + " 1. e4 *");
+            syntaxError("1. e4 (" + symbol + " 1. d4) *");
+            assertTrue(
+                    syntaxError("1. e4 * " + symbol)
+                            .getMessage()
+                            .startsWith("Unexpected token after result"));
+        }
+        syntaxError("1. e4 !!! *");
+        syntaxError("1. e4 +-- *");
+    }
+
+    @Test
     public void castlingAcceptsLettersAndZeros() {
         assertEquals(
                 Arrays.asList("O-O", "0-0-0", "O-O-O+"),
@@ -195,7 +294,7 @@ public class PgnTest {
         assertTrue(syntaxError("1. e4 $256").getMessage().startsWith("Invalid NAG"));
         assertTrue(syntaxError("1. e4 $").getMessage().startsWith("Invalid NAG"));
         assertTrue(
-                syntaxError("1. e4 1-0 e5")
+                syntaxError("1. e4 * e5")
                         .getMessage()
                         .startsWith("Unexpected token after result"));
         assertTrue(

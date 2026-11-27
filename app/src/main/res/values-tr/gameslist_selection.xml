@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Seçili oyunlar için işlemler</string>
+    <string name="gameslist_check_game">%3$d numaralı oyunu seç: %1$s - %2$s</string>
+    <string name="gameslist_select_all">Tümünü seç</string>
+    <string name="gameslist_clear_selection">Seçimi temizle</string>
+    <string name="gameslist_invert_checked">Seçimi tersine çevir</string>
+    <string name="gameslist_multi_edit">Toplu düzenle</string>
+    <string name="gameslist_delete_selected">Seçili oyunları sil</string>
+    <string name="gameslist_edit_topic">Konuyu düzenle</string>
+    <string name="gameslist_topic_hint">Konu</string>
+    <string name="gameslist_topic_explanation">Seçili tüm oyunların konusunu değiştirin. Konuları temizlemek için boş bırakın.</string>
+    <string name="gameslist_clear_topic">Konuyu temizle</string>
+    <string name="gameslist_set_topic">Konuyu ayarla</string>
+    <string name="gameslist_bulk_failed">Seçili oyunlar düzenlenemedi. Hiçbir oyun değiştirilmedi. Tekrar deneyin.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d oyun seçildi</item>
+        <item quantity="other">%d oyun seçildi</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">Seçili %d oyun kalıcı olarak silinsin mi?</item>
+        <item quantity="other">Seçili %d oyun kalıcı olarak silinsin mi?</item>
+    </plurals>
+    <string name="gameslist_export_selected">Seçili oyunları dışa aktar</string>
+</resources>

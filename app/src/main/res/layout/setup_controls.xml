@@ -7,7 +7,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/panel_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,13 +97,13 @@
 
                 <CheckBox
                     android:id="@+id/CheckBoxSetupWhiteCastleShort"
-                    android:text="0-0"
+                    android:text="@string/castling_short_notation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <CheckBox
                     android:id="@+id/CheckBoxSetupWhiteCastleLong"
-                    android:text="0-0-0"
+                    android:text="@string/castling_long_notation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -120,13 +121,13 @@
 
                 <CheckBox
                     android:id="@+id/CheckBoxSetupBlackCastleShort"
-                    android:text="0-0"
+                    android:text="@string/castling_short_notation"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" />
 
                 <CheckBox
                     android:id="@+id/CheckBoxSetupBlackCastleLong"
-                    android:text="0-0-0"
+                    android:text="@string/castling_long_notation"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" />
             </TableRow>

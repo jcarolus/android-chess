@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Gelişmiş</h3>
-        <p>Burada kendi içeriklerinizi oluşturun veya içe aktarın.</p>
-
-        <h4>Oyun veritabanını SD karta aktar</h4>
-        <p>Oyun veritabanındaki tüm oyunlar SD kartta tek bir PGN dosyasına aktarılabilir. Bu dosyanın adı chess.pgn olacaktır ve mevcut bir dosyanın üzerine yazılır.</p>
-
-        <h4>Oyunları oyun veritabanına içe aktar</h4>
-        <p>Bu seçeneği, oyun veritabanına oyun eklemek için kullanın. Bir PGN dosyasına göz atmanıza olanak tanır. Seçin ve içe aktarmayı başlatın.</p>
-
-        <h4>Oyun veritabanındaki tüm oyunları sil</h4>
-        <p>Veritabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce SD karta bir yedek aldığınızdan emin olun; bu işlem geri alınamaz.</p>
-
-        <h4>Alıştırma seti oluştur</h4>
-        <p>Şah matla biten oyunlardan alıştırma konumları oluşturur. İşlenecek dosyayı seçin. Başarısız girişler genellikle şah matla bitmeyen ya da yinelenen oyunlardır.</p>
-
-        <h4>Alıştırma setini sıfırla</h4>
-        <p>Alıştırmalara baştan başlamak ister misiniz? Bu, ortalama süre sayacınızı da sıfırlar.</p>
-
-        ]]></string>
     <string name="alert_no">Hayır</string>
     <string name="alert_ok">Tamam</string>
     <string name="alert_yes">Evet</string>
     <string name="app_name">Satranç</string>
     <string name="app_name_help">Yardım</string>
     <string name="app_name_import">İçe aktar</string>
-    <string name="app_name_pgntools">Gelişmiş</string>
     <string name="app_name_play">Oyna</string>
     <string name="app_name_playonline">Çevrimiçi oyna</string>
     <string name="app_name_save_games">Kayıtlı oyunlar</string>
@@ -279,13 +258,13 @@
     <string name="options_play_white">Beyaz</string>
     <string name="options_quiescent_off">Sessizlik araması kapalı</string>
     <string name="options_quiescent_on">Sessizlik araması açık</string>
-    <string name="pgntool_confirm_delete_games">Emin misiniz?</string>
+    <string name="pgntool_delete_item_count">Silinecek öğe sayısı: %1$d</string>
+    <string name="pgntool_confirm_delete_games">Çalışmalar dahil tüm oyunlar veritabanından silinsin mi?</string>
     <string name="pgntool_confirm_practice_reset">Sıfırlamak istediğinize emin misiniz?</string>
     <string name="pgntool_create_db_explanation">Açılış veritabanı oluştur</string>
     <string name="pgntool_delete_games">Veritabanındaki tüm oyunları sil</string>
     <string name="pgntool_games_deleted">Tüm oyunlar silindi</string>
-    <string name="pgntool_export_explanation">Oyun veritabanını dışa aktar</string>
-    <string name="pgntool_help">Yardım</string>
+    <string name="pgntool_export_explanation">Tüm oyunları dışa aktar</string>
     <string name="pgntool_import_explanation">Oyunları veritabanına aktar</string>
     <string name="importing_games">Oyunlar içe aktarılıyor…</string>
     <string name="importing_puzzles">Problemler içe aktarılıyor…</string>
@@ -357,6 +336,7 @@
     <string name="pref_speech">Sesli okuma</string>
     <string name="pref_user_long_move_descriptions">Tam hamle açıklamasını kullan</string>
     <string name="tts_locale_not_supported">Metinden konuşmaya özelliği yerel ayarınızı desteklemiyor</string>
+    <string name="tts_language_differs_from_app">Metinden konuşmaya özelliği uygulamadan farklı bir dil kullanıyor</string>
     <string name="tts_not_loaded">Metinden konuşma yüklenemedi</string>
     <string name="tts_example_move">Fil G7 alır, şah</string>
     <string name="tts_selected">Seçili</string>
@@ -413,7 +393,6 @@
     <string name="start_wifiboard">Wi‑Fi tahtası</string>
     <string name="start_ics">Çevrimiçi oyna</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Gelişmiş</string>
     <string name="start_play">Oyna</string>
     <string name="start_practice">Alıştırma</string>
     <string name="start_puzzles">Problemler</string>
@@ -447,6 +426,7 @@
     <string name="title_challenge">Meydan okuma</string>
     <string name="title_overwrite_main_line">Bu konumdan itibaren ana hattın üzerine yazılsın mı?</string>
     <string name="title_delete_game">Oyunu sil</string>
+    <string name="game_delete_failed">Oyun silinemedi. Lütfen tekrar deneyin.</string>
     <string name="title_edit_command">Komutu düzenle</string>
     <string name="title_edit_or_delete">Düzenle veya sil?</string>
     <string name="title_error">Hata</string>
@@ -548,7 +528,6 @@
     <string name="analysis_move_mistake">Hata</string>
     <string name="analysis_move_blunder">Büyük hata</string>
     <string name="analysis_move_forced">Zorunlu</string>
-    <string name="analysis_move_pending">Hamle analiz ediliyor…</string>
     <string name="analysis_move_unavailable">Analiz kullanılamıyor</string>
     <string name="analysis_white_to_move">Beyazın sırası</string>
     <string name="analysis_black_to_move">Siyahın sırası</string>
@@ -557,6 +536,9 @@
     <string name="pgn_return_main_line">Ana hatta dön</string>
     <string name="pgn_promote_variation">Tercih edilen devam yolu yap</string>
     <string name="pgn_delete_variation">Varyantı sil</string>
+    <string name="menu_truncate_line">Buradan sonraki hamleleri sil</string>
+    <string name="truncate_line_confirm">%1$s ve sonraki tüm hamleler silinsin mi? Hamle: %2$d</string>
+    <string name="truncate_line_confirm_variations">%1$s ve varyantlar dahil sonraki tüm hamleler silinsin mi? Hamle: %2$d</string>
     <string name="engine_evaluation_score">Motor değerlendirmesi: %1$+.1f piyon (pozitif değerler beyazın lehinedir)</string>
     <string name="engine_evaluation_pending">Motor değerlendirmesi kullanılamıyor</string>
     <string name="analysis_settings">Analiz ayarları</string>
@@ -566,7 +548,6 @@
     <string name="analysis_builtin_warning">Daha iyi analiz için OEX uyumlu bir satranç motoru yükleyin.</string>
     <string name="analysis_dont_show_again">Bir daha gösterme</string>
     <string name="analysis_continue">Devam et</string>
-    <string name="analysis_duck_unsupported">Ördek satrancı için analiz desteklenmiyor.</string>
     <string name="new_game_variant_standard">Standart</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Tepenin Şahı</string>
@@ -583,6 +564,92 @@
     <string name="share_lichess_profile">Lichess profilimi paylaş</string>
     <string name="app_link_invalid">Bu Chess bağlantısı geçersiz veya desteklenmiyor.</string>
     <string name="app_link_too_large">Bu oyun bağlantı olarak paylaşmak için çok büyük. Oyunun tamamını PGN olarak paylaşın.</string>
-    <string name="app_link_no_engine">Bu varyant için motor analizi kullanılamıyor. Tahtayı ve hamleleri inceleyebilirsiniz.</string>
     <string name="share_failed">Oyun paylaşılamadı. Lütfen tekrar deneyin.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>bir</item>
+        <item>iki</item>
+        <item>üç</item>
+        <item>dört</item>
+        <item>beş</item>
+        <item>altı</item>
+        <item>yedi</item>
+        <item>sekiz</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>at</item>
+        <item>fil</item>
+        <item>kale</item>
+        <item>vezir</item>
+    </string-array>
+    <string name="move_input_castle">rok</string>
+    <string name="move_input_captures">alır</string>
+    <string name="menu_delete_game_database">Çalışmalar dahil tüm oyunları sil</string>
+    <string name="practice_delete_confirmation">Tüm alıştırma konumları ve ilerleme silinsin mi?</string>
+    <string name="puzzle_delete_confirmation">Tüm problem konumları ve ilerleme silinsin mi?</string>
+    <string name="collection_restore_prompt">Tüm konumları sildiniz. Varsayılan konumları geri yüklemek ister misiniz?</string>
+    <string name="collection_restore_defaults">Varsayılan konumları geri yükle</string>
+    <string name="collection_empty">Konum yok. Konumları içe aktarmak veya geri yüklemek için menüyü kullanın.</string>
+    <string name="collection_delete_failed">Konumlar silinemedi. Lütfen tekrar deneyin.</string>
+    <string name="lichess_create_challenge_player_invalid">Bu geçerli bir Lichess kullanıcı adı değil.</string>
+    <string name="pgntool_confirm_delete_practice">Tüm alıştırma konumları silinsin mi?</string>
+    <string name="pgntool_confirm_delete_puzzles">Tüm problem konumları silinsin mi?</string>
+    <string name="pgntool_delete_practice">Tüm alıştırma konumlarını sil</string>
+    <string name="pgntool_delete_puzzles">Tüm problem konumlarını sil</string>
+    <string name="pgntool_practice_deleted">Tüm alıştırma konumları silindi</string>
+    <string name="pgntool_puzzles_deleted">Tüm problem konumları silindi</string>
+    <string name="pgntool_import_busy">Bir içe aktarma işlemi zaten devam ediyor</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes: flugsio (CC BY-SA 4.0); Firi: James Faure ve Kiwen-suwi: neverRare (CC BY 4.0); Celtic ve Spatial: Maurizio Monge (MIT). Görseller Android için uyarlandı; Firi yeniden renklendirildi. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">Bu oyun yüklenemedi.</string>
+    <string name="lichess_puzzle_move_failed">Bir problem hamlesi uygulanamadı. Sonraki probleme geçebilirsiniz.</string>
+    <string name="analysis_edit_comment">Yorumu düzenle</string>
+    <string name="analysis_comment_hint">Yorum eklemek için dokunun</string>
+    <string name="analysis_comment_title">Hamleden sonraki yorum</string>
+    <string name="analysis_start_comment_title">İlk hamleden önceki yorum</string>
+    <string name="analysis_engine">Motor</string>
+    <string name="menu_analyse_game">Oyunu analiz et</string>
+    <string name="menu_new_king_of_the_hill">Yeni Tepenin Şahı oyunu</string>
+    <string name="state_hill_win">Şah tepeye ulaştı</string>
+    <string name="state_duck_stalemate_win">Hamle kalmadı; Ördek satrancında bu durum kazandırır</string>
+    <string name="options_engine_oex_variant_disabled">Bu varyant yerleşik motoru kullanır.</string>
+    <string name="practice_finished_position">Tamamlanan konum</string>
+    <string name="practice_preparing_position">Alıştırma konumu hazırlanıyor…</string>
+    <string name="practice_completed_collection">Tüm problemleri tamamladınız!</string>
+    <string name="import_start_failed">İçe aktarma başlatılamadı</string>
+    <string name="import_failed">İçe aktarma başarısız oldu</string>
+    <string name="import_duplicates_skipped">Yinelenenler atlandı</string>
+    <string name="engine_uninstalled">%1$s motoru kaldırıldı</string>
+    <string name="engine_not_installed">Yüklü motor yok</string>
+    <string name="opening_database_uninstalled">%1$s veritabanı kaldırıldı</string>
+    <string name="opening_database_not_installed">Yüklü veritabanı yok</string>
+    <string name="setup_use_illegal_position">Kurallara aykırı konum kullanılsın mı?</string>
+    <string name="clock_minutes_hint">Dakika</string>
+    <string name="clock_increment_hint">Saniye cinsinden ek süre</string>
+    <string name="import_added">Eklendi</string>
+    <string name="import_ignored">Yok sayıldı</string>
+    <string name="pgn_date_hint">PGN tarihi</string>
+    <string name="eco_openings_description">ECO açılışları</string>
+    <string name="hotspot_result_game_over">Oyun bitti</string>
+    <string name="hotspot_result_defeat">Yenilgi</string>
+    <string name="hotspot_result_victory">Zafer!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s terk etti.</string>
+    <string name="hotspot_result_you_resigned">Terk ettiniz.</string>
+    <string name="hotspot_result_mate_lost">Mat olarak kaybettiniz.</string>
+    <string name="hotspot_result_mate_won">Mat ederek kazandınız.</string>
+    <string name="hotspot_result_draw">Oyun berabere bitti.</string>
+    <string name="hotspot_result_stalemate">Oyun pat nedeniyle berabere bitti.</string>
+    <string name="hotspot_result_repetition">Oyun üç kez konum tekrarı nedeniyle berabere bitti.</string>
+    <string name="hotspot_result_fifty_moves">Oyun 50 hamle kuralı nedeniyle berabere bitti.</string>
+    <string name="hotspot_result_insufficient_material">Oyun yetersiz materyal nedeniyle berabere bitti.</string>
+    <string name="website_open_failed">Web sitesini açabilecek bir uygulama yok.</string>
+    <string name="menu_use_position_as_start">Geçerli konumu başlangıç olarak kullan</string>
+    <string name="use_position_as_start_confirm">Bu konum başlangıç olarak kullanılsın mı? Önceki hamleler, yorumları ve daha önce ayrılan varyantlar kaldırılacak. Bu konumdan sonraki devam yolları korunacak. Bu değişiklik otomatik kaydedilir ve geri alınamaz.</string>
+    <string name="use_position_as_start_failed">Başlangıç konumu değiştirilemedi.</string>
 </resources>

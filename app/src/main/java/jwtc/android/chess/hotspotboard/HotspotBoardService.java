@@ -5,11 +5,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.android.chess.services.SocketConnectService;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HotspotBoardService extends SocketConnectService {
     protected static final String TAG = "HotspotBoardService";
@@ -26,6 +31,8 @@ public class HotspotBoardService extends SocketConnectService {
     public static final int MSG_SOCKET_LISTENING = 10;
     public static final int MSG_SESSION_STATE = 11;
     public static final int MSG_ACTIVITY_DISCONNECTED = 12;
+    public static final int MSG_PEER_VARIANTS = 13;
+    public static final String KEY_PEER_VARIANTS = "peerVariants";
     public static final String KEY_CONNECTION_MODE = "connectionMode";
     public static final String KEY_HOST_IP = "hostIp";
     public static final String KEY_HOST_MODE = "hostMode";
@@ -46,6 +53,7 @@ public class HotspotBoardService extends SocketConnectService {
 
     private boolean isHost = false;
     private ClientConnection activePlayingConnection = null;
+    private EnumSet<Variant> peerVariants = EnumSet.of(Variant.STANDARD);
     private int connectionMode = CONNECTION_MODE_HOTSPOT;
     private int hostMode = HOST_MODE_PLAY;
     private String hostIpAddress = null;
@@ -56,26 +64,37 @@ public class HotspotBoardService extends SocketConnectService {
     private int gameResult = 0;
     private boolean observing = false;
 
-    private void rememberGame(String data, boolean incoming) {
-        try {
-            GameMessage message = GameMessage.fromJson(data);
-            if (message.type == GameMessage.TYPE_MOVE
-                    || message.type == GameMessage.TYPE_SHARE_SNAPSHOT) {
-                currentPosition = message;
-                observing = incoming && message.type == GameMessage.TYPE_SHARE_SNAPSHOT;
-                gameResult = 0;
-            } else if (message.type == GameMessage.TYPE_RESIGN) {
-                boolean white = playerName.equals(message.white);
-                if (incoming) {
-                    white = !white;
-                }
-                gameResult = white ? BoardConstants.WHITE_RESIGNED : BoardConstants.BLACK_RESIGNED;
-            } else if (message.type == GameMessage.TYPE_DRAW_ACCEPT) {
-                gameResult = BoardConstants.DRAW_AGREEMENT;
+    private void rememberGame(GameMessage message, boolean incoming) {
+        if (message.type == GameMessage.TYPE_MOVE
+                || message.type == GameMessage.TYPE_SHARE_SNAPSHOT) {
+            currentPosition = message;
+            observing = incoming && message.type == GameMessage.TYPE_SHARE_SNAPSHOT;
+            gameResult = 0;
+        } else if (message.type == GameMessage.TYPE_RESIGN) {
+            boolean white = playerName.equals(message.white);
+            if (incoming) {
+                white = !white;
             }
-        } catch (JSONException e) {
-            Log.w(TAG, "Invalid game update", e);
+            gameResult = white ? BoardConstants.WHITE_RESIGNED : BoardConstants.BLACK_RESIGNED;
+        } else if (message.type == GameMessage.TYPE_DRAW_ACCEPT) {
+            gameResult = BoardConstants.DRAW_AGREEMENT;
         }
+    }
+
+    private void putPeerVariants(Bundle state) {
+        ArrayList<String> names = new ArrayList<>();
+        for (Variant variant : peerVariants) {
+            names.add(variant.name());
+        }
+        state.putStringArrayList(KEY_PEER_VARIANTS, names);
+    }
+
+    private void resetPlayingConnection() {
+        activePlayingConnection = null;
+        peerVariants = EnumSet.of(Variant.STANDARD);
+        currentPosition = null;
+        gameResult = 0;
+        observing = false;
     }
 
     private void sendSessionState() {
@@ -89,6 +108,7 @@ public class HotspotBoardService extends SocketConnectService {
         state.putInt(KEY_CONNECTION_MODE, connectionMode);
         state.putString(KEY_HOST_IP, hostIpAddress);
         state.putInt("result", gameResult);
+        putPeerVariants(state);
         if (currentPosition != null) {
             try {
                 state.putString("position", currentPosition.toJsonString());
@@ -117,9 +137,6 @@ public class HotspotBoardService extends SocketConnectService {
                 break;
             case MSG_START_SESSION:
                 isHost = msg.arg1 == 1;
-                currentPosition = null;
-                gameResult = 0;
-                observing = false;
                 Bundle sessionData = msg.getData();
                 if (sessionData != null) {
                     playerName = sessionData.getString("name", "");
@@ -136,9 +153,16 @@ public class HotspotBoardService extends SocketConnectService {
                 } else {
                     String gameUpdate = msg.getData().getString("data", null);
                     Log.d(TAG, "Trying to write to socket: " + gameUpdate);
-                    if (gameUpdate != null) {
-                        rememberGame(gameUpdate, false);
-                        broadcastLine(gameUpdate);
+                    if (gameUpdate != null && activePlayingConnection != null) {
+                        try {
+                            GameMessage update = GameMessage.fromJson(gameUpdate);
+                            if (canSendVariant(update.variant)) {
+                                rememberGame(update, false);
+                                sendLine(activePlayingConnection, gameUpdate);
+                            }
+                        } catch (JSONException e) {
+                            Log.w(TAG, "Invalid game update", e);
+                        }
                     }
                 }
                 break;
@@ -148,9 +172,20 @@ public class HotspotBoardService extends SocketConnectService {
         }
     }
 
-    private void notifyActivityGameUpdate(String data) {
+    private boolean canSendVariant(Variant variant) {
+        if (variant == null || variant == Variant.STANDARD) {
+            return true;
+        }
+        if (isHost) {
+            return peerVariants.contains(variant);
+        }
+        // The host selects the variant in the first position it sends.
+        return currentPosition != null && variant == currentPosition.variant;
+    }
+
+    private void notifyActivityGameUpdate(String data, GameMessage update) {
         Log.d(TAG, "notifyActivityGameUpdate: " + data);
-        rememberGame(data, true);
+        rememberGame(update, true);
         Bundle bundle = new Bundle();
         bundle.putString("data", data);
         notifyActivity(MSG_RECEIVED_GAME_UPDATE, bundle);
@@ -164,12 +199,24 @@ public class HotspotBoardService extends SocketConnectService {
         }
         Log.d(TAG, "client connected " + connection.clientId + ", outgoing=" + outgoingConnection);
 
+        if (connection.socket.isClosed()) {
+            return;
+        }
         if (isHost && hostMode == HOST_MODE_SHARE) {
             sendSnapshot(connection);
-        }
-
-        if (activePlayingConnection == null) {
+        } else {
+            if (activePlayingConnection != null) {
+                closeClientConnection(connection);
+                return;
+            }
             activePlayingConnection = connection;
+            if (outgoingConnection) {
+                try {
+                    sendLine(connection, GameMessage.supportedVariantsMessage());
+                } catch (JSONException e) {
+                    Log.w(TAG, "Cannot advertise Hotspot variants", e);
+                }
+            }
         }
 
         notifyCurrentConnectionState(true);
@@ -186,7 +233,9 @@ public class HotspotBoardService extends SocketConnectService {
                 "client disconnected " + connection.clientId + ", outgoing=" + outgoingConnection);
 
         if (connection == activePlayingConnection) {
-            activePlayingConnection = null;
+            resetPlayingConnection();
+        } else if (!isHost || hostMode != HOST_MODE_SHARE) {
+            return;
         }
 
         notifyCurrentConnectionState(true);
@@ -199,17 +248,26 @@ public class HotspotBoardService extends SocketConnectService {
             return;
         }
         Log.d(TAG, "Received from socket: " + line + ", clientId=" + connection.clientId);
-        if (isHost && hostMode == HOST_MODE_SHARE) {
-            notifyActivityGameUpdate(line);
-            return;
-        }
-        if (!isHost) {
-            notifyActivityGameUpdate(line);
+        boolean sharing = isHost && hostMode == HOST_MODE_SHARE;
+        if (!sharing && connection != activePlayingConnection) {
             return;
         }
 
-        if (connection == activePlayingConnection) {
-            notifyActivityGameUpdate(line);
+        try {
+            JSONObject json = new JSONObject(line);
+            JSONArray variants = json.optJSONArray("supportedVariants");
+            if (variants != null) {
+                if (isHost && !sharing) {
+                    peerVariants = GameMessage.supportedVariantsFromJson(variants);
+                    Bundle state = new Bundle();
+                    putPeerVariants(state);
+                    notifyActivity(MSG_PEER_VARIANTS, state);
+                }
+                return;
+            }
+            notifyActivityGameUpdate(line, GameMessage.fromJson(json));
+        } catch (JSONException e) {
+            Log.w(TAG, "Invalid Hotspot message", e);
         }
     }
 
@@ -233,7 +291,7 @@ public class HotspotBoardService extends SocketConnectService {
         Log.d(
                 TAG,
                 "startSession " + (isHost ? " as host" : " as client") + ", hostMode=" + hostMode);
-        activePlayingConnection = null;
+        resetPlayingConnection();
         lastBroadcastFen = null;
         isListening = false;
         if (isHost) {
@@ -255,7 +313,7 @@ public class HotspotBoardService extends SocketConnectService {
         Log.d(TAG, "stopSession");
         stopPolling();
         stopConnections();
-        activePlayingConnection = null;
+        resetPlayingConnection();
         lastBroadcastFen = null;
         isListening = false;
         notifyActivity(MSG_SOCKET_DISCONNECTED);
@@ -278,6 +336,9 @@ public class HotspotBoardService extends SocketConnectService {
     }
 
     private boolean hasConnectedSockets() {
+        if (!isHost || hostMode != HOST_MODE_SHARE) {
+            return activePlayingConnection != null && !activePlayingConnection.socket.isClosed();
+        }
         for (ClientConnection connection : getClientConnectionsSnapshot()) {
             if (!connection.socket.isClosed()) {
                 return true;

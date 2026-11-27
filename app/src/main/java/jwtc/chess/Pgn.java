@@ -70,10 +70,14 @@ public final class Pgn {
                 || CASTLING.matcher(trimmed.replace('0', 'O')).matches();
     }
 
+    static boolean isTagPair(String token) {
+        return TAG.matcher(token).matches();
+    }
+
     /**
-     * Strict parse of one game. Throws {@link PgnSyntaxError} for anything not well formed: bad
-     * tags, unbalanced or misplaced variations, annotations without a move, tokens after the
-     * result, disagreeing results.
+     * Reads one game, ignoring non-PGN text after a completed game's result. Valid comments after
+     * the result are retained. Throws {@link PgnSyntaxError} for malformed game content or
+     * disagreeing results. Unfinished games still require well-formed text throughout.
      */
     public static PgnDocument parse(String text) {
         PGNTokenizer lexer = new PGNTokenizer(text);
@@ -95,8 +99,13 @@ public final class Pgn {
         String result = null;
         boolean ended = false;
 
-        for (; token.kind != PGNTokenizer.Kind.END; token = lexer.next()) {
+        for (;
+                token.kind != PGNTokenizer.Kind.END;
+                token = nextToken(lexer, ended && !"*".equals(result))) {
             if (ended && token.kind != PGNTokenizer.Kind.COMMENT) {
+                if (!"*".equals(result)) {
+                    break;
+                }
                 throw new PgnSyntaxError("Unexpected token after result", token.offset);
             }
             switch (token.kind) {
@@ -141,6 +150,12 @@ public final class Pgn {
                     current.nags.add(parseNag(token));
                     break;
                 case SYMBOL:
+                    int annotation = annotationNag(token.text);
+                    if (annotation > 0) {
+                        current = requireMove(current, token);
+                        current.nags.add(annotation);
+                        break;
+                    }
                     if (RESULT.matcher(token.text).matches()) {
                         if (!stack.isEmpty()) {
                             throw new PgnSyntaxError("Result inside variation", token.offset);
@@ -194,12 +209,32 @@ public final class Pgn {
                 result != null ? result : headerResult);
     }
 
+    private static PGNTokenizer.Token nextToken(PGNTokenizer lexer, boolean tolerateSuffix) {
+        try {
+            return lexer.next();
+        } catch (PgnSyntaxError ex) {
+            if (!tolerateSuffix) {
+                throw ex;
+            }
+            return new PGNTokenizer.Token(PGNTokenizer.Kind.END, "", ex.getOffset());
+        }
+    }
+
     /**
      * Lenient read of the tag block at the start of a game. Never throws; unrecognised text before
      * the first tag is skipped, and reading stops at the first thing after the tags that is not a
      * tag.
      */
     public static Map<String, String> readTags(String text) {
+        return readTags(text, true);
+    }
+
+    /** Reads only the initial tag block, stopping at the start of the movetext. */
+    public static Map<String, String> readHeaderTags(String text) {
+        return readTags(text, false);
+    }
+
+    private static Map<String, String> readTags(String text, boolean skipLeadingText) {
         Map<String, String> tags = new LinkedHashMap<>();
         if (text == null) {
             return tags;
@@ -207,18 +242,101 @@ public final class Pgn {
         Matcher matcher = TAG.matcher(text);
         int pos = 0;
         while (pos < text.length()) {
-            if (Character.isWhitespace(text.charAt(pos)) || text.charAt(pos) == '﻿') {
+            if (Character.isWhitespace(text.charAt(pos)) || text.charAt(pos) == '\uFEFF') {
                 pos++;
             } else if (matcher.region(pos, text.length()).lookingAt()) {
                 tags.put(matcher.group(1), unescape(matcher.group(2)));
                 pos = matcher.end();
-            } else if (tags.isEmpty()) {
+            } else if (skipLeadingText && tags.isEmpty()) {
                 pos++;
             } else {
                 break;
             }
         }
         return tags;
+    }
+
+    /** An optional tag value, with PGN's unknown marker treated as missing. */
+    public static String optionalTagValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() || trimmed.equals("?") ? null : trimmed;
+    }
+
+    /** Fills a missing tag while leaving other tags and the movetext as supplied. */
+    public static String withDefaultTag(String text, String name, String value) {
+        if (optionalTagValue(value) == null) {
+            return text;
+        }
+        Matcher matcher = TAG.matcher(text);
+        int start = 0;
+        int end = 0;
+        String existing = null;
+        int pos = 0;
+        while (pos < text.length()) {
+            if (Character.isWhitespace(text.charAt(pos)) || text.charAt(pos) == '\uFEFF') {
+                pos++;
+            } else if (matcher.region(pos, text.length()).lookingAt()) {
+                if (name.equals(matcher.group(1))) {
+                    start = pos;
+                    end = matcher.end();
+                    existing = unescape(matcher.group(2));
+                }
+                pos = matcher.end();
+            } else {
+                break;
+            }
+        }
+        if (optionalTagValue(existing) != null) {
+            return text;
+        }
+        if (end == 0 && !text.isEmpty() && text.charAt(0) == '\uFEFF') {
+            start = end = 1;
+        }
+        StringBuilder tag = new StringBuilder();
+        appendTag(tag, name, value);
+        if (end > start) {
+            tag.setLength(tag.length() - 1);
+        }
+        return text.substring(0, start) + tag + text.substring(end);
+    }
+
+    /** Replaces or removes a header tag without rewriting other tags or movetext. */
+    public static String withTag(String text, String name, String value) {
+        Matcher matcher = TAG.matcher(text);
+        StringBuilder out = new StringBuilder();
+        StringBuilder replacement = new StringBuilder();
+        appendTag(replacement, name, value);
+        if (replacement.length() > 0) {
+            replacement.setLength(replacement.length() - 1);
+        }
+        int pos = 0;
+        int copied = 0;
+        boolean found = false;
+        while (pos < text.length()) {
+            if (Character.isWhitespace(text.charAt(pos)) || text.charAt(pos) == '\uFEFF') {
+                pos++;
+            } else if (matcher.region(pos, text.length()).lookingAt()) {
+                if (name.equals(matcher.group(1))) {
+                    out.append(text, copied, pos);
+                    if (!found) {
+                        out.append(replacement);
+                    }
+                    found = true;
+                    copied = matcher.end();
+                }
+                pos = matcher.end();
+            } else {
+                break;
+            }
+        }
+        if (!found && value != null) {
+            int start = text.startsWith("\uFEFF") ? 1 : 0;
+            return text.substring(0, start) + replacement + "\n" + text.substring(start);
+        }
+        return out.append(text, copied, text.length()).toString();
     }
 
     /**
@@ -276,6 +394,17 @@ public final class Pgn {
             throw new PgnSyntaxError("Invalid NAG", token.offset);
         }
         return current;
+    }
+
+    private static int annotationNag(String text) {
+        switch (text) {
+            case "+-":
+                return 18;
+            case "-+":
+                return 19;
+            default:
+                return Arrays.asList(GLYPHS).indexOf(text);
+        }
     }
 
     private static int parseNag(PGNTokenizer.Token token) {

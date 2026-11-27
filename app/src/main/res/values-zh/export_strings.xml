@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_title">导出 PGN</string>
+    <string name="export_create">创建新文件</string>
+    <string name="export_append">追加到文件</string>
+    <string name="export_replace">替换文件</string>
+    <string name="export_choose_action">选择导出棋局的方式。</string>
+    <string name="export_all">所有棋局</string>
+    <string name="export_matching">符合当前筛选条件的棋局</string>
+    <string name="export_replace_confirm">替换“%1$s”的全部内容？此操作无法撤销。</string>
+    <string name="export_preparing">正在准备导出棋局…</string>
+    <string name="export_writing">正在导出棋局…</string>
+    <string name="export_done">导出完成。</string>
+    <string name="export_no_games">没有可导出的棋局。</string>
+    <string name="export_failed">导出失败。请选择其他位置，或关闭后重试。</string>
+    <string name="export_partial">导出失败。目标文件可能只写入了部分内容。重试前请检查内容，以免出现重复或不完整的棋局。您可以选择其他位置。</string>
+</resources>

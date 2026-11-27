@@ -10,6 +10,20 @@
         android:padding="@dimen/panel_padding">
 
         <CheckBox
+            android:id="@+id/CheckBoxMoveEntry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/control_gap"
+            android:text="@string/pref_move_entry" />
+
+        <CheckBox
+            android:id="@+id/CheckBoxConfirmMoveEntry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/control_gap"
+            android:text="@string/pref_confirm_move_entry" />
+
+        <CheckBox
             android:id="@+id/CheckBoxShowPiecesDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

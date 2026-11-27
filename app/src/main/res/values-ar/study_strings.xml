@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">الدراسات</string>
+    <string name="study_topic">الموضوع</string>
+    <string name="study_surprise">فاجئني</string>
+    <string name="study_variations">التفرعات</string>
+    <plurals name="study_variations_available">
+        <item quantity="zero">%1$d تفرعات متاحة</item>
+        <item quantity="one">تفرع واحد متاح (%1$d)</item>
+        <item quantity="two">تفرعان متاحان (%1$d)</item>
+        <item quantity="few">%1$d تفرعات متاحة</item>
+        <item quantity="many">%1$d تفرعًا متاحًا</item>
+        <item quantity="other">%1$d تفرع متاح</item>
+    </plurals>
+    <string name="study_before_move">قبل النقلة: %1$s</string>
+    <string name="study_after_move">بعد النقلة: %1$s</string>
+    <string name="study_pgn_evaluation">تقييم الدراسة: %1$s</string>
+    <string name="study_loading">جارٍ تحميل الدراسات…</string>
+    <string name="study_position">%1$d من %2$d</string>
+    <string name="study_previous">الدراسة السابقة</string>
+    <string name="study_next">الدراسة التالية</string>
+    <string name="study_import_topic">الموضوع الافتراضي</string>
+    <string name="import_optional_topic">الموضوع الافتراضي (اختياري)</string>
+    <string name="study_delete_matching">حذف الدراسات المطابقة</string>
+    <string name="study_delete_failed">تعذّر حذف التحديد.</string>
+    <string name="study_delete_confirmation">هل تريد حذف الدراسات ذات الموضوع «%1$s» والحدث «%2$s» من قائمة المباريات؟</string>
+    <string name="study_load_failed">تعذّر تحميل الدراسات.</string>
+    <string name="study_library_empty">لم تُستورد أي دراسات.</string>
+    <string name="study_download_collections">تنزيل المجموعات</string>
+    <string name="study_import">استيراد PGN أو ZIP</string>
+    <string name="study_import_value_required">أدخل قيمة</string>
+    <string name="importing_studies">جارٍ استيراد الدراسات…</string>
+</resources>

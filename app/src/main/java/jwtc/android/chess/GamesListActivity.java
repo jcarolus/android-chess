@@ -1,7 +1,5 @@
 package jwtc.android.chess;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,29 +11,36 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.RatingBar;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
+import jwtc.android.chess.gamedatabase.BulkGameEditModel;
+import jwtc.android.chess.gamedatabase.GameSelectionActivity;
+import jwtc.android.chess.gamedatabase.GameSelectionPreferences;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.EinkMode;
+import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.play.MoveItem;
@@ -43,13 +48,16 @@ import jwtc.android.chess.play.MoveItemAdapter;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.tools.ExportActivity;
+import jwtc.android.chess.tools.ImportActivity;
+import jwtc.android.chess.tools.ImportService;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.android.chess.views.FixedDropdownView;
-import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
+import jwtc.chess.GameSelection;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNEntry;
+import jwtc.chess.Pgn;
 import jwtc.chess.PgnDate;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
@@ -58,25 +66,15 @@ public class GamesListActivity extends ChessBoardActivity {
     private static final String TAG = "GamesListActivity";
     private static final int VIEW_BOARD = 1, VIEW_PGN = 2, VIEW_LIST = 3;
     private static final String EMPTY_BOARD_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
-    private String sortOrder, sortBy;
+    private GameSelection selection;
     private TextView textViewResult,
             textViewTotal,
             textViewPlayerWhite,
             textViewPlayerBlack,
             textViewEvent,
             textViewDate,
-            textViewFilterInfo,
             textViewRating;
-    private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
     private MaterialButton buttonFilters, buttonOpen, buttonAnalyze, buttonEdit, buttonDelete;
-    private PGNDateView pgnDateAfter, pgnDateBefore;
-    private SwitchMaterial switchFilterWhite,
-            switchFilterBlack,
-            switchFilterDateAfter,
-            switchFilterDateBefore,
-            switchFilterEvent,
-            switchFilterResult;
-    private FixedDropdownView dropDownResult, dropDownOrderBy, dropDownOrderDirection;
     private MaterialButtonToggleGroup buttonToggleGroup;
     private GridView gridLayoutPgn;
     private ListView listView;
@@ -84,7 +82,6 @@ public class GamesListActivity extends ChessBoardActivity {
     private final ArrayList<MoveItem> mapMoves = new ArrayList<MoveItem>();
     private MoveItemAdapter adapterMoves;
     private SimpleCursorAdapter adapterGames;
-    private FilterDialog filterDialog;
     private SeekBar seekBarGames;
     private Cursor cursor;
     private long currentGameId;
@@ -92,6 +89,15 @@ public class GamesListActivity extends ChessBoardActivity {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private int queryGeneration = 0;
     private boolean updatingSelection;
+    private boolean previewLoaded;
+    private boolean queryPending;
+    private final Set<Long> checkedGameIds = new HashSet<>();
+    private MaterialButton buttonBulkGames;
+    private CheckBox checkBoxCurrentGame;
+    private ActivityResultLauncher<String[]> pickImportFile;
+    private BulkGameEditModel bulkEditModel;
+    private AlertDialog bulkDialog;
+    private String appliedFilterKey;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,8 +109,28 @@ public class GamesListActivity extends ChessBoardActivity {
 
         gameApi = new GameApi();
 
-        sortBy = PGNColumns.DATE;
-        sortOrder = "ASC";
+        selection =
+                savedInstanceState == null
+                        ? null
+                        : (GameSelection) savedInstanceState.getSerializable(GameSelection.EXTRA);
+        if (selection == null) {
+            selection = (GameSelection) getIntent().getSerializableExtra(GameSelection.EXTRA);
+        }
+        if (selection == null) {
+            selection =
+                    GameSelectionPreferences.load(getPrefs(), GameSelectionPreferences.DATABASE);
+        }
+
+        if (savedInstanceState != null) {
+            long[] checked = savedInstanceState.getLongArray("checkedGameIds");
+            if (checked != null) {
+                for (long id : checked) {
+                    checkedGameIds.add(id);
+                }
+            }
+            appliedFilterKey = savedInstanceState.getString("checkedFilterKey");
+        }
+        bulkEditModel = new ViewModelProvider(this).get(BulkGameEditModel.class);
 
         textViewPlayerWhite = findViewById(R.id.TextViewPlayerWhite);
         textViewPlayerBlack = findViewById(R.id.TextViewPlayerBlack);
@@ -161,13 +187,63 @@ public class GamesListActivity extends ChessBoardActivity {
         buttonDelete = findViewById(R.id.ButtonDelete);
         buttonDelete.setOnClickListener(v -> deleteGame());
 
+        checkBoxCurrentGame = findViewById(R.id.CheckBoxCurrentGame);
+        checkBoxCurrentGame.setOnClickListener(
+                v -> {
+                    if (checkBoxCurrentGame.isChecked()) {
+                        checkedGameIds.add(currentGameId);
+                    } else {
+                        checkedGameIds.remove(currentGameId);
+                    }
+                    adapterGames.notifyDataSetChanged();
+                    updateSelectionControls();
+                });
+
         textViewDate = findViewById(R.id.TextViewDate);
         textViewEvent = findViewById(R.id.TextViewEvent);
 
-        filterDialog = new FilterDialog(this);
-
         buttonFilters = findViewById(R.id.ButtonOpenFilters);
-        buttonFilters.setOnClickListener(v -> filterDialog.show());
+        ActivityResultLauncher<Intent> filters =
+                registerForActivityResult(
+                        new ActivityResultContracts.StartActivityForResult(),
+                        result -> {
+                            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                                GameSelection updated =
+                                        (GameSelection)
+                                                result.getData()
+                                                        .getSerializableExtra(GameSelection.EXTRA);
+                                if (updated != null) {
+                                    selection = updated;
+                                    doFilterSort();
+                                }
+                            }
+                        });
+        buttonFilters.setOnClickListener(
+                v ->
+                        filters.launch(
+                                new Intent(this, GameSelectionActivity.class)
+                                        .putExtra(
+                                                GameSelectionActivity.EXTRA_RETURN_SELECTION, true)
+                                        .putExtra(GameSelection.EXTRA, selection)));
+
+        pickImportFile =
+                registerForActivityResult(
+                        new ActivityResultContracts.OpenDocument(),
+                        uri -> {
+                            if (uri != null) {
+                                startActivity(
+                                        new Intent(this, ImportActivity.class)
+                                                .setData(uri)
+                                                .addFlags(
+                                                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                                                | Intent
+                                                                        .FLAG_GRANT_WRITE_URI_PERMISSION)
+                                                .putExtra("mode", ImportService.IMPORT_GAMES));
+                            }
+                        });
+
+        buttonBulkGames = findViewById(R.id.ButtonBulkGames);
+        buttonBulkGames.setOnClickListener(v -> showSelectionMenu());
 
         buttonToggleGroup = findViewById(R.id.ButtonToggleGroupView);
 
@@ -204,7 +280,6 @@ public class GamesListActivity extends ChessBoardActivity {
                             PGNColumns.BLACK,
                             PGNColumns.DATE,
                             PGNColumns.EVENT,
-                            PGNColumns.RATING,
                             PGNColumns.RESULT
                         },
                         new int[] {
@@ -213,12 +288,31 @@ public class GamesListActivity extends ChessBoardActivity {
                             R.id.text_name2,
                             R.id.text_date,
                             R.id.text_event,
-                            R.id.rating,
                             R.id.text_result
                         }) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
                         View row = super.getView(position, convertView, parent);
+                        long id = adapterGames.getItemId(position);
+                        CheckBox checkBox = row.findViewById(R.id.CheckBoxGame);
+                        checkBox.setOnCheckedChangeListener(null);
+                        checkBox.setChecked(checkedGameIds.contains(id));
+                        checkBox.setEnabled(!bulkEditModel.isRunning() && !queryPending);
+                        checkBox.setContentDescription(
+                                getString(
+                                        R.string.gameslist_check_game,
+                                        Utils.getColumnString(cursor, PGNColumns.WHITE),
+                                        Utils.getColumnString(cursor, PGNColumns.BLACK),
+                                        id));
+                        checkBox.setOnCheckedChangeListener(
+                                (button, checked) -> {
+                                    if (checked) {
+                                        checkedGameIds.add(id);
+                                    } else {
+                                        checkedGameIds.remove(id);
+                                    }
+                                    updateSelectionControls();
+                                });
                         // Accessibility services announce what a tap and a long press do on a
                         // row, so the long-press delete is discoverable without sight.
                         ViewCompat.replaceAccessibilityAction(
@@ -246,13 +340,6 @@ public class GamesListActivity extends ChessBoardActivity {
 
         adapterGames.setViewBinder(
                 (view, cursor, columnIndex) -> {
-                    int nImageIndex = cursor.getColumnIndex(PGNColumns.RATING);
-                    if (nImageIndex == columnIndex) {
-                        float fR = Utils.getColumnFloat(cursor, PGNColumns.RATING);
-                        ((RatingBar) view).setRating(fR);
-                        // ((RatingBar)view).setRating(0.4F);
-                        return true;
-                    }
                     int nDateIndex = cursor.getColumnIndex(PGNColumns.DATE);
                     if (nDateIndex == columnIndex) {
                         ((TextView) view)
@@ -286,6 +373,37 @@ public class GamesListActivity extends ChessBoardActivity {
                 });
 
         scrollView = findViewById(R.id.ScrollView);
+        bulkEditModel
+                .state()
+                .observe(
+                        this,
+                        state -> {
+                            if (state == BulkGameEditModel.State.SUCCEEDED) {
+                                if (bulkDialog != null) {
+                                    bulkDialog.dismiss();
+                                }
+                                checkedGameIds.clear();
+                                bulkEditModel.acknowledgeResult();
+                                doFilterSort();
+                            } else if (state == BulkGameEditModel.State.FAILED) {
+                                doToast(getString(R.string.gameslist_bulk_failed));
+                                bulkEditModel.acknowledgeResult();
+                            }
+                            if (bulkDialog != null && bulkDialog.isShowing()) {
+                                boolean enabled = !bulkEditModel.isRunning();
+                                bulkDialog.setCancelable(enabled);
+                                for (int which :
+                                        new int[] {
+                                            AlertDialog.BUTTON_POSITIVE,
+                                            AlertDialog.BUTTON_NEGATIVE,
+                                            AlertDialog.BUTTON_NEUTRAL
+                                        }) {
+                                    bulkDialog.getButton(which).setEnabled(enabled);
+                                }
+                            }
+                            adapterGames.notifyDataSetChanged();
+                            updateSelectionControls();
+                        });
 
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
@@ -320,8 +438,6 @@ public class GamesListActivity extends ChessBoardActivity {
         SharedPreferences prefs = getPrefs();
         currentGameId = prefs.getLong("gameslist_current_game_id", 0);
 
-        filterDialog.init();
-
         int view = prefs.getInt("gameslist_current_view", VIEW_BOARD);
         Log.d(TAG, "View " + view);
         switch (view) {
@@ -343,40 +459,18 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putSerializable(GameSelection.EXTRA, selection);
+        state.putLongArray("checkedGameIds", checkedIds());
+        state.putString("checkedFilterKey", appliedFilterKey);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
-
-        editor.putString(
-                "gameslist_filter_event",
-                Utils.getTrimmedOrDefault(editTextFilterEvent.getText(), ""));
-        editor.putString(
-                "gameslist_filter_white",
-                Utils.getTrimmedOrDefault(editTextFilterWhite.getText(), ""));
-        editor.putString(
-                "gameslist_filter_black",
-                Utils.getTrimmedOrDefault(editTextFilterBlack.getText(), ""));
-        editor.putString(
-                "gameslist_filter_result",
-                Utils.getTrimmedOrDefault(dropDownResult.getSelectionText(), ""));
-        editor.putLong("gameslist_filter_date_after", pgnDateAfter.getDate().getTime());
-        editor.putLong("gameslist_filter_date_before", pgnDateBefore.getDate().getTime());
-
-        editor.putBoolean("gameslist_filter_switch_event", switchFilterEvent.isChecked());
-        editor.putBoolean("gameslist_filter_switch_white", switchFilterWhite.isChecked());
-        editor.putBoolean("gameslist_filter_switch_black", switchFilterBlack.isChecked());
-        editor.putBoolean(
-                "gameslist_filter_switch_date_before", switchFilterDateBefore.isChecked());
-        editor.putBoolean("gameslist_filter_switch_date_after", switchFilterDateAfter.isChecked());
-        editor.putBoolean("gameslist_filter_switch_result", switchFilterResult.isChecked());
-
-        editor.putString(
-                "gameslist_filter_order_by",
-                Utils.getTrimmedOrDefault(dropDownOrderBy.getSelectionText(), ""));
-        editor.putString(
-                "gameslist_filter_order_direction",
-                Utils.getTrimmedOrDefault(dropDownOrderDirection.getSelectionText(), ""));
 
         editor.putLong("gameslist_current_game_id", currentGameId);
 
@@ -395,7 +489,15 @@ public class GamesListActivity extends ChessBoardActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (bulkDialog != null) {
+            bulkDialog.dismiss();
+        }
+        ++queryGeneration;
         queryExecutor.shutdownNow();
+        adapterGames.swapCursor(null);
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
     }
 
     @Override
@@ -405,9 +507,12 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private void onQueryUpdated() {
+        queryPending = false;
         int count = cursor == null ? 0 : cursor.getCount();
-        textViewFilterInfo.setText(getString(R.string.gameslist_result_count, count));
+        Set<Long> matching = matchingIds();
+        checkedGameIds.retainAll(matching);
         adapterGames.swapCursor(cursor);
+        updateSelectionControls();
         if (count == 0) {
             seekBarGames.setVisibility(View.INVISIBLE);
             clearPreview();
@@ -431,8 +536,7 @@ public class GamesListActivity extends ChessBoardActivity {
         }
         int count = cursor.getCount();
 
-        String totalText =
-                getString(R.string.gameslist_game_of_total, position + 1, count);
+        String totalText = getString(R.string.gameslist_game_of_total, position + 1, count);
         textViewTotal.setText(totalText);
 
         GameRecord record = GameStore.fromCursor(cursor);
@@ -443,6 +547,7 @@ public class GamesListActivity extends ChessBoardActivity {
             gameApi.initFEN(EMPTY_BOARD_FEN, true);
             doToast(getString(R.string.gameslist_load_failed));
         }
+        previewLoaded = loaded;
         buttonOpen.setEnabled(loaded);
         buttonAnalyze.setEnabled(loaded);
         buttonEdit.setEnabled(loaded);
@@ -483,9 +588,11 @@ public class GamesListActivity extends ChessBoardActivity {
 
         adapterMoves.notifyDataSetChanged();
         gridLayoutPgn.smoothScrollToPosition(adapterMoves.getCount());
+        updateSelectionControls();
     }
 
     private void clearPreview() {
+        previewLoaded = false;
         gameApi.initFEN(EMPTY_BOARD_FEN, true);
         textViewTotal.setText(getString(R.string.gameslist_game_of_total, 0, 0));
         textViewPlayerWhite.setText("");
@@ -502,6 +609,9 @@ public class GamesListActivity extends ChessBoardActivity {
         buttonAnalyze.setEnabled(false);
         buttonEdit.setEnabled(false);
         buttonDelete.setEnabled(false);
+        checkBoxCurrentGame.setChecked(false);
+        checkBoxCurrentGame.setEnabled(false);
+        checkBoxCurrentGame.setContentDescription(getString(R.string.gameslist_selection_actions));
     }
 
     private Long selectedGameId() {
@@ -516,7 +626,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void openGame() {
         Long id = selectedGameId();
-        if (id == null) {
+        if (id == null || bulkEditModel.isRunning()) {
             return;
         }
 
@@ -535,7 +645,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void analyzeGame() {
         Long id = selectedGameId();
-        if (id == null) {
+        if (id == null || bulkEditModel.isRunning()) {
             return;
         }
 
@@ -551,7 +661,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void deleteGame() {
         Long id = selectedGameId();
-        if (id == null || id < 0) {
+        if (id == null || id < 0 || bulkEditModel.isRunning()) {
             return;
         }
 
@@ -568,7 +678,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void editGame() {
         Long id = selectedGameId();
-        if (id == null) {
+        if (id == null || bulkEditModel.isRunning()) {
             return;
         }
         // the game is loaded via the GameApi
@@ -576,35 +686,17 @@ public class GamesListActivity extends ChessBoardActivity {
         saveDialog.show();
     }
 
-    private void updateParams() {
-        doFilterSort();
-    }
-
     private void doFilterSort() {
-        GameFilter filter = new GameFilter();
-
-        if (switchFilterWhite.isChecked()) {
-            filter.white(Utils.getTrimmedOrNull(editTextFilterWhite.getText()));
+        GameFilter filter = selection.filter();
+        String filterKey =
+                filter.selection() + "|" + java.util.Arrays.toString(filter.selectionArgs());
+        if (appliedFilterKey != null && !appliedFilterKey.equals(filterKey)) {
+            checkedGameIds.clear();
         }
-        if (switchFilterBlack.isChecked()) {
-            filter.black(Utils.getTrimmedOrNull(editTextFilterBlack.getText()));
-        }
-        if (switchFilterEvent.isChecked()) {
-            filter.event(Utils.getTrimmedOrNull(editTextFilterEvent.getText()));
-        }
-        if (switchFilterDateAfter.isChecked()) {
-            filter.after(pgnDateAfter.getDate());
-        }
-        if (switchFilterDateBefore.isChecked()) {
-            filter.before(pgnDateBefore.getDate());
-        }
-        if (switchFilterResult.isChecked()) {
-            filter.result(dropDownResult.getSelectionText());
-        }
-
-        sortBy = Utils.getTrimmedOrDefault(dropDownOrderBy.getSelectionText(), PGNColumns.DATE);
-        sortOrder = Utils.getTrimmedOrDefault(dropDownOrderDirection.getSelectionText(), "DESC");
-        filter.orderBy(sortBy, sortOrder);
+        appliedFilterKey = filterKey;
+        queryPending = true;
+        adapterGames.notifyDataSetChanged();
+        updateSelectionControls();
 
         Log.i(TAG, "runQuery " + filter.selection() + " BY " + filter.orderBy());
 
@@ -645,11 +737,266 @@ public class GamesListActivity extends ChessBoardActivity {
         return 0;
     }
 
+    private long[] checkedIds() {
+        long[] ids = new long[checkedGameIds.size()];
+        int i = 0;
+        for (long id : checkedGameIds) {
+            ids[i++] = id;
+        }
+        return ids;
+    }
+
+    private Set<Long> matchingIds() {
+        Set<Long> ids = new LinkedHashSet<>();
+        if (cursor != null && !cursor.isClosed()) {
+            int position = cursor.getPosition();
+            cursor.moveToPosition(-1);
+            while (cursor.moveToNext()) {
+                ids.add(Utils.getColumnLong(cursor, PGNColumns._ID));
+            }
+            cursor.moveToPosition(position);
+        }
+        return ids;
+    }
+
+    private void updateSelectionControls() {
+        boolean busy = bulkEditModel.isRunning() || queryPending;
+        boolean hasGame =
+                cursor != null && !cursor.isClosed() && cursor.getCount() > 0 && currentGameId > 0;
+        checkBoxCurrentGame.setEnabled(!busy && hasGame);
+        checkBoxCurrentGame.setChecked(hasGame && checkedGameIds.contains(currentGameId));
+        checkBoxCurrentGame.setContentDescription(
+                hasGame
+                        ? getString(
+                                R.string.gameslist_check_game,
+                                textViewPlayerWhite.getText(),
+                                textViewPlayerBlack.getText(),
+                                currentGameId)
+                        : getString(R.string.gameslist_selection_actions));
+        buttonBulkGames.setContentDescription(
+                getString(R.string.button_menu_description)
+                        + ". "
+                        + selectedTitle(checkedGameIds.size()));
+        buttonBulkGames.setEnabled(!busy);
+        buttonFilters.setEnabled(!busy);
+        buttonDelete.setEnabled(!busy && cursor != null && cursor.getCount() > 0);
+        buttonEdit.setEnabled(!busy && previewLoaded);
+        buttonOpen.setEnabled(!busy && previewLoaded);
+        buttonAnalyze.setEnabled(!busy && previewLoaded);
+    }
+
+    private void selectAllGames() {
+        if (queryPending || bulkEditModel.isRunning()) {
+            return;
+        }
+        checkedGameIds.addAll(matchingIds());
+        adapterGames.notifyDataSetChanged();
+        updateSelectionControls();
+    }
+
+    private void showSelectionMenu() {
+        if (queryPending || bulkEditModel.isRunning()) {
+            return;
+        }
+        boolean hasSelection = !checkedGameIds.isEmpty();
+        boolean hasGames = cursor != null && cursor.getCount() > 0;
+        PopupMenu menu = new PopupMenu(this, buttonBulkGames);
+        menu.getMenu()
+                .add(R.string.gameslist_multi_edit)
+                .setEnabled(hasSelection)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            editSelectedTopic();
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.gameslist_invert_checked)
+                .setEnabled(hasGames)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            Set<Long> inverted = matchingIds();
+                            inverted.removeAll(checkedGameIds);
+                            checkedGameIds.clear();
+                            checkedGameIds.addAll(inverted);
+                            adapterGames.notifyDataSetChanged();
+                            updateSelectionControls();
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.gameslist_select_all)
+                .setEnabled(hasGames && checkedGameIds.size() < cursor.getCount())
+                .setOnMenuItemClickListener(
+                        item -> {
+                            selectAllGames();
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.gameslist_clear_selection)
+                .setEnabled(hasSelection)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            checkedGameIds.clear();
+                            adapterGames.notifyDataSetChanged();
+                            updateSelectionControls();
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.pgntool_import_explanation)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            pickImportFile.launch(new String[] {"*/*"});
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.pgntool_export_explanation)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            ExportActivity.exportDatabase(this, selection.withoutFilters());
+                            return true;
+                        });
+        menu.getMenu()
+                .add(R.string.gameslist_export_selected)
+                .setEnabled(hasSelection)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            long[] ids =
+                                    matchingIds().stream()
+                                            .filter(checkedGameIds::contains)
+                                            .mapToLong(Long::longValue)
+                                            .toArray();
+                            ExportActivity.exportSelectedGames(this, ids);
+                            return true;
+                        });
+        menu.getMenu()
+            .add(R.string.gameslist_delete_selected)
+            .setEnabled(hasSelection)
+            .setOnMenuItemClickListener(
+                item -> {
+                    confirmBulkDelete();
+                    return true;
+                });
+        menu.getMenu()
+                .add(R.string.menu_delete_game_database)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            confirmDeleteDatabase();
+                            return true;
+                        });
+        menu.show();
+    }
+
+    private void confirmDeleteDatabase() {
+        GameStore store = new GameStore(getContentResolver());
+        openConfirmDialog(
+                getString(R.string.pgntool_confirm_delete_games)
+                        + "\n\n"
+                        + getString(R.string.pgntool_delete_item_count, store.count()),
+                getString(R.string.choice_delete),
+                getString(R.string.button_cancel),
+                () -> {
+                    try {
+                        store.deleteAll();
+                        checkedGameIds.clear();
+                        currentGameId = 0;
+                        getPrefs()
+                                .edit()
+                                .putLong("game_id", 0)
+                                .putLong("gameslist_current_game_id", 0)
+                                .apply();
+                        doFilterSort();
+                        doToast(getString(R.string.pgntool_games_deleted));
+                    } catch (Exception failure) {
+                        Log.e(TAG, "Could not delete Game Database", failure);
+                        doToast(getString(R.string.gameslist_delete_failed));
+                    }
+                },
+                null);
+    }
+
+    private String selectedTitle(int count) {
+        return getResources().getQuantityString(R.plurals.gameslist_selected_count, count, count);
+    }
+
+    private void confirmBulkDelete() {
+        long[] ids = checkedIds();
+        if (ids.length == 0 || bulkEditModel.isRunning() || queryPending) {
+            return;
+        }
+        bulkDialog =
+                new ChessAlertDialogBuilder(this)
+                        .setTitle(R.string.gameslist_delete_selected)
+                        .setMessage(
+                                getResources()
+                                        .getQuantityString(
+                                                R.plurals.gameslist_delete_count,
+                                                ids.length,
+                                                ids.length))
+                        .setPositiveButton(R.string.choice_delete, null)
+                        .setNegativeButton(R.string.button_cancel, null)
+                        .create();
+        bulkDialog.setOnShowListener(
+                dialog ->
+                        bulkDialog
+                                .getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setOnClickListener(v -> bulkEditModel.delete(ids)));
+        bulkDialog.show();
+    }
+
+    private void editSelectedTopic() {
+        long[] ids = checkedIds();
+        if (ids.length == 0 || bulkEditModel.isRunning() || queryPending) {
+            return;
+        }
+        EditText input = new EditText(this);
+        input.setSingleLine(true);
+        input.setHint(R.string.gameslist_topic_hint);
+        input.setContentDescription(getString(R.string.gameslist_edit_topic));
+        bulkDialog =
+                new ChessAlertDialogBuilder(this)
+                        .setTitle(selectedTitle(ids.length))
+                        .setMessage(R.string.gameslist_topic_explanation)
+                        .setView(input)
+                        .setPositiveButton(R.string.gameslist_clear_topic, null)
+                        .setNegativeButton(R.string.button_cancel, null)
+                        .create();
+        input.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(
+                            CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        bulkDialog
+                                .getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setText(
+                                        Pgn.optionalTagValue(s.toString()) == null
+                                                ? R.string.gameslist_clear_topic
+                                                : R.string.gameslist_set_topic);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable text) {}
+                });
+        bulkDialog.setOnShowListener(
+                dialog ->
+                        bulkDialog
+                                .getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setOnClickListener(
+                                        v ->
+                                                bulkEditModel.setTopic(
+                                                        ids,
+                                                        Pgn.optionalTagValue(
+                                                                input.getText().toString()))));
+        bulkDialog.show();
+    }
+
     private void showBoardView() {
         chessBoardView.setVisibility(View.VISIBLE);
         gridLayoutPgn.setVisibility(View.INVISIBLE);
         listView.setVisibility(View.GONE);
         scrollView.setVisibility(View.VISIBLE);
+        updateSelectionControls();
     }
 
     private void showPgnView() {
@@ -657,6 +1004,7 @@ public class GamesListActivity extends ChessBoardActivity {
         gridLayoutPgn.setVisibility(View.VISIBLE);
         listView.setVisibility(View.GONE);
         scrollView.setVisibility(View.VISIBLE);
+        updateSelectionControls();
     }
 
     private void showListView() {
@@ -664,125 +1012,6 @@ public class GamesListActivity extends ChessBoardActivity {
         gridLayoutPgn.setVisibility(View.INVISIBLE);
         listView.setVisibility(View.VISIBLE);
         scrollView.setVisibility(View.GONE);
-    }
-
-    private class FilterDialog extends Dialog {
-        public FilterDialog(@NonNull Context context) {
-            super(
-                    context,
-                    EinkMode.isThemeEnabled()
-                            ? R.style.ChessDialogThemeEink
-                            : R.style.ChessDialogTheme);
-
-            setContentView(R.layout.gameslist_filters);
-            ActivityHelper.constrainDialogToTvSafeArea(this);
-        }
-
-        public void init() {
-            SharedPreferences prefs = getPrefs();
-
-            final TextWatcher textWatcher =
-                    new TextWatcher() {
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                            updateParams();
-                        }
-
-                        @Override
-                        public void beforeTextChanged(
-                                CharSequence s, int start, int count, int after) {}
-
-                        @Override
-                        public void onTextChanged(
-                                CharSequence s, int start, int before, int count) {}
-                    };
-
-            MaterialButton buttonFilterClose = findViewById(R.id.ButtonFilterClose);
-            buttonFilterClose.setOnClickListener(v -> dismiss());
-
-            textViewFilterInfo = findViewById(R.id.TextViewFilterInfo);
-
-            editTextFilterWhite = findViewById(R.id.EditTextFilterWhite);
-            editTextFilterWhite.setText(prefs.getString("gameslist_filter_white", ""));
-            editTextFilterWhite.addTextChangedListener(textWatcher);
-
-            editTextFilterBlack = findViewById(R.id.EditTextFilterBlack);
-            editTextFilterBlack.setText(prefs.getString("gameslist_filter_black", ""));
-            editTextFilterBlack.addTextChangedListener(textWatcher);
-
-            editTextFilterEvent = findViewById(R.id.EditTextFilterEvent);
-            editTextFilterEvent.setText(prefs.getString("gameslist_filter_event", ""));
-            editTextFilterEvent.addTextChangedListener(textWatcher);
-
-            pgnDateAfter = findViewById(R.id.PGNDateAfter);
-            pgnDateAfter.setDate(
-                    new Date(
-                            prefs.getLong(
-                                    "gameslist_filter_date_after",
-                                    Calendar.getInstance().getTime().getTime())));
-            pgnDateAfter.addOnTextChangedListener(textWatcher);
-
-            pgnDateBefore = findViewById(R.id.PGNDateBefore);
-            pgnDateBefore.setDate(
-                    new Date(
-                            prefs.getLong(
-                                    "gameslist_filter_date_before",
-                                    Calendar.getInstance().getTime().getTime())));
-            pgnDateBefore.addOnTextChangedListener(textWatcher);
-
-            switchFilterWhite = findViewById(R.id.SwitchFilterWhite);
-            switchFilterWhite.setChecked(prefs.getBoolean("gameslist_filter_switch_white", false));
-            switchFilterWhite.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterBlack = findViewById(R.id.SwitchFilterBlack);
-            switchFilterBlack.setChecked(prefs.getBoolean("gameslist_filter_switch_black", false));
-            switchFilterBlack.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterEvent = findViewById(R.id.SwitchFilterEvent);
-            switchFilterEvent.setChecked(prefs.getBoolean("gameslist_filter_switch_event", false));
-            switchFilterEvent.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterDateAfter = findViewById(R.id.SwitchFilterDateAfter);
-            switchFilterDateAfter.setChecked(
-                    prefs.getBoolean("gameslist_filter_switch_date_after", false));
-            switchFilterDateAfter.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterDateBefore = findViewById(R.id.SwitchFilterDateBefore);
-            switchFilterDateBefore.setChecked(
-                    prefs.getBoolean("gameslist_filter_switch_date_before", false));
-            switchFilterDateBefore.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            switchFilterResult = findViewById(R.id.SwitchFilterResult);
-            switchFilterResult.setChecked(
-                    prefs.getBoolean("gameslist_filter_switch_result", false));
-            switchFilterResult.setOnCheckedChangeListener((v, isChecked) -> updateParams());
-
-            String[] resultOptions = {"1-0", "0-1", "1/2-1/2", "*"};
-            dropDownResult = findViewById(R.id.DropdownResult);
-            dropDownResult.setSelectionText(prefs.getString("gameslist_filter_result", "1-0"));
-            dropDownResult.setItems(resultOptions);
-            dropDownResult.addOnTextChangedListener(textWatcher);
-
-            String[] orderByOptions = {
-                PGNColumns.DATE,
-                PGNColumns.WHITE,
-                PGNColumns.BLACK,
-                PGNColumns.EVENT,
-                PGNColumns.RESULT
-            };
-            dropDownOrderBy = findViewById(R.id.DropdownOrderBy);
-            dropDownOrderBy.setSelectionText(PGNColumns.DATE);
-            dropDownOrderBy.setItems(orderByOptions);
-            dropDownOrderBy.setSelectionText(
-                    prefs.getString("gameslist_filter_order_by", PGNColumns.DATE));
-            dropDownOrderBy.addOnTextChangedListener(textWatcher);
-
-            String[] orderDirectionOptions = {"ASC", "DESC"};
-            dropDownOrderDirection = findViewById(R.id.DropdownOrderDirection);
-            dropDownOrderDirection.setItems(orderDirectionOptions);
-            dropDownOrderDirection.setSelectionText(
-                    prefs.getString("gameslist_filter_order_direction", "DESC"));
-            dropDownOrderDirection.addOnTextChangedListener(textWatcher);
-        }
+        updateSelectionControls();
     }
 }

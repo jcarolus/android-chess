@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_show_games">Показать партии</string>
+    <string name="gameslist_loading">Загрузка партий…</string>
+    <string name="game_selection_load_failed">Не удалось загрузить партии.</string>
+    <string name="gameslist_invalid_dates">Укажите допустимые даты: начальная дата должна быть не позже конечной.</string>
+    <string name="study_title">Этюд</string>
+    <string name="study_delete_filtered_confirmation">Удалить из базы данных все партии, соответствующие включённым фильтрам?</string>
+    <string name="gameslist_delete_matching">Удалить подходящие партии</string>
+    <string name="gameslist_delete_matching_confirmation">Удалить из базы данных все партии, соответствующие включённым фильтрам?</string>
+    <string name="gameslist_delete_failed">Не удалось удалить выбранные партии.</string>
+</resources>

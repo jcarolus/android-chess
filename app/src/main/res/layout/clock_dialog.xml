@@ -21,7 +21,7 @@
                 android:id="@+id/InputMinutes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Minutes">
+                android:hint="@string/clock_minutes_hint">
 
                 <EditText
                     android:id="@+id/EditMinutes"
@@ -35,7 +35,7 @@
                 android:id="@+id/InputIncrement"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Increment in seconds">
+                android:hint="@string/clock_increment_hint">
 
                 <EditText
                     android:id="@+id/EditIncrement"

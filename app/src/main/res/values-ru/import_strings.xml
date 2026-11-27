@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">Найдено примерно %1$d партий</string>
+    <string name="import_all">Импортировать все</string>
+    <string name="import_subsection">Выбрать диапазон</string>
+    <string name="import_games_from">Партии с</string>
+    <string name="import_games_until">Партии по</string>
+    <string name="import_continue">Продолжить</string>
+    <string name="import_back">Назад</string>
+    <string name="import_no_games">Партии не найдены</string>
+    <string name="import_range_bounds">Введите целое число от 1 до %1$d</string>
+    <string name="import_range_order">Конечный номер должен быть не меньше начального</string>
+</resources>

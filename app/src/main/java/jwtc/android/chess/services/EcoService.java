@@ -8,12 +8,13 @@ import java.util.Map;
 import jwtc.android.chess.engine.RustBoardNative;
 import jwtc.android.chess.engine.RustBoardResult;
 import jwtc.android.chess.engine.RustSearchRequest;
+import jwtc.chess.Variant;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class EcoService {
     private static final String TAG = "EcoService";
-    private HMap hashMap = null;
+    private volatile HMap hashMap = null;
     private final GameApi gameApi;
 
     public EcoService(GameApi gameApi) {
@@ -21,6 +22,10 @@ public class EcoService {
     }
 
     public void load(final AssetManager assetManager) {
+        load(assetManager, null);
+    }
+
+    public void load(final AssetManager assetManager, final Runnable onLoaded) {
         if (hashMap == null) {
             (new Thread(
                             new Runnable() {
@@ -36,12 +41,17 @@ public class EcoService {
                                                         + hashMap.getSize()
                                                         + " load ms:"
                                                         + (System.currentTimeMillis() - start));
+                                        if (onLoaded != null) {
+                                            onLoaded.run();
+                                        }
                                     } catch (Exception e) {
                                         Log.d(TAG, "Could not read the opening database");
                                     }
                                 }
                             }))
                     .start();
+        } else if (onLoaded != null) {
+            onLoaded.run();
         }
     }
 
@@ -83,14 +93,14 @@ public class EcoService {
             return openings;
         }
         String fen = gameApi.getFEN();
-        RustSearchRequest.Variant variant = gameApi.rustVariant();
+        Variant variant = gameApi.variant();
         int[] files =
-                variant == RustSearchRequest.Variant.CHESS_960
+                variant == Variant.CHESS_960
                         ? RustSearchRequest.chess960Files(fen, fen.split(" ")[1].equals("w"))
                         : null;
         String[] history = new String[0];
         Map<String, String> duckTurns = new HashMap<>();
-        if (variant == RustSearchRequest.Variant.DUCK) {
+        if (variant == Variant.DUCK) {
             for (String turn :
                     RustBoardResult.words(
                             RustBoardNative.legalMoves(variant, fen, history).moves)) {
@@ -104,10 +114,7 @@ public class EcoService {
         for (int i = 0; i < count; i++) {
             int move = gameApi.getMoveArrayAt(i);
             String coordinate = RustSearchRequest.toRustCoordinate(move, files);
-            String turn =
-                    variant == RustSearchRequest.Variant.DUCK
-                            ? duckTurns.get(coordinate)
-                            : coordinate;
+            String turn = variant == Variant.DUCK ? duckTurns.get(coordinate) : coordinate;
             if (turn == null) {
                 continue;
             }

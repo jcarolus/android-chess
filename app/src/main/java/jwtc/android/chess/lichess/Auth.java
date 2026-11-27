@@ -461,12 +461,8 @@ public class Auth {
     }
 
     public void game(String gameId, AuthResponseHandler responseHandler) {
-        if (gameStream != null) {
-            gameStream.close();
-        }
-        // Track this stream's identity so that when it is deliberately replaced by a later game()
-        // call, the resulting (cancelled) onClose is ignored instead of being reported as a
-        // disconnect that would bounce the user back to the lobby.
+        closeGameStream();
+        // Check stream identity on the main thread because callbacks can outlive a canceled call.
         final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
         self[0] =
                 openStream(
@@ -479,13 +475,15 @@ public class Auth {
                                 if (type.equals("gameFull") || type.equals("gameState")) {
                                     mainHandler.post(
                                             () -> {
-                                                responseHandler.onResponse(jsonObject);
+                                                if (gameStream == self[0]) {
+                                                    responseHandler.onResponse(jsonObject);
+                                                }
                                             });
                                 }
                             }
 
                             @Override
-                            public void onClose(boolean sucess) {
+                            public void onClose(boolean success) {
                                 mainHandler.post(
                                         () -> {
                                             if (gameStream != self[0]) {
@@ -493,12 +491,19 @@ public class Auth {
                                                 // intentional.
                                                 return;
                                             }
-                                            responseHandler.onClose(sucess);
                                             gameStream = null;
+                                            responseHandler.onClose(success);
                                         });
                             }
                         });
         gameStream = self[0];
+    }
+
+    void closeGameStream() {
+        if (gameStream != null) {
+            gameStream.close();
+            gameStream = null;
+        }
     }
 
     public void move(
@@ -595,10 +600,7 @@ public class Auth {
 
     public void closeStreams() {
         Log.d(TAG, "closeStreams");
-        if (gameStream != null) {
-            gameStream.close();
-            gameStream = null;
-        }
+        closeGameStream();
         if (eventStream != null) {
             eventStream.close();
             eventStream = null;

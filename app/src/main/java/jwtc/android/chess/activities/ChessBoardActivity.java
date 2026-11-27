@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
@@ -32,18 +33,24 @@ import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
 import jwtc.android.chess.links.LinkSharing;
+import jwtc.android.chess.moveintake.DefaultMoveIntake;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.moveintake.MoveOutcome;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.services.TextToSpeechApi;
+import jwtc.android.chess.tools.ExportActivity;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public abstract class ChessBoardActivity extends BaseActivity implements GameListener {
@@ -105,35 +112,92 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         hapticFeedback = new HapticFeedback(this);
     }
 
+    /**
+     * Offers a move from the board to this Mode's {@link MoveIntake}. Returns false when it was
+     * rejected, true when it was played or waits for the user's answer.
+     */
     public boolean requestMove(final int from, final int to) {
-        if (gameApi.getDuckPos() == from) {
-            return gameApi.requestDuckMove(to);
-        } else if (gameApi.isPromotionMove(from, to)) {
+        return offerMove(MoveCandidate.of(from, to)).kind() != MoveOutcome.Kind.REJECTED;
+    }
 
-            final String[] items = getResources().getStringArray(R.array.promotionpieces);
+    /** The Move intake this Mode applies to every move the user offers. */
+    protected MoveIntake moveIntake() {
+        return new DefaultMoveIntake(gameApi);
+    }
 
-            ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
-            builder.setTitle(R.string.title_pick_promo);
-            builder.setCancelable(false);
-            builder.setSingleChoiceItems(
-                    items,
-                    0,
-                    (dialog, item) -> {
-                        dialog.dismiss();
-                        gameApi.setPromo(4 - item);
-                        if (!gameApi.requestMove(from, to)) {
-                            rebuildBoard();
-                        }
-                    });
-            builder.create().show();
-
-            //            if (_vibrator != null) {
-            //                _vibrator.vibrate(40L);
-            //            }
-
-            return true;
+    /**
+     * Offers the candidate and renders the outcome: asks the question it names and offers the
+     * candidate again with the answer, or restores the board after a rejection. Returns the outcome
+     * of this offer; answers to its question are offered later.
+     */
+    public MoveOutcome offerMove(final MoveCandidate candidate) {
+        MoveOutcome outcome = moveIntake().offer(candidate);
+        switch (outcome.kind()) {
+            case PLAYED:
+                break;
+            case NEEDS_PROMOTION:
+                promotionDialog(piece -> offerMove(candidate.withPromotion(piece))).show();
+                break;
+            case NEEDS_CASTLE_CHOICE:
+                openConfirmDialog(
+                        getString(R.string.title_castle),
+                        getString(R.string.alert_yes),
+                        getString(R.string.alert_no),
+                        () -> offerMove(candidate.withCastle(true)),
+                        () -> offerMove(candidate.withCastle(false)));
+                break;
+            case CONFIRM_OVERWRITE:
+                openConfirmDialog(
+                        getString(R.string.title_overwrite_main_line),
+                        getString(R.string.alert_yes),
+                        getString(R.string.alert_no),
+                        () -> offerMove(candidate.withOverwriteConfirmed()),
+                        this::rebuildBoard);
+                break;
+            case CONFIRM_MOVE:
+                confirmMove(candidate);
+                break;
+            case QUEUED_AS_PREMOVE:
+                queuePremove(candidate);
+                break;
+            default:
+                onMoveRejected(outcome.reason());
+                if (outcome.reason() != MoveOutcome.Reason.ILLEGAL) {
+                    rebuildBoard();
+                }
+                break;
         }
-        return gameApi.requestMove(from, to);
+        return outcome;
+    }
+
+    /**
+     * Asks the user to confirm a move before it is played; confirming offers {@code
+     * candidate.withMoveConfirmed()}. Modes whose Move intake asks for confirmation override this.
+     */
+    protected void confirmMove(MoveCandidate candidate) {
+        throw new UnsupportedOperationException("This Mode does not confirm moves");
+    }
+
+    /** Keeps a premove until it can be offered again. Modes with premoves override this. */
+    protected void queuePremove(MoveCandidate candidate) {
+        throw new UnsupportedOperationException("This Mode has no premoves");
+    }
+
+    /** Lets a Mode tell the user why a move was rejected; the board is restored either way. */
+    protected void onMoveRejected(MoveOutcome.Reason reason) {}
+
+    public ChessAlertDialogBuilder promotionDialog(java.util.function.IntConsumer selected) {
+        ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
+        builder.setTitle(R.string.title_pick_promo)
+                .setCancelable(false)
+                .setSingleChoiceItems(
+                        getResources().getStringArray(R.array.promotionpieces),
+                        0,
+                        (dialog, item) -> {
+                            dialog.dismiss();
+                            selected.accept(4 - item);
+                        });
+        return builder;
     }
 
     @Override
@@ -206,7 +270,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void onNewGameStarted(int variant) {
+    public void onNewGameStarted(Variant variant) {
         Log.d(TAG, "onNewGameStarted " + variant);
         clearPendingDraggedMove();
     }
@@ -241,8 +305,8 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         new SaveGameDialog(this, gameApi, gameId, this::saveGameFromDialog).show();
     }
 
-    protected void startSaveGameToFile(int requestCode) {
-        startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", requestCode);
+    protected void startSaveGameToFile() {
+        ExportActivity.exportGame(this, gameApi.exportFullPGN());
     }
 
     protected void copyGameToClipboard() {
@@ -813,10 +877,14 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void rebuildBoard() {
-
+        chessBoardView.setVariant(gameApi.variant());
+        boolean reusePieces = reusesPieceViews();
         cancelMoveAnimation();
-        chessBoardView.removePieces();
+        if (!reusePieces) {
+            chessBoardView.removePieces();
+        }
         chessBoardView.removeLabels();
+        ChessPieceView[] existingPieces = reusePieces ? chessBoardView.piecesBySquare() : null;
 
         final int state = gameApi.getState();
         final int turn = gameApi.getTurn();
@@ -886,11 +954,18 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                 piece = gameApi.pieceAt(color, i);
             }
 
+            ChessPieceView existing = existingPieces == null ? null : existingPieces[i];
+            if (existing != null
+                    && (existing.getPiece() != piece || existing.getColor() != color)) {
+                chessBoardView.removeView(existing);
+                existing = null;
+            }
             if (piece != BoardConstants.FIELD) {
-                ChessPieceView p = new ChessPieceView(this, color, piece, i);
-                p.setOnTouchListener(myTouchListener);
-
-                chessBoardView.addView(p);
+                if (existing == null) {
+                    ChessPieceView p = new ChessPieceView(this, color, piece, i);
+                    p.setOnTouchListener(myTouchListener);
+                    chessBoardView.addView(p);
+                }
 
                 if (piece == BoardConstants.KING) {
                     if (color == BoardConstants.WHITE && labelForWhiteKing != null) {
@@ -917,6 +992,10 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
 
         updateSelectedSquares();
         DisplayedPosition.publish(gameApi);
+    }
+
+    protected boolean reusesPieceViews() {
+        return false;
     }
 
     private void startMoveAnimation(int from, int to, int color, int piece) {
@@ -1068,25 +1147,6 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    //    @Override
-    //    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten
-    // in certain appcompat versions
-    //    public boolean dispatchKeyEvent(KeyEvent event) {
-    //        int keyCode = event.getKeyCode();
-    //        int action = event.getAction();
-    //        boolean isDown = action == 0;
-    //
-    //        if (skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
-    //            return true;
-    //        }
-    //
-    //        if (keyCode == KeyEvent.KEYCODE_MENU) {
-    //            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
-    //        }
-    //
-    //        return super.dispatchKeyEvent(event);
-    //    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -1138,6 +1198,14 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         if (languageStatus == TextToSpeech.LANG_MISSING_DATA
                 || languageStatus == TextToSpeech.LANG_NOT_SUPPORTED) {
             doToast(getString(R.string.tts_locale_not_supported));
+        } else {
+            warnIfSpeechLanguageDiffers();
+        }
+    }
+
+    protected void warnIfSpeechLanguageDiffers() {
+        if (textToSpeech != null && textToSpeech.isVoiceLanguageDifferentFromApp()) {
+            doToast(getString(R.string.tts_language_differs_from_app));
         }
     }
 
@@ -1252,7 +1320,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected String getFieldDescription(int pos) {
-        String sPos = Pos.toString(pos).toUpperCase();
+        String sPos = Pos.toString(pos).toUpperCase(Locale.getDefault());
         if (PieceSets.selectedBlindfoldMode != PieceSets.BLINDFOLD_HIDE_PIECES) {
             int whitePiece = gameApi.pieceAt(BoardConstants.WHITE, pos);
             int blackPiece = gameApi.pieceAt(BoardConstants.BLACK, pos);
@@ -1325,7 +1393,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         String sRet = "";
         if (includeAttackersAndDefendersInFieldDescription) {
             int[] positions =
-                    gameApi.getAttackerPositionsTo(
+                    attackersForDescription(
                             pos,
                             gameApi.getTurn() == BoardConstants.BLACK
                                     ? BoardConstants.WHITE
@@ -1337,7 +1405,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                         R.string.attacked_by_pieces,
                                         getPieceDescriptionsForPosition(positions));
             }
-            positions = gameApi.getAttackerPositionsTo(pos, gameApi.getTurn());
+            positions = attackersForDescription(pos, gameApi.getTurn());
             if (positions.length > 0) {
                 sRet +=
                         ". "
@@ -1350,6 +1418,10 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         return sRet;
     }
 
+    protected int[] attackersForDescription(int square, int color) {
+        return gameApi.getAttackerPositionsTo(square, color);
+    }
+
     protected String getPieceDescriptionsForPosition(int[] positions) {
         if (positions.length > 0) {
             StringBuilder pieceDescriptions = new StringBuilder();
@@ -1359,7 +1431,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                     piece = gameApi.pieceAt(BoardConstants.BLACK, positions[i]);
                 }
                 if (piece != BoardConstants.FIELD) {
-                    String sPos = Pos.toString(positions[i]).toUpperCase();
+                    String sPos = Pos.toString(positions[i]).toUpperCase(Locale.getDefault());
                     String sPiece = getString(Piece.toResource(piece));
                     pieceDescriptions.append(
                             getString(R.string.square_with_piece_description, sPiece, sPos));
@@ -1498,9 +1570,17 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                         selectPosition(toPos);
                                     } else {
                                         markMoveEnteredByDragging(fromPos, toPos);
-                                        pieceViewFrom.setPos(toPos);
-                                        chessBoardView.layoutChild(pieceViewFrom);
-                                        requestMove(fromPos, toPos);
+                                        if (reusesPieceViews()) {
+                                            // A committed move will reconcile the board. A rejected
+                                            // move or a pending promotion keeps the piece here.
+                                            if (!requestMove(fromPos, toPos)) {
+                                                clearPendingDraggedMove();
+                                            }
+                                        } else {
+                                            pieceViewFrom.setPos(toPos);
+                                            chessBoardView.layoutChild(pieceViewFrom);
+                                            requestMove(fromPos, toPos);
+                                        }
                                         selectPosition(-1);
                                     }
                                     ChessBoardActivity.this.updateSelectedSquares();
@@ -1840,18 +1920,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void handleAmbiguousCastle(int from, int to) {
-        openConfirmDialog(
-                getString(R.string.title_castle),
-                getString(R.string.alert_yes),
-                getString(R.string.alert_no),
-                () -> {
-                    gameApi.requestMoveCastle(from, to);
-                },
-                () -> {
-                    if (from != to) {
-                        gameApi.requestMove(from, to);
-                    }
-                });
+        offerMove(MoveCandidate.of(from, to));
     }
 
     protected void selectPosition(int pos) {

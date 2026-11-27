@@ -1,5 +1,7 @@
 package jwtc.android.chess.services;
 
+import jwtc.chess.Variant;
+
 /**
  * Observes changes made by {@link GameApi}.
  *
@@ -22,7 +24,7 @@ public interface GameListener {
 
     default void onHistoryPositionChanged(int boardNumber) {}
 
-    default void onNewGameStarted(int variant) {}
+    default void onNewGameStarted(Variant variant) {}
 
     default void onGameLoaded() {}
 

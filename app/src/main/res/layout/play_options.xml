@@ -22,7 +22,6 @@
             <RadioGroup
                 android:id="@+id/RadioGroupSetup"
                 android:orientation="horizontal"
-                android:layout_below="@id/TextViewSetupTurn"
                 style="@style/MyRowStyle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">

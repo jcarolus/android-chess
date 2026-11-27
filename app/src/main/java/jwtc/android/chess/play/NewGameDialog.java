@@ -8,13 +8,16 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
-import jwtc.chess.board.BoardConstants;
+import jwtc.chess.Variant;
 
 public class NewGameDialog extends ResultDialog<Bundle> {
+    /** The chosen {@link Variant}'s name. */
     public static final String EXTRA_VARIANT = "variant";
-    public static final String EXTRA_CHESS960 = "chess960";
-    private static final String PREF_VARIANT = "newGameVariant";
-    private static final String PREF_CHESS960 = "newGameChess960";
+
+    private static final String PREF_VARIANT = "newGameVariantName";
+    // Earlier versions stored an int code plus a separate Chess 960 flag.
+    private static final String LEGACY_PREF_VARIANT = "newGameVariant";
+    private static final String LEGACY_PREF_CHESS960 = "newGameChess960";
 
     public NewGameDialog(
             @NonNull Context context,
@@ -31,27 +34,12 @@ public class NewGameDialog extends ResultDialog<Bundle> {
         toggleOpponent.check(
                 prefs.getBoolean("opponent", true) ? R.id.radioAndroid : R.id.radioHuman);
         toggleColor.check(prefs.getBoolean("myTurn", true) ? R.id.radioWhite : R.id.radioBlack);
-        int savedVariant = prefs.getInt(PREF_VARIANT, BoardConstants.VARIANT_DEFAULT);
-        if (prefs.getBoolean(PREF_CHESS960, false)) {
-            toggleVariant.check(R.id.radioChess960);
-        } else if (savedVariant == BoardConstants.VARIANT_DUCK) {
-            toggleVariant.check(R.id.radioDuck);
-        } else if (savedVariant == BoardConstants.VARIANT_KING_OF_THE_HILL) {
-            toggleVariant.check(R.id.radioKingOfTheHill);
-        } else {
-            toggleVariant.check(R.id.radioStandard);
-        }
+        toggleVariant.check(buttonFor(savedVariant(prefs)));
 
         findViewById(R.id.ButtonOk)
                 .setOnClickListener(
                         v -> {
-                            int selectedVariant = toggleVariant.getCheckedButtonId();
-                            int variant = BoardConstants.VARIANT_DEFAULT;
-                            if (selectedVariant == R.id.radioDuck) {
-                                variant = BoardConstants.VARIANT_DUCK;
-                            } else if (selectedVariant == R.id.radioKingOfTheHill) {
-                                variant = BoardConstants.VARIANT_KING_OF_THE_HILL;
-                            }
+                            Variant variant = variantFor(toggleVariant.getCheckedButtonId());
                             prefs.edit()
                                     .putBoolean(
                                             "opponent",
@@ -60,18 +48,64 @@ public class NewGameDialog extends ResultDialog<Bundle> {
                                     .putBoolean(
                                             "myTurn",
                                             toggleColor.getCheckedButtonId() == R.id.radioWhite)
-                                    .putInt(PREF_VARIANT, variant)
-                                    .putBoolean(
-                                            PREF_CHESS960, selectedVariant == R.id.radioChess960)
+                                    .putString(PREF_VARIANT, variant.name())
+                                    .remove(LEGACY_PREF_VARIANT)
+                                    .remove(LEGACY_PREF_CHESS960)
                                     .apply();
 
                             Bundle result = new Bundle();
-                            result.putInt(EXTRA_VARIANT, variant);
-                            result.putBoolean(
-                                    EXTRA_CHESS960, selectedVariant == R.id.radioChess960);
+                            result.putString(EXTRA_VARIANT, variant.name());
                             setResult(result);
                             dismiss();
                         });
         findViewById(R.id.ButtonCancel).setOnClickListener(v -> dismiss());
+    }
+
+    private static Variant savedVariant(SharedPreferences prefs) {
+        String name = prefs.getString(PREF_VARIANT, null);
+        if (name != null) {
+            try {
+                return Variant.valueOf(name);
+            } catch (IllegalArgumentException ignored) {
+                return Variant.STANDARD;
+            }
+        }
+        if (prefs.getBoolean(LEGACY_PREF_CHESS960, false)) {
+            return Variant.CHESS_960;
+        }
+        switch (prefs.getInt(LEGACY_PREF_VARIANT, 1)) {
+            case 2:
+                return Variant.DUCK;
+            case 3:
+                return Variant.KING_OF_THE_HILL;
+            default:
+                return Variant.STANDARD;
+        }
+    }
+
+    private static int buttonFor(Variant variant) {
+        switch (variant) {
+            case CHESS_960:
+                return R.id.radioChess960;
+            case DUCK:
+                return R.id.radioDuck;
+            case KING_OF_THE_HILL:
+                return R.id.radioKingOfTheHill;
+            default:
+                return R.id.radioStandard;
+        }
+    }
+
+    private static Variant variantFor(int buttonId) {
+        if (buttonId == R.id.radioChess960) {
+            return Variant.CHESS_960;
+        }
+        if (buttonId == R.id.radioDuck) {
+            return Variant.DUCK;
+        }
+        if (buttonId == R.id.radioKingOfTheHill) {
+            return Variant.KING_OF_THE_HILL;
+        }
+        return Variant.STANDARD;
     }
 }

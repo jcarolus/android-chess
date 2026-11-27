@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import jwtc.chess.board.BoardPosition;
 
 /**
  * Recorded moves, independent of the board currently being viewed. Child zero is the main
@@ -54,6 +55,11 @@ public final class GameTree {
             return copy(entry);
         }
 
+        /** Recorded remaining time after this move; the root has no move clock. */
+        public Long getClockMillis() {
+            return entry == null ? null : entry.getClockMillis();
+        }
+
         public List<Node> getChildren() {
             return Collections.unmodifiableList(children);
         }
@@ -74,10 +80,20 @@ public final class GameTree {
     private final Node root;
     private final String initialFen;
     private final int startingPly;
+    private final int[][] castlingFiles;
     private String rootComment = "";
 
     public GameTree(String initialFen, int boardState, int turn) {
+        this(initialFen, boardState, turn, new BoardPosition(initialFen).chess960());
+    }
+
+    public GameTree(String initialFen, int boardState, int turn, boolean chess960) {
         this.initialFen = initialFen;
+        BoardPosition position = chess960 ? new BoardPosition(initialFen) : null;
+        castlingFiles =
+                position == null
+                        ? null
+                        : new int[][] {position.chess960Files(false), position.chess960Files(true)};
         String[] fields = initialFen.split("\\s+");
         int fullmove = fields.length > 5 ? Integer.parseInt(fields[5]) : 1;
         startingPly = 2 * (Math.max(1, fullmove) - 1) + ("b".equals(fields[1]) ? 1 : 0);
@@ -229,9 +245,12 @@ public final class GameTree {
         }
         for (Node step : path) {
             int move = step.entry.move;
-            command.append(' ')
-                    .append(Pos.toString(Move.getFrom(move)))
-                    .append(Pos.toString(Move.getTo(move)));
+            int from = Move.getFrom(move), to = Move.getTo(move);
+            if (castlingFiles != null && (Move.isOO(move) || Move.isOOO(move))) {
+                int[] files = castlingFiles[from / 8 == 7 ? 1 : 0];
+                to = from / 8 * 8 + files[Move.isOO(move) ? 2 : 1];
+            }
+            command.append(' ').append(Pos.toString(from)).append(Pos.toString(to));
             if (Move.isPromotionMove(move)) {
                 command.append("pnbrqk".charAt(Move.getPromotionPiece(move)));
             }
@@ -249,12 +268,46 @@ public final class GameTree {
         return node.parent.children.remove(node);
     }
 
-    /** Explicit truncation for rejected online/puzzle moves, not ordinary history navigation. */
+    /**
+     * Removes the node and every move after it, including nested variations. When the node was the
+     * main continuation, the next variation from its parent becomes the main continuation.
+     */
     public boolean removeContinuation(Node node) {
         if (!contains(node) || node == root) {
             return false;
         }
         return node.parent.children.remove(node);
+    }
+
+    /**
+     * Number of moves in the node's subtree, the node itself and all nested variations included.
+     */
+    public int countMoves(Node node) {
+        requireMember(node);
+        int count = 0;
+        Deque<Node> pending = new ArrayDeque<>();
+        pending.push(node);
+        while (!pending.isEmpty()) {
+            Node next = pending.pop();
+            if (next.entry != null) {
+                count++;
+            }
+            for (Node child : next.children) {
+                pending.push(child);
+            }
+        }
+        return count;
+    }
+
+    /** Whether the subtree below the node holds moves other than its main continuations. */
+    public boolean hasVariationsFrom(Node node) {
+        requireMember(node);
+        for (Node next = node; next != null; next = next.getNext()) {
+            if (next.children.size() > 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean promoteVariation(Node node) {
@@ -282,10 +335,21 @@ public final class GameTree {
 
     /** Iterative traversal also handles very long lines without consuming the Java call stack. */
     public String exportMoves() {
+        return exportMoves(root, rootComment, false);
+    }
+
+    /** Exports only continuations of this Position, with its comment as the new introduction. */
+    public String exportMovesFrom(Node position) {
+        requireMember(position);
+        return exportMoves(
+                position, position == root ? rootComment : position.entry.sAnnotation, true);
+    }
+
+    private String exportMoves(Node position, String comment, boolean includeFirstMoveNumber) {
         StringBuilder out = new StringBuilder();
-        boolean followsComment = appendComment(out, rootComment);
+        boolean followsComment = appendComment(out, comment) || includeFirstMoveNumber;
         Deque<Object> work = new ArrayDeque<>();
-        pushContinuations(work, root);
+        pushContinuations(work, position);
         while (!work.isEmpty()) {
             Object item = work.pop();
             if (item instanceof String) {

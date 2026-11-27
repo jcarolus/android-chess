@@ -29,8 +29,7 @@ public class SwissTournament {
     }
 
     public boolean isSupportedVariant() {
-        // The app's board only renders standard and chess960.
-        return variant == null || variant.equals("standard") || variant.equals("chess960");
+        return variant == null || LichessVariant.isSupported(variant);
     }
 
     public boolean isBoardCompatible() {

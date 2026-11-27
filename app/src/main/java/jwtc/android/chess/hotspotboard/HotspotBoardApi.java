@@ -3,7 +3,9 @@ package jwtc.android.chess.hotspotboard;
 import android.util.Log;
 import jwtc.android.chess.services.DisplayedPosition;
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
+import jwtc.chess.board.BoardPosition;
 
 public class HotspotBoardApi extends GameApi {
     private static final String TAG = "HotspotBoardApi";
@@ -49,11 +51,33 @@ public class HotspotBoardApi extends GameApi {
             opponentName = message.white;
         }
 
-        if (!message.FEN.isEmpty()) {
-            initFEN(message.FEN, true);
-        } else {
+        if (message.FEN.isEmpty()) {
             Log.d(TAG, "GameUpdate without FEN");
+            return;
         }
+        if (message.type == GameMessage.TYPE_SHARE_SNAPSHOT) {
+            initFEN(message.FEN, true);
+            return;
+        }
+        Variant variant = message.variant == null ? Variant.STANDARD : message.variant;
+        if (message.type != GameMessage.TYPE_MOVE
+                && (message.variant != null
+                        || message.FEN.equals(getFEN()) && variant == variant())) {
+            return;
+        }
+        if (message.variant != null && message.lastMove != 0 && variant == variant()) {
+            // Replay complete turns when possible so both players retain repetition history.
+            int duck = variant == Variant.DUCK ? new BoardPosition(message.FEN).duck() : -1;
+            if (applyMove(message.lastMove, duck) && message.FEN.equals(getFEN())) {
+                dispatchState();
+                return;
+            }
+        }
+        initFEN(message.FEN, true, variant);
+    }
+
+    public void restorePosition(String fen, Variant variant) {
+        initFEN(fen, true, variant);
     }
 
     public boolean isMyTurn() {

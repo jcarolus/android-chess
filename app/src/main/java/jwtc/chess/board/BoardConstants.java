@@ -3,10 +3,6 @@ package jwtc.chess.board;
 // "split" object for ChessBoard. contains the constants of the board object
 
 public class BoardConstants {
-    public static final int VARIANT_DEFAULT = 1;
-    public static final int VARIANT_DUCK = 2;
-    public static final int VARIANT_KING_OF_THE_HILL = 3;
-
     // states of the game
     // ////////////////////////////////////////////////////////////////////////////
     public static final int PLAY = 1;

@@ -2,6 +2,7 @@ package jwtc.chess;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -22,6 +23,60 @@ public class GameTreeTest {
 
     private Node add(Node parent, String san, int move) {
         return tree.append(parent, new PGNEntry(san, "", move, -1), 0, 0, false);
+    }
+
+    @Test
+    public void clockMetadataSurvivesImportCommentEditsAndExportOnEveryBranch() {
+        PgnDocument doc =
+                Pgn.parse(
+                        "[TimeControl \"30+0\"]\n[Result \"0-1\"]\n"
+                                + "1. e4 {[%clk 0:00:30.123456] Good move.} "
+                                + "e5 {[%clk 0:00:29]} (1... c5 {[%clk 0:00:28.5]}) "
+                                + "2. Nf3 {[%clk broken] [%other data]} 0-1");
+        PgnDocument.Move first = doc.mainLine.get(0);
+        PgnDocument.Move second = doc.mainLine.get(1);
+        PgnDocument.Move alternative = second.variations.get(0).get(0);
+        PgnDocument.Move third = doc.mainLine.get(2);
+        Node e4 =
+                tree.append(
+                        tree.getRoot(), new PGNEntry(first.san, first.comment, 1, -1), 0, 0, false);
+        Node e5 = tree.append(e4, new PGNEntry(second.san, second.comment, 2, -1), 0, 0, false);
+        Node c5 =
+                tree.append(
+                        e4, new PGNEntry(alternative.san, alternative.comment, 3, -1), 0, 0, false);
+        Node nf3 = tree.append(e5, new PGNEntry(third.san, third.comment, 4, -1), 0, 0, false);
+        tree.setRootComment("[%clk 0:00:30]");
+        assertNull(tree.getRoot().getClockMillis());
+        assertEquals(Long.valueOf(30123), e4.getClockMillis());
+        assertEquals(Long.valueOf(28500), c5.getClockMillis());
+        assertNull(nf3.getClockMillis());
+        tree.setAnnotation(e4, PgnComment.withText(e4.getEntry().sAnnotation, "Revised."));
+
+        PgnDocument back = Pgn.parse(Pgn.writeTags(doc.tags) + "\n" + tree.exportMoves() + " 0-1");
+        assertEquals("30+0", back.tags.get("TimeControl"));
+        assertEquals(30000, back.getTimeControl().periods.get(0).baseMillis);
+        assertEquals("[%clk 0:00:30.123456] Revised.", back.mainLine.get(0).comment);
+        assertEquals(first.getClockMillis(), back.mainLine.get(0).getClockMillis());
+        assertEquals(second.comment, back.mainLine.get(1).comment);
+        assertEquals(alternative.comment, back.mainLine.get(1).variations.get(0).get(0).comment);
+        assertEquals(
+                alternative.getClockMillis(),
+                back.mainLine.get(1).variations.get(0).get(0).getClockMillis());
+        assertEquals(third.comment, back.mainLine.get(2).comment);
+        assertNull(back.mainLine.get(2).getClockMillis());
+    }
+
+    @Test
+    public void derivedClocksFollowAnnotationChangesAndDefensiveCopies() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        assertNull(e4.getClockMillis());
+        tree.setAnnotation(e4, "[%clk 0:00:30]");
+        PGNEntry snapshot = e4.getEntry();
+        tree.setAnnotation(e4, "[%clk 0:00:20]");
+        assertEquals(Long.valueOf(30000), snapshot.getClockMillis());
+        assertEquals(Long.valueOf(20000), e4.getClockMillis());
+        tree.setAnnotation(e4, "No clock");
+        assertNull(e4.getClockMillis());
     }
 
     @Test
@@ -115,6 +170,63 @@ public class GameTreeTest {
     }
 
     @Test
+    public void exportsFromPositionWithAllRemainingVariationsAndAnnotations() {
+        tree.setRootComment("old introduction");
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        add(tree.getRoot(), "d4", 2);
+        tree.setAnnotation(e4, "new introduction");
+        tree.addNag(e4, 1);
+        Node e5 = add(e4, "e5", 3);
+        Node c5 = add(e4, "c5", 4);
+        tree.setLeadingComment(c5, "Sicilian");
+        tree.addNag(c5, 5);
+        tree.setAnnotation(c5, "counterplay");
+        add(e5, "Nf3", 5);
+        Node nf3 = add(c5, "Nf3", 6);
+        add(c5, "Nc3", 7);
+        add(nf3, "d6", 8);
+
+        assertEquals(
+                "{new introduction} 1... e5 ( {Sicilian} 1... c5 $5 {counterplay} "
+                        + "2. Nf3 ( 2. Nc3 ) d6 ) 2. Nf3",
+                tree.exportMovesFrom(e4));
+        assertEquals(8, tree.countMoves(tree.getRoot()));
+    }
+
+    @Test
+    public void exportsFromVariationWithoutEarlierBranches() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        add(e4, "e5", 2);
+        Node c5 = add(e4, "c5", 3);
+        tree.setLeadingComment(c5, "comment on removed move");
+        add(c5, "Nf3", 4);
+        assertEquals("2. Nf3", tree.exportMovesFrom(c5));
+    }
+
+    @Test
+    public void exportsBlackStartWithOriginalNumberEvenWithoutComment() {
+        tree = new GameTree("8/8/8/8/8/8/8/K6k w - - 0 23", 0, 0);
+        Node ka2 = add(tree.getRoot(), "Ka2", 1);
+        add(ka2, "Kg1", 2);
+        assertEquals("23... Kg1", tree.exportMovesFrom(ka2));
+    }
+
+    @Test
+    public void exportsEndpointAsPositionOnlyWithItsComment() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        assertEquals("", tree.exportMovesFrom(e4));
+        tree.setAnnotation(e4, "study this position");
+        assertEquals("{study this position}", tree.exportMovesFrom(e4));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsExportFromDetachedPosition() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        tree.removeContinuation(e4);
+        tree.exportMovesFrom(e4);
+    }
+
+    @Test
     public void moveNumbersFollowTheStartingPosition() {
         GameTree black = new GameTree("8/8/8/8/8/8/8/K6k b - - 0 7", 0, 1);
         Node first = black.append(black.getRoot(), new PGNEntry("Kg1", "", 1, -1), 0, 0, false);
@@ -201,6 +313,47 @@ public class GameTreeTest {
     }
 
     @Test
+    public void removingTheMainContinuationPromotesTheNextVariation() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node e5 = add(e4, "e5", 2);
+        Node c5 = add(e4, "c5", 3);
+        add(e5, "Nf3", 4);
+
+        assertTrue(tree.removeContinuation(e5));
+
+        assertSame(c5, e4.getNext());
+        assertFalse(tree.contains(e5));
+        assertEquals("1. e4 c5", tree.exportMoves());
+    }
+
+    @Test
+    public void countsMovesInSubtreeIncludingVariations() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node e5 = add(e4, "e5", 2);
+        add(e4, "c5", 3);
+        Node nf3 = add(e5, "Nf3", 4);
+        add(add(e5, "Bc4", 5), "Nf6", 6);
+        add(nf3, "Nc6", 7);
+
+        assertEquals(7, tree.countMoves(tree.getRoot()));
+        assertEquals(5, tree.countMoves(e5));
+        assertEquals(2, tree.countMoves(nf3));
+    }
+
+    @Test
+    public void detectsVariationsAlongTheLine() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node e5 = add(e4, "e5", 2);
+        Node nf3 = add(e5, "Nf3", 3);
+        add(nf3, "Nc6", 4);
+        assertFalse(tree.hasVariationsFrom(e5));
+
+        add(nf3, "d6", 5);
+        assertTrue(tree.hasVariationsFrom(e5));
+        assertFalse(tree.hasVariationsFrom(nf3.getNext()));
+    }
+
+    @Test
     public void anEmptyGameCanHaveATerminalResult() {
         assertTrue(tree.setFinalState(tree.getRoot(), BoardConstants.WHITE_FORFEIT_TIME));
         assertEquals(BoardConstants.WHITE_FORFEIT_TIME, tree.getRoot().getFinalState());
@@ -225,6 +378,59 @@ public class GameTreeTest {
         add(c5, "Nf3", Move.makeMove(Pos.fromString("g1"), Pos.fromString("f3")));
         assertEquals("position fen " + START, tree.positionCommand(tree.getRoot()));
         assertEquals("position fen " + START + " moves e2e4 c7c5", tree.positionCommand(c5));
+    }
+
+    @Test
+    public void enginePositionDistinguishesChess960CastlingFromAnOrdinaryKingMove()
+            throws Exception {
+        String fen = "4k3/8/8/8/8/8/8/5K1R w K - 0 1";
+        tree = new GameTree(fen, 0, BoardConstants.WHITE);
+        int from = Pos.fromString("f1"), to = Pos.fromString("g1");
+        Node ordinary = add(tree.getRoot(), "Kg1", Move.makeMove(from, to));
+        Node castle = add(tree.getRoot(), "O-O", Move.makeMoveOO(from, to));
+
+        assertEquals("position fen " + fen + " moves f1g1", tree.positionCommand(ordinary));
+        assertEquals("position fen " + fen + " moves f1h1", tree.positionCommand(castle));
+        assertFalse(tree.positionCommand(ordinary).equals(tree.positionCommand(castle)));
+    }
+
+    @Test
+    public void enginePositionDistinguishesBlackQueensideCastlingFromAnOrdinaryKingMove()
+            throws Exception {
+        String fen = "r2k4/8/8/8/8/8/8/4K3 b q - 0 1";
+        tree = new GameTree(fen, 0, BoardConstants.BLACK);
+        int from = Pos.fromString("d8"), to = Pos.fromString("c8");
+        Node ordinary = add(tree.getRoot(), "Kc8", Move.makeMove(from, to));
+        Node castle = add(tree.getRoot(), "O-O-O", Move.makeMoveOOO(from, to));
+
+        assertEquals("position fen " + fen + " moves d8c8", tree.positionCommand(ordinary));
+        assertEquals("position fen " + fen + " moves d8a8", tree.positionCommand(castle));
+    }
+
+    @Test
+    public void enginePositionUsesExplicitVariantForAnOrthodoxChess960StartingPosition()
+            throws Exception {
+        String fen = "4k3/8/8/8/8/8/8/4K2R w K - 0 1";
+        int castle = Move.makeMoveOO(Pos.fromString("e1"), Pos.fromString("g1"));
+        tree = new GameTree(fen, 0, BoardConstants.WHITE, true);
+        Node chess960 = add(tree.getRoot(), "O-O", castle);
+        assertEquals("position fen " + fen + " moves e1h1", tree.positionCommand(chess960));
+
+        tree = new GameTree(fen, 0, BoardConstants.WHITE, false);
+        Node standard = add(tree.getRoot(), "O-O", castle);
+        assertEquals("position fen " + fen + " moves e1g1", tree.positionCommand(standard));
+    }
+
+    @Test
+    public void enginePositionUsesTheExplicitCastlingRookFile() throws Exception {
+        String fen = "8/4k3/8/8/8/8/8/4KR1R w F - 0 1";
+        tree = new GameTree(fen, 0, BoardConstants.WHITE);
+        Node castle =
+                add(
+                        tree.getRoot(),
+                        "O-O",
+                        Move.makeMoveOO(Pos.fromString("e1"), Pos.fromString("g1")));
+        assertEquals("position fen " + fen + " moves e1f1", tree.positionCommand(castle));
     }
 
     @Test

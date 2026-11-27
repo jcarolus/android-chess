@@ -26,6 +26,8 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     private final OnItemClickListener listener;
     private final GameApi gameApi;
     private final Context context;
+    private List<Node> displayedLine = java.util.Collections.emptyList();
+    private int selectedIndex = -1;
 
     public interface OnItemClickListener {
         void onMoveItemClick(int position);
@@ -42,6 +44,15 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     }
 
     public void update(List<Node> nodes) {
+        int nextSelection = nodes.indexOf(gameApi.getCurrentNode());
+        if (displayedLine.equals(nodes)) {
+            if (selectedIndex != nextSelection) {
+                updateSelection(selectedIndex, false);
+                updateSelection(nextSelection, true);
+                selectedIndex = nextSelection;
+            }
+            return;
+        }
         ArrayList<HashMap<String, String>> newMapMoves = new ArrayList<HashMap<String, String>>();
 
         for (Node node : nodes) {
@@ -91,7 +102,16 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
                         });
         mapMoves.clear();
         mapMoves.addAll(newMapMoves);
+        displayedLine = new ArrayList<>(nodes);
+        selectedIndex = nextSelection;
         diffResult.dispatchUpdatesTo(this);
+    }
+
+    private void updateSelection(int index, boolean selected) {
+        if (index >= 0) {
+            mapMoves.get(index).put("turn", selected ? "yes" : "no");
+            notifyItemChanged(index);
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

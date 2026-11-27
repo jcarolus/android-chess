@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Действия с выбранными партиями</string>
+    <string name="gameslist_check_game">Выбрать партию %3$d: %1$s против %2$s</string>
+    <string name="gameslist_select_all">Выбрать все</string>
+    <string name="gameslist_clear_selection">Снять выделение</string>
+    <string name="gameslist_invert_checked">Инвертировать выделение</string>
+    <string name="gameslist_multi_edit">Групповое редактирование</string>
+    <string name="gameslist_delete_selected">Удалить выбранные партии</string>
+    <string name="gameslist_edit_topic">Изменить тему</string>
+    <string name="gameslist_topic_hint">Тема</string>
+    <string name="gameslist_topic_explanation">Заменить тему всех выбранных партий. Оставьте поле пустым, чтобы удалить темы.</string>
+    <string name="gameslist_clear_topic">Удалить тему</string>
+    <string name="gameslist_set_topic">Задать тему</string>
+    <string name="gameslist_bulk_failed">Не удалось изменить выбранные партии. Ни одна партия не изменена. Повторите попытку.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">Выбрана %d партия</item>
+        <item quantity="few">Выбрано %d партии</item>
+        <item quantity="many">Выбрано %d партий</item>
+        <item quantity="other">Выбрано %d партии</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">Удалить %d выбранную партию безвозвратно?</item>
+        <item quantity="few">Удалить %d выбранные партии безвозвратно?</item>
+        <item quantity="many">Удалить %d выбранных партий безвозвратно?</item>
+        <item quantity="other">Удалить %d выбранной партии безвозвратно?</item>
+    </plurals>
+    <string name="gameslist_export_selected">Экспортировать выбранные партии</string>
+</resources>

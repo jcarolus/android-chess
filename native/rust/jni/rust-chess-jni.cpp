@@ -12,9 +12,11 @@ struct NativeResult {
 };
 extern "C" {
 void* rust_chess_create();
+void* rust_chess_create_session();
+void rust_chess_destroy_session(void*);
 void rust_chess_stop(const void*);
 void rust_chess_destroy(void*);
-void rust_chess_search(const void*, uint64_t, int32_t, const char*, const char* const*, size_t,
+void rust_chess_search(const void*, const void*, uint64_t, int32_t, const char*, const char* const*, size_t,
                        int32_t, int32_t, int32_t, NativeResult*, void (*)(void*, const NativeResult*), void*);
 }
 
@@ -63,6 +65,14 @@ extern "C" JNIEXPORT jlong JNICALL
 Java_jwtc_android_chess_engine_RustNative_create(JNIEnv*, jclass) {
     return reinterpret_cast<jlong>(rust_chess_create());
 }
+extern "C" JNIEXPORT jlong JNICALL
+Java_jwtc_android_chess_engine_RustNative_createSession(JNIEnv*, jclass) {
+    return reinterpret_cast<jlong>(rust_chess_create_session());
+}
+extern "C" JNIEXPORT void JNICALL
+Java_jwtc_android_chess_engine_RustNative_destroySession(JNIEnv*, jclass, jlong session) {
+    rust_chess_destroy_session(reinterpret_cast<void*>(session));
+}
 extern "C" JNIEXPORT void JNICALL
 Java_jwtc_android_chess_engine_RustNative_stop(JNIEnv*, jclass, jlong handle) {
     rust_chess_stop(reinterpret_cast<void*>(handle));
@@ -72,7 +82,7 @@ Java_jwtc_android_chess_engine_RustNative_destroy(JNIEnv*, jclass, jlong handle)
     rust_chess_destroy(reinterpret_cast<void*>(handle));
 }
 extern "C" JNIEXPORT jobject JNICALL
-Java_jwtc_android_chess_engine_RustNative_search(JNIEnv* env, jclass, jlong handle, jlong id,
+Java_jwtc_android_chess_engine_RustNative_search(JNIEnv* env, jclass, jlong session, jlong handle, jlong id,
         jint variant, jstring fen, jobjectArray history, jint depth, jint millis, jboolean quiescence, jobject listener) {
     if (!handle || !history) { fail(env, "Missing search handle or history"); return nullptr; }
     std::string startingPosition;
@@ -102,7 +112,8 @@ Java_jwtc_android_chess_engine_RustNative_search(JNIEnv* env, jclass, jlong hand
     }
     ProgressContext context{env, listener, type, constructor, onProgress};
     NativeResult result{};
-    rust_chess_search(reinterpret_cast<void*>(handle), id, variant, startingPosition.c_str(),
+    rust_chess_search(reinterpret_cast<void*>(session), reinterpret_cast<void*>(handle),
+                      id, variant, startingPosition.c_str(),
                       pointers.data(), pointers.size(), depth, millis, quiescence, &result, progress, &context);
     if (env->ExceptionCheck()) return nullptr;
     if (result.error[0]) { fail(env, result.error); return nullptr; }

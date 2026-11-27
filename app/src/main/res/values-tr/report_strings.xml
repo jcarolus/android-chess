@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_report">Rapor</string>
+    <string name="analysis_report_title">Ana devam yolu raporu</string>
+    <string name="analysis_report_progress">Konumlar analiz ediliyor: %1$d / %2$d</string>
+    <string name="analysis_report_accuracy">Doğruluk\nBeyaz: %1$s · Siyah: %2$s</string>
+    <string name="analysis_report_graph">Değerlendirme grafiği</string>
+    <string name="analysis_report_graph_hint">Beyaz alan: Beyazın kazanma şansı. Bir konuma gitmek için grafiğe dokunun.</string>
+    <string name="analysis_report_go_to_move">Seçili konuma git</string>
+    <string name="analysis_report_key_moments">Kritik anlar</string>
+    <string name="analysis_report_no_moments">Hata veya büyük hata bulunamadı.</string>
+    <string name="analysis_report_partial">Bazı konumlar değerlendirilemedi. Yeniden denemek için raporu tekrar açın. Doğruluk, tüm konumlar değerlendirildikten sonra kullanılabilir.</string>
+    <string name="analysis_report_unavailable">Rapor kullanılamıyor. Geçerli hamleyi tamamlayın ve oyunda analiz edilecek hamleler olduğundan emin olun.</string>
+    <string name="analysis_report_start">Başlangıç konumu</string>
+    <string name="analysis_report_position">%1$s · Değerlendirme: %2$s</string>
+    <string name="analysis_report_unknown">Kullanılamıyor</string>
+</resources>

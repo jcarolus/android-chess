@@ -1,5 +1,6 @@
 package jwtc.android.chess.tools;
 
+import static jwtc.android.chess.tools.ImportHandler.Result.*;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -38,8 +39,18 @@ public class ImportPipelineTest {
             values.add("start:" + mode);
         }
 
-        public void OnImportProgress(int mode, int ok, int failed) {
-            values.add("progress:" + mode + ":" + ok + ":" + failed);
+        public void OnImportProgress(int mode, int ok, int failed, int duplicates, int updated) {
+            values.add(
+                    "progress:"
+                            + mode
+                            + ":"
+                            + ok
+                            + ":"
+                            + failed
+                            + ":"
+                            + duplicates
+                            + ":"
+                            + updated);
         }
 
         public void OnImportFinished(int mode) {
@@ -81,7 +92,7 @@ public class ImportPipelineTest {
 
     @Test
     public void busyRejectionDoesNotConstructOrReplaceTheAcceptedJob() {
-        assertTrue(pipeline.start(2, () -> job(2, "1. e4 *", item -> true)));
+        assertTrue(pipeline.start(2, () -> job(2, "1. e4 *", item -> INSERTED)));
         assertFalse(
                 pipeline.start(
                         4,
@@ -90,13 +101,13 @@ public class ImportPipelineTest {
                         }));
         Events attached = new Events();
         pipeline.replay(attached);
-        assertEquals(List.of("start:2", "progress:2:0:0"), attached.values);
+        assertEquals(List.of("start:2", "progress:2:0:0:0:0"), attached.values);
         assertEquals(List.of("start:2", "reject:4"), events.values);
         complete();
         assertEquals("finish:2", events.values.get(events.values.size() - 1));
         attached.values.clear();
         pipeline.replay(attached);
-        assertEquals(List.of("finish:2"), attached.values);
+        assertEquals(List.of("progress:2:1:0:0:0", "finish:2"), attached.values);
     }
 
     @Test
@@ -108,25 +119,41 @@ public class ImportPipelineTest {
                         job(
                                 2,
                                 "[Event \"One\"]\n1. e4 *\n\n[Event \"Two\"]\n1. d4 *",
-                                item -> ++handled[0] == 1));
+                                item -> ++handled[0] == 1 ? INSERTED : FAILED));
         worker.drain();
         delivery.tasks.remove().run();
         Events attached = new Events();
         pipeline.replay(attached);
-        assertEquals(List.of("start:2", "progress:2:1:0"), attached.values);
+        assertEquals(List.of("start:2", "progress:2:1:0:0:0"), attached.values);
         delivery.drain();
-        assertTrue(events.values.contains("progress:2:1:1"));
+        assertTrue(events.values.contains("progress:2:1:1:0:0"));
         assertEquals("finish:2", events.values.get(events.values.size() - 1));
     }
 
     @Test
+    public void duplicatesAndUpdatesAreReportedSeparatelyAndReplayedAfterCompletion() {
+        pipeline.start(
+                2,
+                () ->
+                        job(
+                                2,
+                                "1. e4 *\n\n[Event \"Two\"]\n1. d4 *",
+                                item -> item.sourcePosition == 1 ? DUPLICATE : UPDATED));
+        complete();
+        Events attached = new Events();
+        pipeline.replay(attached);
+        assertEquals(List.of("progress:2:0:0:1:1", "finish:2"), attached.values);
+    }
+
+    @Test
     public void cancelAfterWorkerFinishesSuppressesQueuedEventsAndAllowsNextJob() {
-        pipeline.start(2, () -> job(2, "1. e4 *", item -> true));
+        pipeline.start(2, () -> job(2, "1. e4 *", item -> INSERTED));
         worker.drain();
         pipeline.cancel();
-        assertTrue(pipeline.start(3, () -> job(3, "1. d4 *", item -> false)));
+        assertTrue(pipeline.start(3, () -> job(3, "1. d4 *", item -> FAILED)));
         complete();
-        assertEquals(List.of("start:2", "start:3", "progress:3:0:1", "finish:3"), events.values);
+        assertEquals(
+                List.of("start:2", "start:3", "progress:3:0:1:0:0", "finish:3"), events.values);
     }
 
     @Test
@@ -142,7 +169,7 @@ public class ImportPipelineTest {
                                 item -> {
                                     handled[0]++;
                                     pipeline.cancel();
-                                    return true;
+                                    return INSERTED;
                                 }));
         complete();
         assertEquals(1, handled[0]);
@@ -151,7 +178,7 @@ public class ImportPipelineTest {
         Events attached = new Events();
         pipeline.replay(attached);
         assertTrue(attached.values.isEmpty());
-        assertTrue(pipeline.start(3, () -> job(3, "1. d4 *", item -> true)));
+        assertTrue(pipeline.start(3, () -> job(3, "1. d4 *", item -> INSERTED)));
         complete();
         assertEquals("finish:3", events.values.get(events.values.size() - 1));
     }
@@ -178,7 +205,7 @@ public class ImportPipelineTest {
         complete();
         assertTrue(input.closed);
         assertEquals(List.of("start:2", "reject:3"), events.values);
-        assertTrue(pipeline.start(3, () -> job(3, "1. d4 *", item -> true)));
+        assertTrue(pipeline.start(3, () -> job(3, "1. d4 *", item -> INSERTED)));
         complete();
     }
 
@@ -193,7 +220,7 @@ public class ImportPipelineTest {
         pipeline.replay(attached);
         assertEquals(List.of("error:2"), attached.values);
         assertTrue(worker.tasks.isEmpty());
-        assertTrue(pipeline.start(4, () -> job(4, "1. e4 *", item -> true)));
+        assertTrue(pipeline.start(4, () -> job(4, "1. e4 *", item -> INSERTED)));
         complete();
     }
 
@@ -226,7 +253,7 @@ public class ImportPipelineTest {
                         },
                         delivery,
                         events);
-        rejecting.start(2, () -> new ImportJob(2, PgnSource.file(input), item -> true));
+        rejecting.start(2, () -> new ImportJob(2, PgnSource.file(input), item -> INSERTED));
         assertTrue(input.closed);
         assertEquals(List.of("start:2", "error:2"), events.values);
     }

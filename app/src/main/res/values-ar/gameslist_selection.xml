@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">إجراءات المباريات المحددة</string>
+    <string name="gameslist_check_game">تحديد المباراة %3$d: %1$s ضد %2$s</string>
+    <string name="gameslist_select_all">تحديد الكل</string>
+    <string name="gameslist_clear_selection">إلغاء التحديد</string>
+    <string name="gameslist_invert_checked">عكس التحديد</string>
+    <string name="gameslist_multi_edit">تعديل متعدد</string>
+    <string name="gameslist_delete_selected">حذف المباريات المحددة</string>
+    <string name="gameslist_edit_topic">تعديل الموضوع</string>
+    <string name="gameslist_topic_hint">الموضوع</string>
+    <string name="gameslist_topic_explanation">استبدال موضوع جميع المباريات المحددة. اترك الحقل فارغًا لمسح المواضيع.</string>
+    <string name="gameslist_clear_topic">مسح الموضوع</string>
+    <string name="gameslist_set_topic">تعيين الموضوع</string>
+    <string name="gameslist_bulk_failed">تعذر تعديل المباريات المحددة. لم يتم تغيير أي مباراة. حاول مجددًا.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="zero">عدد المباريات المحددة: %d</item>
+        <item quantity="one">عدد المباريات المحددة: %d</item>
+        <item quantity="two">عدد المباريات المحددة: %d</item>
+        <item quantity="few">عدد المباريات المحددة: %d</item>
+        <item quantity="many">عدد المباريات المحددة: %d</item>
+        <item quantity="other">عدد المباريات المحددة: %d</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="zero">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
+        <item quantity="one">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
+        <item quantity="two">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
+        <item quantity="few">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
+        <item quantity="many">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
+        <item quantity="other">هل تريد حذف المباريات المحددة نهائيًا؟ العدد: %d</item>
+    </plurals>
+    <string name="gameslist_export_selected">تصدير المباريات المحددة</string>
+</resources>

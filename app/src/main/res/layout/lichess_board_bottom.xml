@@ -21,7 +21,7 @@
             android:id="@+id/TextViewClockMe"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="00:00"
+            android:text="@string/placeholder_clock_time"
             android:gravity="center_vertical"
             style="@style/MyHeaderTextStyle"
             android:layout_marginStart="@dimen/control_gap" />
@@ -35,7 +35,7 @@
             style="@style/MyHeaderTextStyle" />
 
         <TextView
-            android:text="----"
+            android:text="@string/placeholder_rating"
             android:id="@+id/TextViewRatingMe"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

@@ -5,9 +5,18 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/play_controls_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/panel_padding">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/ButtonMenu"
+            app:icon="@drawable/ic_three_dots_vertical"
+            android:contentDescription="@string/button_menu_description"
+            android:layout_gravity="end"
+            style="?attr/chessImageButtonStyle" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -43,7 +52,7 @@
 
             <TextView
                 android:id="@+id/TextViewPercentage"
-                android:text="0%"
+                android:text="@string/placeholder_percentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@id/ButtonPracticeNext"

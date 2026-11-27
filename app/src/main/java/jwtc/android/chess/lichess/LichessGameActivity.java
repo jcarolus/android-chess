@@ -14,24 +14,22 @@ import android.widget.Toast;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.ChessAlertDialogBuilder;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.lichess.models.PuzzleGlicko;
+import jwtc.android.chess.moveintake.MoveCandidate;
+import jwtc.android.chess.moveintake.MoveIntake;
+import jwtc.android.chess.moveintake.MoveOutcome;
+import jwtc.android.chess.play.MoveEntry;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
+import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -45,8 +43,6 @@ import jwtc.chess.board.BoardConstants;
 public class LichessGameActivity extends ChessBoardActivity
         implements LichessApi.LichessApiListener, ClockListener, LichessSession.Callbacks {
     private static final String TAG = "LichessGameActivity";
-    private static final String STATE_PENDING_EXPORT = "pendingExportPath";
-    public static final int REQUEST_SAVE_GAME_TO_FILE = 1;
 
     public static final String EXTRA_GAME_ID = "gameId";
     public static final String EXTRA_PUZZLE_ANGLE = "puzzleAngle";
@@ -66,6 +62,8 @@ public class LichessGameActivity extends ChessBoardActivity
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private MaterialButton buttonDraw, buttonResign, buttonConfirmMove;
     private MaterialButton buttonPuzzleShow, buttonPuzzleNext, buttonPuzzleRetry;
+    private MoveEntry moveEntry;
+    private boolean moveEntryActive;
 
     // The launch request. currentGameId is durable and is updated when a new pairing (round N+1)
     // auto-opens, so it is persisted across rotation (not just re-read from the launch intent).
@@ -76,8 +74,8 @@ public class LichessGameActivity extends ChessBoardActivity
     // whether to honor the launch extras vs. restore in-progress api state on first connect.
     private boolean freshLaunch;
     private boolean firstConnect = true;
+    private boolean reconnectGameOnResume;
     private String premoveGameId;
-    private File pendingExportFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,10 +85,6 @@ public class LichessGameActivity extends ChessBoardActivity
         ActivityHelper.fixPaddings(this, findViewById(R.id.ICSPlay));
 
         freshLaunch = savedInstanceState == null;
-        if (savedInstanceState != null) {
-            String path = savedInstanceState.getString(STATE_PENDING_EXPORT);
-            pendingExportFile = path == null ? null : new File(path);
-        }
         Intent intent = getIntent();
         // currentGameId can change after launch (round N+1), so prefer the saved value on
         // recreation.
@@ -124,7 +118,7 @@ public class LichessGameActivity extends ChessBoardActivity
         buttonConfirmMove = findViewById(R.id.ButtonConfirmMove);
 
         MaterialButton buttonSaveToFile = findViewById(R.id.ButtonSaveToFile);
-        buttonSaveToFile.setOnClickListener(v -> startGameExport());
+        buttonSaveToFile.setOnClickListener(v -> startSaveGameToFile());
         MaterialButton buttonSaveToDatabase = findViewById(R.id.ButtonSaveToDatabase);
         buttonSaveToDatabase.setOnClickListener(
                 v -> {
@@ -175,6 +169,8 @@ public class LichessGameActivity extends ChessBoardActivity
         textViewOfferDraw = findViewById(R.id.TextViewOfferDraw);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
+
+        moveEntry = new MoveEntry(this);
 
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -227,6 +223,7 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public void onLichessApiLost() {
+        moveEntry.update(null, null);
         if (lichessApi != null) {
             lichessApi.setApiListener(null);
         }
@@ -266,6 +263,7 @@ public class LichessGameActivity extends ChessBoardActivity
         if (mode == LichessApi.VIEW_PUZZLE) {
             displayPuzzle();
             rebuildBoard();
+            restorePuzzleProgress();
             return;
         }
         if (mode == LichessApi.VIEW_PLAY && lichessApi.getOngoingGameId() != null) {
@@ -284,9 +282,6 @@ public class LichessGameActivity extends ChessBoardActivity
         super.onSaveInstanceState(outState);
         // currentGameId may differ from the launch intent (round N+1 auto-open); preserve it.
         outState.putString(EXTRA_GAME_ID, currentGameId);
-        outState.putString(
-                STATE_PENDING_EXPORT,
-                pendingExportFile == null ? null : pendingExportFile.getAbsolutePath());
     }
 
     @Override
@@ -309,17 +304,36 @@ public class LichessGameActivity extends ChessBoardActivity
         if (lichessApi != null) {
             lichessApi.setApiListener(this);
             puzzleActive = lichessApi.getViewMode() == LichessApi.VIEW_PUZZLE;
+            if (puzzleActive) {
+                restorePuzzleProgress();
+            }
             openPendingGameStart();
+            if (reconnectGameOnResume && session.isConnected()) {
+                lichessApi.openGameStream(currentGameId);
+            }
         }
+        reconnectGameOnResume = false;
         layoutResignDraw.setVisibility(puzzleActive ? View.GONE : View.VISIBLE);
         layoutPuzzleControls.setVisibility(puzzleActive ? View.VISIBLE : View.GONE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
+        moveEntryActive = true;
+        updateMoveEntry();
     }
 
     @Override
     protected void onPause() {
+        moveEntryActive = false;
+        moveEntry.reset();
+        if (hasPremoved()) {
+            clearPremove();
+            updateSelectedSquares();
+        }
         super.onPause();
         if (lichessApi != null) {
+            reconnectGameOnResume =
+                    lichessApi.getUser() != null
+                            && currentGameId != null
+                            && !lichessApi.isGameFinished(currentGameId);
             lichessApi.setApiListener(null);
         }
         SharedPreferences.Editor editor = getPrefs().edit();
@@ -342,66 +356,15 @@ public class LichessGameActivity extends ChessBoardActivity
             }
         }
         session.unbind(this);
+        reconnectGameOnResume = false;
         gameApi = null;
         lichessApi = null;
         localClockApi = null;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
-            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
-                try {
-                    if (pendingExportFile == null) {
-                        throw new IOException("Missing game export");
-                    }
-                    String pgn = readExport(pendingExportFile);
-                    saveToFile(data.getData(), pgn);
-                } catch (IOException e) {
-                    Log.e(TAG, "Could not read pending game export", e);
-                    Toast.makeText(this, R.string.ics_error, Toast.LENGTH_LONG).show();
-                }
-            }
-            if (pendingExportFile != null) {
-                pendingExportFile.delete();
-                pendingExportFile = null;
-            }
-        }
-    }
-
-    private void startGameExport() {
-        File snapshot = null;
-        try {
-            snapshot = File.createTempFile("lichess-game-", ".pgn", getCacheDir());
-            try (FileOutputStream output = new FileOutputStream(snapshot)) {
-                output.write(gameApi.exportFullPGN().getBytes(StandardCharsets.UTF_8));
-            }
-            pendingExportFile = snapshot;
-            startIntentForSaveDocument(
-                    "application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
-        } catch (IOException e) {
-            if (snapshot != null) {
-                snapshot.delete();
-            }
-            Log.e(TAG, "Could not prepare game export", e);
-            Toast.makeText(this, R.string.ics_error, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private static String readExport(File file) throws IOException {
-        try (FileInputStream input = new FileInputStream(file);
-                ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[4096];
-            int count;
-            while ((count = input.read(buffer)) != -1) {
-                output.write(buffer, 0, count);
-            }
-            return new String(output.toByteArray(), StandardCharsets.UTF_8);
-        }
-    }
-
     protected void openGame(String gameId) {
+        reconnectGameOnResume = false;
+        moveEntry.reset();
         if (hasPremoved() && (premoveGameId == null || !premoveGameId.equals(gameId))) {
             clearPremove();
         }
@@ -424,6 +387,8 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     protected void displayPuzzle() {
+        moveEntry.reset();
+        updateMoveEntry();
         clearPremove();
         textViewLastMove.setText("");
         textViewStatus.setText("");
@@ -437,6 +402,7 @@ public class LichessGameActivity extends ChessBoardActivity
         layoutResignDraw.setVisibility(View.GONE);
         layoutSave.setVisibility(View.GONE);
         layoutPuzzleControls.setVisibility(View.VISIBLE);
+        buttonPuzzleShow.setEnabled(true);
         buttonPuzzleNext.setEnabled(false);
         buttonPuzzleRetry.setVisibility(View.GONE);
         correctPosition = -1;
@@ -481,17 +447,20 @@ public class LichessGameActivity extends ChessBoardActivity
         textViewPlayerMe.setText(playAsWhite ? gameFull.white.name : gameFull.black.name);
 
         textViewRatingOpp.setText(
-                "" + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
+                String.valueOf(playAsWhite ? gameFull.black.rating : gameFull.white.rating));
         textViewRatingMe.setText(
-                "" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
+                String.valueOf(playAsWhite ? gameFull.white.rating : gameFull.black.rating));
 
-        if (gameFull.clock != null && isStarted) {
+        if (gameFull.clock != null) {
             localClockApi.startClock(
                     gameFull.clock.increment,
                     gameFull.state.wtime,
                     gameFull.state.btime,
                     turn,
-                    System.currentTimeMillis());
+                    isStarted ? System.currentTimeMillis() : 0);
+            if (!isStarted) {
+                OnClockTime();
+            }
         }
         buttonDraw.setEnabled(isStarted);
         buttonResign.setEnabled(isStarted);
@@ -542,6 +511,7 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public void onGameDisconnected() {
+        moveEntry.reset();
         clearPremove();
         Toast.makeText(this, R.string.lichess_game_disconnected, Toast.LENGTH_SHORT).show();
         finish();
@@ -564,7 +534,7 @@ public class LichessGameActivity extends ChessBoardActivity
             PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {
         onPuzzle(nextPuzzle);
         if (glicko != null) {
-            textViewRatingMe.setText("" + (int) glicko.rating);
+            textViewRatingMe.setText(String.valueOf((int) glicko.rating));
             String diffStr =
                     solveRound.ratingDiff >= 0
                             ? "+" + solveRound.ratingDiff
@@ -580,6 +550,14 @@ public class LichessGameActivity extends ChessBoardActivity
     @Override
     public void onPuzzleMoveCorrect() {
         updateGameStateMessage(getString(R.string.puzzle_correct_move));
+    }
+
+    @Override
+    public void onPuzzleMoveFailed() {
+        buttonPuzzleShow.setEnabled(false);
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        buttonPuzzleNext.setEnabled(true);
+        updateGameStateMessage(getString(R.string.lichess_puzzle_move_failed));
     }
 
     @Override
@@ -605,60 +583,80 @@ public class LichessGameActivity extends ChessBoardActivity
         buttonPuzzleNext.setEnabled(true);
     }
 
-    @Override
-    public boolean requestMove(int from, int to) {
-        if (lichessApi == null) {
-            rebuildBoard();
-            return false;
+    private void restorePuzzleProgress() {
+        if (lichessApi.hasPuzzleMoveFailed()) {
+            onPuzzleMoveFailed();
+        } else if (lichessApi.isPuzzleComplete()) {
+            onPuzzleCompleted(Move.getTo(lichessApi.getMyMove()));
         }
-
-        boolean liveGame = lichessApi.getViewMode() == LichessApi.VIEW_PLAY;
-        if (liveGame && !lichessApi.isOngoingGameInProgress()) {
-            rebuildBoard();
-            return false;
-        }
-
-        if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
-            return submitMove(from, to);
-        }
-
-        // Puzzles share this activity, but their automatic reply window must never accept a
-        // pre-move. Only an active online game reaches the queueing path.
-        if (liveGame && isMyPieceAt(from)) {
-            storePremove(from, to);
-            return true;
-        }
-        rebuildBoard();
-        return false;
     }
 
-    private boolean submitMove(int from, int to) {
-        if (lichessApi.isPromotionMove(from, to)) {
-            showPromotionPicker(
-                    piece -> {
-                        lichessApi.setPromotionPiece(piece);
-                        lichessApi.move(from, to);
-                    });
-            return true;
+    @Override
+    protected MoveIntake moveIntake() {
+        if (lichessApi == null) {
+            return candidate -> MoveOutcome.rejected(MoveOutcome.Reason.NOT_READY);
         }
-        if (switchConfirmMoves.isChecked()) {
-            layoutConfirm.setVisibility(View.VISIBLE);
-            layoutResignDraw.setVisibility(View.GONE);
-            buttonConfirmMove.setText(
-                    getString(
-                            R.string.lichess_game_confirm_move,
-                            Pos.toString(from) + " " + Pos.toString(to)));
-            pulseAnimation(buttonConfirmMove, 1.05f, 1);
-            buttonConfirmMove.setOnClickListener(
-                    v -> {
-                        lichessApi.move(from, to);
-                        layoutConfirm.setVisibility(View.GONE);
-                        layoutResignDraw.setVisibility(View.VISIBLE);
-                    });
-        } else {
-            lichessApi.move(from, to);
+        boolean confirmMoves = switchConfirmMoves.isChecked();
+        switch (lichessApi.getViewMode()) {
+            case LichessApi.VIEW_PLAY:
+                return new LichessGameMoveIntake(
+                        lichessApi, lichessApi.isOngoingGameInProgress(), confirmMoves);
+            case LichessApi.VIEW_PUZZLE:
+                return new LichessPuzzleMoveIntake(
+                        lichessApi, lichessApi.isPuzzleAwaitingMove(), confirmMoves);
+            default:
+                return candidate -> MoveOutcome.rejected(MoveOutcome.Reason.NOT_READY);
         }
-        return false;
+    }
+
+    /** A new offer replaces a move still waiting for confirmation. */
+    @Override
+    public MoveOutcome offerMove(MoveCandidate candidate) {
+        if (layoutConfirm.getVisibility() == View.VISIBLE) {
+            layoutConfirm.setVisibility(View.GONE);
+            layoutResignDraw.setVisibility(View.VISIBLE);
+        }
+        return super.offerMove(candidate);
+    }
+
+    @Override
+    protected void confirmMove(MoveCandidate candidate) {
+        layoutConfirm.setVisibility(View.VISIBLE);
+        layoutResignDraw.setVisibility(View.GONE);
+        buttonConfirmMove.setText(
+                getString(
+                        R.string.lichess_game_confirm_move,
+                        Pos.toString(candidate.from) + " " + Pos.toString(candidate.to)));
+        pulseAnimation(buttonConfirmMove, 1.05f, 1);
+        buttonConfirmMove.setOnClickListener(v -> offerMove(candidate.withMoveConfirmed()));
+    }
+
+    @Override
+    protected void queuePremove(MoveCandidate candidate) {
+        storePremove(candidate.from, candidate.to);
+    }
+
+    private void updateMoveEntry() {
+        if (!moveEntryActive
+                || lichessApi == null
+                || !getPrefs().getBoolean(MoveEntry.PREF_MOVE_ENTRY, false)) {
+            moveEntry.update(null, null);
+            return;
+        }
+
+        int mode = lichessApi.getViewMode();
+        boolean liveGame =
+                mode == LichessApi.VIEW_PLAY
+                        && currentGameId != null
+                        && currentGameId.equals(lichessApi.getOngoingGameId());
+        boolean puzzle = mode == LichessApi.VIEW_PUZZLE;
+        if (!liveGame && !puzzle) {
+            moveEntry.update(null, null);
+            return;
+        }
+
+        // The Lichess stream can rebuild the game tree without changing the position.
+        moveEntry.update(gameApi, gameApi.getFEN());
     }
 
     private void storePremove(int from, int to) {
@@ -666,29 +664,6 @@ public class LichessGameActivity extends ChessBoardActivity
         setPremove(from, to);
         updateSelectedSquares();
         executePremoveIfReady();
-    }
-
-    private interface PromotionSelectionListener {
-        void onPromotionPieceSelected(int piece);
-    }
-
-    private void showPromotionPicker(PromotionSelectionListener listener) {
-        final String[] items = getResources().getStringArray(R.array.promotionpieces);
-        ChessAlertDialogBuilder builder = new ChessAlertDialogBuilder(this);
-        builder.setTitle(R.string.title_pick_promo);
-        builder.setCancelable(false);
-        builder.setSingleChoiceItems(
-                items,
-                0,
-                (dialog, item) -> {
-                    dialog.dismiss();
-                    listener.onPromotionPieceSelected(4 - item);
-                });
-        builder.create().show();
-    }
-
-    private boolean isMyPieceAt(int position) {
-        return gameApi.pieceAt(lichessApi.getMyTurn(), position) != BoardConstants.FIELD;
     }
 
     private void executePremoveIfReady() {
@@ -740,7 +715,7 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     private void updateTurnState() {
-
+        updateMoveEntry();
         int myTurn = lichessApi.getMyTurn();
         int turn = lichessApi.getTurn();
         boolean isMyTurn = myTurn == turn;

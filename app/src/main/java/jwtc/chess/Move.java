@@ -39,7 +39,6 @@ public class Move {
     }
 
     public static final int makeMoveHit(final int from, final int to) {
-        // co.pl("makeMovehit " + from + "-" + to);
         return from | (to << SHIFT_TO) | (1 << SHIFT_HIT);
     }
 
@@ -79,7 +78,6 @@ public class Move {
         return ((m >> SHIFT_TO) & MASK_POS) == ((m2 >> SHIFT_TO) & MASK_POS);
     }
 
-    // returns "from" of the move
     public static final int getFrom(final int move) {
         return move & MASK_POS;
     }

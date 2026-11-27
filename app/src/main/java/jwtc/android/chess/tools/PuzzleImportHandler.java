@@ -17,14 +17,15 @@ public class PuzzleImportHandler implements ImportHandler {
     }
 
     @Override
-    public boolean handle(ImportItem item) {
+    public Result handle(ImportItem item) {
         if (gameApi.loadPGN(item.pgn)) {
             ContentValues values = new ContentValues();
             values.put(PGNColumns.PGN, gameApi.exportFullPGN());
 
-            contentResolver.insert(MyPuzzleProvider.CONTENT_URI_PUZZLES, values);
-            return true;
+            return contentResolver.insert(MyPuzzleProvider.CONTENT_URI_PUZZLES, values) == null
+                    ? Result.DUPLICATE
+                    : Result.INSERTED;
         }
-        return false;
+        return Result.FAILED;
     }
 }

@@ -20,15 +20,21 @@ public class GameFilterTest {
 
     @Test
     public void blankTextIsNoConstraint() {
-        GameFilter filter = new GameFilter().white("  ").black(null).event("").result(" ");
+        GameFilter filter =
+                new GameFilter().white("  ").black(null).event("").topic(" ").result(" ");
         assertTrue(filter.isEmpty());
     }
 
     @Test
-    public void namesAndEventMatchAnywhereInTheText() {
-        GameFilter filter = new GameFilter().white(" Kasparov ").black("Deep").event("Wijk");
-        assertEquals("white LIKE ? AND black LIKE ? AND event LIKE ?", filter.selection());
-        assertArrayEquals(new String[] {"%Kasparov%", "%Deep%", "%Wijk%"}, filter.selectionArgs());
+    public void namesEventAndTopicMatchAnywhereInTheText() {
+        GameFilter filter =
+                new GameFilter().white(" Kasparov ").black("Deep").event("Wijk").topic(" Attack ");
+        assertEquals(
+                "white LIKE ? AND black LIKE ? AND event LIKE ? AND topic LIKE ?",
+                filter.selection());
+        assertArrayEquals(
+                new String[] {"%Kasparov%", "%Deep%", "%Wijk%", "%Attack%"},
+                filter.selectionArgs());
         assertFalse(filter.isEmpty());
     }
 
@@ -70,6 +76,8 @@ public class GameFilterTest {
     public void orderByAcceptsTheSortableColumns() {
         assertEquals("white ASC", new GameFilter().orderBy("white", "ASC").orderBy());
         assertEquals("event DESC", new GameFilter().orderBy(" event ", "DESC").orderBy());
+        assertEquals("topic ASC", new GameFilter().orderBy("topic", "ASC").orderBy());
+        assertEquals("topic DESC", new GameFilter().orderBy("topic", "DESC").orderBy());
         assertEquals("result ASC", new GameFilter().orderBy("result", "asc").orderBy());
     }
 

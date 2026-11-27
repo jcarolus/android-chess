@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import jwtc.android.chess.constants.Piece;
@@ -20,6 +21,7 @@ import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.GameState;
+import jwtc.android.chess.lichess.models.LichessVariant;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
 import jwtc.android.chess.lichess.models.PuzzleBatchSelectResponse;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRequest;
@@ -33,6 +35,7 @@ import jwtc.android.chess.lichess.models.TeamPaginator;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
+import jwtc.chess.Variant;
 import jwtc.chess.board.BoardConstants;
 
 public class LichessApi extends GameApi {
@@ -77,6 +80,8 @@ public class LichessApi extends GameApi {
 
         default void onPuzzleMoveCorrect() {}
 
+        default void onPuzzleMoveFailed() {}
+
         default void onPuzzleUnexpectedMove(String sMove, int toPos) {}
 
         default void onPuzzleRetried() {}
@@ -115,6 +120,7 @@ public class LichessApi extends GameApi {
     private boolean puzzleSolvedCleanly = true;
     private boolean hasPendingWrongMove = false;
     private boolean puzzleComputerMovePending = false;
+    private boolean puzzleMoveFailed;
     private final Handler puzzleHandler = new Handler(Looper.getMainLooper());
     private String user;
 
@@ -224,8 +230,7 @@ public class LichessApi extends GameApi {
                                                     Challenge.class);
                             if (apiListener != null
                                     && !user.equals(challenge.challenger.id)
-                                    && (challenge.variant.key.equals("standard")
-                                            || challenge.variant.key.equals("chess960"))) {
+                                    && LichessVariant.isSupported(challenge.variant.key)) {
                                 // ignore own challenge and variants we do not support
                                 apiListener.onChallenge(challenge);
                             }
@@ -368,7 +373,11 @@ public class LichessApi extends GameApi {
     }
 
     public void nextPuzzle() {
-        if (currentPuzzleRated && ongoingPuzzle != null) {
+        boolean completed = isPuzzleComplete();
+        if (!completed && !hasPuzzleMoveFailed()) {
+            return;
+        }
+        if (currentPuzzleRated && completed) {
             solvePuzzle(currentPuzzleAngle, ongoingPuzzle.puzzle.id, puzzleSolvedCleanly, true);
         } else {
             fetchPuzzle(currentPuzzleAngle, null, null, currentPuzzleRated);
@@ -431,7 +440,8 @@ public class LichessApi extends GameApi {
             int to = Pos.fromString(uciMove.substring(2, 4));
             Integer promo =
                     uciMove.length() == 5
-                            ? Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase())
+                            ? Piece.fromUCIPromo(
+                                    uciMove.substring(4, 5).toLowerCase(Locale.getDefault()))
                             : null;
             if (applyServerMove(from, to, promo) != 0) {
                 return true;
@@ -446,7 +456,7 @@ public class LichessApi extends GameApi {
     }
 
     public void showNextSolutionMove() {
-        if (ongoingPuzzle == null || puzzleComputerMovePending) {
+        if (ongoingPuzzle == null || puzzleComputerMovePending || puzzleMoveFailed) {
             return;
         }
         List<String> solution = ongoingPuzzle.puzzle.solution;
@@ -454,10 +464,9 @@ public class LichessApi extends GameApi {
             return;
         }
         if (hasPendingWrongMove) {
-            hasPendingWrongMove = false;
-            discardLastMove();
-            if (apiListener != null) {
-                apiListener.onPuzzleRetried();
+            retryWrongPuzzleMove();
+            if (puzzleMoveFailed) {
+                return;
             }
         }
         puzzleSolvedCleanly = false;
@@ -465,51 +474,64 @@ public class LichessApi extends GameApi {
     }
 
     private void applyPuzzleMoveAndResponse(String playerMove) {
-        List<String> solution = ongoingPuzzle.puzzle.solution;
+        PuzzleAndGame puzzle = ongoingPuzzle;
+        List<String> solution = puzzle.puzzle.solution;
 
         if (!applyUciMoveToBoard(playerMove)) {
-            Log.e(TAG, "Player puzzle move failed to apply: " + playerMove);
-            dispatchState();
+            Log.e(TAG, "Player move failed in puzzle " + puzzle.puzzle.id + ": " + playerMove);
+            failPuzzleMove();
             return;
         }
         int move = getMyMove();
-        dispatchMove(move);
         puzzleMoveIndex++;
+        puzzleComputerMovePending = puzzleMoveIndex < solution.size();
+        dispatchMove(move);
 
         if (apiListener != null) {
             apiListener.onPuzzleMoveCorrect();
         }
 
-        if (puzzleMoveIndex >= solution.size()) {
-            dispatchState();
+        if (!puzzleComputerMovePending) {
             if (apiListener != null) {
                 apiListener.onPuzzleCompleted(Move.getTo(move));
             }
             return;
         }
 
-        // Delay the computer's response for smoother UX
-        final String computerMove = solution.get(puzzleMoveIndex);
-        puzzleComputerMovePending = true;
+        // Let the player see their move before showing the opponent's reply.
+        String computerMove = solution.get(puzzleMoveIndex);
         puzzleHandler.postDelayed(
                 () -> {
+                    if (ongoingPuzzle != puzzle) {
+                        return;
+                    }
                     puzzleComputerMovePending = false;
                     if (!applyUciMoveToBoard(computerMove)) {
-                        Log.e(TAG, "Computer puzzle move failed: " + computerMove);
-                        dispatchState();
+                        Log.e(
+                                TAG,
+                                "Computer puzzle move failed: "
+                                        + puzzle.puzzle.id
+                                        + " "
+                                        + computerMove);
+                        failPuzzleMove();
                         return;
                     }
                     int cpuMove = getMyMove();
-                    dispatchMove(cpuMove);
                     puzzleMoveIndex++;
-                    dispatchState();
-                    if (puzzleMoveIndex >= solution.size()) {
-                        if (apiListener != null) {
-                            apiListener.onPuzzleCompleted(Move.getTo(cpuMove));
-                        }
+                    dispatchMove(cpuMove);
+                    if (puzzleMoveIndex >= solution.size() && apiListener != null) {
+                        apiListener.onPuzzleCompleted(Move.getTo(cpuMove));
                     }
                 },
                 1000);
+    }
+
+    private void failPuzzleMove() {
+        puzzleMoveFailed = true;
+        dispatchState();
+        if (apiListener != null) {
+            apiListener.onPuzzleMoveFailed();
+        }
     }
 
     private void handlePuzzleError(JsonObject e) {
@@ -806,6 +828,10 @@ public class LichessApi extends GameApi {
         if (isPromotionMove(from, to)) {
             uciMove += Piece.toPromoUCI(promotionPiece);
         }
+        sendMove(uciMove);
+    }
+
+    void sendMove(String uciMove) {
         if (ongoingGameFull != null) {
             this.auth.move(
                     ongoingGameFull.id,
@@ -826,14 +852,11 @@ public class LichessApi extends GameApi {
                         }
                     });
         } else if (ongoingPuzzle != null) {
-            if (puzzleComputerMovePending) {
+            if (!isPuzzleAwaitingMove() || getTurn() != getMyTurn()) {
+                dispatchState();
                 return;
             }
             List<String> solution = ongoingPuzzle.puzzle.solution;
-            if (puzzleMoveIndex >= solution.size()) {
-                Log.d(TAG, "Solution index");
-                return;
-            }
             if (!uciMove.equals(solution.get(puzzleMoveIndex))) {
                 Log.d(TAG, "Not equal " + uciMove + " = " + solution.get(puzzleMoveIndex));
                 puzzleSolvedCleanly = false;
@@ -903,21 +926,32 @@ public class LichessApi extends GameApi {
     }
 
     public void game(String gameId) {
+        puzzleHandler.removeCallbacksAndMessages(null);
+        ongoingPuzzle = null;
         reset();
         dispatchState();
+        openGameStream(gameId);
+    }
+
+    void openGameStream(String gameId) {
         this.auth.game(
                 gameId,
                 new Auth.AuthResponseHandler() {
+                    private boolean receivedGameFull;
+
                     @Override
                     public void onResponse(JsonObject jsonObject) {
                         String type = jsonObject.get("type").getAsString();
-                        Log.d(TAG, "game " + jsonObject.get("type").getAsString());
-                        if (type.equals("gameState") && ongoingGameFull != null) {
-                            ongoingGameFull.state =
-                                    (new Gson()).fromJson(jsonObject, GameState.class);
-                        } else if (type.equals("gameFull")) {
+                        Log.d(TAG, "game " + type);
+                        if (type.equals("gameFull")) {
                             ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
                             ongoingPuzzle = null;
+                            receivedGameFull = true;
+                        } else if (type.equals("gameState") && receivedGameFull) {
+                            ongoingGameFull.state =
+                                    (new Gson()).fromJson(jsonObject, GameState.class);
+                        } else {
+                            return;
                         }
                         processGameState();
                     }
@@ -950,10 +984,35 @@ public class LichessApi extends GameApi {
         return ongoingGameFull != null ? ongoingGameFull.id : null;
     }
 
+    boolean isGameFinished(String gameId) {
+        return lastGameStateSnapshot != null
+                && gameId.equals(lastGameStateSnapshot.gameId)
+                && !lastGameStateSnapshot.isStarted();
+    }
+
     public boolean isOngoingGameInProgress() {
         return ongoingGameFull != null
                 && ongoingGameFull.state != null
                 && "started".equals(ongoingGameFull.state.status);
+    }
+
+    boolean isPuzzleAwaitingMove() {
+        return ongoingPuzzle != null
+                && !puzzleMoveFailed
+                && !puzzleComputerMovePending
+                && !hasPendingWrongMove
+                && puzzleMoveIndex < ongoingPuzzle.puzzle.solution.size();
+    }
+
+    boolean hasPuzzleMoveFailed() {
+        return ongoingPuzzle != null && puzzleMoveFailed;
+    }
+
+    boolean isPuzzleComplete() {
+        return ongoingPuzzle != null
+                && !puzzleMoveFailed
+                && puzzleMoveIndex > 0
+                && puzzleMoveIndex == ongoingPuzzle.puzzle.solution.size();
     }
 
     /** A gameStart retained until a foreground Lichess screen can act on it. */
@@ -1070,7 +1129,8 @@ public class LichessApi extends GameApi {
             if (replayedEntireSnapshot) {
                 int finalState = snapshot.finalState();
                 if (finalState != -1
-                        && (finalState != BoardConstants.DRAW_AGREEMENT || !isBoardDetectedDraw())) {
+                        && (finalState != BoardConstants.DRAW_AGREEMENT
+                                || !isBoardDetectedDraw())) {
                     setFinalState(finalState);
                 }
                 dispatchGameStateTransition(snapshot, transition);
@@ -1092,9 +1152,11 @@ public class LichessApi extends GameApi {
     private void processPuzzle() {
         Log.d(TAG, "ProcessPuzzle " + ongoingPuzzle);
         if (ongoingPuzzle != null) {
+            auth.closeGameStream();
             puzzleMoveIndex = 0;
             puzzleSolvedCleanly = true;
             puzzleComputerMovePending = false;
+            puzzleMoveFailed = false;
             hasPendingWrongMove = false;
             puzzleHandler.removeCallbacksAndMessages(null);
             resetToStandardPositionWithoutHistory();
@@ -1122,7 +1184,8 @@ public class LichessApi extends GameApi {
 
                     Integer promo =
                             sMove.length() == 5
-                                    ? Piece.fromUCIPromo(sMove.substring(4, 5).toLowerCase())
+                                    ? Piece.fromUCIPromo(
+                                            sMove.substring(4, 5).toLowerCase(Locale.getDefault()))
                                     : null;
 
                     if (applyServerMove(from, to, promo) == 0) {
@@ -1185,8 +1248,14 @@ public class LichessApi extends GameApi {
     }
 
     public void retryWrongPuzzleMove() {
+        if (ongoingPuzzle == null || !hasPendingWrongMove || puzzleMoveFailed) {
+            return;
+        }
+        if (!discardLastMove()) {
+            failPuzzleMove();
+            return;
+        }
         hasPendingWrongMove = false;
-        discardLastMove();
         dispatchState();
         if (apiListener != null) {
             apiListener.onPuzzleRetried();
@@ -1199,8 +1268,8 @@ public class LichessApi extends GameApi {
         pgnTags.put("White", ongoingGameFull.white.name);
         pgnTags.put("Black", ongoingGameFull.black.name);
 
-        if (ongoingGameFull.variant.key.equals("chess960")) {
-            pgnTags.put("Variant", "Fischerandom");
+        if (LichessVariant.toVariant(ongoingGameFull.variant.key) == Variant.CHESS_960) {
+            pgnTags.put("Variant", Variant.CHESS_960.pgnTag());
             pgnTags.put("Setup", "1");
             pgnTags.put("FEN", getFEN());
         }

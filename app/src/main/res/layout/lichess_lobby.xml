@@ -13,7 +13,6 @@
         android:padding="@dimen/panel_padding">
 
         <TableRow android:gravity="center_vertical">
-
             <ImageView
                 android:layout_width="32dip"
                 android:layout_height="32dip"
@@ -40,14 +39,14 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/control_gap">
+        android:padding="@dimen/panel_padding">
 
         <TextView
             android:id="@+id/TextViewLobbyStatus"
             style="@style/MyPaneTextStyle2Lines"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/control_gap"
+            android:layout_marginTop="@dimen/control_gap"
             android:text="@string/lichess_lobby_connected"
             android:accessibilityLiveRegion="polite" />
 

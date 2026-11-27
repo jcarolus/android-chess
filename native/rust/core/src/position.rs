@@ -1,4 +1,5 @@
 use std::fmt;
+mod san;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Variant {
@@ -153,14 +154,16 @@ const ZOBRIST: [u64; 781] = {
     let mut i = 0;
     while i < keys.len() {
         state = state.wrapping_add(0x9e37_79b9_7f4a_7c15);
-        let mut z = state;
-        z = (z ^ (z >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
-        z = (z ^ (z >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
-        keys[i] = z ^ (z >> 31);
+        keys[i] = mix_key(state);
         i += 1;
     }
     keys
 };
+const fn mix_key(mut key: u64) -> u64 {
+    key = (key ^ (key >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
+    key = (key ^ (key >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
+    key ^ (key >> 31)
+}
 fn piece_key(t: usize, p: usize, s: usize) -> u64 {
     ZOBRIST[(t * 6 + p) * 64 + s]
 }
@@ -187,6 +190,20 @@ fn slide(directions: std::ops::Range<usize>, occupied: u64, s: usize) -> u64 {
     }
     result
 }
+pub(crate) fn between(from: usize, to: usize) -> u64 {
+    let row = to as i32 / 8 - from as i32 / 8;
+    let file = to as i32 % 8 - from as i32 % 8;
+    if row != 0 && file != 0 && row.abs() != file.abs() {
+        return 0;
+    }
+    let step = 8 * row.signum() + file.signum();
+    let mut mask = 0;
+    for offset in 1..row.abs().max(file.abs()) {
+        mask |= bit((from as i32 + offset * step) as usize);
+    }
+    mask
+}
+
 pub(crate) fn bit(s: usize) -> u64 {
     1u64 << s
 }
@@ -280,9 +297,17 @@ impl Move {
                 .unwrap_or_default()
         ))
     }
+
+    pub(crate) fn same_piece_move(self, other: Self) -> bool {
+        self.from == other.from
+            && self.to == other.to
+            && self.promotion == other.promotion
+            && self.castle == other.castle
+    }
 }
 #[derive(Clone, PartialEq, Eq)]
 pub(crate) struct Repetition {
+    pub(crate) key: u64,
     pieces: [[u64; 6]; 2],
     turn: usize,
     rights: [u8; 2],
@@ -361,10 +386,13 @@ impl Position {
             _ => return Err(invalid("Invalid side to move")),
         };
         if fields[2] != "-"
-            && (!fields[2].bytes().all(|b| b"KQkq".contains(&b))
-                || fields[2]
-                    .bytes()
-                    .any(|b| fields[2].bytes().filter(|v| *v == b).count() != 1))
+            && (!fields[2].bytes().all(|b| {
+                b"KQkq".contains(&b)
+                    || variant == Variant::Chess960
+                        && (b'A'..=b'H').contains(&b.to_ascii_uppercase())
+            }) || fields[2]
+                .bytes()
+                .any(|b| fields[2].bytes().filter(|v| *v == b).count() != 1))
         {
             return Err(invalid("Invalid castling rights"));
         }
@@ -397,26 +425,47 @@ impl Position {
                     | (u8::from(!short) << 1)
                     | (if !long && !short { 4 } else { 0 });
             } else {
-                // Chess 960: scan outward from the king along the back rank for the
-                // outermost rook on each side; a claimed right that resolves to no
-                // rook is dropped silently.
                 let king = p.king(t);
-                let mut lost = 0u8;
-                if long {
-                    match outermost_rook_file(p.pieces[t][ROOK], (base..king).rev()) {
-                        Some(file) => p.rook_file[t][0] = file,
-                        None => lost |= 1,
+                let mut claimed = [false; 2];
+                let mut lost = 3u8;
+                for right in fields[2]
+                    .bytes()
+                    .filter(|b| b.is_ascii_uppercase() == (t == WHITE))
+                {
+                    if right == b'-' {
+                        continue;
                     }
-                } else {
-                    lost |= 1;
-                }
-                if short {
-                    match outermost_rook_file(p.pieces[t][ROOK], king + 1..=base + 7) {
-                        Some(file) => p.rook_file[t][1] = file,
-                        None => lost |= 2,
+                    let lower = right.to_ascii_lowercase();
+                    let explicit = (b'a'..=b'h').contains(&lower);
+                    let side = usize::from(if explicit {
+                        usize::from(lower - b'a') > king % 8
+                    } else {
+                        lower == b'k'
+                    });
+                    if claimed[side] {
+                        return Err(invalid("Multiple castling rooks on one side"));
                     }
-                } else {
-                    lost |= 2;
+                    claimed[side] = true;
+                    let file = if explicit {
+                        let file = usize::from(lower - b'a');
+                        if king / 8 != base / 8
+                            || file == king % 8
+                            || p.pieces[t][ROOK] & bit(base + file) == 0
+                        {
+                            return Err(invalid("Invalid castling rook file"));
+                        }
+                        Some(file)
+                    } else if king / 8 != base / 8 {
+                        None
+                    } else if side == 0 {
+                        outermost_rook_file(p.pieces[t][ROOK], (base..king).rev())
+                    } else {
+                        outermost_rook_file(p.pieces[t][ROOK], king + 1..=base + 7)
+                    };
+                    if let Some(file) = file {
+                        p.rook_file[t][side] = file;
+                        lost &= !(1 << side);
+                    }
                 }
                 p.castling[t] = lost | (if lost & 3 == 3 { 4 } else { 0 });
             }
@@ -453,11 +502,26 @@ impl Position {
         p.key = p.computed_key();
         Ok(p)
     }
-    /// Zobrist key of the pieces, side to move, castling rights and a capturable
+    /// Zobrist key of the pieces, side to move, castling rook identities and a capturable
     /// en-passant square. The duck square is left out, so a Duck position keys the
     /// same as its pieces alone.
     pub fn hash_key(&self) -> u64 {
         self.key
+    }
+    /// Variant and original castling rook files are fixed for one search.
+    pub(crate) fn search_key(&self) -> u64 {
+        self.search_key_with_duck(self.duck)
+    }
+    fn search_key_with_duck(&self, duck: Option<usize>) -> u64 {
+        let duck = duck.map_or(0, |square| square as u64 + 1);
+        let queen_phase = self.plies_until_queen_mobility() as u64;
+        let castling = u16::from_le_bytes(self.castling) as u64;
+        let state = self.halfmove as u64 | (castling << 32) | (queen_phase << 48) | (duck << 52);
+        self.key ^ mix_key(state)
+    }
+    pub(crate) fn duckless_search_key(&self) -> u64 {
+        debug_assert_eq!(self.variant, Variant::Duck);
+        self.search_key_with_duck(None) ^ 0xe3b1_07de_b326_a8c9
     }
     /// The key built from scratch; `make_unrecorded` keeps `key` equal to it.
     fn computed_key(&self) -> u64 {
@@ -481,6 +545,10 @@ impl Position {
             for side in 0..2 {
                 if rights[t] & (1 << side) != 0 {
                     key ^= ZOBRIST[CASTLING_KEYS + t * 2 + side];
+                    if self.variant == Variant::Chess960 && self.rook_file[t][side] != side * 7 {
+                        key ^=
+                            mix_key(0x9600 + ((t * 2 + side) * 8 + self.rook_file[t][side]) as u64);
+                    }
                 }
             }
         }
@@ -517,7 +585,7 @@ impl Position {
         (0..6).find(|&p| self.pieces[t][p] & bit(s) != 0)
     }
     pub(crate) fn material(&self, t: usize) -> i32 {
-        (0..6)
+        (0..KING)
             .map(|p| self.pieces[t][p].count_ones() as i32 * VALUES[p])
             .sum()
     }
@@ -539,13 +607,7 @@ impl Position {
         }
     }
     pub(crate) fn mobility_with(&self, p: usize, t: usize, s: usize, occupied: u64) -> u64 {
-        self.range_with(p, t, s, occupied)
-            & !(self.own(t)
-                | if t == self.turn {
-                    self.duck.map(bit).unwrap_or(0)
-                } else {
-                    0
-                })
+        self.range_with(p, t, s, occupied) & !(self.own(t) | self.duck.map(bit).unwrap_or(0))
     }
     pub(crate) fn attacked(&self, t: usize, s: usize) -> bool {
         if s >= 64 {
@@ -557,6 +619,25 @@ impl Position {
         // would capture.
         let occupied = self.occupied();
         (0..6).any(|p| self.pieces[t ^ 1][p] & self.range_with(p, t, s, occupied) != 0)
+    }
+    /// Interposition squares for each capture of this king with the duck lifted.
+    pub(crate) fn king_capture_paths(&self, side: usize) -> impl Iterator<Item = u64> + '_ {
+        debug_assert_eq!(self.variant, Variant::Duck);
+        let king = self.king(side);
+        let occupied = self.own(0) | self.own(1);
+        self.pieces[side ^ 1]
+            .into_iter()
+            .enumerate()
+            .flat_map(move |(piece, enemies)| {
+                let attackers = enemies & self.range_with(piece, side, king, occupied);
+                squares(attackers).map(move |attacker| {
+                    if matches!(piece, BISHOP | ROOK | QUEEN) {
+                        between(king, attacker)
+                    } else {
+                        0
+                    }
+                })
+            })
     }
     pub fn in_check(&self) -> bool {
         self.variant != Variant::Duck && self.attacked(self.turn, self.king(self.turn))
@@ -758,15 +839,8 @@ impl Position {
         coordinate: &str,
         omit_pending: bool,
     ) -> Result<bool, Error> {
-        if self.variant == Variant::KingOfTheHill
-            && !matches!(self.game_state(), GameState::Play | GameState::Check)
-        {
-            return Err(invalid("Game has ended"));
-        }
+        self.check_turn_available()?;
         let coordinate = CoordinateMove::parse(coordinate)?;
-        if self.variant == Variant::Duck && self.game_state() != GameState::Play {
-            return Err(invalid("Game has ended"));
-        }
         let (piece, duck) = coordinate
             .as_str()
             .split_once('@')
@@ -780,15 +854,38 @@ impl Position {
             .into_iter()
             .find(|m| self.external(self.turn, *m).as_str() == piece)
             .ok_or_else(|| invalid("Illegal move"))?;
-        let mut next = self.make(m);
+        self.apply_resolved(m, duck.map(square).transpose()?, omit_pending)
+    }
+
+    fn check_turn_available(&self) -> Result<(), Error> {
+        if self.variant == Variant::KingOfTheHill
+            && !matches!(self.game_state(), GameState::Play | GameState::Check)
+            || self.variant == Variant::Duck && self.game_state() != GameState::Play
+        {
+            return Err(invalid("Game has ended"));
+        }
+        Ok(())
+    }
+
+    fn apply_resolved(
+        &mut self,
+        m: Move,
+        duck: Option<usize>,
+        omit_pending: bool,
+    ) -> Result<bool, Error> {
+        let mut coordinate = self.external(self.turn, m).0;
+        let mut next;
         if self.variant == Variant::Duck {
+            // Duck's pending preview can fail, so keep the current position intact.
+            next = self.make(m);
             match duck {
                 Some(d) => {
-                    let d = square(d)?;
                     if next.ends_before_duck() || next.occupied() & bit(d) != 0 {
                         return Err(invalid("Illegal duck placement"));
                     }
                     next.duck = Some(d);
+                    coordinate.push('@');
+                    coordinate.push_str(&name(d));
                 }
                 None if !next.ends_before_duck() => {
                     if omit_pending {
@@ -798,8 +895,15 @@ impl Position {
                 }
                 None => {}
             }
+        } else {
+            next = self.make_unrecorded(m);
+            next.history = std::mem::take(&mut self.history);
+            if !self.is_irreversible(m) {
+                next.previous = std::mem::take(&mut self.previous);
+                next.previous.push(self.repetition());
+            }
         }
-        next.history.push(coordinate.0);
+        next.history.push(coordinate);
         *self = next;
         Ok(true)
     }
@@ -828,6 +932,7 @@ impl Position {
         ]
     }
     pub(crate) fn repetition(&self) -> Repetition {
+        let pseudo_ep_key = self.ep_key();
         let ep = self.ep.filter(|&to| {
             squares(self.pieces[self.turn][PAWN]).any(|from| {
                 if self.range(PAWN, self.turn, from) & bit(to) == 0 {
@@ -842,6 +947,7 @@ impl Position {
         });
         // Duck placement is intentionally excluded from repetition identity.
         Repetition {
+            key: mix_key(self.key ^ pseudo_ep_key ^ ep.map_or(0, |to| ZOBRIST[EP_KEYS + to % 8])),
             pieces: self.pieces,
             turn: self.turn,
             rights: self.rights(),
@@ -850,7 +956,7 @@ impl Position {
     }
     /// A copy of the board state that leaves out the game history and the
     /// repetition list, so it never allocates.
-    fn without_records(&self) -> Self {
+    pub(crate) fn without_records(&self) -> Self {
         Self {
             pieces: self.pieces,
             turn: self.turn,
@@ -991,7 +1097,7 @@ impl Position {
             && self.pieces[self.turn ^ 1][KING] & (bit(27) | bit(28) | bit(35) | bit(36)) != 0
     }
 
-    fn dead_position_by_material(&self) -> bool {
+    pub(crate) fn dead_position_by_material(&self) -> bool {
         if !matches!(self.variant, Variant::Standard | Variant::Chess960) {
             return false;
         }
@@ -1079,7 +1185,12 @@ impl Position {
         let mut rights = String::new();
         for (t, mask, ch) in [(1, 6, 'K'), (1, 5, 'Q'), (0, 6, 'k'), (0, 5, 'q')] {
             if self.castling[t] & mask == 0 {
-                rights.push(ch);
+                rights.push(if self.variant == Variant::Chess960 {
+                    let file = self.rook_file[t][usize::from(mask == 6)];
+                    char::from(if t == WHITE { b'A' } else { b'a' } + file as u8)
+                } else {
+                    ch
+                });
             }
         }
         s.push_str(if rights.is_empty() { "-" } else { &rights });

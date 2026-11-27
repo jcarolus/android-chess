@@ -3,7 +3,7 @@ package jwtc.android.chess.lichess.models;
 public class GameFull {
 
     public String id;
-    public Variant variant;
+    public LichessVariant variant;
     public String speed;
     public Perf perf;
     public boolean rated;

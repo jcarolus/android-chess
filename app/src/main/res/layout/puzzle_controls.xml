@@ -5,9 +5,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/play_controls_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/panel_padding">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/ButtonMenu"
+            app:icon="@drawable/ic_three_dots_vertical"
+            android:contentDescription="@string/button_menu_description"
+            android:layout_gravity="end"
+            style="?attr/chessImageButtonStyle" />
 
         <TextView
             android:id="@+id/TextViewSolution"

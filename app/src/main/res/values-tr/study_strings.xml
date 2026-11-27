@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studies">Çalışmalar</string>
+    <string name="study_topic">Konu</string>
+    <string name="study_surprise">Beni şaşırt</string>
+    <string name="study_variations">Varyantlar</string>
+    <plurals name="study_variations_available">
+        <item quantity="one">%1$d varyant mevcut</item>
+        <item quantity="other">%1$d varyant mevcut</item>
+    </plurals>
+    <string name="study_before_move">Hamleden önce: %1$s</string>
+    <string name="study_after_move">Hamleden sonra: %1$s</string>
+    <string name="study_pgn_evaluation">Çalışma değerlendirmesi: %1$s</string>
+    <string name="study_loading">Çalışmalar yükleniyor…</string>
+    <string name="study_position">%1$d / %2$d</string>
+    <string name="study_previous">Önceki çalışma</string>
+    <string name="study_next">Sonraki çalışma</string>
+    <string name="study_import_topic">Varsayılan konu</string>
+    <string name="import_optional_topic">Varsayılan konu (isteğe bağlı)</string>
+    <string name="study_delete_matching">Eşleşen çalışmaları sil</string>
+    <string name="study_delete_failed">Seçim silinemedi.</string>
+    <string name="study_delete_confirmation">“%1$s” konulu ve “%2$s” etkinliğine ait çalışmalar oyunlardan silinsin mi?</string>
+    <string name="study_load_failed">Çalışmalar yüklenemedi.</string>
+    <string name="study_library_empty">İçe aktarılmış çalışma yok.</string>
+    <string name="study_download_collections">Koleksiyonları indir</string>
+    <string name="study_import">PGN veya ZIP içe aktar</string>
+    <string name="study_import_value_required">Bir değer girin</string>
+    <string name="importing_studies">Çalışmalar içe aktarılıyor…</string>
+</resources>

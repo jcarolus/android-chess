@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">Yaklaşık %1$d oyun bulundu</string>
+    <string name="import_all">Tümünü içe aktar</string>
+    <string name="import_subsection">Bir aralık belirle</string>
+    <string name="import_games_from">Başlangıç oyunu</string>
+    <string name="import_games_until">Bitiş oyunu</string>
+    <string name="import_continue">Devam</string>
+    <string name="import_back">Geri</string>
+    <string name="import_no_games">Oyun bulunamadı</string>
+    <string name="import_range_bounds">1 ile %1$d arasında bir tam sayı girin</string>
+    <string name="import_range_order">Bitiş numarası başlangıç numarasından küçük olamaz</string>
+</resources>

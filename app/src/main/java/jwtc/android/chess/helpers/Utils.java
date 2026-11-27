@@ -62,7 +62,7 @@ public class Utils {
         int index = cursor.getColumnIndex(column);
         if (index >= 0 && index < cursor.getColumnCount()) {
             try {
-                return new Date(cursor.getLong(index));
+                return cursor.isNull(index) ? null : new Date(cursor.getLong(index));
             } catch (Exception ex) {
                 Log.d(TAG, "Caught exception for " + column + " " + ex.getMessage());
             }

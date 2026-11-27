@@ -91,6 +91,20 @@ public class PgnSplitterTest {
     }
 
     @Test
+    public void trailingMessageTextDoesNotRejectAFileOrHideLaterGames() throws IOException {
+        String suffix = "Sent at 05:14, Seen\nViewed 1 time\n\n";
+        for (String second : List.of(GAME_2, "1. d4 d5 0-1\n\n")) {
+            List<String> games = split(GAME_1 + suffix + second);
+            assertEquals(2, games.size());
+            GameRecord first = GameRecord.fromPgn(games.get(0));
+            assertEquals("1-0", first.result);
+            assertEquals(PgnFingerprint.of(GAME_1), PgnFingerprint.of(first.pgn));
+            assertEquals(second, games.get(1));
+            assertEquals("0-1", GameRecord.fromPgn(games.get(1)).result);
+        }
+    }
+
+    @Test
     public void theLastGameIsReturnedWithoutATrailingNewline() throws IOException {
         List<String> games = split(GAME_1 + GAME_3);
         assertEquals(GAME_3, games.get(1));
@@ -104,18 +118,31 @@ public class PgnSplitterTest {
     }
 
     @Test
-    public void textWithoutAnEventTagHasNoGames() throws IOException {
-        assertEquals(0, split("[White \"A\"]\n\n1. e4 e5 1-0\n").size());
-        assertEquals(0, split("").size());
-        assertEquals(0, split("[Event").size());
+    public void gamesCanStartWithOtherTagsOrMovetext() throws IOException {
+        String otherTag = "[White \"A\"]\n\n1. e4 e5 1-0\n";
+        assertEquals(List.of(otherTag), split(otherTag));
+        assertEquals(List.of("1. e4 *"), split("1. e4 *"));
+        assertEquals(List.of(), split(""));
+        assertEquals(List.of(), split("[Event"));
     }
 
     @Test
-    public void aGameWithoutAnEventTagStaysWithThePreviousGame() throws IOException {
-        String noEvent = "[White \"B\"]\n\n1. d4 d5 0-1\n";
-        List<String> games = split(GAME_1 + noEvent + GAME_3);
-        assertEquals(2, games.size());
-        assertEquals(GAME_1 + noEvent, games.get(0));
+    public void eachTagBlockStartsItsOwnGame() throws IOException {
+        String noEvent = "[Topic \"Tactics\"]\n[White \"B\"]\n\n1. d4 d5 0-1\n";
+        assertEquals(List.of(GAME_1, noEvent, GAME_3), split(GAME_1 + noEvent + GAME_3));
+    }
+
+    @Test
+    public void retainsTagsBeforeEventAndIgnoresTagLikeTextInComments() throws IOException {
+        String first =
+                "[Topic \"Lesson\"]\n" + GAME_1.replace("e4 e5", "e4 {[Event \"Comment\"]} e5");
+        assertEquals(List.of(first, GAME_2), split(first + GAME_2));
+    }
+
+    @Test
+    public void aSecondEventSeparatesLegacyGamesWithoutMovetext() throws IOException {
+        String diagram = "[Event \"First diagram\"]\n[FEN \"8/8/8/8/8/4K3/8/4k3 w - - 0 1\"]\n\n";
+        assertEquals(List.of(diagram, GAME_2), split(diagram + GAME_2));
     }
 
     @Test

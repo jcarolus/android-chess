@@ -25,10 +25,10 @@ public class ClockDialog extends ResultDialog<Bundle> {
         int totalMinutes = (int) (prefs.getLong("clockTotalMillies", 0) / 60000);
 
         final EditText editMinutes = findViewById(R.id.EditMinutes);
-        final EditText editIncrement = findViewById(R.id.EditMinutes);
+        final EditText editIncrement = findViewById(R.id.EditIncrement);
 
-        editMinutes.setText("" + totalMinutes);
-        editIncrement.setText("" + increment);
+        editMinutes.setText(String.valueOf(totalMinutes));
+        editIncrement.setText(String.valueOf(increment));
 
         Button buttonOk = findViewById(R.id.ButtonOk);
         buttonOk.setOnClickListener(

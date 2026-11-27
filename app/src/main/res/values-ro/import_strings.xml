@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_game_estimate">Aproximativ %1$d partide găsite</string>
+    <string name="import_all">Importă tot</string>
+    <string name="import_subsection">Definește un interval</string>
+    <string name="import_games_from">Partide de la</string>
+    <string name="import_games_until">Partide până la</string>
+    <string name="import_continue">Continuă</string>
+    <string name="import_back">Înapoi</string>
+    <string name="import_no_games">Nu s-au găsit partide</string>
+    <string name="import_range_bounds">Introduceți un număr întreg de la 1 la %1$d</string>
+    <string name="import_range_order">Numărul final trebuie să fie cel puțin egal cu numărul inițial</string>
+</resources>

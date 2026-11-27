@@ -47,7 +47,9 @@ public final class MoveSpeech {
             String sRow = matchToken.group(3);
 
             if (useLongMove) {
-                sMoveSpeech.append(Pos.toString(Move.getFrom(move)).toUpperCase()).append(" ");
+                sMoveSpeech
+                        .append(Pos.toString(Move.getFrom(move)).toUpperCase(Locale.getDefault()))
+                        .append(" ");
             } else {
 
                 if (sFile != null) {

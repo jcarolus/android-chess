@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gameslist_selection_actions">Acties voor geselecteerde partijen</string>
+    <string name="gameslist_check_game">Selecteer partij %3$d: %1$s tegen %2$s</string>
+    <string name="gameslist_select_all">Alles selecteren</string>
+    <string name="gameslist_clear_selection">Selectie wissen</string>
+    <string name="gameslist_invert_checked">Selectie omkeren</string>
+    <string name="gameslist_multi_edit">Meerdere bewerken</string>
+    <string name="gameslist_delete_selected">Geselecteerde partijen verwijderen</string>
+    <string name="gameslist_edit_topic">Onderwerp bewerken</string>
+    <string name="gameslist_topic_hint">Onderwerp</string>
+    <string name="gameslist_topic_explanation">Vervang het onderwerp van alle geselecteerde partijen. Laat leeg om hun onderwerpen te wissen.</string>
+    <string name="gameslist_clear_topic">Onderwerp wissen</string>
+    <string name="gameslist_set_topic">Onderwerp instellen</string>
+    <string name="gameslist_bulk_failed">De geselecteerde partijen konden niet worden bewerkt. Er is niets gewijzigd. Probeer het opnieuw.</string>
+    <plurals name="gameslist_selected_count">
+        <item quantity="one">%d partij geselecteerd</item>
+        <item quantity="other">%d partijen geselecteerd</item>
+    </plurals>
+    <plurals name="gameslist_delete_count">
+        <item quantity="one">%d geselecteerde partij definitief verwijderen?</item>
+        <item quantity="other">%d geselecteerde partijen definitief verwijderen?</item>
+    </plurals>
+    <string name="gameslist_export_selected">Geselecteerde partijen exporteren</string>
+</resources>

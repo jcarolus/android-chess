@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advanced_help"><![CDATA[
-        <h3>Avanzato</h3>
-        <p>Crea o importa qui i tuoi contenuti.</p>
-
-        <h4>Esporta il database delle partite sulla scheda SD</h4>
-        <p>Tutte le partite nel database possono essere esportate in un unico file PGN sulla scheda SD. Questo file si chiamerà chess.pgn e un eventuale file esistente verrà sovrascritto.</p>
-
-        <h4>Importa partite nel database</h4>
-        <p>Usa questa opzione per aggiungere partite al database. Ti permette di sfogliare fino a un file PGN. Selezionalo e scegli di importarlo.</p>
-
-        <h4>Elimina tutte le partite nel database</h4>
-        <p>Usa questa opzione se vuoi ripulire il database. Assicurati prima di creare un backup sulla scheda SD; questa azione non può essere annullata.</p>
-
-        <h4>Crea set di esercizi</h4>
-        <p>Crea posizioni di allenamento dalle partite che finiscono con scacco matto. Seleziona il file da elaborare. Le voci non riuscite sono di solito partite che non finiscono con scacco matto o duplicati.</p>
-
-        <h4>Reimposta set di esercizi</h4>
-        <p>Vuoi ricominciare ad allenarti? Questo reimposterà anche il tuo contatore del tempo medio.</p>
-
-        ]]></string>
     <string name="alert_no">No</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Sì</string>
     <string name="app_name">Scacchi</string>
     <string name="app_name_help">Aiuto</string>
     <string name="app_name_import">Importa</string>
-    <string name="app_name_pgntools">Avanzato</string>
     <string name="app_name_play">Gioca</string>
     <string name="app_name_playonline">Gioca online</string>
     <string name="app_name_save_games">Partite salvate</string>
@@ -279,13 +258,13 @@
     <string name="options_play_white">Bianchi</string>
     <string name="options_quiescent_off">Ricerca quiete disattiva</string>
     <string name="options_quiescent_on">Ricerca quiete attiva</string>
-    <string name="pgntool_confirm_delete_games">Sei sicuro?</string>
+    <string name="pgntool_delete_item_count">Elementi da eliminare: %1$d</string>
+    <string name="pgntool_confirm_delete_games">Eliminare tutte le partite dal database, inclusi gli studi?</string>
     <string name="pgntool_confirm_practice_reset">Vuoi davvero reimpostare?</string>
     <string name="pgntool_create_db_explanation">Crea database aperture</string>
     <string name="pgntool_delete_games">Elimina tutte le partite nel database</string>
     <string name="pgntool_games_deleted">Tutte le partite eliminate</string>
-    <string name="pgntool_export_explanation">Esporta database delle partite</string>
-    <string name="pgntool_help">Aiuto</string>
+    <string name="pgntool_export_explanation">Esporta tutte le partite</string>
     <string name="pgntool_import_explanation">Importa partite nel database</string>
     <string name="importing_games">Importazione delle partite…</string>
     <string name="importing_puzzles">Importazione dei problemi…</string>
@@ -357,6 +336,7 @@
     <string name="pref_speech">Voce</string>
     <string name="pref_user_long_move_descriptions">Usa descrizione completa della mossa</string>
     <string name="tts_locale_not_supported">La sintesi vocale non supporta le impostazioni locali</string>
+    <string name="tts_language_differs_from_app">La sintesi vocale usa una lingua diversa da quella dell’app</string>
     <string name="tts_not_loaded">Impossibile caricare la sintesi vocale</string>
     <string name="tts_example_move">Alfiere cattura in G7, scacco</string>
     <string name="tts_selected">Selezionato</string>
@@ -413,7 +393,6 @@
     <string name="start_wifiboard">Scacchiera Wi‑Fi</string>
     <string name="start_ics">Gioca online</string>
     <string name="start_lichess">Lichess</string>
-    <string name="start_pgn">Avanzato</string>
     <string name="start_play">Gioca</string>
     <string name="start_practice">Allenamento</string>
     <string name="start_puzzles">Problemi</string>
@@ -447,6 +426,7 @@
     <string name="title_challenge">Sfida</string>
     <string name="title_overwrite_main_line">Sovrascrivere la linea principale da questa posizione?</string>
     <string name="title_delete_game">Elimina partita</string>
+    <string name="game_delete_failed">Impossibile eliminare la partita. Riprova.</string>
     <string name="title_edit_command">Modifica comando</string>
     <string name="title_edit_or_delete">Modificare o eliminare?</string>
     <string name="title_error">Errore</string>
@@ -548,7 +528,6 @@
     <string name="analysis_move_mistake">Errore</string>
     <string name="analysis_move_blunder">Errore grave</string>
     <string name="analysis_move_forced">Forzata</string>
-    <string name="analysis_move_pending">Analisi della mossa…</string>
     <string name="analysis_move_unavailable">Analisi non disponibile</string>
     <string name="analysis_white_to_move">Tocca al Bianco</string>
     <string name="analysis_black_to_move">Tocca al Nero</string>
@@ -557,6 +536,9 @@
     <string name="pgn_return_main_line">Torna alla linea principale</string>
     <string name="pgn_promote_variation">Imposta come continuazione preferita</string>
     <string name="pgn_delete_variation">Elimina variante</string>
+    <string name="menu_truncate_line">Elimina mosse da qui</string>
+    <string name="truncate_line_confirm">Eliminare %1$s e tutte le mosse successive? Mosse: %2$d</string>
+    <string name="truncate_line_confirm_variations">Eliminare %1$s e tutte le mosse successive, varianti comprese? Mosse: %2$d</string>
     <string name="engine_evaluation_score">Valutazione del motore: %1$+.1f pedoni (i valori positivi favoriscono il Bianco)</string>
     <string name="engine_evaluation_pending">Valutazione del motore non disponibile</string>
     <string name="analysis_settings">Impostazioni di analisi</string>
@@ -566,7 +548,6 @@
     <string name="analysis_builtin_warning">Per un’analisi migliore, installa un motore scacchistico compatibile con OEX.</string>
     <string name="analysis_dont_show_again">Non mostrare più</string>
     <string name="analysis_continue">Continua</string>
-    <string name="analysis_duck_unsupported">L’analisi degli scacchi con l’anatra non è supportata.</string>
     <string name="new_game_variant_standard">Standard</string>
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Re della collina</string>
@@ -583,6 +564,92 @@
     <string name="share_lichess_profile">Condividi il mio profilo Lichess</string>
     <string name="app_link_invalid">Questo link di Chess non è valido o non è supportato.</string>
     <string name="app_link_too_large">Questa partita è troppo grande per un link. Condividi la partita completa in formato PGN.</string>
-    <string name="app_link_no_engine">Analisi del motore non disponibile per questa variante. Puoi esplorare la scacchiera e le mosse.</string>
     <string name="share_failed">Impossibile condividere la partita. Riprova.</string>
+
+    <!-- Move entry vocabulary. Separate aliases for the same value with |. -->
+    <string-array name="move_input_ranks">
+        <item>uno|un</item>
+        <item>due</item>
+        <item>tre</item>
+        <item>quattro</item>
+        <item>cinque</item>
+        <item>sei</item>
+        <item>sette</item>
+        <item>otto</item>
+    </string-array>
+    <string-array name="move_input_promotions">
+        <item>cavallo</item>
+        <item>alfiere</item>
+        <item>torre</item>
+        <item>donna|regina</item>
+    </string-array>
+    <string name="move_input_castle">arrocco|arroccare</string>
+    <string name="move_input_captures">prende|cattura</string>
+    <string name="menu_delete_game_database">Elimina tutte le partite, inclusi gli studi</string>
+    <string name="practice_delete_confirmation">Eliminare tutte le posizioni di allenamento e i progressi?</string>
+    <string name="puzzle_delete_confirmation">Eliminare tutte le posizioni dei problemi e i progressi?</string>
+    <string name="collection_restore_prompt">Hai eliminato tutte le posizioni. Vuoi ripristinare le posizioni predefinite?</string>
+    <string name="collection_restore_defaults">Ripristina le posizioni predefinite</string>
+    <string name="collection_empty">Nessuna posizione. Usa il menu per importare o ripristinare le posizioni.</string>
+    <string name="collection_delete_failed">Impossibile eliminare le posizioni. Riprova.</string>
+    <string name="lichess_create_challenge_player_invalid">Questo nome utente Lichess non è valido.</string>
+    <string name="pgntool_confirm_delete_practice">Eliminare tutte le posizioni di allenamento?</string>
+    <string name="pgntool_confirm_delete_puzzles">Eliminare tutte le posizioni dei problemi?</string>
+    <string name="pgntool_delete_practice">Elimina tutte le posizioni di allenamento</string>
+    <string name="pgntool_delete_puzzles">Elimina tutte le posizioni dei problemi</string>
+    <string name="pgntool_practice_deleted">Tutte le posizioni di allenamento sono state eliminate</string>
+    <string name="pgntool_puzzles_deleted">Tutte le posizioni dei problemi sono state eliminate</string>
+    <string name="pgntool_import_busy">È già in corso un’importazione</string>
+    <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes di flugsio (CC BY-SA 4.0); Firi di James Faure e Kiwen-suwi di neverRare (CC BY 4.0); Celtic e Spatial di Maurizio Monge (MIT). Grafica adattata per Android; Firi ricolorato. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
+    <string name="gameslist_load_failed">Impossibile caricare questa partita.</string>
+    <string name="lichess_puzzle_move_failed">Impossibile eseguire una mossa del problema. Puoi passare al problema successivo.</string>
+    <string name="analysis_edit_comment">Modifica commento</string>
+    <string name="analysis_comment_hint">Tocca per aggiungere un commento</string>
+    <string name="analysis_comment_title">Commento dopo la mossa</string>
+    <string name="analysis_start_comment_title">Commento prima della prima mossa</string>
+    <string name="analysis_engine">Motore</string>
+    <string name="menu_analyse_game">Analizza partita</string>
+    <string name="menu_new_king_of_the_hill">Nuova partita Re della collina</string>
+    <string name="state_hill_win">Il re ha raggiunto la collina</string>
+    <string name="state_duck_stalemate_win">Non ci sono più mosse disponibili: negli scacchi con anatra questo dà la vittoria</string>
+    <string name="options_engine_oex_variant_disabled">Questa variante usa il motore integrato.</string>
+    <string name="practice_finished_position">Posizione completata</string>
+    <string name="practice_preparing_position">Preparazione della posizione di allenamento…</string>
+    <string name="practice_completed_collection">Hai completato tutti i problemi!</string>
+    <string name="import_start_failed">Impossibile avviare l’importazione</string>
+    <string name="import_failed">Importazione non riuscita</string>
+    <string name="import_duplicates_skipped">Duplicati ignorati</string>
+    <string name="engine_uninstalled">Motore %1$s disinstallato</string>
+    <string name="engine_not_installed">Nessun motore installato</string>
+    <string name="opening_database_uninstalled">Database %1$s disinstallato</string>
+    <string name="opening_database_not_installed">Nessun database installato</string>
+    <string name="setup_use_illegal_position">Usare una posizione illegale?</string>
+    <string name="clock_minutes_hint">Minuti</string>
+    <string name="clock_increment_hint">Incremento in secondi</string>
+    <string name="import_added">Aggiunte</string>
+    <string name="import_ignored">Ignorate</string>
+    <string name="pgn_date_hint">Data PGN</string>
+    <string name="eco_openings_description">Aperture ECO</string>
+    <string name="hotspot_result_game_over">Partita terminata</string>
+    <string name="hotspot_result_defeat">Sconfitta</string>
+    <string name="hotspot_result_victory">Vittoria!</string>
+    <string name="hotspot_result_opponent_resigned">%1$s ha abbandonato.</string>
+    <string name="hotspot_result_you_resigned">Hai abbandonato.</string>
+    <string name="hotspot_result_mate_lost">Hai perso per scacco matto.</string>
+    <string name="hotspot_result_mate_won">Hai vinto per scacco matto.</string>
+    <string name="hotspot_result_draw">La partita è patta.</string>
+    <string name="hotspot_result_stalemate">La partita è patta per stallo.</string>
+    <string name="hotspot_result_repetition">La partita è patta per triplice ripetizione.</string>
+    <string name="hotspot_result_fifty_moves">La partita è patta per la regola delle 50 mosse.</string>
+    <string name="hotspot_result_insufficient_material">La partita è patta per materiale insufficiente.</string>
+    <string name="website_open_failed">Nessuna app disponibile per aprire il sito web.</string>
+    <string name="menu_use_position_as_start">Usa la posizione attuale come inizio</string>
+    <string name="use_position_as_start_confirm">Usare questa posizione come inizio? Le mosse precedenti, i loro commenti e le varianti che iniziano prima saranno rimossi. Le continuazioni da questa posizione saranno mantenute. Questa modifica viene salvata automaticamente e non può essere annullata.</string>
+    <string name="use_position_as_start_failed">Impossibile modificare la posizione iniziale.</string>
 </resources>
